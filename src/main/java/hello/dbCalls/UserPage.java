@@ -32,7 +32,7 @@ public class UserPage {
         return rs;
     }
 
-    public static void updateVisits(Connection con, int userID, int getUserID) {
+    private static void updateVisits(Connection con, int userID, int getUserID) {
         CallableStatement st = null;
 
         try {

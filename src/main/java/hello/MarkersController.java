@@ -12,17 +12,11 @@ import java.sql.SQLException;
 
 @RestController
 public class MarkersController { //For markers section
-    @RequestMapping(value = "/getMy")
+    @RequestMapping(value = "/getAskedQuestions")
     public String getMyQuestions(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "amount", required = false, defaultValue = "15") int amount, @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         MsSqlConnection connection = new MsSqlConnection();
 
-        ResultSet questions = QuestionsList.getMyQuestions(connection.con, id, amount);
-
-        /*try {
-            voters.beforeFirst();;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
+        ResultSet questions = QuestionsList.getUserAskedQuestions(connection.con, id, id, amount, true);
 
         JSONArray arr = new JSONArray();
         try {
@@ -38,11 +32,11 @@ public class MarkersController { //For markers section
         return arr.toString();
     }
 
-    @RequestMapping(value = "/getFavorites")
+    @RequestMapping(value = "/getFavoriteQuestions")
     public String getFavoriteQuestions(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "amount", required = false, defaultValue = "15") int amount, @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         MsSqlConnection connection = new MsSqlConnection();
 
-        ResultSet questions = QuestionsList.getFavorites(connection.con, id, amount);
+        ResultSet questions = QuestionsList.getUserFavoriteQuestions(connection.con, id, id, amount, true);
 
         JSONArray arr = new JSONArray();
         try {
@@ -58,11 +52,11 @@ public class MarkersController { //For markers section
         return arr.toString();
     }
 
-    @RequestMapping(value = "/getHistory")
+    @RequestMapping(value = "/getAnsweredQuestions")
     public String getHistoryQuestions(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "amount", required = false, defaultValue = "15") int amount, @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         MsSqlConnection connection = new MsSqlConnection();
 
-        ResultSet questions = QuestionsList.getHistory(connection.con, id, amount);
+        ResultSet questions = QuestionsList.getUserAnsweredQuestions(connection.con, id, id, amount, true);
 
         JSONArray arr = new JSONArray();
         try {

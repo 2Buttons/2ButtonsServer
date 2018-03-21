@@ -8,10 +8,7 @@ import hello.dbCalls.QuestionsList;
 import hello.dbCalls.UserPage;
 
 public class MsSqlConnection {
-    private final static String URL = "jdbc:sqlserver://localhost:1433";
-    private final static String CONNECTIONURL = "jdbc:sqlserver://localhost:1433;databaseName=OurFuture;integratedSecurity=true;";
-    private final static String USERNAME = "Ilya";
-    private final static String PASSWORD = "kate1805";
+    private final static String CONNECTIONURL = "jdbc:sqlserver://localhost:1433;databaseName=TwoButtons;integratedSecurity=true;";
 
     public static Connection con = null;
 
@@ -128,7 +125,7 @@ public class MsSqlConnection {
             e.printStackTrace();
         }*/
 
-        ResultSet questions = QuestionsList.getHistory(con, 4, 4);
+        /*ResultSet questions = QuestionsList.getHistory(con, 4, 4);
         try {
             while (questions.next()) {
                 if (questions != null) { //userInfo allready done in getUserInfo
@@ -139,7 +136,7 @@ public class MsSqlConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
         //Fix it
 
