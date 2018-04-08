@@ -122,4 +122,24 @@ public class QuestionsList {
         }
         return rs;
     }
+
+    public static ResultSet getUserCommentedQuestions(Connection con, int userID, int getUserID, int amount) {
+        ResultSet rs = null;
+        PreparedStatement st = null;
+
+        try {
+            st = con.prepareStatement("select * from dbo.getUserCommentedQuestions(?, ?, ?)", ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+
+            st.setInt(1, userID);
+            st.setInt(2, getUserID);
+            st.setInt(3, amount);
+
+            rs = st.executeQuery();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
 }

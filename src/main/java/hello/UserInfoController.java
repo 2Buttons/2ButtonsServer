@@ -36,6 +36,8 @@ public class UserInfoController { //We get user's information
 
         System.out.println(arr.toString().substring(1, arr.toString().length()-1));
 
+        System.out.println(UserPage.getUserRaiting(connection.con, userId));
+
         return arr.toString().substring(1, arr.toString().length()-1);
     }
 }

@@ -15,7 +15,11 @@ import java.sql.SQLException;
 @RestController
 public class ResultsController { //To work with questions results
     @RequestMapping(value = "/getResults")
-    public String saveFeedback(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "questionId", required = true) int questionId, @RequestParam(value = "minAge", required = false, defaultValue = "0") int minAge, @RequestParam(value = "maxAge", required = false, defaultValue = "100") int maxAge, @RequestParam(value = "sex", required = false, defaultValue = "0") int sex) {
+    public String saveFeedback(@RequestParam(value = "id", required = true) int id,
+                               @RequestParam(value = "questionId", required = true) int questionId,
+                               @RequestParam(value = "minAge", required = false, defaultValue = "0") int minAge,
+                               @RequestParam(value = "maxAge", required = false, defaultValue = "100") int maxAge,
+                               @RequestParam(value = "sex", required = false, defaultValue = "0") int sex) {
         MsSqlConnection connection = new MsSqlConnection();
 
         ResultSet results = Results.getResults(connection.con, id, questionId, minAge, maxAge, sex);

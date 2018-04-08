@@ -11,9 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @RestController
-public class MarkersController { //For markers section
+public class MarkersController { //Don't receive deleted
     @RequestMapping(value = "/getAskedQuestions")
-    public String getMyQuestions(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "amount", required = false, defaultValue = "15") int amount, @RequestParam(value = "search", required = false, defaultValue = "") String search) {
+    public String getMyQuestions(@RequestParam(value = "id", required = true) int id,
+                                 @RequestParam(value = "amount", required = false, defaultValue = "100") int amount,
+                                 @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         MsSqlConnection connection = new MsSqlConnection();
 
         ResultSet questions = QuestionsList.getUserAskedQuestions(connection.con, id, id, amount, true);
@@ -33,7 +35,9 @@ public class MarkersController { //For markers section
     }
 
     @RequestMapping(value = "/getFavoriteQuestions")
-    public String getFavoriteQuestions(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "amount", required = false, defaultValue = "15") int amount, @RequestParam(value = "search", required = false, defaultValue = "") String search) {
+    public String getFavoriteQuestions(@RequestParam(value = "id", required = true) int id,
+                                       @RequestParam(value = "amount", required = false, defaultValue = "100") int amount,
+                                       @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         MsSqlConnection connection = new MsSqlConnection();
 
         ResultSet questions = QuestionsList.getUserFavoriteQuestions(connection.con, id, id, amount, true);
@@ -53,7 +57,9 @@ public class MarkersController { //For markers section
     }
 
     @RequestMapping(value = "/getAnsweredQuestions")
-    public String getHistoryQuestions(@RequestParam(value = "id", required = true) int id, @RequestParam(value = "amount", required = false, defaultValue = "15") int amount, @RequestParam(value = "search", required = false, defaultValue = "") String search) {
+    public String getHistoryQuestions(@RequestParam(value = "id", required = true) int id,
+                                      @RequestParam(value = "amount", required = false, defaultValue = "100") int amount,
+                                      @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         MsSqlConnection connection = new MsSqlConnection();
 
         ResultSet questions = QuestionsList.getUserAnsweredQuestions(connection.con, id, id, amount, true);

@@ -12,7 +12,8 @@ public class MsSqlConnection {
 
     public static Connection con = null;
 
-    public MsSqlConnection() {
+    public MsSqlConnection() { //Call each time, than we neet to connect with DB (each request)
+
         try {
             con = DriverManager.getConnection(CONNECTIONURL);
 
