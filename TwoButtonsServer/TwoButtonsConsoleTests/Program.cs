@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.WrapperFunctions;
@@ -21,7 +22,24 @@ namespace TwoButtonsConsoleTests
             //CommentsWrapper commentsWrapper = new CommentsWrapper();
             //if (commentsWrapper.TryGetComments("",1,1,100,out IEnumerable<CommentDb> comments))
             //    Console.WriteLine(comments.FirstOrDefault().Comment);
+
+            using (var db = new TwoButtonsContext(CreateOptions()))
+            {
+                var user = db.UserDb.FirstOrDefault();
+                Console.WriteLine(user?.Login);
+            }
+
             Console.WriteLine("Hello World!");
+        }
+
+        static DbContextOptions<TwoButtonsContext> CreateOptions()
+        {
+            string connectionString = "Server=DESKTOP-T41QO6T\\SQLEXPRESS;database=TwoButtons;Trusted_Connection=True;";
+
+            var optionsBuilder = new DbContextOptionsBuilder<TwoButtonsContext>();
+            return  optionsBuilder
+                .UseSqlServer(connectionString)
+                .Options;
         }
     }
 }

@@ -34,6 +34,8 @@ namespace TwoButtonsDatabase
         public virtual DbSet<UserFavouriteQuestionsDb> UserFavouriteQuestionsDb { get; set; }
         public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
 
+        public virtual DbSet<UserDb> UserDb { get; set; }
+
 
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
