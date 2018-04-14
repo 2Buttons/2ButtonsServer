@@ -1,0 +1,16 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace TwoButtonsDatabase.Entities
+{
+    public partial class NewRecommendedQuestionDb
+    {
+        [Key]
+        public int UserId { get; set; }
+        public bool Recommended { get; set; }
+        public DateTime Asked { get; set; }
+        public string Condition { get; set; }
+        public string Login { get; set; }
+        public string AvatarLink { get; set; }
+    }
+}
