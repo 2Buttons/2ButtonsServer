@@ -1,44 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MediaServer.FileSystem;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TwoButtonsDatabase;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 
 namespace MediaServer.Controllers
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
+    [EnableCors("AllowAllOrigin")]
+    //[Route("api/[controller]")]
+    public class MediaController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+
+        TwoButtonsContext _context;
+        IHostingEnvironment _appEnvironment;
+
+        public MediaController(TwoButtonsContext context, IHostingEnvironment appEnvironment, IFileManager fileManager)
         {
-            return new string[] { "value1", "value2" };
+            _context = context;
+            _appEnvironment = appEnvironment;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+
+        // GET api/values
+        [HttpGet("images")]
+        public FileResult DownloadFile(string path)
         {
-            return "value";
+            
+            
+            string fileName = Path.GetFileName(path);
+            var ext = Path.GetExtension(fileName);
+            string fileType = "application/" + ext.Skip(1).FirstOrDefault();
+
+            string absolutePath = Path.Combine(_appEnvironment.ContentRootPath, "..\\..\\..\\MediaData\\"+fileName);
+
+
+            FileStream fs = new FileStream(absolutePath, FileMode.Open);
+            
+            return  File(fs, fileType, fileName);
         }
+
+
 
         // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [HttpPost("images")]
+        public async Task<IActionResult> UploadFile(int userId, string imageType, IFormFile uploadedFile)
         {
+            if (uploadedFile != null)
+            {
+                //путь к папке Files
+                string path = "\\..\\..\\..\\..\\MediaData\\" + uploadedFile.FileName;
+
+                var absolutePath = _appEnvironment.WebRootPath + path;
+                // сохраняем фалй в папкуFiles в каталоге 
+                using (var fileStream = new FileStream(absolutePath, FileMode.Create))
+                {
+                    await uploadedFile.CopyToAsync(fileStream);
+                }
+                return Ok("All is good");
+            }
+
+            return BadRequest("The file is not uploaded");
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+    
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
