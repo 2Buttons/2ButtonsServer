@@ -1,22 +1,63 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using TwoButtonsDatabase.Entities;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class LoginWrapper
     {
-        public static int identification(TwoButtonsContext db, string login, int password)
+        public static bool TryGetIdentification(TwoButtonsContext db, string login, int password, out int userId)
         {
-            throw new NotFiniteNumberException();
+            try
+            {
+                userId = db.IdentificationDb
+                             .FromSql($"select * from dbo.identification({login}, {password})").FirstOrDefault()
+                             ?.UserId ?? -1;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userId = -1;
+            return false;
         }
 
-        public static int checkValidUser(TwoButtonsContext db, string phone, string login)
+        public static bool TryCheckValidUser(TwoButtonsContext db, string phone, string login, out int returnsCode)
         {
-            throw new NotFiniteNumberException();
+            try
+            {
+                returnsCode = db.CheckValidUserDb
+                             .FromSql($"select * from dbo.checkValidUser({phone}, {login})").FirstOrDefault()
+                             ?.ReturnCode ?? -1;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            returnsCode = -1;
+            return false;
         }
 
-        public static int checkValidLogin(TwoButtonsContext db, string login)
+        public static bool CheckValidLogin(TwoButtonsContext db, string login, out bool isValid)
         {
-            throw new NotFiniteNumberException();
+            try
+            {
+                var intIsValid = (db.CheckValidLoginDb
+                             .FromSql($"select * from dbo.checkValidLogin({login})").FirstOrDefault()
+                             ?.IsValid  ?? 0);
+                isValid = intIsValid == 1;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            isValid = false;
+            return false;
         }
     }
 }

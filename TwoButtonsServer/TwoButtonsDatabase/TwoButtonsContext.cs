@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.ForScalarFunctions;
 
 namespace TwoButtonsDatabase
 {
@@ -9,6 +10,7 @@ namespace TwoButtonsDatabase
     {
         public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options) { }
 
+        //for functions and prosedures
         public virtual DbSet<AnsweredFollowToAndStrangersDb> AnsweredFollowToAndStrangersDb { get; set; }
         public virtual DbSet<AnsweredListDb> AnsweredListDb { get; set; }
         public virtual DbSet<CommentDb> CommentDb { get; set; }
@@ -34,8 +36,10 @@ namespace TwoButtonsDatabase
         public virtual DbSet<UserFavouriteQuestionsDb> UserFavouriteQuestionsDb { get; set; }
         public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
 
-        public virtual DbSet<UserDb> UserDb { get; set; }
-
+        //for scalara functions
+        public virtual DbSet<IdentificationDb> IdentificationDb { get; set; }
+        public virtual DbSet<CheckValidLoginDb> CheckValidLoginDb { get; set; }
+        public virtual DbSet<CheckValidUserDb> CheckValidUserDb { get; set; }
 
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

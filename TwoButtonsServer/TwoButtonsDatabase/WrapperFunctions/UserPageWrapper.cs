@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 
@@ -11,59 +8,45 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class UserPageWrapper
     {
-
         public static bool TryGetUserInfo(TwoButtonsContext db, int userId, int getUserId, out UserInfoDb userInfo)
         {
-            
-                try
-                {
-                    var p = db.UserInfoDb
-                        .FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})");
-                    var t = p;
-                    userInfo = db.UserInfoDb
-                        .FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})").FirstOrDefault() ?? new UserInfoDb();
+            try
+            {
+                userInfo = db.UserInfoDb
+                               .FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})").FirstOrDefault() ??
+                           new UserInfoDb();
 
-                    if (userId != getUserId)
-                    {
-
-                        if (userInfo.YouFollowed.HasValue && userInfo.YouFollowed == 1)
-                        {
-                            TryUpdateVisits(db, userId, getUserId);
-                        }
-                    }
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                userInfo = new UserInfoDb();
-                return false;
-            
-           
+                if (userId != getUserId)
+                    if (userInfo.YouFollowed.HasValue && userInfo.YouFollowed == 1)
+                        TryUpdateVisits(db, userId, getUserId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userInfo = new UserInfoDb();
+            return false;
         }
 
         public static bool TryUpdateVisits(TwoButtonsContext db, int userId, int getUserId)
         {
-
-            
-                try
-                {
-                    db.Database.ExecuteSqlCommand($"updateVisits {userId}, {getUserId}");
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                return false;
-            
-           
+            try
+            {
+                db.Database.ExecuteSqlCommand($"updateVisits {userId}, {getUserId}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return false;
         }
 
         public static bool TryGetUserRaiting(TwoButtonsContext db, int userId, out int rainting)
         {
-            throw new NotImplementedException();
+            rainting = -100500;
+            return false;
 
             //ResultSet rsQuestions;
             //ResultSet rsComments;
@@ -99,22 +82,21 @@ namespace TwoButtonsDatabase.WrapperFunctions
             //return raiting;
         }
 
-        public static bool TryGetPosts(TwoButtonsContext db, int userId, int getUserId, int amount, out IEnumerable<PostDb> posts)
+        public static bool TryGetPosts(TwoButtonsContext db, int userId, int getUserId, int amount,
+            out IEnumerable<PostDb> posts)
         {
-            
-                try
-                {
-                    posts = db.PostDb
-                                   .FromSql($"select * from dbo.getPosts({userId}, {getUserId}, {amount})").ToList();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                posts = new List<PostDb>();
-                return false;
-            
+            try
+            {
+                posts = db.PostDb
+                    .FromSql($"select * from dbo.getPosts({userId}, {getUserId}, {amount})").ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            posts = new List<PostDb>();
+            return false;
         }
     }
 }

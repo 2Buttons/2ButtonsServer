@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Autorization\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
