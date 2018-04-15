@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsServer", "TwoButtonsServer\TwoButtonsServer.csproj", "{97B02328-3552-41F0-B03A-F977AD40F1B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsDatabase", "TwoButtonsDatabase\TwoButtonsDatabase.csproj", "{EB11A692-A6F8-4130-9932-7D45E8F8D083}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsConsoleTests", "TwoButtonsConsoleTests\TwoButtonsConsoleTests.csproj", "{93136119-0BFD-4C98-9DCE-85681B2851B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoButtonsConsoleTests", "TwoButtonsConsoleTests\TwoButtonsConsoleTests.csproj", "{93136119-0BFD-4C98-9DCE-85681B2851B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsDatabase", "..\CommonLibraries\TwoButtonsDatabase\TwoButtonsDatabase.csproj", "{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB11A692-A6F8-4130-9932-7D45E8F8D083}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB11A692-A6F8-4130-9932-7D45E8F8D083}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB11A692-A6F8-4130-9932-7D45E8F8D083}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB11A692-A6F8-4130-9932-7D45E8F8D083}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
