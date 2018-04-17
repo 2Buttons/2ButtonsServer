@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace TwoButtonsDatabase.Entities
+namespace TwoButtonsServer.ViewModels
 {
-    public partial class UserAskedQuestionsDb
+    public partial class UserAskedQuestionsViewModel
     {
-        [Key]
         public int QuestionId { get; set; }
         public string Condition { get; set; }
         public string FirstOption { get; set; }
@@ -21,5 +21,7 @@ namespace TwoButtonsDatabase.Entities
         public int? YourFeedback { get; set; }
         public int? Answered { get; set; }
         public int? Comments { get; set; }
+
+        public List<TagViewModel> Tags { get; set; }
     }
 }

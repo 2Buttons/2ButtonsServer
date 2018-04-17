@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace TwoButtonsDatabase.Entities
+namespace TwoButtonsServer.ViewModels
 {
-    public partial class UserCommentedQuestionsDb
+    public partial class UserCommentedQuestionsViewModel
     {
-        [Key]
         public int QuestionId { get; set; }
         public string Condition { get; set; }
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
         public int? QuestionType { get; set; }
-        public DateTime Asked { get; set; }
+        public DateTime QuestionAddDate { get; set; }
         public int? UserId { get; set; }
         public string Login { get; set; }
         public string AvatarLink { get; set; }
@@ -28,6 +28,8 @@ namespace TwoButtonsDatabase.Entities
         public int? CommentDislikes { get; set; }
         public int? YourCommentFeedback { get; set; }
         public int? PreviousCommentId { get; set; }
-        public DateTime Commented { get; set; }
+        public DateTime CommentAddDate { get; set; }
+
+        public List<TagViewModel> Tags { get; set; }
     }
 }
