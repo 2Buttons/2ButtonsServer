@@ -20,7 +20,7 @@ namespace TwoButtonsDatabase
         public virtual DbSet<NewsDb> NewsDb { get; set; }
         public virtual DbSet<PhotoDb> PhotoDb { get; set; }
         public virtual DbSet<PostDb> PostDb { get; set; }
-        public virtual DbSet<QuestionDb> QuestionDb { get; set; }
+        public virtual DbSet<NewQuestionsPostsDb> QuestionDb { get; set; }
         public virtual DbSet<RecommendedFromFollowsDb> RecommendedFromFollowsDb { get; set; }
         public virtual DbSet<RecommendedFromContactsDb> RecommendedFromContactsDb { get; set; }
         public virtual DbSet<RecommendedStrangersDb> RecommendedStrangersDb { get; set; }

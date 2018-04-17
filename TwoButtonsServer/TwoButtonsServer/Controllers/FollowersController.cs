@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
@@ -10,6 +11,7 @@ using TwoButtonsDatabase.WrapperFunctions;
 namespace TwoButtonsServer.Controllers
 {
     [Produces("application/json")]
+    [EnableCors("AllowAllOrigin")]
     //[Route("api/[controller]")]
     public class FollowersController : Controller //Represent user's followers or people who user are follow to
     {

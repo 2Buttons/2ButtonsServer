@@ -1,33 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediaServer.FileSystem;
+﻿using MediaServer.FileSystem;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using TwoButtonsDatabase;
 
 namespace MediaServer
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<TwoButtonsDatabase.TwoButtonsContext>(options => options.UseSqlServer(connection));
-            
+            var connection = Configuration.GetConnectionString("TwoButtonsDatabase");
+            services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(connection));
+
             services.AddMvc();
             services.AddCors(options =>
             {
@@ -40,13 +35,9 @@ namespace MediaServer
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
-            app.UseMiddleware<FileManager>();
             app.UseMvc();
-            
         }
     }
 }

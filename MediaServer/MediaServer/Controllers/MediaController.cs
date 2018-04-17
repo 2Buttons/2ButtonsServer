@@ -1,80 +1,78 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using MediaServer.FileSystem;
-using Microsoft.AspNetCore.Hosting;
+using MediaServer.ViewModel;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
 
 namespace MediaServer.Controllers
 {
     [EnableCors("AllowAllOrigin")]
-    //[Route("api/[controller]")]
+    [Route("images")]
     public class MediaController : Controller
     {
+        private TwoButtonsContext _context;
+        private readonly IFileManager _fileManager;
 
-        TwoButtonsContext _context;
-        IHostingEnvironment _appEnvironment;
-
-        public MediaController(TwoButtonsContext context, IHostingEnvironment appEnvironment, IFileManager fileManager)
+        public MediaController(TwoButtonsContext context, IFileManager fileManager)
         {
             _context = context;
-            _appEnvironment = appEnvironment;
+            _fileManager = fileManager;
         }
 
 
         // GET api/values
-        [HttpGet("images")]
-        public FileResult DownloadFile(string path)
+        [HttpGet("downloadFile/{imageType}/{fileName}")]
+        public IActionResult DownloadFile(int userId, string imageType, string fileName)
         {
-            
-            
-            string fileName = Path.GetFileName(path);
-            var ext = Path.GetExtension(fileName);
-            string fileType = "application/" + ext.Skip(1).FirstOrDefault();
 
-            string absolutePath = Path.Combine(_appEnvironment.ContentRootPath, "..\\..\\..\\MediaData\\"+fileName);
+            if (string.IsNullOrEmpty(imageType))
+                return BadRequest($"{imageType} is empty or null");
+            if (string.IsNullOrEmpty(fileName))
+                return BadRequest($"{fileName} is empty or null");
+            if (fileName == "favicon.icon")
+                return Ok();
 
+            if (!_fileManager.IsValidImageType(imageType))
+                return BadRequest("ImageType is uncleared.");
 
-            FileStream fs = new FileStream(absolutePath, FileMode.Open);
-            
-            return  File(fs, fileType, fileName);
+            var fileExtension = Path.GetExtension(fileName).Replace(".", "");
+            var fileType = "application/" + fileExtension;
+
+            var filePath = _fileManager.CreateServerPath(imageType, fileName);
+            if (!new FileInfo(filePath).Exists)
+                return BadRequest("Oooops.... We can't find file. The Black Hole maybe contains your file.");
+
+            var fs = new FileStream(filePath, FileMode.Open);
+
+            return File(fs, fileType, fileName);
         }
 
+        [HttpGet("getMediaFolders")]
+        public IActionResult GetMediaFolders()
+        {
+            return Ok(_fileManager.GetMediaFolders());
+        }
 
-
-        // POST api/values
-        [HttpPost("images")]
+        [HttpPost("uploadFile")]
         public async Task<IActionResult> UploadFile(int userId, string imageType, IFormFile uploadedFile)
         {
-            if (uploadedFile != null)
+            if (uploadedFile == null)
+                return BadRequest("The file is not uploaded");
+            imageType = imageType.ToUpper().GetMd5Hash();
+            if (!_fileManager.IsValidImageType(imageType))
+                return BadRequest("Image type is not right.");
+
+            var uniqueName = _fileManager.CreateUniqueName(uploadedFile.FileName);
+            var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                //путь к папке Files
-                string path = "\\..\\..\\..\\..\\MediaData\\" + uploadedFile.FileName;
-
-                var absolutePath = _appEnvironment.WebRootPath + path;
-                // сохраняем фалй в папкуFiles в каталоге 
-                using (var fileStream = new FileStream(absolutePath, FileMode.Create))
-                {
-                    await uploadedFile.CopyToAsync(fileStream);
-                }
-                return Ok("All is good");
+                await uploadedFile.CopyToAsync(fileStream);
             }
-
-            return BadRequest("The file is not uploaded");
+            return Ok(_fileManager.GetWebPath(imageType, uniqueName));
         }
-
-    
-
     }
 }

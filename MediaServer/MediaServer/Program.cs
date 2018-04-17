@@ -8,10 +8,10 @@ namespace MediaServer
     public class Program
     {
         public static IConfiguration Configuration { get; private set; }
-        public static string Protocol { get; private set; }
+        public static string Scheme { get; private set; }
         public static string IPAddress { get; private set; }
         public static string Port { get; private set; }
-        public static string Url => Protocol + IPAddress + ":" + Port;
+        public static string Url => Scheme + IPAddress + ":" + Port;
 
 
         public static void Main(string[] args)
@@ -22,7 +22,7 @@ namespace MediaServer
 
             Configuration = builder.Build();
 
-            Protocol = Configuration["WebHost:Protocol"];
+            Scheme = Configuration["WebHost:Scheme"];
             IPAddress = Configuration["WebHost:IPAddress"];
             Port = Configuration["WebHost:Port"];
             

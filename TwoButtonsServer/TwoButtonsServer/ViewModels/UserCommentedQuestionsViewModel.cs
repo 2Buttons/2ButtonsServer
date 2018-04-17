@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TwoButtonsDatabase.Entities
 {
-    public partial class UserFavouriteQuestionsDb
+    public partial class UserCommentedQuestionsDb
     {
         [Key]
         public int QuestionId { get; set; }
@@ -11,7 +11,7 @@ namespace TwoButtonsDatabase.Entities
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
         public int? QuestionType { get; set; }
-        public DateTime QuestionAddDate { get; set; }
+        public DateTime Asked { get; set; }
         public int? UserId { get; set; }
         public string Login { get; set; }
         public string AvatarLink { get; set; }
@@ -21,5 +21,13 @@ namespace TwoButtonsDatabase.Entities
         public int? YourFeedback { get; set; }
         public int? Answered { get; set; }
         public int? Comments { get; set; }
+
+        public int? CommentId { get; set; }
+        public string Comment { get; set; }
+        public int? CommentLikes { get; set; }
+        public int? CommentDislikes { get; set; }
+        public int? YourCommentFeedback { get; set; }
+        public int? PreviousCommentId { get; set; }
+        public DateTime Commented { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace TwoButtonsDatabase.Entities
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
         public int? QuestionType { get; set; }
-        public DateTime QuestionAddDate { get; set; }
+        public DateTime Asked { get; set; }
         public int? UserId { get; set; }
         public string Login { get; set; }
         public string AvatarLink { get; set; }

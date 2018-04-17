@@ -24,15 +24,17 @@ namespace TwoButtonsServer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
+                    .AllowAnyMethod());
+            });
             services.AddDbContext<TwoButtonsContext>(options=> options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsDatabase")));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
 
@@ -41,12 +43,8 @@ namespace TwoButtonsServer
                 app.UseDeveloperExceptionPage();
             }
 
-            //var options = new RewriteOptions()
-            //    .AddRedirect("(.*)/$", "$1"); ;
-            //app.UseRewriter(options);
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
 
             app.UseMvc();
         }
