@@ -32,7 +32,8 @@ namespace TwoButtonsServer.ViewModels
                 Likes = dbEntity.Likes,
                 Dislikes = dbEntity.Dislikes,
                 YourFeedback = dbEntity.YourFeedback,
-                Answered = dbEntity.Answered,
+                YourAnswer = dbEntity.YourAnswer,
+                InFavorites = dbEntity.InFavorites,
                 Comments = dbEntity.Comments,
 
                 Tags = tags
@@ -67,7 +68,8 @@ namespace TwoButtonsServer.ViewModels
                 Likes = dbEntity.Likes,
                 Dislikes = dbEntity.Dislikes,
                 YourFeedback = dbEntity.YourFeedback,
-                Answered = dbEntity.Answered,
+                YourAnswer = dbEntity.YourAnswer,
+                InFavorites = dbEntity.InFavorites,
                 Comments = dbEntity.Comments,
 
                 Tags = tags
@@ -103,7 +105,8 @@ namespace TwoButtonsServer.ViewModels
                 Likes = dbEntity.Likes,
                 Dislikes = dbEntity.Dislikes,
                 YourFeedback = dbEntity.YourFeedback,
-                Answered = dbEntity.Answered,
+                YourAnswer = dbEntity.YourAnswer,
+                InFavorites = dbEntity.InFavorites,
                 Comments = dbEntity.Comments,
 
                 CommentId = dbEntity.CommentId,
@@ -146,7 +149,8 @@ namespace TwoButtonsServer.ViewModels
                 Likes = dbEntity.Likes,
                 Dislikes = dbEntity.Dislikes,
                 YourFeedback = dbEntity.YourFeedback,
-                Answered = dbEntity.Answered,
+                YourAnswer = dbEntity.YourAnswer,
+                InFavorites = dbEntity.InFavorites,
                 Comments = dbEntity.Comments,
 
                 Tags = tags

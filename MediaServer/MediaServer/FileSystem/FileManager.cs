@@ -41,7 +41,7 @@ namespace MediaServer.FileSystem
 
         public string CreateServerPath(string imageType, string imageName)
         {
-            return Path.Combine(AppEnvironment.WebRootPath, RootFolderRelativePath + RootFolderName,
+            return Path.Combine(RootFolderRelativePath + RootFolderName,
                 imageType, imageName);
         }
 
@@ -90,7 +90,7 @@ namespace MediaServer.FileSystem
 
         private string GetAbsoluteRootPath()
         {
-            return Path.Combine(AppEnvironment.WebRootPath, RootFolderRelativePath + RootFolderName)+"\\";
+            return Path.Combine(RootFolderRelativePath + RootFolderName,"");
         }
 
         private string GetAbsoluteMediaFolderPath(string folderName)

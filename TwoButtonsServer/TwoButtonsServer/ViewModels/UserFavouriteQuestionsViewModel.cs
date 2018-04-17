@@ -19,7 +19,8 @@ namespace TwoButtonsServer.ViewModels
         public int? Likes { get; set; }
         public int? Dislikes { get; set; }
         public int? YourFeedback { get; set; }
-        public int? Answered { get; set; }
+        public int? YourAnswer { get; set; }
+        public int? InFavorites { get; set; }
         public int? Comments { get; set; }
 
         public List<TagViewModel> Tags { get; set; }
