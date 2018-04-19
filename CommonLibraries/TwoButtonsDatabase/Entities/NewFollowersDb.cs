@@ -8,6 +8,6 @@ namespace TwoButtonsDatabase.Entities
         public int FollowerId { get; set; }
         public bool Followed { get; set; }
         public string Login { get; set; }
-        public string AvatarLink { get; set; }
+        public string SmallAvatarLink { get; set; }
     }
 }

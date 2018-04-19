@@ -6,6 +6,6 @@ namespace TwoButtonsDatabase.Entities
     {
         [Key]
         public int UserId { get; set; }
-        public string AvatarLink { get; set; }
+        public string SmallAvatarLink { get; set; }
     }
 }

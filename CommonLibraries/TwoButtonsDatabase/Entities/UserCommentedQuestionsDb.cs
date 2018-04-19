@@ -10,11 +10,12 @@ namespace TwoButtonsDatabase.Entities
         public string Condition { get; set; }
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
+        public string BackgroundImageLink { get; set; }
         public int? QuestionType { get; set; }
         public DateTime QuestionAddDate { get; set; }
         public int? UserId { get; set; }
         public string Login { get; set; }
-        public string AvatarLink { get; set; }
+        public string SmallAvatarLink { get; set; }
         public int? Answers { get; set; }
         public int? Likes { get; set; }
         public int? Dislikes { get; set; }

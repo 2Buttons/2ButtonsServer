@@ -47,7 +47,7 @@ namespace MediaServer.FileSystem
 
         public string GetWebPath(string imageType, string imageName)
         {
-            return "/" + imageType.GetMd5Hash() + "/" + imageName;
+            return "/" + imageType + "/" + imageName;
         }
 
         public string CreateUniqueName(string imageName)

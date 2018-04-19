@@ -24,7 +24,7 @@ namespace TwoButtonsServer.Controllers
         [HttpGet("getUserInfo")]
         public IActionResult GetUserInfo(int id, int userId, int p = 100)
         {
-            if (UserPageWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
+            if (UserWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
                 return Ok(userInfo);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

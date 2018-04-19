@@ -10,7 +10,7 @@ namespace TwoButtonsDatabase.Entities
         public int? Age { get; set; }
         public int? Sex { get; set; }
         public string Description { get; set; }
-        public string AvatarLink { get; set; }
+        public string FullAvatarLink { get; set; }
         public int? YouFollowed { get; set; }
         public int? HeFollowed { get; set; }
         public int? AskedQuestions { get; set; }

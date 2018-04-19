@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MediaServer.FileSystem;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
+using TwoButtonsDatabase.WrapperFunctions;
 
 namespace MediaServer.Controllers
 {
@@ -14,7 +16,7 @@ namespace MediaServer.Controllers
     [Route("images")]
     public class MediaController : Controller
     {
-        private TwoButtonsContext _context;
+        private readonly TwoButtonsContext _context;
         private readonly IFileManager _fileManager;
 
         public MediaController(TwoButtonsContext context, IFileManager fileManager)
@@ -57,14 +59,21 @@ namespace MediaServer.Controllers
             return Ok(_fileManager.GetMediaFolders());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UploadFile(int userId, string imageType, IFormFile uploadedFile)
+        [HttpPost("uploadUserAvatar")]
+        public async Task<IActionResult> UploadFile(int userId, string size, IFormFile uploadedFile)
         {
+            // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
+
             if (uploadedFile == null)
-                return BadRequest("The file is not uploaded");
+                return BadRequest("uploadedFile is null");
+            if (size == null)
+                return BadRequest("size is null");
+
+            var imageType = size.ToUpper() == "small".ToUpper() ? "UserSmallAvatarPhoto" : "UserFullAvatarPhoto";
+
             imageType = imageType.ToUpper().GetMd5Hash();
             if (!_fileManager.IsValidImageType(imageType))
-                return BadRequest("Image type is not right.");
+                return BadRequest("Image type is not valid.");
 
             var uniqueName = _fileManager.CreateUniqueName(uploadedFile.FileName);
             var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
@@ -72,7 +81,47 @@ namespace MediaServer.Controllers
             {
                 await uploadedFile.CopyToAsync(fileStream);
             }
-            return Ok(_fileManager.GetWebPath(imageType, uniqueName));
+
+            string avatarLink = _fileManager.GetWebPath(imageType, uniqueName);
+
+            if (size.ToUpper() == "small".ToUpper())
+            {
+                if(UserWrapper.TryUpdateUserSmallAvatar(_context,userId, avatarLink))
+                    return Ok(_fileManager.GetWebPath(imageType, uniqueName));
+                return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
+            }
+            else
+            {
+                if (UserWrapper.TryUpdateUserFullAvatar(_context, userId, avatarLink))
+                    return Ok(_fileManager.GetWebPath(imageType, uniqueName));
+                return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
+
+            }
+        }
+
+        [HttpPost("uploadQuestionBackground")]
+        public async Task<IActionResult> UploadQuestionBackground(int questionId, IFormFile uploadedFile)
+        {
+            // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
+
+            if (uploadedFile == null)
+                return BadRequest("uploadedFile is null");
+            
+            string imageType = "Background".ToUpper().GetMd5Hash();
+            if (!_fileManager.IsValidImageType(imageType))
+                return BadRequest("Image type is not valid.");
+
+            var uniqueName = _fileManager.CreateUniqueName(uploadedFile.FileName);
+            var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await uploadedFile.CopyToAsync(fileStream);
+            }
+
+            string backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
+            if (QuestionWrapper.TryUpdateQuestionBackground(_context, questionId, backgroundLink))
+                return Ok(backgroundLink);
+            return BadRequest("Link is not saved in the database, but link in file system:"+ backgroundLink);
         }
     }
 }

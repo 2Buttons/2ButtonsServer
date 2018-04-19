@@ -42,7 +42,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool CheckValidLogin(TwoButtonsContext db, string login, out bool isValid)
+        public static bool TryCheckValidLogin(TwoButtonsContext db, string login, out bool isValid)
         {
             try
             {

@@ -9,7 +9,7 @@ namespace TwoButtonsDatabase.Entities
         public int CommentId { get; set; }
         public int? UserId { get; set; }
         public string Login { get; set; }
-        public string AvatarLink { get; set; }
+        public string SmallAvatarLink { get; set; }
         public string Comment { get; set; }
         public int? Likes { get; set; }
         public int? Dislikes { get; set; }

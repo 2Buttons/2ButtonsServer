@@ -1,13 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
-    public static class UserPageWrapper
+    public static class UserWrapper
     {
+
+        public static bool TryAddUser(TwoButtonsContext db, string login, string password, int age, int sex, string phone, string description, string fullAvatarLink, string smallAvatarLink, out int userId)
+        {
+
+            var userIdDb = new SqlParameter
+            {
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output,
+            };
+
+            var regDate = DateTime.Now;
+
+            try
+            {
+                db.Database.ExecuteSqlCommand($"addUser {login}, {password}, {age}, {sex}, {phone}, {description}, {fullAvatarLink}, {smallAvatarLink},{regDate}, {userIdDb} OUT");
+                userId = (int)userIdDb.Value;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userId = -1;
+            return false;
+
+        }
+
+        public static bool TryUpdateUserFullAvatar(TwoButtonsContext db, int userId, string fullAvatarLink)
+        {
+            try
+            {
+                db.Database.ExecuteSqlCommand($"updateUserFullAvatar {userId}, {fullAvatarLink}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return false;
+        }
+
+        public static bool TryUpdateUserSmallAvatar(TwoButtonsContext db, int userId, string smallAvatar)
+        {
+            try
+            {
+                db.Database.ExecuteSqlCommand($"updateUserSmallAvatar {userId}, {smallAvatar}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return false;
+        }
+
         public static bool TryGetUserInfo(TwoButtonsContext db, int userId, int getUserId, out UserInfoDb userInfo)
         {
             try

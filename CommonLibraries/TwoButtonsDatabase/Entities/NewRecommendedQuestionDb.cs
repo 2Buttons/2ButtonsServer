@@ -11,6 +11,6 @@ namespace TwoButtonsDatabase.Entities
         public DateTime QuestionAddDate { get; set; }
         public string Condition { get; set; }
         public string Login { get; set; }
-        public string AvatarLink { get; set; }
+        public string SmallAvatarLink { get; set; }
     }
 }

@@ -22,9 +22,9 @@ namespace TwoButtonsServer.Controllers
         }
         // GET api/addUser/
         [HttpGet("addUser")]
-        public IActionResult AddUser(string login, string password, int age, int sex, string phone = null, string description = null, string avatarLink = null)
+        public IActionResult AddUser(string login, string password, int age, int sex, string phone = null, string description = null, string fullAvatarLink = null, string smallAvatarLink = null)
         {
-            if (AddWrapper.TryAddUser(_context, login, password, age, sex, phone, description, avatarLink, out var userId))
+            if (UserWrapper.TryAddUser(_context, login, password, age, sex, phone, description, fullAvatarLink, smallAvatarLink, out var userId))
                 return Ok(userId);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

@@ -34,7 +34,7 @@ namespace TwoButtonsServer.Controllers
         [HttpGet("checkValidLogin")]
         public IActionResult CheckValidLogin(string login)
         {
-            if (LoginWrapper.CheckValidLogin(_context, login, out var isValid ))
+            if (LoginWrapper.TryCheckValidLogin(_context, login, out var isValid ))
                 return Ok(isValid);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

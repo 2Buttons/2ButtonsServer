@@ -41,7 +41,7 @@ namespace TwoButtonsServer.Controllers
         [HttpGet("getPosts")]
         public IActionResult GetPosts(int id, int userId, int amount = 100)
         {
-            if (UserPageWrapper.TryGetPosts(_context, id, userId, amount, out var posts))
+            if (UserWrapper.TryGetPosts(_context, id, userId, amount, out var posts))
                 return Ok(posts);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
