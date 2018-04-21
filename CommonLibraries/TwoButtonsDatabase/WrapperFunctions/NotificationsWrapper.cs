@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.News;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
@@ -28,23 +27,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetNewRecommendedQuestions(TwoButtonsContext db, int userId, out IEnumerable<NewsRecommendedQuestionDb> newRecommendedQuestion)
-        {
-
-            try
-            {
-                newRecommendedQuestion = db.NewRecommendedQuestionDb
-                    .FromSql($"select * from dbo.getNewRecommendedQuestions({userId})").ToList();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            newRecommendedQuestion = new List<NewsRecommendedQuestionDb>();
-            return false;
-        }
-
+       
         public static bool TryUpdateNotsDate(TwoButtonsContext db, int userId)
         {
             

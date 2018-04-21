@@ -1,4 +1,4 @@
-﻿namespace TwoButtonsServer.ViewModels.News
+﻿namespace TwoButtonsServer.ViewModels
 {
     public partial class TagViewModel
     {

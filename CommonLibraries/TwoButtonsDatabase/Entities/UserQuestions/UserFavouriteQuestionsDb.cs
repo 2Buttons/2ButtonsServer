@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace TwoButtonsDatabase.Entities
+﻿namespace TwoButtonsDatabase.Entities.UserQuestions
 {
     public partial class UserFavouriteQuestionsDb : QuestionBaseDb
     {

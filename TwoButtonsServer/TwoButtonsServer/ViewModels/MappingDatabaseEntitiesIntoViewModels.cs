@@ -1,38 +1,85 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.NewsQuestions;
 using TwoButtonsDatabase.Entities.UserQuestions;
+using TwoButtonsServer.ViewModels.News;
 using TwoButtonsServer.ViewModels.UserQuestions;
-using TagViewModel = TwoButtonsServer.ViewModels.News.TagViewModel;
-using UserAnsweredQuestionsDb = TwoButtonsDatabase.Entities.News.UserAnsweredQuestionsDb;
-using UserAskedQuestionsDb = TwoButtonsDatabase.Entities.News.UserAskedQuestionsDb;
-using UserCommentedQuestionsDb = TwoButtonsDatabase.Entities.News.UserCommentedQuestionsDb;
-using UserFavouriteQuestionsDb = TwoButtonsDatabase.Entities.News.UserFavouriteQuestionsDb;
+
+
 
 namespace TwoButtonsServer.ViewModels
 {
     public static class MappingDatabaseEntitiesIntoViewModels
     {
+
+        public static NewsAnsweredQuestionsViewModel MapToNewsAnsweredQuestionsViewModel(
+            this NewsAnsweredQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
+        {
+            var viewModel = QuestionDbToViewModel<NewsAnsweredQuestionsViewModel>(dbEntity, dbTags);
+            viewModel.AnsweredFollowTo = dbEntity.AnsweredFollowTo;
+            viewModel.AnswerDate = dbEntity.AnswerDate;
+            return viewModel;
+        }
+
+        public static NewsAskedQuestionsViewModel MapToNewsAskedQuestionsViewModel(
+            this NewsAskedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
+        {
+            return QuestionDbToViewModel<NewsAskedQuestionsViewModel>(dbEntity, dbTags);
+        }
+
+        public static NewsCommentedQuestionsViewModel MapToNewsCommentedQuestionsViewModel(
+            this NewsCommentedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
+        {
+            var viewModel = QuestionDbToViewModel<NewsCommentedQuestionsViewModel>(dbEntity, dbTags);
+
+            viewModel.CommentUserId = dbEntity.CommentUserId;
+            viewModel.CommentUserLogin = dbEntity.CommentUserLogin;
+            viewModel.CommentAmount = dbEntity.CommentAmount;
+            viewModel.CommentAddDate = dbEntity.CommentAddDate;
+            return viewModel;
+        }
+
+        public static NewsFavouriteQuestionsViewModel MapToNewsFavouriteQuestionsViewModel(
+            this NewsFavouriteQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
+        {
+            var viewModel = QuestionDbToViewModel<NewsFavouriteQuestionsViewModel>(dbEntity, dbTags);
+            viewModel.FavoriteAddedUserId = dbEntity.FavoriteAddedUserId;
+            viewModel.FavoriteAddedUserLogin = dbEntity.FavoriteAddedUserLogin;
+            viewModel.FavoriteAddDate = dbEntity.FavoriteAddDate;
+            return viewModel;
+        }
+
+
+        public static NewsRecommendedQuestionViewModel MapNewsRecommendedQuestionsViewModel(
+            this NewsRecommendedQuestionDb dbEntity, IEnumerable<TagDb> dbTags)
+        {
+            var viewModel = QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dbEntity, dbTags);
+            viewModel.RecommendedUserId = dbEntity.RecommendedUserId;
+            viewModel.RecommendedUserLogin = dbEntity.RecommendedUserLogin;
+            viewModel.RecommendedDate = dbEntity.RecommendedDate;
+            return viewModel;
+        }
+
+
         public static UserAnsweredQuestionsViewModel MapToUserAnsweredQuestionsViewModel(
             this UserAnsweredQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<UserAnsweredQuestionsViewModel>(dbEntity);
-            viewModel.Tags = TagDbToTagViewModel(dbTags);
+            var viewModel = QuestionDbToViewModel<UserAnsweredQuestionsViewModel>(dbEntity, dbTags);
             return viewModel;
         }
 
         public static UserAskedQuestionsViewModel MapToUserAskedQuestionsViewModel(
             this UserAskedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<UserAskedQuestionsViewModel>(dbEntity);
-            viewModel.Tags = TagDbToTagViewModel(dbTags);
+            var viewModel = QuestionDbToViewModel<UserAskedQuestionsViewModel>(dbEntity, dbTags);
             return viewModel;
         }
 
         public static UserCommentedQuestionsViewModel MapToUserCommentedQuestionsViewModel(
             this UserCommentedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity);
+            var viewModel = QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity, dbTags);
 
             viewModel.CommentId = dbEntity.CommentId;
             viewModel.Comment = dbEntity.Comment;
@@ -41,15 +88,13 @@ namespace TwoButtonsServer.ViewModels
             viewModel.YourCommentFeedback = dbEntity.YourFeedback;
             viewModel.PreviousCommentId = dbEntity.PreviousCommentId;
             viewModel.CommentAddDate = dbEntity.CommentAddDate;
-            viewModel.Tags = TagDbToTagViewModel(dbTags);
             return viewModel;
         }
 
         public static UserFavouriteQuestionsViewModel MapToUserFavouriteQuestionsViewModel(
             this UserFavouriteQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<UserFavouriteQuestionsViewModel>(dbEntity);
-            viewModel.Tags = TagDbToTagViewModel(dbTags);
+            var viewModel = QuestionDbToViewModel<UserFavouriteQuestionsViewModel>(dbEntity, dbTags);
             return viewModel;
         }
 
@@ -57,12 +102,11 @@ namespace TwoButtonsServer.ViewModels
         public static TopQuestionsViewModel MapToTopQuestionsViewModel(
             this TopQuestionDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<TopQuestionsViewModel>(dbEntity);
-            viewModel.Tags = TagDbToTagViewModel(dbTags);
+            var viewModel = QuestionDbToViewModel<TopQuestionsViewModel>(dbEntity, dbTags);
             return viewModel;
         }
 
-        private static T QuestionDbToViewModel<T>(QuestionBaseDb dbEntity) where T:QuestionBaseViewModel, new()
+        private static T QuestionDbToViewModel<T>(QuestionBaseDb dbEntity, IEnumerable<TagDb> dbTags) where T : QuestionBaseViewModel, new()
         {
             var question = new T
             {
@@ -82,7 +126,9 @@ namespace TwoButtonsServer.ViewModels
                 YourFeedback = dbEntity.YourFeedback,
                 YourAnswer = dbEntity.YourAnswer,
                 InFavorites = dbEntity.InFavorites,
-                Comments = dbEntity.Comments
+                Comments = dbEntity.Comments,
+
+                Tags = TagDbToTagViewModel(dbTags)
             };
             return question;
         }
@@ -90,11 +136,11 @@ namespace TwoButtonsServer.ViewModels
         private static List<TagViewModel> TagDbToTagViewModel(IEnumerable<TagDb> dbTags)
         {
             return dbTags.Select(tag => new TagViewModel
-                {
-                    TagId = tag.TagId,
-                    TagText = tag.TagText,
-                    Position = tag.Position
-                })
+            {
+                TagId = tag.TagId,
+                TagText = tag.TagText,
+                Position = tag.Position
+            })
                 .ToList();
         }
     }

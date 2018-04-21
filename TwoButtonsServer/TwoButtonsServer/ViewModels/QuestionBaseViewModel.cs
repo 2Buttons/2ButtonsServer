@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TwoButtonsServer.ViewModels.UserQuestions;
-using TagViewModel = TwoButtonsServer.ViewModels.News.TagViewModel;
 
 namespace TwoButtonsServer.ViewModels
 {

@@ -2,22 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.UserQuestions;
-
+using TwoButtonsDatabase.Entities.NewsQuestions;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
-    public static class NewsWrapper
+    public static class NewsQuestionsWrapper
     {
-        public static bool TryGetUserAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            bool showAnonimous, out IEnumerable<UserAskedQuestionsDb> userAskedQuestions)
+        public static bool TryGetNewsAskedQuestions(TwoButtonsContext db, int userId, int amount,
+            out IEnumerable<NewsAskedQuestionsDb> newsAskedQuestions)
         {
-            var isAnonimus = showAnonimous ? 1 : 0;
             try
             {
-                userAskedQuestions = db.UserAskedQuestionsDb
-                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                newsAskedQuestions = db.NewsAskedQuestionsDb
+                    .FromSql($"select * from dbo.getNewsAskedQuestions({userId}, {amount})")
                     .ToList();
                 return true;
             }
@@ -25,19 +22,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userAskedQuestions = new List<UserAskedQuestionsDb>();
+            newsAskedQuestions = new List<NewsAskedQuestionsDb>();
             return false;
         }
 
-        public static bool TryGetUserAnsweredQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            bool showAnonimous, out IEnumerable<UserAnsweredQuestionsDb> userAnsweredQuestions)
+        public static bool TryGetNewsAnsweredQuestions(TwoButtonsContext db, int userId, int amount,
+            out IEnumerable<NewsAnsweredQuestionsDb> newsAnsweredQuestions)
         {
-            var isAnonimus = showAnonimous ? 1 : 0;
             try
             {
-                userAnsweredQuestions = db.UserAnsweredQuestionsDb
+                newsAnsweredQuestions = db.NewsAnsweredQuestionsDb
                     .FromSql(
-                        $"select * from dbo.getUserAnsweredQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                        $"select * from dbo.getNewsAnsweredQuestions({userId}, {amount})")
                     .ToList();
                 return true;
             }
@@ -45,19 +41,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userAnsweredQuestions = new List<UserAnsweredQuestionsDb>();
+            newsAnsweredQuestions = new List<NewsAnsweredQuestionsDb>();
             return false;
         }
 
-        public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            bool showAnonimous, out IEnumerable<UserFavouriteQuestionsDb> userFavouriteQuestions)
+        public static bool TryGetNewsFavoriteQuestions(TwoButtonsContext db, int userId, int amount,
+            out IEnumerable<NewsFavouriteQuestionsDb> newsFavouriteQuestions)
         {
-            var isAnonimus = showAnonimous ? 1 : 0;
             try
             {
-                userFavouriteQuestions = db.UserFavouriteQuestionsDb
+                newsFavouriteQuestions = db.NewsFavouriteQuestionsDb
                     .FromSql(
-                        $"select * from dbo.getUserFavoriteQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                        $"select * from dbo.getNewsFavoriteQuestions({userId}, {amount})")
                     .ToList();
                 return true;
             }
@@ -65,41 +60,41 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userFavouriteQuestions = new List<UserFavouriteQuestionsDb>();
+            newsFavouriteQuestions = new List<NewsFavouriteQuestionsDb>();
             return false;
         }
 
-        public static bool TryGetUserCommentedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            out IEnumerable<UserCommentedQuestionsDb> userCommentedQuestions)
+        public static bool TryGetNewsCommentedQuestions(TwoButtonsContext db, int userId, int amount,
+            out IEnumerable<NewsCommentedQuestionsDb> newsCommentedQuestions)
         {
             try
             {
-                userCommentedQuestions = db.UserCommentedQuestionsDb
-                    .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {getUserId}, {amount})").ToList();
+                newsCommentedQuestions = db.NewsCommentedQuestionsDb
+                    .FromSql($"select * from dbo.getNewsCommentedQuestions({userId}, {amount})").ToList();
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            userCommentedQuestions = new List<UserCommentedQuestionsDb>();
+            newsCommentedQuestions = new List<NewsCommentedQuestionsDb>();
             return false;
         }
 
-        public static bool TryGeTopQuestions(TwoButtonsContext db, int userId, bool isOnlyNew, int amount, DateTime topAfterDate,
-            out IEnumerable<TopQuestionDb> topQuestions)
+        public static bool TryGetNewsRecommendedQuestions(TwoButtonsContext db, int userId, int amount,
+            out IEnumerable<NewsRecommendedQuestionDb> newRecommendedQuestion)
         {
             try
             {
-                topQuestions = db.TopQuestionsDb
-                    .FromSql($"select * from dbo.getTop({userId}, {amount}, {topAfterDate}, {isOnlyNew})").ToList();
+                newRecommendedQuestion = db.NewsRecommendedQuestionDb
+                    .FromSql($"select * from dbo.getNewRecommendedQuestions({userId}, {amount})").ToList();
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            topQuestions = new List<TopQuestionDb>();
+            newRecommendedQuestion = new List<NewsRecommendedQuestionDb>();
             return false;
         }
     }

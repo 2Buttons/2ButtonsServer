@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.ForScalarFunctions;
-using TwoButtonsDatabase.Entities.News;
+using TwoButtonsDatabase.Entities.NewsQuestions;
 using TwoButtonsDatabase.Entities.UserQuestions;
 
 

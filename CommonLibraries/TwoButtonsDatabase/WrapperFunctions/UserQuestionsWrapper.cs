@@ -4,10 +4,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.UserQuestions;
-using UserAnsweredQuestionsDb = TwoButtonsDatabase.Entities.News.UserAnsweredQuestionsDb;
-using UserAskedQuestionsDb = TwoButtonsDatabase.Entities.News.UserAskedQuestionsDb;
-using UserCommentedQuestionsDb = TwoButtonsDatabase.Entities.News.UserCommentedQuestionsDb;
-using UserFavouriteQuestionsDb = TwoButtonsDatabase.Entities.News.UserFavouriteQuestionsDb;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
