@@ -24,7 +24,7 @@ namespace TwoButtonsServer.Controllers
         [HttpGet("getAskedQuestions")]
         public IActionResult GetAskedQuestions(int id, int amount = 100, string search = "")
         {
-            if (QuestionsListWrapper.TryGetUserAskedQuestions(_context,id,id,amount,true,out var userAskedQuestions))
+            if (UserQuestionsWrapper.TryGetUserAskedQuestions(_context,id,id,amount,true,out var userAskedQuestions))
                 return Ok(userAskedQuestions);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
@@ -33,7 +33,7 @@ namespace TwoButtonsServer.Controllers
         [HttpGet("getFavoriteQuestions")]
         public IActionResult GetFavoriteQuestions(int id, int amount = 100, string search = "")
         {
-            if (QuestionsListWrapper.TryGetUserFavoriteQuestions(_context, id, id, amount, true, out var userAskedQuestions))
+            if (UserQuestionsWrapper.TryGetUserFavoriteQuestions(_context, id, id, amount, true, out var userAskedQuestions))
                 return Ok(userAskedQuestions);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
@@ -42,7 +42,7 @@ namespace TwoButtonsServer.Controllers
         [HttpGet("getAnsweredQuestions")]
         public IActionResult GetAnsweredQuestions(int id, int amount=100, string search="")
         {
-            if (QuestionsListWrapper.TryGetUserAnsweredQuestions(_context, id, id, amount, true, out var userAskedQuestions))
+            if (UserQuestionsWrapper.TryGetUserAnsweredQuestions(_context, id, id, amount, true, out var userAskedQuestions))
                 return Ok(userAskedQuestions);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

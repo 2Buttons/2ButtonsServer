@@ -1,9 +1,12 @@
-﻿using MediaServer.FileSystem;
+﻿using System.IO;
+using MediaServer.FileSystem;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using TwoButtonsDatabase;
 
 namespace MediaServer
@@ -23,6 +26,9 @@ namespace MediaServer
             var connection = Configuration.GetConnectionString("TwoButtonsDatabase");
             services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(connection));
 
+            services.AddOptions();
+            services.Configure<MediaData>(Configuration.GetSection("MediaData"));
+
             services.AddMvc();
             services.AddCors(options =>
             {
@@ -32,12 +38,20 @@ namespace MediaServer
             services.AddSingleton<IFileManager, FileManager>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<MediaData> mediaOptions)
         {
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), mediaOptions.Value.RootFolderRelativePath, mediaOptions.Value.RootFolderName)),
+                RequestPath = "/images"
+            });
+
             app.UseMvc();
         }
+
     }
 }

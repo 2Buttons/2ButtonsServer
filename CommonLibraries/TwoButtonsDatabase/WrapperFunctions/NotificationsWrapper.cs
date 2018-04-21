@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.News;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
@@ -27,7 +28,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetNewRecommendedQuestions(TwoButtonsContext db, int userId, out IEnumerable<NewRecommendedQuestionDb> newRecommendedQuestion)
+        public static bool TryGetNewRecommendedQuestions(TwoButtonsContext db, int userId, out IEnumerable<NewsRecommendedQuestionDb> newRecommendedQuestion)
         {
 
             try
@@ -40,7 +41,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            newRecommendedQuestion = new List<NewRecommendedQuestionDb>();
+            newRecommendedQuestion = new List<NewsRecommendedQuestionDb>();
             return false;
         }
 

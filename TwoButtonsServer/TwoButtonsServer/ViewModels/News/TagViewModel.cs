@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TwoButtonsServer.ViewModels
+﻿namespace TwoButtonsServer.ViewModels.News
 {
     public partial class TagViewModel
     {

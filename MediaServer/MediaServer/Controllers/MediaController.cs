@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MediaServer.FileSystem;
 using MediaServer.ViewModel;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
@@ -19,39 +22,66 @@ namespace MediaServer.Controllers
         private readonly TwoButtonsContext _context;
         private readonly IFileManager _fileManager;
 
-        public MediaController(TwoButtonsContext context, IFileManager fileManager)
+        public MediaController(TwoButtonsContext context, IHostingEnvironment appEnvironment, IFileManager fileManager)
         {
             _context = context;
             _fileManager = fileManager;
         }
 
 
+        
+        //[HttpGet("{imageType:required}/{fileName:required}")]
+        //public IActionResult DownloadFile(int userId, string imageType, string fileName)
+        //{
+
+        //    if (string.IsNullOrEmpty(imageType))
+        //        return BadRequest($"{imageType} is empty or null");
+        //    if (string.IsNullOrEmpty(fileName))
+        //        return BadRequest($"{fileName} is empty or null");
+        //    if (fileName == "favicon.ico")
+        //        return Ok();
+
+        //    if (!_fileManager.IsValidImageType(imageType))
+        //        return BadRequest("ImageType is uncleared.");
+
+        //    var fileExtension = Path.GetExtension(fileName).Replace(".", "");
+        //    var fileType = "image/" + fileExtension;
+
+        //    var filePath = _fileManager.CreateServerPath(imageType, fileName);
+        //    if (!new FileInfo(filePath).Exists)
+        //        return BadRequest("Oooops.... We can't find file. The Black Hole maybe contains your file.");
+
+        //    var fs = new FileStream(filePath, FileMode.Open);
+
+        //    return File(fs, fileType, fileName);
+        //}
+
         // GET api/values
-        [HttpGet("{imageType:required}/{fileName:required}")]
-        public IActionResult DownloadFile(int userId, string imageType, string fileName)
-        {
+        //[HttpGet("{imageType:required}/{fileName:required}")]
+        //public IActionResult GetStaticFile(int userId, string imageType, string fileName)
+        //{
 
-            if (string.IsNullOrEmpty(imageType))
-                return BadRequest($"{imageType} is empty or null");
-            if (string.IsNullOrEmpty(fileName))
-                return BadRequest($"{fileName} is empty or null");
-            if (fileName == "favicon.ico")
-                return Ok();
+        //    //if (string.IsNullOrEmpty(imageType))
+        //    //    return BadRequest($"{imageType} is empty or null");
+        //    //if (string.IsNullOrEmpty(fileName))
+        //    //    return BadRequest($"{fileName} is empty or null");
+        //    //if (fileName == "favicon.ico")
+        //    //    return Ok();
 
-            if (!_fileManager.IsValidImageType(imageType))
-                return BadRequest("ImageType is uncleared.");
+        //    //if (!_fileManager.IsValidImageType(imageType))
+        //    //    return BadRequest("ImageType is uncleared.");
 
-            var fileExtension = Path.GetExtension(fileName).Replace(".", "");
-            var fileType = "image/" + fileExtension;
+        //    var fileExtension = Path.GetExtension(fileName).Replace(".", "");
+        //    var fileType = "image/" + fileExtension;
 
-            var filePath = _fileManager.CreateServerPath(imageType, fileName);
-            if (!new FileInfo(filePath).Exists)
-                return BadRequest("Oooops.... We can't find file. The Black Hole maybe contains your file.");
+        //    var filePath =Directory.GetCurrentDirectory()+ "\\"+_fileManager.CreateServerPath(imageType, fileName);
+        //    //if (!new FileInfo(filePath).Exists)
+        //    //    return BadRequest("Oooops.... We can't find file. The Black Hole maybe contains your file.");
 
-            var fs = new FileStream(filePath, FileMode.Open);
+        //    //var fs = new FileStream(filePath, FileMode.Open);
 
-            return File(fs, fileType, fileName);
-        }
+        //    return (@"E:\Projects\2Buttons\Project\MEDIADATA\87ed58ce5596142e11cb65deb049bb4b\b792bfb3a4ba43108a0033b521a824aa.jpg");
+        //}
 
         [HttpGet("getMediaFolders")]
         public IActionResult GetMediaFolders()

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using TwoButtonsServer.ViewModels.UserQuestions;
+using TagViewModel = TwoButtonsServer.ViewModels.News.TagViewModel;
 
 namespace TwoButtonsServer.ViewModels
 {
-    public partial class UserAskedQuestionsViewModel
+    public class QuestionBaseViewModel
     {
         public int QuestionId { get; set; }
         public string Condition { get; set; }
@@ -23,6 +24,7 @@ namespace TwoButtonsServer.ViewModels
         public int? YourAnswer { get; set; }
         public int? InFavorites { get; set; }
         public int? Comments { get; set; }
+
 
         public List<TagViewModel> Tags { get; set; }
     }

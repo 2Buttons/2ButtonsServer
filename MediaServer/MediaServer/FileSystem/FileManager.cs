@@ -4,22 +4,20 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace MediaServer.FileSystem
 {
     public class FileManager : IFileManager
     {
-        private string _defaultMediaFolder;
         private IDictionary<string, string> _folders;
 
-        public string RootFolderName { get; private set; }
-        public string RootFolderRelativePath { get; private set; }
-        public IConfiguration AppConfiguration { get; }
+        public IOptions<MediaData> MediaOptions { get; }
         public IHostingEnvironment AppEnvironment { get; }
 
-        public FileManager(IHostingEnvironment appEnvironment, IConfiguration configuration)
+        public FileManager(IHostingEnvironment appEnvironment, IOptions<MediaData> mediaOptions)
         {
-            AppConfiguration = configuration;
+            MediaOptions = mediaOptions;
             AppEnvironment = appEnvironment;
             InitConfiguration();
         }
@@ -41,7 +39,7 @@ namespace MediaServer.FileSystem
 
         public string CreateServerPath(string imageType, string imageName)
         {
-            return Path.Combine(RootFolderRelativePath + RootFolderName,
+            return Path.Combine(MediaOptions.Value.RootFolderRelativePath + MediaOptions.Value.RootFolderName,
                 imageType, imageName);
         }
 
@@ -57,21 +55,16 @@ namespace MediaServer.FileSystem
 
         public void InitConfiguration()
         {
-            var mediaData = AppConfiguration.GetSection("MediaData");
-            RootFolderName = mediaData["RootFolderName"].ToUpper();
-            RootFolderRelativePath = mediaData["RootFolderRelativePath"].ToUpper();
-            _defaultMediaFolder = mediaData["DefaultMediaFolder"].ToUpper();
-            var mediaFoldersCount = mediaData.GetValue<int>("MediaFoldersCount");
-            _folders = new Dictionary<string, string>(mediaFoldersCount);
+
+            _folders = new Dictionary<string, string>(MediaOptions.Value.MediaFolders.Count);
 
 
-            for (var i = 0; i < mediaFoldersCount; i++)
+            foreach (Folder folder in MediaOptions.Value.MediaFolders)
             {
-                var folderName = mediaData.GetValue<string>($"MediaFolders:{i}:Name");
-                folderName = folderName.ToUpper();
-                _folders.Add(folderName.GetMd5Hash(), folderName);
+                folder.Name = folder.Name.ToUpper();
+                _folders.Add(folder.Name.GetMd5Hash(), folder.Name);
             }
-            _folders.Add(_defaultMediaFolder.GetMd5Hash(), _defaultMediaFolder);
+            _folders.Add(MediaOptions.Value.DefaultMediaFolder.GetMd5Hash(), MediaOptions.Value.DefaultMediaFolder);
 
             CreateIfNotExistsRootFolder();
             foreach (var mediaFolder in _folders.Keys)
@@ -80,17 +73,17 @@ namespace MediaServer.FileSystem
 
         private void CreateIfNotExistsRootFolder()
         {
-                Directory.CreateDirectory(GetAbsoluteRootPath());
+            Directory.CreateDirectory(GetAbsoluteRootPath());
         }
 
         private void CreateIfNotExistsMediaFolder(string folderName)
         {
-                Directory.CreateDirectory(GetAbsoluteMediaFolderPath(folderName));
+            Directory.CreateDirectory(GetAbsoluteMediaFolderPath(folderName));
         }
 
         private string GetAbsoluteRootPath()
         {
-            return Path.Combine(RootFolderRelativePath + RootFolderName,"");
+            return Path.Combine(MediaOptions.Value.RootFolderRelativePath + MediaOptions.Value.RootFolderName, "");
         }
 
         private string GetAbsoluteMediaFolderPath(string folderName)

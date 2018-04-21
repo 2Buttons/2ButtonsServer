@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace TwoButtonsDatabase.Entities
 {
-    public partial class UserAskedQuestionsDb
+    public class QuestionBaseDb
     {
         [Key]
         public int QuestionId { get; set; }
