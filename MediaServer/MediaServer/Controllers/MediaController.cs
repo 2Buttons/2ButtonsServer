@@ -86,7 +86,7 @@ namespace MediaServer.Controllers
         [HttpGet("getMediaFolders")]
         public IActionResult GetMediaFolders()
         {
-            return Ok(_fileManager.GetMediaFolders());
+            return Ok("Hello");
         }
 
         [HttpPost("uploadUserAvatar")]

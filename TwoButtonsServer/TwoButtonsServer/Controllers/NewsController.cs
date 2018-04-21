@@ -22,7 +22,7 @@ namespace TwoButtonsServer.Controllers
         {
             _context = context;
         }
-        [HttpGet("getNewsAskedQuestions")]
+        [HttpPost("getNewsAskedQuestions")]
         public IActionResult GetNewsAskedQuestions(int userId, int amount = 100)
         {
             if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, amount, out var userAskedQuestions))
@@ -41,7 +41,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getNewsnsweredQuestions")]
+        [HttpPost("getNewsnsweredQuestions")]
         public IActionResult GetNewsAnsweredQuestions(int userId, int amount = 100)
         {
             if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context,  userId, amount,  out var userAnsweredQuestions))
@@ -58,7 +58,7 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getNewsFavoriteQuestions")]
+        [HttpPost("getNewsFavoriteQuestions")]
         public IActionResult GetNewsFavoriteQuestions(int userId, int amount = 100)
         {
             if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context,userId, amount,  out var userFavouriteQuestions))
@@ -76,7 +76,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getNewsCommentedQuestions")]
+        [HttpPost("getNewsCommentedQuestions")]
         public IActionResult GetNewsCommentedQuestions( int userId, int amount = 100)
         {
             if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context,  userId, amount, out var userCommentedQuestions))
@@ -94,7 +94,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getNewsRecommendedQuestions")]
+        [HttpPost("getNewsRecommendedQuestions")]
         public IActionResult TryGetNewsRecommendedQuestions(int userId, int amount = 100)
         {
 

@@ -87,7 +87,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             try
             {
                 newRecommendedQuestion = db.NewsRecommendedQuestionDb
-                    .FromSql($"select * from dbo.getNewRecommendedQuestions({userId}, {amount})").ToList();
+                    .FromSql($"select * from dbo.getNewsRecommendedQuestions({userId}, {amount})").ToList();
                 return true;
             }
             catch (Exception e)

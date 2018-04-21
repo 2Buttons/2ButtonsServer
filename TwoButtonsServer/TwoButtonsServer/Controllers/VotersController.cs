@@ -21,7 +21,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
         // GET api/getVoters/
-        [HttpGet("getVoters")]
+        [HttpPost("getVoters")]
         public IActionResult GetVoters(int id, int questionId, int amount, int option, int minAge = 0, int maxAge = 100, int sex = 0, string search = "")
         {
             if (ResultsWrapper.TryGetAnsweredList(_context, id, questionId, amount, option, minAge, maxAge, sex, search, out var answeredList))

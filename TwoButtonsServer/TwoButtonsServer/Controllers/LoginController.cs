@@ -22,7 +22,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/login/
-        [HttpGet("login")]
+        [HttpPost("login")]
         public IActionResult Login(string login, string password)
         {
             if (LoginWrapper.TryGetIdentification(_context, login, int.Parse(password),out var userId))
@@ -31,7 +31,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/checkValidLogin/
-        [HttpGet("checkValidLogin")]
+        [HttpPost("checkValidLogin")]
         public IActionResult CheckValidLogin(string login)
         {
             if (LoginWrapper.TryCheckValidLogin(_context, login, out var isValid ))

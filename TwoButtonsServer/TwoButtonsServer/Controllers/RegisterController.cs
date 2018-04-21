@@ -21,7 +21,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
         // GET api/addUser/
-        [HttpGet("addUser")]
+        [HttpPost("addUser")]
         public IActionResult AddUser(string login, string password, int age, int sex, string phone = null, string description = null, string fullAvatarLink = null, string smallAvatarLink = null)
         {
             if (UserWrapper.TryAddUser(_context, login, password, age, sex, phone, description, fullAvatarLink, smallAvatarLink, out var userId))

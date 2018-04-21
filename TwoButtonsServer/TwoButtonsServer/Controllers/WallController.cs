@@ -24,7 +24,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-        [HttpGet("getPostsSampleActionResult")]
+        [HttpPost("getPostsSampleActionResult")]
         public IActionResult GetPostsSampleActionResult(int id, int userId, int amount = 100)
         {
             return Ok("GetPosts" + " " + id + " " + userId + " " + amount);
@@ -32,14 +32,14 @@ namespace TwoButtonsServer.Controllers
 
 
 
-        [HttpGet("getPostsSample")]
+        [HttpPost("getPostsSample")]
         public string GetPostsSample(int id, int userId, int amount = 100)
         {
             return "GetPosts" + " " + id + " " + userId + " " + amount;
         }
 
 
-        [HttpGet("getPosts")]
+        [HttpPost("getPosts")]
         public IActionResult GetPosts(int id, int userId, int amount = 100)
         {
             if (UserWrapper.TryGetPosts(_context, id, userId, amount, out var posts))
@@ -48,7 +48,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getUserAskedQuestions")]
+        [HttpPost("getUserAskedQuestions")]
         public IActionResult GetUserAskedQuestions(int id, int userId, int amount = 100)
         {
             if (!UserQuestionsWrapper.TryGetUserAskedQuestions(_context, id, userId, amount, false,
@@ -68,7 +68,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getUserAnsweredQuestions")]
+        [HttpPost("getUserAnsweredQuestions")]
         public IActionResult GetUserAnsweredQuestions(int id, int userId, int amount = 100)
         {
             if (!UserQuestionsWrapper.TryGetUserAnsweredQuestions(_context, id, userId, amount, false, out var userAnsweredQuestions))
@@ -85,7 +85,7 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getUserFavoriteQuestions")]
+        [HttpPost("getUserFavoriteQuestions")]
         public IActionResult GetUserFavoriteQuestions(int id, int userId, int amount = 100)
         {
             if (!UserQuestionsWrapper.TryGetUserFavoriteQuestions(_context, id, userId, amount, true, out var userFavouriteQuestions))
@@ -103,7 +103,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getUserCommentedQuestions")]
+        [HttpPost("getUserCommentedQuestions")]
         public IActionResult GetUserCommentedQuestions(int id, int userId, int amount = 100)
         {
             if (!UserQuestionsWrapper.TryGetUserCommentedQuestions(_context, id, userId, amount, out var userCommentedQuestions))
@@ -121,7 +121,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpGet("getTopQuestions")]
+        [HttpPost("getTopQuestions")]
         public IActionResult GetTopQuestions(int id, DateTime topAfterDate, bool isOnlyNew = true, int amount = 100)
         {
 

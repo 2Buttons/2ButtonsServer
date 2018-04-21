@@ -22,7 +22,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/addComment/
-        [HttpGet("addComment")]
+        [HttpPost("addComment")]
         public IActionResult AddComment(int id, int questionId, string comment, int previousCommentId=0)
         {
             if (CommentsWrapper.TryAddComment(_context, id, questionId, comment, previousCommentId))
@@ -31,7 +31,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/addCommentFeedback/
-        [HttpGet("addCommentFeedback")]
+        [HttpPost("addCommentFeedback")]
         public IActionResult AddCommentFeedback(int id, int questionId, int feedback=0)
         {
             if (CommentsWrapper.TryAddCommentFeedback(_context, id, questionId, feedback))
@@ -40,7 +40,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/getComments/
-        [HttpGet("getComments")]
+        [HttpPost("getComments")]
         public IActionResult GetComments(int id, int questionId, int amount=0)
         {
             if (CommentsWrapper.TryGetComments(_context,id,questionId,amount, out var comment))

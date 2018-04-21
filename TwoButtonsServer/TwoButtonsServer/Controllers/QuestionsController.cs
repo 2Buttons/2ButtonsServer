@@ -21,7 +21,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
         // GET api/saveFeedback/
-        [HttpGet("saveFeedback")]
+        [HttpPost("saveFeedback")]
         public IActionResult SaveFeedback(int id, int questionId, int feedback=0)
         {
             if (QuestionWrapper.TrySaveFeedback(_context,id, questionId, feedback))
@@ -30,7 +30,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/saveFeedback/
-        [HttpGet("saveFavorites")]
+        [HttpPost("saveFavorites")]
         public IActionResult SaveFavorites(int id, int questionId, int inFavorites=0)
         {
             if (QuestionWrapper.TrySaveFeedback(_context, id, questionId, inFavorites))
@@ -39,7 +39,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         // GET api/saveFeedback/
-        [HttpGet("saveAnswer")]
+        [HttpPost("saveAnswer")]
         public IActionResult SaveAnswer(int id, int questionId, int answer)
         {
             if (QuestionWrapper.TrySaveFeedback(_context, id, questionId, answer))

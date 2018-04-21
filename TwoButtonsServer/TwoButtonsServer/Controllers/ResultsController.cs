@@ -21,7 +21,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
         // GET api/getResults/
-        [HttpGet("getResults")]
+        [HttpPost("getResults")]
         public IActionResult SaveFeedback(int id, int questionId, int minAge=0, int maxAge=100, int sex=0)
         {
             if (ResultsWrapper.TryGetResults(_context, id, questionId, minAge,maxAge,sex, out var results))

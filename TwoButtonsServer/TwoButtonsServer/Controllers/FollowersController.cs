@@ -22,7 +22,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
         // GET api/getFollowers/1/25
-        [HttpGet("getFollowers")]
+        [HttpPost("getFollowers")]
         public IActionResult GetFollowers(int id, int userId, int amount=100, string search="")
         {
             if (PeopleListWrapper.TryGetFollowers(_context, id, userId, amount, search, out var followers))
@@ -30,7 +30,7 @@ namespace TwoButtonsServer.Controllers
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
         // GET api/getFollowTo/1/25
-        [HttpGet("getFollowTo")]
+        [HttpPost("getFollowTo")]
         public IActionResult GetFollowTo(int id, int userId, int amount=100, string search="")
         {
             if (PeopleListWrapper.TryGetFollowTo(_context,id,userId,amount,search, out var follower))
