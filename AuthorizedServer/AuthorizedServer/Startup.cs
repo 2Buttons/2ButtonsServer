@@ -29,6 +29,8 @@ namespace AuthorizedServer
                 options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
                     .AllowAnyMethod());
             });
+            services.AddOptions();
+            services.Configure<Audience>(Configuration.GetSection("Audience"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,7 +41,9 @@ namespace AuthorizedServer
                 app.UseDeveloperExceptionPage();
             }
 
+
             app.UseMvc();
+
         }
     }
 }

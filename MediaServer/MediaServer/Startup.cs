@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net.Mime;
 using MediaServer.FileSystem;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,15 +42,17 @@ namespace MediaServer
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<MediaData> mediaOptions)
         {
+
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), mediaOptions.Value.RootFolderRelativePath, mediaOptions.Value.RootFolderName)),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory,mediaOptions.Value.RootFolderRelativePath, mediaOptions.Value.RootFolderName.ToUpper())),
                 RequestPath = "/images"
             });
+
 
             app.UseMvc();
         }
