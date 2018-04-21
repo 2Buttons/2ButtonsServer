@@ -24,21 +24,7 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-        [HttpPost("getPostsSampleActionResult")]
-        public IActionResult GetPostsSampleActionResult(int id, int userId, int amount = 100)
-        {
-            return Ok("GetPosts" + " " + id + " " + userId + " " + amount);
-        }
-
-
-
-        [HttpPost("getPostsSample")]
-        public string GetPostsSample(int id, int userId, int amount = 100)
-        {
-            return "GetPosts" + " " + id + " " + userId + " " + amount;
-        }
-
-
+       
         [HttpPost("getPosts")]
         public IActionResult GetPosts(int id, int userId, int amount = 100)
         {

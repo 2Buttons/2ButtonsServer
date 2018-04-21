@@ -41,7 +41,7 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        [HttpPost("getNewsnsweredQuestions")]
+        [HttpPost("getNewsAnsweredQuestions")]
         public IActionResult GetNewsAnsweredQuestions(int userId, int amount = 100)
         {
             if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context,  userId, amount,  out var userAnsweredQuestions))

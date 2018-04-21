@@ -41,7 +41,7 @@ namespace TwoButtonsServer.Controllers
 
         // GET api/getComments/
         [HttpPost("getComments")]
-        public IActionResult GetComments(int id, int questionId, int amount=0)
+        public IActionResult GetComments(int id, int questionId, int amount=100)
         {
             if (CommentsWrapper.TryGetComments(_context,id,questionId,amount, out var comment))
                 return Ok(comment);

@@ -16,6 +16,7 @@ using TwoButtonsDatabase.WrapperFunctions;
 namespace MediaServer.Controllers
 {
     [EnableCors("AllowAllOrigin")]
+    [Produces("application/json")]
     [Route("images")]
     public class MediaController : Controller
     {

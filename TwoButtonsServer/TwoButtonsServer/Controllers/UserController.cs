@@ -22,7 +22,7 @@ namespace TwoButtonsServer.Controllers
         }
         // GET api/getUserInfo/1/25
         [HttpPost("getUserInfo")]
-        public IActionResult GetUserInfo(int id, int userId, int p = 100)
+        public IActionResult GetUserInfo(int id, int userId)
         {
             if (UserWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
                 return Ok(userInfo);
