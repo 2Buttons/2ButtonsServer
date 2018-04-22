@@ -16,7 +16,7 @@ namespace AuthorizationServer.Models
         [Column("refresh_token")]
         public string RefreshToken { get; set; }
 
-        [Column("isstop")]
+        [Column("isStop")]
         public int IsStop { get; set; }
     }
 }

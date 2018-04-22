@@ -36,9 +36,12 @@ namespace TwoButtonsServer.Controllers
             if (!UserWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
                 return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
             if (!UserWrapper.TryGetUserStatistics(_context, id, out var userStatistics))
-                return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+                return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+            if (!UserWrapper.TryGetUserContacts(_context, id, out var userContacts))
+                return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
 
-            var result = userInfo.MapToUserInfoViewModel(userStatistics);
+
+            var result = userInfo.MapToUserInfoViewModel(userStatistics, userContacts);
 
             return Ok(result);
         }

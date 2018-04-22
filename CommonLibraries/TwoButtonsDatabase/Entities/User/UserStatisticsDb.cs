@@ -1,7 +1,10 @@
-﻿namespace TwoButtonsDatabase.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TwoButtonsDatabase.Entities.User
 {
     public class UserStatisticsDb
     {
+        [Key]
         public int UserId { get; set; }
 
         public int PublicAskedQuestions { get; set; }

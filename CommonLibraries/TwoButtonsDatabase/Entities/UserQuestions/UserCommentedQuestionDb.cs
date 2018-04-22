@@ -2,7 +2,7 @@
 
 namespace TwoButtonsDatabase.Entities.UserQuestions
 {
-    public partial class UserCommentedQuestionsDb : QuestionBaseDb
+    public partial class UserCommentedQuestionDb : QuestionBaseDb
     {
         public int? CommentId { get; set; }
         public string Comment { get; set; }

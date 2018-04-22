@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.User;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
@@ -104,6 +105,22 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
+        public static bool TryGetUserContacts(TwoButtonsContext db, int userId, out List<UserContactsDb> userContacts)
+        {
+            try
+            {
+                userContacts = db.UserContactsDb
+                                   .FromSql($"select * from dbo.getUserContacts({userId})").ToList();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userContacts = new List<UserContactsDb>();
+            return false;
+        }
 
         public static bool TryUpdateVisits(TwoButtonsContext db, int userId, int getUserId)
         {

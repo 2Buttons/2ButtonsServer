@@ -9,14 +9,30 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class UserQuestionsWrapper
     {
-        public static bool TryGetUserAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            bool showAnonimous, out IEnumerable<UserAskedQuestionsDb> userAskedQuestions)
+        public static bool TryAddRecommendedQuestion(TwoButtonsContext db, int userToId, int userFromId, int questionId)
         {
-            var isAnonimus = showAnonimous ? 1 : 0;
+            var recommendedDate = DateTime.Now;
+            try
+            {
+                db.Database.ExecuteSqlCommand($"addTag {userToId}, {userFromId}, {questionId}, {recommendedDate}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return false;
+        }
+
+
+
+        public static bool TryGetUserAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+        {
+            var isAnonimus = 0;
             try
             {
                 userAskedQuestions = db.UserAskedQuestionsDb
-                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {amount}, {isAnonimus})")
                     .ToList();
                 return true;
             }
@@ -24,19 +40,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userAskedQuestions = new List<UserAskedQuestionsDb>();
+            userAskedQuestions = new List<UserAskedQuestionDb>();
             return false;
         }
 
-        public static bool TryGetUserAnsweredQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            bool showAnonimous, out IEnumerable<UserAnsweredQuestionsDb> userAnsweredQuestions)
+        public static bool TryGetUserAnsweredQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<UserAnsweredQuestionDb> userAnsweredQuestions)
         {
-            var isAnonimus = showAnonimous ? 1 : 0;
+            var isAnonimus = 0;
             try
             {
                 userAnsweredQuestions = db.UserAnsweredQuestionsDb
                     .FromSql(
-                        $"select * from dbo.getUserAnsweredQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                        $"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {amount}, {isAnonimus})")
                     .ToList();
                 return true;
             }
@@ -44,19 +59,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userAnsweredQuestions = new List<UserAnsweredQuestionsDb>();
+            userAnsweredQuestions = new List<UserAnsweredQuestionDb>();
             return false;
         }
 
-        public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            bool showAnonimous, out IEnumerable<UserFavouriteQuestionsDb> userFavouriteQuestions)
+        public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<UserFavouriteQuestionDb> userFavouriteQuestions)
         {
-            var isAnonimus = showAnonimous ? 1 : 0;
+            var isAnonimus = 0;
             try
             {
                 userFavouriteQuestions = db.UserFavouriteQuestionsDb
                     .FromSql(
-                        $"select * from dbo.getUserFavoriteQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                        $"select * from dbo.getUserFavoriteQuestions({userId}, {pageUserId}, {amount}, {isAnonimus})")
                     .ToList();
                 return true;
             }
@@ -64,24 +78,24 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userFavouriteQuestions = new List<UserFavouriteQuestionsDb>();
+            userFavouriteQuestions = new List<UserFavouriteQuestionDb>();
             return false;
         }
 
-        public static bool TryGetUserCommentedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount,
-            out IEnumerable<UserCommentedQuestionsDb> userCommentedQuestions)
+        public static bool TryGetUserCommentedQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount,
+            out IEnumerable<UserCommentedQuestionDb> userCommentedQuestions)
         {
             try
             {
                 userCommentedQuestions = db.UserCommentedQuestionsDb
-                    .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {getUserId}, {amount})").ToList();
+                    .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId}, {amount})").ToList();
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            userCommentedQuestions = new List<UserCommentedQuestionsDb>();
+            userCommentedQuestions = new List<UserCommentedQuestionDb>();
             return false;
         }
 
@@ -99,6 +113,64 @@ namespace TwoButtonsDatabase.WrapperFunctions
                 Console.WriteLine(e);
             }
             topQuestions = new List<TopQuestionDb>();
+            return false;
+        }
+
+
+
+        public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<AskedQuestionDb> userAskedQuestions)
+        {
+            var isAnonimus = 1;
+            try
+            {
+                userAskedQuestions = db.AskedQuestionsDb
+                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {amount}, {isAnonimus})")
+                    .ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userAskedQuestions = new List<AskedQuestionDb>();
+            return false;
+        }
+
+        public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<LikedQuestionDb> userAnsweredQuestions)
+        {
+            var isAnonimus = 1;
+            try
+            {
+                userAnsweredQuestions = db.LikedQuestionsDb
+                    .FromSql(
+                        $"select * from dbo.getUserLikedQuestions({userId}, {pageUserId}, {amount}, {isAnonimus})")
+                    .ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userAnsweredQuestions = new List<LikedQuestionDb>();
+            return false;
+        }
+
+        public static bool TryGetSavedQuestions(TwoButtonsContext db, int userId, int amount, out IEnumerable<SavedQuestionDb> userFavouriteQuestions)
+        {
+            var isAnonimus = 1;
+            try
+            {
+                userFavouriteQuestions = db.SavedQuestionsDb
+                    .FromSql(
+                        $"select * from dbo.getUserFavoriteQuestions({userId}, {amount}, {isAnonimus})")
+                    .ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userFavouriteQuestions = new List<SavedQuestionDb>();
             return false;
         }
     }

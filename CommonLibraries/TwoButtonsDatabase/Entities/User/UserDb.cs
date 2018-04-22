@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace TwoButtonsDatabase.Entities
+namespace TwoButtonsDatabase.Entities.User
 {
     [Table("User")]
     public class UserDb
@@ -12,6 +9,6 @@ namespace TwoButtonsDatabase.Entities
         [Key]
         public int UserId { get; set; }
         public string Login { get; set; }
-        public int Password { get; set; }
+        public string Password { get; set; }
     }
 }

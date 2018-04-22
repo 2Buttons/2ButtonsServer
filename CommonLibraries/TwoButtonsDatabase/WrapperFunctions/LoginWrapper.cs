@@ -13,7 +13,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             try
             {
                 userId = db.IdentificationDb
-                             .FromSql($"select * from dbo.identification({login}, {int.Parse(password)})").FirstOrDefault()
+                             .FromSql($"select * from dbo.identification({login}, {password})").FirstOrDefault()
                              ?.UserId ?? -1;
                 return true;
             }

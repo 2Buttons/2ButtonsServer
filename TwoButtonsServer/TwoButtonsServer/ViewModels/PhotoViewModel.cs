@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TwoButtonsDatabase.Entities
+﻿namespace TwoButtonsServer.ViewModels
 {
-    public class PhotoDb
+    public class PhotoViewModel
     {
-        [Key]
         public int UserId { get; set; }
         public string Login { get; set; }
         public int Sex { get; set; }

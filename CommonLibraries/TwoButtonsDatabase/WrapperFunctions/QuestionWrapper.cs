@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using TwoButtonsDatabase.Entities.UserQuestions;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class QuestionWrapper
     {
 
-        public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, string backgroundImageLink, int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption)
+        public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption,  string backgroundImageLink)
         {
-            var askedTime = DateTime.Now;
+            var questionAddDate = DateTime.Now;
             try
             {
-                db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {questionType}, {standartPictureId}, {firstOption}, {secondOption}, {askedTime}");
+                db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {standartPictureId}, {firstOption}, {secondOption}");
                 return true;
             }
             catch (Exception e)
@@ -21,7 +24,22 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryUpdateQuestionBackground(TwoButtonsContext db, int questionId, string backgroundImageLink)
+        public static bool TryAddAnswer(TwoButtonsContext db, int userId, int questionId, string answer, int yourFeedback)
+        {
+            var anwserAddDate = DateTime.Now;
+            try
+            {
+                db.Database.ExecuteSqlCommand($"addAnswer {userId}, {questionId}, {answer}, {yourFeedback}, {anwserAddDate}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return false;
+        }
+
+        public static bool TryUpdateQuestionBackgroundLink(TwoButtonsContext db, int questionId, string backgroundImageLink)
         {
             try
             {
@@ -80,6 +98,42 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
+            return false;
+        }
+
+        public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+        {
+            var isAnonimus = 1;
+            try
+            {
+                userAskedQuestions = db.UserAskedQuestionsDb
+                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                    .ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userAskedQuestions = new List<UserAskedQuestionDb>();
+            return false;
+        }
+
+        public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+        {
+            var isAnonimus = 1;
+            try
+            {
+                userAskedQuestions = db.UserAskedQuestionsDb
+                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                    .ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userAskedQuestions = new List<UserAskedQuestionDb>();
             return false;
         }
     }

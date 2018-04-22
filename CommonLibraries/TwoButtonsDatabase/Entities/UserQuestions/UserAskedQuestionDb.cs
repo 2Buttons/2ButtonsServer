@@ -1,6 +1,6 @@
 ﻿namespace TwoButtonsDatabase.Entities.UserQuestions
 {
-    public partial class UserFavouriteQuestionsDb : QuestionBaseDb
+    public partial class UserAskedQuestionDb : QuestionBaseDb
     {
 
     }

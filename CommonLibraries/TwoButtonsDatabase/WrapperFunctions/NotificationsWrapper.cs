@@ -11,6 +11,23 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class NotificationsWrapper
     {
+
+        public static bool TryGetNotifications(TwoButtonsContext db, int userId, out IEnumerable<NotificationDb> notifications)
+        {
+            try
+            {
+                notifications = db.NotificationsDb
+                    .FromSql($"select * from dbo.getNotifications({userId})").ToList();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            notifications = new List<NotificationDb>();
+            return false;
+        }
+
         public static bool TryGetNewFollowers(TwoButtonsContext db, int userId, out IEnumerable<NewFollowersDb> newFollowers)
         {
             try

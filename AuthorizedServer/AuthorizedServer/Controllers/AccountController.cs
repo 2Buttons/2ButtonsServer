@@ -40,25 +40,25 @@ namespace AuthorizationServer.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginParams loginParams)
+        public IActionResult Login(LoginViewModel loginData)
         {
-            var login = loginParams.Login.Trim();
-            var password = loginParams.Password.Trim();
+            var login = loginData.login.Trim();
+            var password = loginData.password.Trim();
 
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password) || !LoginWrapper.TryCheckValidLogin(_db, login, out var isValid) || !isValid)
                 return BadRequest("Invalid username or password.");
 
 
-            if (loginParams.GrantType == "password")
+            switch (loginData.grant_type)
             {
-                return Ok(AccessToken(loginParams));
-            }
-            else if (loginParams.GrantType == "refresh_token")
-            {
-                return Ok(RefreshToken(loginParams));
+                case "password":
+                    return Ok(AccessToken(loginData));
+                case "refresh_token":
+                    return Ok(RefreshToken(loginData));
+                default:
+                    return BadRequest();
             }
 
-            return BadRequest();
 
         }
 
@@ -73,19 +73,19 @@ namespace AuthorizationServer.Controllers
 
         public IActionResult Logout()
         {
-            _dbToken.ExpireToken
+         //   _dbToken.ExpireToken
         }
 
 
        
 
   
-        private IActionResult AccessToken(LoginParams loginParams)
+        private IActionResult AccessToken(LoginViewModel loginData)
         {
                                        
 
-            if (!LoginWrapper.TryGetIdentification(_db, loginParams.Login, loginParams.Password, out var userId) || userId == -1)
-                return BadRequest("Invalid user infomation");
+            if (!LoginWrapper.TryGetIdentification(_db, loginData.login, loginData.password, out var userId) || userId == -1)
+                
 
            
             var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
@@ -108,9 +108,9 @@ namespace AuthorizationServer.Controllers
             
         }
 
-        private IActionResult RefreshToken(LoginParams loginParams)
+        private IActionResult RefreshToken(LoginViewModel loginData)
         {
-            var token = _dbToken.GetToken(loginParams.RefreshToken, loginParams.UserId);
+            var token = _dbToken.GetToken(loginData.refresh_token, loginData.user_id);
 
             if (token == null)
             {
@@ -130,7 +130,7 @@ namespace AuthorizationServer.Controllers
 
             var addFlag = _dbToken.AddToken(new Token
             {
-                UserId = loginParams.UserId,
+                UserId = loginData.UserId,
                 RefreshToken = refreshToken,
                 Id = Guid.NewGuid().ToString(),
                 IsStop = 0
@@ -138,14 +138,14 @@ namespace AuthorizationServer.Controllers
 
             if (updateFlag && addFlag)
             {
-                return Ok(GetJwt(loginParams.UserId, refreshToken));
+                return Ok(GetJwt(loginData.UserId, refreshToken));
             }
 
             return BadRequest("Can not expire token or a new token");
         
         }
 
-        private string GetJwt(string clientId, string refreshToken)
+        private string GetJwt(string clientId, string refreshToken, string role)
         {
             var now = DateTime.UtcNow;
 
@@ -156,7 +156,7 @@ namespace AuthorizationServer.Controllers
             //    new Claim(JwtRegisteredClaimNames.Iat, now.ToUniversalTime().ToString(), ClaimValueTypes.Integer64)
             //};
 
-            var indentity = GetIdentity();
+            var indentity = GetIdentity(role);
 
             var jwt = new JwtSecurityToken(
                 issuer: _settings.Value.Issuer,

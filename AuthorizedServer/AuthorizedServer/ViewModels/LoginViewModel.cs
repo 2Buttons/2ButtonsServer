@@ -1,7 +1,6 @@
-﻿
-namespace AuthorizationServer.ViewModels
+﻿namespace AuthorizationServer.ViewModels
 {
-    public class LoginData
+    public class LoginViewModel
     {
         public string grant_type { get; set; }
         public string refresh_token { get; set; }

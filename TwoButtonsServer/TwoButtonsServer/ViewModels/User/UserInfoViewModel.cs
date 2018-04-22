@@ -1,4 +1,6 @@
-﻿namespace TwoButtonsServer.ViewModels.User
+﻿using System.Collections.Generic;
+
+namespace TwoButtonsServer.ViewModels.User
 {
     public class UserInfoViewModel
     {
@@ -18,6 +20,7 @@
         public int? Comments { get; set; }
 
         public UserStatisticsViewModel UserStatistics { get; set; }
+        public List<UserContactsViewModel> Social { get; set; }
     }
 
     

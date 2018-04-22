@@ -23,14 +23,17 @@ namespace TwoButtonsServer.Controllers
         {
             _context = context;
         }
+
+
+
         [HttpPost("getNews")]
-        public async  Task<IActionResult> GetNews(int userId, int amount = 100)
+        public async  Task<IActionResult> GetNews(int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
         {
-            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, amount)).GetAwaiter().GetResult();
-            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, amount)).GetAwaiter().GetResult();
-            var favouriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, amount)).GetAwaiter().GetResult();
-            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, amount)).GetAwaiter().GetResult();
-            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, amount)).GetAwaiter().GetResult();
+            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
+            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
+            var favouriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
+            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
+            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
 
            // await Task.WhenAll(new Task[] { askedList, answeredList, favouriteList, commentedList, recommentedList});
 
@@ -47,9 +50,9 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-        private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int amount = 100)
+        private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, amount, out var userAskedQuestions))
+            if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, questionsAmount, out var userAskedQuestions))
                 return new List<NewsAskedQuestionViewModel>();
 
             var result = new List<NewsAskedQuestionViewModel>();
@@ -59,7 +62,11 @@ namespace TwoButtonsServer.Controllers
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                var resultQuestion = question.MapToNewsAskedQuestionsViewModel(tags);
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId,1, photosAmount, minAge, maxAge, sex, out var firstPhotos))
+                    firstPhotos = new List<PhotoDb>();
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, out var secondPhotos))
+                    secondPhotos = new List<PhotoDb>();
+                var resultQuestion = question.MapToNewsAskedQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
 
@@ -69,9 +76,9 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int amount = 100)
+        private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context, userId, amount,
+            if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context, userId, questionsAmount,
                 out var userAnsweredQuestions))
                 return new List<NewsAnsweredQuestionViewModel>();
 
@@ -81,7 +88,11 @@ namespace TwoButtonsServer.Controllers
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags);
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 1, photosAmount, minAge, maxAge, sex, out var firstPhotos))
+                    firstPhotos = new List<PhotoDb>();
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, out var secondPhotos))
+                    secondPhotos = new List<PhotoDb>();
+                var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             }
@@ -89,9 +100,9 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsFavouriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int amount = 100)
+        private List<NewsFavouriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context, userId, amount,
+            if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context, userId, questionsAmount,
                 out var userFavouriteQuestions))
                 return new List<NewsFavouriteQuestionViewModel>();
 
@@ -101,7 +112,11 @@ namespace TwoButtonsServer.Controllers
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                var resultQuestion = question.MapToNewsFavouriteQuestionsViewModel(tags);
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 1, photosAmount, minAge, maxAge, sex, out var firstPhotos))
+                    firstPhotos = new List<PhotoDb>();
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, out var secondPhotos))
+                    secondPhotos = new List<PhotoDb>();
+                var resultQuestion = question.MapToNewsFavouriteQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             }
@@ -109,9 +124,9 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions( int userId, int amount = 100)
+        private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions( int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context, userId, amount,
+            if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context, userId, questionsAmount,
                 out var userCommentedQuestions))
                 return new List<NewsCommentedQuestionViewModel>();
 
@@ -121,7 +136,11 @@ namespace TwoButtonsServer.Controllers
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags);
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 1, photosAmount, minAge, maxAge, sex, out var firstPhotos))
+                    firstPhotos = new List<PhotoDb>();
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, out var secondPhotos))
+                    secondPhotos = new List<PhotoDb>();
+                var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             }
@@ -129,10 +148,10 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int amount = 100)
+        private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
         {
 
-            if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, amount,
+            if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, questionsAmount,
                 out var newsRecommendedQuestions))
                 return new List<NewsRecommendedQuestionViewModel>();
 
@@ -142,7 +161,11 @@ namespace TwoButtonsServer.Controllers
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags);
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 1, photosAmount, minAge, maxAge, sex, out var firstPhotos))
+                    firstPhotos = new List<PhotoDb>();
+                if (!ResultsWrapper.TryGetPhotos(_context, userId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, out var secondPhotos))
+                    secondPhotos = new List<PhotoDb>();
+                var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             }

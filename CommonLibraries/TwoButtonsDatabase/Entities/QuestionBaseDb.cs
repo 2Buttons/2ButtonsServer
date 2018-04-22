@@ -18,12 +18,15 @@ namespace TwoButtonsDatabase.Entities
         public int? UserId { get; set; }
         public string Login { get; set; }
         public string SmallAvatarLink { get; set; }
-        public int? Answers { get; set; }
+        public int? Shows { get; set; }
         public int? Likes { get; set; }
         public int? Dislikes { get; set; }
         public int? YourFeedback { get; set; }
         public int? YourAnswer { get; set; }
         public int? InFavorites { get; set; }
         public int? Comments { get; set; }
+
+        public int? FirstAnswers { get; set; }
+        public int? SecondAnswers { get; set; }
     }
 }
