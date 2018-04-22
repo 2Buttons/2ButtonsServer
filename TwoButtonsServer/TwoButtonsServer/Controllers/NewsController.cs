@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
@@ -22,94 +23,130 @@ namespace TwoButtonsServer.Controllers
         {
             _context = context;
         }
-        [HttpPost("getNewsAskedQuestions")]
-        public IActionResult GetNewsAskedQuestions(int userId, int amount = 100)
+        [HttpPost("getNews")]
+        public async  Task<IActionResult> GetNews(int userId, int amount = 100)
+        {
+            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, amount)).GetAwaiter().GetResult();
+            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, amount)).GetAwaiter().GetResult();
+            var favouriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, amount)).GetAwaiter().GetResult();
+            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, amount)).GetAwaiter().GetResult();
+            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, amount)).GetAwaiter().GetResult();
+
+           // await Task.WhenAll(new Task[] { askedList, answeredList, favouriteList, commentedList, recommentedList});
+
+            NewsViewModel result = new NewsViewModel
+            {
+                NewsAskedQuestions = askedList,
+                NewsAnsweredQuestions = answeredList,
+                NewsFavouriteQuestions = favouriteList,
+                NewsCommentedQuestions = commentedList,
+                NewsRecommendedQuestions = recommentedList
+            };
+
+
+            return Ok(result);
+        }
+
+        private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int amount = 100)
         {
             if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, amount, out var userAskedQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+                return new List<NewsAskedQuestionViewModel>();
 
-            var result = new List<NewsAskedQuestionsViewModel>();
+            var result = new List<NewsAskedQuestionViewModel>();
 
+            int index = 0;
             foreach (var question in userAskedQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                result.Add(question.MapToNewsAskedQuestionsViewModel(tags));
+                var resultQuestion = question.MapToNewsAskedQuestionsViewModel(tags);
+                resultQuestion.IndexNumber = index++;
+                result.Add(resultQuestion);
+
             }
-            return Ok(result);
+            return result;
 
         }
 
 
-        [HttpPost("getNewsAnsweredQuestions")]
-        public IActionResult GetNewsAnsweredQuestions(int userId, int amount = 100)
+        private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int amount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context,  userId, amount,  out var userAnsweredQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context, userId, amount,
+                out var userAnsweredQuestions))
+                return new List<NewsAnsweredQuestionViewModel>();
 
-            var result = new List<NewsAnsweredQuestionsViewModel>();
-
+            var result = new List<NewsAnsweredQuestionViewModel>();
+            int index = 0;
             foreach (var question in userAnsweredQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                result.Add(question.MapToNewsAnsweredQuestionsViewModel(tags));
+                var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags);
+                resultQuestion.IndexNumber = index++;
+                result.Add(resultQuestion);
             }
-            return Ok(result);
+            return result;
         }
 
-        [HttpPost("getNewsFavoriteQuestions")]
-        public IActionResult GetNewsFavoriteQuestions(int userId, int amount = 100)
+
+        private List<NewsFavouriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int amount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context,userId, amount,  out var userFavouriteQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context, userId, amount,
+                out var userFavouriteQuestions))
+                return new List<NewsFavouriteQuestionViewModel>();
 
-            var result = new List<NewsFavouriteQuestionsViewModel>();
-
+            var result = new List<NewsFavouriteQuestionViewModel>();
+            int index = 0;
             foreach (var question in userFavouriteQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                result.Add(question.MapToNewsFavouriteQuestionsViewModel(tags));
+                var resultQuestion = question.MapToNewsFavouriteQuestionsViewModel(tags);
+                resultQuestion.IndexNumber = index++;
+                result.Add(resultQuestion);
             }
-            return Ok(result);
+            return result;
         }
 
 
-        [HttpPost("getNewsCommentedQuestions")]
-        public IActionResult GetNewsCommentedQuestions( int userId, int amount = 100)
+        private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions( int userId, int amount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context,  userId, amount, out var userCommentedQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context, userId, amount,
+                out var userCommentedQuestions))
+                return new List<NewsCommentedQuestionViewModel>();
 
-            var result = new List<NewsCommentedQuestionsViewModel>();
-
+            var result = new List<NewsCommentedQuestionViewModel>();
+            int index = 0;
             foreach (var question in userCommentedQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                result.Add(question.MapToNewsCommentedQuestionsViewModel(tags));
+                var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags);
+                resultQuestion.IndexNumber = index++;
+                result.Add(resultQuestion);
             }
-            return Ok(result);
+            return result;
         }
 
 
-        [HttpPost("getNewsRecommendedQuestions")]
-        public IActionResult TryGetNewsRecommendedQuestions(int userId, int amount = 100)
+        private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int amount = 100)
         {
 
-            if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, amount, out var newsRecommendedQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, amount,
+                out var newsRecommendedQuestions))
+                return new List<NewsRecommendedQuestionViewModel>();
 
             var result = new List<NewsRecommendedQuestionViewModel>();
-
+            int index = 0;
             foreach (var question in newsRecommendedQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
-                result.Add(question.MapNewsRecommendedQuestionsViewModel(tags));
+                var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags);
+                resultQuestion.IndexNumber = index++;
+                result.Add(resultQuestion);
             }
-            return Ok(result);
+            return result;
         }
     }
 }

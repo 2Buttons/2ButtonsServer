@@ -8,12 +8,12 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class LoginWrapper
     {
-        public static bool TryGetIdentification(TwoButtonsContext db, string login, int password, out int userId)
+        public static bool TryGetIdentification(TwoButtonsContext db, string login, string password, out int userId)
         {
             try
             {
                 userId = db.IdentificationDb
-                             .FromSql($"select * from dbo.identification({login}, {password})").FirstOrDefault()
+                             .FromSql($"select * from dbo.identification({login}, {int.Parse(password)})").FirstOrDefault()
                              ?.UserId ?? -1;
                 return true;
             }

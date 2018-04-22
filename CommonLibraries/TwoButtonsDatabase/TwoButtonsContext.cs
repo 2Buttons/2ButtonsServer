@@ -42,6 +42,7 @@ namespace TwoButtonsDatabase
         public virtual DbSet<NewsFavouriteQuestionsDb> NewsFavouriteQuestionsDb { get; set; }
         public virtual DbSet<NewsRecommendedQuestionDb> NewsRecommendedQuestionDb { get; set; }
         public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
+        public virtual DbSet<UserStatisticsDb> UserStatisticsDb { get; set; }
 
         //for scalara functions
         public virtual DbSet<IdentificationDb> IdentificationDb { get; set; }

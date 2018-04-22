@@ -2,7 +2,7 @@
 
 namespace TwoButtonsServer.ViewModels.News
 {
-    public class NewsAnsweredQuestionsViewModel : QuestionBaseViewModel
+    public class NewsAnsweredQuestionViewModel : NewsQuestionBaseViewModel
     {
         public int AnsweredFollowTo { get; set; } /*amount of answered followsTo*/
         public DateTime AnswerDate { get; set; }

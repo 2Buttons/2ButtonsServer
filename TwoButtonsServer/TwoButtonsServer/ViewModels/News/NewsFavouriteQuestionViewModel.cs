@@ -2,7 +2,7 @@
 
 namespace TwoButtonsServer.ViewModels.News
 {
-    public class NewsFavouriteQuestionsViewModel : QuestionBaseViewModel
+    public class NewsFavouriteQuestionViewModel : NewsQuestionBaseViewModel
     {
         public int FavoriteAddedUserId { get; set; }
         public string FavoriteAddedUserLogin { get; set; }

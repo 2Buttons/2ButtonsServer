@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -20,13 +21,26 @@ namespace TwoButtonsServer.Controllers
         {
             _context = context;
         }
-        // GET api/getUserInfo/1/25
+
+        [HttpPost("addUser")]
+        public IActionResult AddUser(string login, string password, int age, int sex, string phone = null, string description = null, string fullAvatarLink = null, string smallAvatarLink = null)
+        {
+            if (UserWrapper.TryAddUser(_context, login, password, age, sex, phone, description, fullAvatarLink, smallAvatarLink, out var userId))
+                return Ok(userId);
+            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        }
+
         [HttpPost("getUserInfo")]
         public IActionResult GetUserInfo(int id, int userId)
         {
-            if (UserWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
-                return Ok(userInfo);
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (!UserWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
+                return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+            if (!UserWrapper.TryGetUserStatistics(_context, id, out var userStatistics))
+                return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+
+            var result = userInfo.MapToUserInfoViewModel(userStatistics);
+
+            return Ok(result);
         }
     }
 }

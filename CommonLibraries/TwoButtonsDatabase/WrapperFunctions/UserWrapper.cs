@@ -86,6 +86,25 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
+        public static bool TryGetUserStatistics(TwoButtonsContext db, int userId,  out UserStatisticsDb userStatistics)
+        {
+            try
+            {
+                userStatistics = db.UserStatisticsDb
+                               .FromSql($"select * from dbo.getUserStatistics({userId})").FirstOrDefault() ??
+                           new UserStatisticsDb();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            userStatistics = new UserStatisticsDb();
+            return false;
+        }
+
+
         public static bool TryUpdateVisits(TwoButtonsContext db, int userId, int getUserId)
         {
             try

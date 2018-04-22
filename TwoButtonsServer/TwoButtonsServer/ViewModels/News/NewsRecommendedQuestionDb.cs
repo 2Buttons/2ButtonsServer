@@ -3,7 +3,7 @@ using TwoButtonsDatabase.Entities;
 
 namespace TwoButtonsServer.ViewModels.News
 {
-    public class NewsRecommendedQuestionViewModel : QuestionBaseViewModel
+    public class NewsRecommendedQuestionViewModel : NewsQuestionBaseViewModel
     {
         public int RecommendedUserId { get; set; }
         public string RecommendedUserLogin { get; set; }

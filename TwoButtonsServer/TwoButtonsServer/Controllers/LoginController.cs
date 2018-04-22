@@ -25,7 +25,7 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("login")]
         public IActionResult Login(string login, string password)
         {
-            if (LoginWrapper.TryGetIdentification(_context, login, int.Parse(password),out var userId))
+            if (LoginWrapper.TryGetIdentification(_context, login, password,out var userId))
                 return Ok(userId);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

@@ -10,40 +10,40 @@ using TwoButtonsServer.ViewModels.UserQuestions;
 
 namespace TwoButtonsServer.ViewModels
 {
-    public static class MappingDatabaseEntitiesIntoViewModels
+    public static class MappingQuestionDbToViewModel
     {
 
-        public static NewsAnsweredQuestionsViewModel MapToNewsAnsweredQuestionsViewModel(
+        public static NewsAnsweredQuestionViewModel MapToNewsAnsweredQuestionsViewModel(
             this NewsAnsweredQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<NewsAnsweredQuestionsViewModel>(dbEntity, dbTags);
+            var viewModel = QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dbEntity, dbTags);
             viewModel.AnsweredFollowTo = dbEntity.AnsweredFollowTo;
             viewModel.AnswerDate = dbEntity.AnswerDate;
             return viewModel;
         }
 
-        public static NewsAskedQuestionsViewModel MapToNewsAskedQuestionsViewModel(
+        public static NewsAskedQuestionViewModel MapToNewsAskedQuestionsViewModel(
             this NewsAskedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            return QuestionDbToViewModel<NewsAskedQuestionsViewModel>(dbEntity, dbTags);
+            return QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags);
         }
 
-        public static NewsCommentedQuestionsViewModel MapToNewsCommentedQuestionsViewModel(
+        public static NewsCommentedQuestionViewModel MapToNewsCommentedQuestionsViewModel(
             this NewsCommentedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<NewsCommentedQuestionsViewModel>(dbEntity, dbTags);
+            var viewModel = QuestionDbToViewModel<NewsCommentedQuestionViewModel>(dbEntity, dbTags);
 
             viewModel.CommentUserId = dbEntity.CommentUserId;
             viewModel.CommentUserLogin = dbEntity.CommentUserLogin;
-            viewModel.CommentAmount = dbEntity.CommentAmount;
+            viewModel.CommentsAmount = dbEntity.CommentsAmount;
             viewModel.CommentAddDate = dbEntity.CommentAddDate;
             return viewModel;
         }
 
-        public static NewsFavouriteQuestionsViewModel MapToNewsFavouriteQuestionsViewModel(
+        public static NewsFavouriteQuestionViewModel MapToNewsFavouriteQuestionsViewModel(
             this NewsFavouriteQuestionsDb dbEntity, IEnumerable<TagDb> dbTags)
         {
-            var viewModel = QuestionDbToViewModel<NewsFavouriteQuestionsViewModel>(dbEntity, dbTags);
+            var viewModel = QuestionDbToViewModel<NewsFavouriteQuestionViewModel>(dbEntity, dbTags);
             viewModel.FavoriteAddedUserId = dbEntity.FavoriteAddedUserId;
             viewModel.FavoriteAddedUserLogin = dbEntity.FavoriteAddedUserLogin;
             viewModel.FavoriteAddDate = dbEntity.FavoriteAddDate;
