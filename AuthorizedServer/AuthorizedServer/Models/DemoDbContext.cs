@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthorizedServer.Models
+namespace AuthorizationServer.Models
 {
     public class DemoDbContext : DbContext
     {
         public DbSet<Token> Tokens { get; set; }
-
-        //public DbSet<AToken> ATokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

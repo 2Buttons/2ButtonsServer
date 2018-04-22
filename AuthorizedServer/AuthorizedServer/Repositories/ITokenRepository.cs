@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AuthorizedServer.Models;
+﻿using AuthorizationServer.Models;
 
-namespace AuthorizedServer.Repositories
+namespace AuthorizationServer.Repositories
 {
     public interface ITokenRepository
     {
@@ -12,6 +8,6 @@ namespace AuthorizedServer.Repositories
 
         bool ExpireToken(Token token);
 
-        Token GetToken(string refresh_token, string client_id);
+        Token GetToken(string userId, string refreshToken);
     }
 }

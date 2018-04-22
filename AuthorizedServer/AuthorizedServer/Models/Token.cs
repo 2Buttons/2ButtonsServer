@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace AuthorizedServer.Models
+namespace AuthorizationServer.Models
 {
-    [Table("rtoken")]
+    [Table("token")]
     public class Token
     {
         [Column("id")]
@@ -15,7 +11,7 @@ namespace AuthorizedServer.Models
         public string Id { get; set; }
 
         [Column("client_id")]
-        public string ClientId { get; set; }
+        public string UserId { get; set; }
 
         [Column("refresh_token")]
         public string RefreshToken { get; set; }

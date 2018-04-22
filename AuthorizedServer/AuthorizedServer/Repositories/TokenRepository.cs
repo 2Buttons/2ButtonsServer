@@ -1,37 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using AuthorizationServer.Models;
 
-namespace AuthorizedServer.Repositories
+namespace AuthorizationServer.Repositories
 {
     public class TokenRepository : ITokenRepository
     {
-        public bool AddToken(RToken token)
+        public bool AddToken(Token token)
         {
             using (DemoDbContext db = new DemoDbContext())
             {
-                db.RTokens.Add(token);
+                db.Tokens.Add(token);
 
                 return db.SaveChanges() > 0;
             }
         }
 
-        public bool ExpireToken(RToken token)
+        public bool ExpireToken(Token token)
         {
             using (DemoDbContext db = new DemoDbContext())
             {
-                db.RTokens.Update(token);
+                db.Tokens.Update(token);
 
                 return db.SaveChanges() > 0;
             }
         }
 
-        public RToken GetToken(string refresh_token, string client_id)
+        public Token GetToken(string userId, string refreshToken)
         {
             using (DemoDbContext db = new DemoDbContext())
             {
-                return db.RTokens.FirstOrDefault(x => x.ClientId == client_id && x.RefreshToken == refresh_token);
+                return db.Tokens.FirstOrDefault(x => x.UserId == userId && x.RefreshToken == refreshToken);
             }
         }
     }
