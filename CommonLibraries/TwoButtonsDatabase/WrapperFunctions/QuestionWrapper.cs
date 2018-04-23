@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities.UserQuestions;
@@ -9,18 +11,27 @@ namespace TwoButtonsDatabase.WrapperFunctions
     public static class QuestionWrapper
     {
 
-        public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption,  string backgroundImageLink)
+        public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption,  string backgroundImageLink, out int questionId)
         {
             var questionAddDate = DateTime.Now;
+
+            var questionIdDb = new SqlParameter
+            {
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output,
+            };
+
             try
             {
-                db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {standartPictureId}, {firstOption}, {secondOption}");
+                db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {standartPictureId}, {firstOption}, {secondOption}, {questionIdDb} OUT");
+                questionId = (int)questionIdDb.Value;
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            questionId = -1;
             return false;
         }
 

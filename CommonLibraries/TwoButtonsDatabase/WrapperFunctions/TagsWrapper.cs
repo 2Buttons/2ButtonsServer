@@ -8,19 +8,17 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class TagsWrapper
     {
-        public static bool TryAddTag(TwoButtonsContext db, int questionId, string tagText, int position, out int tagId)
+        public static bool TryAddTag(TwoButtonsContext db, int questionId, string tagText, int position)
         {
             try
             {
                 db.Database.ExecuteSqlCommand($"addTag {questionId}, {tagText}, {position}");
-                tagId = 1;
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            tagId = -1;
             return false;
         }
 

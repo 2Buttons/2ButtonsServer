@@ -9,6 +9,7 @@ using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.Moderators;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels.InputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -24,11 +25,29 @@ namespace TwoButtonsServer.Controllers
         }
 
         [HttpPost("addQuestion")]
-        public IActionResult AddQuestion(int userId, string condition,  int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption, string backgroundImageLink = null)
+        public IActionResult AddQuestion(QuestionViewModel question, List<TagViewModel> tags)
         {
-            if (QuestionWrapper.TryAddQuestion(_context, userId, condition, anonymity, audience, questionType, standartPictureId, firstOption, secondOption, backgroundImageLink))
-                return Ok();
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.Anonymity, question.Audience, question.QuestionType, question.StandartPictureId, question.FirstOption, question.SecondOption, question.BackgroundImageLink, out var questionId))
+                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+
+            List<TagViewModel> badAddedTags = new List<TagViewModel>();
+
+            foreach (var tag in tags)
+            {
+                if (!TagsWrapper.TryAddTag(_context, tag.TagId, tag.TagText, tag.Position))
+                    badAddedTags.Add(tag);
+            }
+            if (badAddedTags.Count != 0)
+            {
+                var response =
+                    new
+                    {
+                        Message= "Not All Tags inserted",
+                        BadTegs = badAddedTags
+                    };
+                return BadRequest(response);
+            }
+            return Ok();   
         }
 
         [HttpPost("addAnswer")]
@@ -50,8 +69,8 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("addTag")]
         public IActionResult AddTag(int questionId, string tagText, int position)
         {
-            if (TagsWrapper.TryAddTag(_context, questionId,  tagText,  position, out int tagId))
-                return Ok(tagId);
+            if (TagsWrapper.TryAddTag(_context, questionId,  tagText,  position))
+                return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
