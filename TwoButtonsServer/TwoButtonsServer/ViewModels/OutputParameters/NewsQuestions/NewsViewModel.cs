@@ -6,7 +6,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters.NewsQuestions
     {
         public List<NewsAskedQuestionViewModel> NewsAskedQuestions { get; set; }
         public List<NewsAnsweredQuestionViewModel> NewsAnsweredQuestions { get; set; }
-        public List<NewsFavouriteQuestionViewModel> NewsFavouriteQuestions { get; set; }
+        public List<NewsFavoriteQuestionViewModel> NewsFavoriteQuestions { get; set; }
         public List<NewsRecommendedQuestionViewModel> NewsRecommendedQuestions { get; set; }
         public List<NewsCommentedQuestionViewModel> NewsCommentedQuestions { get; set; }
     }

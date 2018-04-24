@@ -38,12 +38,12 @@ namespace TwoButtonsDatabase
         public virtual DbSet<UserAnsweredQuestionDb> UserAnsweredQuestionsDb { get; set; }
         public virtual DbSet<UserAskedQuestionDb> UserAskedQuestionsDb { get; set; }
         public virtual DbSet<UserCommentedQuestionDb> UserCommentedQuestionsDb { get; set; }
-        public virtual DbSet<UserFavouriteQuestionDb> UserFavouriteQuestionsDb { get; set; }
+        public virtual DbSet<UserFavoriteQuestionDb> UserFavoriteQuestionsDb { get; set; }
 
         public virtual DbSet<NewsAnsweredQuestionsDb> NewsAnsweredQuestionsDb { get; set; }
         public virtual DbSet<NewsAskedQuestionsDb> NewsAskedQuestionsDb { get; set; }
         public virtual DbSet<NewsCommentedQuestionsDb> NewsCommentedQuestionsDb { get; set; }
-        public virtual DbSet<NewsFavouriteQuestionsDb> NewsFavouriteQuestionsDb { get; set; }
+        public virtual DbSet<NewsFavoriteQuestionsDb> NewsFavoriteQuestionsDb { get; set; }
         public virtual DbSet<NewsRecommendedQuestionDb> NewsRecommendedQuestionDb { get; set; }
 
         public virtual DbSet<AskedQuestionDb> AskedQuestionsDb { get; set; }

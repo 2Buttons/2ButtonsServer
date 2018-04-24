@@ -46,11 +46,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
         }
 
         public static bool TryGetNewsFavoriteQuestions(TwoButtonsContext db, int userId, int amount,
-            out IEnumerable<NewsFavouriteQuestionsDb> newsFavouriteQuestions)
+            out IEnumerable<NewsFavoriteQuestionsDb> newsFavoriteQuestions)
         {
             try
             {
-                newsFavouriteQuestions = db.NewsFavouriteQuestionsDb
+                newsFavoriteQuestions = db.NewsFavoriteQuestionsDb
                     .FromSql(
                         $"select * from dbo.getNewsFavoriteQuestions({userId}, {amount})")
                     .ToList();
@@ -60,7 +60,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            newsFavouriteQuestions = new List<NewsFavouriteQuestionsDb>();
+            newsFavoriteQuestions = new List<NewsFavoriteQuestionsDb>();
             return false;
         }
 

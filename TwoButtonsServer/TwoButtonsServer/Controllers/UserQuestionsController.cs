@@ -86,10 +86,10 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getUserFavoriteQuestions")]
         public IActionResult GetUserFavoriteQuestions([FromBody]UserQuestionsViewModel userQuestions)
         {
-            if (!UserQuestionsWrapper.TryGetUserFavoriteQuestions(_context, userQuestions.UserId, userQuestions.UserPageId, userQuestions.QuestionsAmount, out var userFavouriteQuestions))
+            if (!UserQuestionsWrapper.TryGetUserFavoriteQuestions(_context, userQuestions.UserId, userQuestions.UserPageId, userQuestions.QuestionsAmount, out var userFavoriteQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-            var result = new List<UserFavouriteQuestionsViewModel>();
+            var result = new List<UserFavoriteQuestionsViewModel>();
 
 
             int photosAmount = userQuestions.PhotoParams.PhotosAmount;
@@ -97,7 +97,7 @@ namespace TwoButtonsServer.Controllers
             int maxAge = userQuestions.PhotoParams.MaxAge;
             int sex = userQuestions.PhotoParams.Sex;
 
-            foreach (var question in userFavouriteQuestions)
+            foreach (var question in userFavoriteQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();
@@ -105,7 +105,7 @@ namespace TwoButtonsServer.Controllers
                     firstPhotos = new List<PhotoDb>();
                 if (!ResultsWrapper.TryGetPhotos(_context, userQuestions.UserId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, out var secondPhotos))
                     secondPhotos = new List<PhotoDb>();
-                result.Add(question.MapToUserFavouriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
+                result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
             }
             return Ok(result);
         }
@@ -227,7 +227,7 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getSavedQuestions")]
         public IActionResult TryGetSavedQuestions([FromBody]UserQuestionsViewModel userQuestions)
         {
-            if (!UserQuestionsWrapper.TryGetSavedQuestions(_context, userQuestions.UserId, userQuestions.QuestionsAmount, out var userFavouriteQuestions))
+            if (!UserQuestionsWrapper.TryGetSavedQuestions(_context, userQuestions.UserId, userQuestions.QuestionsAmount, out var userFavoriteQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var result = new List<SavedQuestionsViewModel>();
@@ -238,7 +238,7 @@ namespace TwoButtonsServer.Controllers
             int maxAge = userQuestions.PhotoParams.MaxAge;
             int sex = userQuestions.PhotoParams.Sex;
 
-            foreach (var question in userFavouriteQuestions)
+            foreach (var question in userFavoriteQuestions)
             {
                 if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
                     tags = new List<TagDb>();

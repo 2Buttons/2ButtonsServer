@@ -63,12 +63,12 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<UserFavouriteQuestionDb> userFavouriteQuestions)
+        public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int pageUserId, int amount, out IEnumerable<UserFavoriteQuestionDb> userFavoriteQuestions)
         {
             var isAnonimus = 0;
             try
             {
-                userFavouriteQuestions = db.UserFavouriteQuestionsDb
+                userFavoriteQuestions = db.UserFavoriteQuestionsDb
                     .FromSql(
                         $"select * from dbo.getUserFavoriteQuestions({userId}, {pageUserId}, {amount}, {isAnonimus})")
                     .ToList();
@@ -78,7 +78,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userFavouriteQuestions = new List<UserFavouriteQuestionDb>();
+            userFavoriteQuestions = new List<UserFavoriteQuestionDb>();
             return false;
         }
 
@@ -155,12 +155,12 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetSavedQuestions(TwoButtonsContext db, int userId, int amount, out IEnumerable<SavedQuestionDb> userFavouriteQuestions)
+        public static bool TryGetSavedQuestions(TwoButtonsContext db, int userId, int amount, out IEnumerable<SavedQuestionDb> userFavoriteQuestions)
         {
             var isAnonimus = 1;
             try
             {
-                userFavouriteQuestions = db.SavedQuestionsDb
+                userFavoriteQuestions = db.SavedQuestionsDb
                     .FromSql(
                         $"select * from dbo.getUserFavoriteQuestions({userId}, {amount}, {isAnonimus})")
                     .ToList();
@@ -170,7 +170,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             {
                 Console.WriteLine(e);
             }
-            userFavouriteQuestions = new List<SavedQuestionDb>();
+            userFavoriteQuestions = new List<SavedQuestionDb>();
             return false;
         }
     }

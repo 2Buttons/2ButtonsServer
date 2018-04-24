@@ -2,7 +2,7 @@
 
 namespace TwoButtonsDatabase.Entities.NewsQuestions
 {
-    public class NewsFavouriteQuestionsDb : QuestionBaseDb
+    public class NewsFavoriteQuestionsDb : QuestionBaseDb
     {
         public int FavoriteAddedUserId { get; set; }
         public string FavoriteAddedUserLogin { get; set; }

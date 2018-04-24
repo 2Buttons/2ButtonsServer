@@ -42,12 +42,12 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             return viewModel;
         }
 
-        public static NewsFavouriteQuestionViewModel MapToNewsFavouriteQuestionsViewModel(
-            this NewsFavouriteQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+        public static NewsFavoriteQuestionViewModel MapToNewsFavoriteQuestionsViewModel(
+            this NewsFavoriteQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
             IEnumerable<PhotoDb> dbSecondPhotos)
         {
             var viewModel =
-                QuestionDbToViewModel<NewsFavouriteQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<NewsFavoriteQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
             viewModel.FavoriteAddedUserId = dbEntity.FavoriteAddedUserId;
             viewModel.FavoriteAddedUserLogin = dbEntity.FavoriteAddedUserLogin;
             viewModel.FavoriteAddDate = dbEntity.FavoriteAddDate;
@@ -104,12 +104,12 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             return viewModel;
         }
 
-        public static UserFavouriteQuestionsViewModel MapToUserFavouriteQuestionsViewModel(
-            this UserFavouriteQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+        public static UserFavoriteQuestionsViewModel MapToUserFavoriteQuestionsViewModel(
+            this UserFavoriteQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
             IEnumerable<PhotoDb> dbSecondPhotos)
         {
             var viewModel =
-                QuestionDbToViewModel<UserFavouriteQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<UserFavoriteQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
             return viewModel;
         }
 

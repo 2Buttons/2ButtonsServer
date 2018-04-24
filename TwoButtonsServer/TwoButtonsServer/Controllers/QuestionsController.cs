@@ -101,7 +101,7 @@ namespace TwoButtonsServer.Controllers
         }
 
         [HttpPost("getVoters")]
-        public IActionResult GetVoters(GetVoters voters)
+        public IActionResult GetVoters([FromBody]GetVoters voters)
         {
             if (ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.VotersAmount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
                 return Ok(answeredList);
