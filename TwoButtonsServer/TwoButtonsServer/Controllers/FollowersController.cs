@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels.InputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -21,19 +22,19 @@ namespace TwoButtonsServer.Controllers
         {
             _context = context;
         }
-        // GET api/getFollowers/1/25
+
         [HttpPost("getFollowers")]
-        public IActionResult GetFollowers(int id, int userId, int amount=100, string search="")
+        public IActionResult GetFollowers([FromBody]FollowerViewModel vm)
         {
-            if (PeopleListWrapper.TryGetFollowers(_context, id, userId, amount, search, out var followers))
+            if (PeopleListWrapper.TryGetFollowers(_context, vm.UserId, vm.UserPageId, vm.Amount, vm.SearchedLogin, out var followers))
                 return Ok(followers);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
-        // GET api/getFollowTo/1/25
+
         [HttpPost("getFollowTo")]
-        public IActionResult GetFollowTo(int id, int userId, int amount=100, string search="")
+        public IActionResult GetFollowTo([FromBody]FollowerViewModel vm)
         {
-            if (PeopleListWrapper.TryGetFollowTo(_context,id,userId,amount,search, out var follower))
+            if (PeopleListWrapper.TryGetFollowTo(_context, vm.UserId, vm.UserPageId, vm.Amount, vm.SearchedLogin, out var follower))
                 return Ok(follower);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

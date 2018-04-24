@@ -10,6 +10,7 @@ using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.Moderators;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels.InputParameters;
+using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -25,16 +26,16 @@ namespace TwoButtonsServer.Controllers
         }
 
         [HttpPost("addQuestion")]
-        public IActionResult AddQuestion(QuestionViewModel question, List<TagViewModel> tags)
+        public IActionResult AddQuestion([FromBody]AddQuestionViewModel question)
         {
             if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.Anonymity, question.Audience, question.QuestionType, question.StandartPictureId, question.FirstOption, question.SecondOption, question.BackgroundImageLink, out var questionId))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-            List<TagViewModel> badAddedTags = new List<TagViewModel>();
+            var badAddedTags = new List<TagViewModel>();
 
-            foreach (var tag in tags)
+            foreach (var tag in question.Tags)
             {
-                if (!TagsWrapper.TryAddTag(_context, tag.TagId, tag.TagText, tag.Position))
+                if (!TagsWrapper.TryAddTag(_context, questionId, tag.TagText, tag.Position))
                     badAddedTags.Add(tag);
             }
             if (badAddedTags.Count != 0)
@@ -51,33 +52,33 @@ namespace TwoButtonsServer.Controllers
         }
 
         [HttpPost("addAnswer")]
-        public IActionResult AddAnswer(int userId, int questionId, string answer, int yourFeedback)
+        public IActionResult AddAnswer([FromBody]AddAnswerViewModel answer)
         {
-            if (QuestionWrapper.TryAddAnswer( _context,  userId,  questionId,  answer,  yourFeedback))
+            if (QuestionWrapper.TryAddAnswer( _context, answer.UserId, answer.QuestionId, answer.Answer, answer.YourFeedback))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         [HttpPost("addComplaint")]
-        public IActionResult AddComplaint(int userId, int questionId, int complaintId)
+        public IActionResult AddComplaint([FromBody]AddComplaintViewModel complaint)
         {
-            if (ModeratorWrapper.TryAddComplaint(_context,  userId, questionId, complaintId))
+            if (ModeratorWrapper.TryAddComplaint(_context, complaint.UserId, complaint.QuestionId, complaint.ComplaintId))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         [HttpPost("addTag")]
-        public IActionResult AddTag(int questionId, string tagText, int position)
+        public IActionResult AddTag([FromBody]AddTagViewModel tag)
         {
-            if (TagsWrapper.TryAddTag(_context, questionId,  tagText,  position))
+            if (TagsWrapper.TryAddTag(_context, tag.QuestionId, tag.TagText, tag.Position))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         [HttpPost("addRecommendedQuestion")]
-        public IActionResult AddRecommendedQuestion(int userToId, int userFromId, int questionId)
+        public IActionResult AddRecommendedQuestion([FromBody]AddRecommendedQuestionViewModel recommendedQuestion)
         {
-            if (UserQuestionsWrapper.TryAddRecommendedQuestion(_context,  userToId,  userFromId,  questionId))
+            if (UserQuestionsWrapper.TryAddRecommendedQuestion(_context, recommendedQuestion.UserToId, recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
@@ -92,35 +93,43 @@ namespace TwoButtonsServer.Controllers
         }
 
         [HttpPost("getQuestionResults")]
-        public IActionResult GetQuestionResults(int id, int questionId, int minAge = 0, int maxAge = 100, int sex = 0)
+        public IActionResult GetQuestionResults([FromBody]GetQuestionResultsViewModel question)
         {
-            if (ResultsWrapper.TryGetResults(_context, id, questionId, minAge, maxAge, sex, out var results))
+            if (ResultsWrapper.TryGetResults(_context, question.UserId, question.QuestionId, question.MinAge, question.MaxAge, question.Sex, out var results))
                 return Ok(results);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
-        [HttpPost("saveFeedback")]
-        public IActionResult SaveFeedback(int id, int questionId, int feedback=0)
+        [HttpPost("getVoters")]
+        public IActionResult GetVoters(GetVoters voters)
         {
-            if (QuestionWrapper.TrySaveFeedback(_context,id, questionId, feedback))
+            if (ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.VotersAmount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
+                return Ok(answeredList);
+            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        }
+
+        [HttpPost("saveFeedback")]
+        public IActionResult SaveFeedback([FromBody]SaveFeedbackViewModel feedback)
+        {
+            if (QuestionWrapper.TrySaveFeedback(_context, feedback.UserId, feedback.QuestionId, feedback.Feeback))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
        
         [HttpPost("saveFavorites")]
-        public IActionResult SaveFavorites(int id, int questionId, int inFavorites=0)
+        public IActionResult SaveFavorites([FromBody]SaveFavoritesViewModel favorites)
         {
-            if (QuestionWrapper.TrySaveFeedback(_context, id, questionId, inFavorites))
+            if (QuestionWrapper.TrySaveFeedback(_context, favorites.UserId, favorites.QuestionId, favorites.InFavorites))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
    
         [HttpPost("saveAnswer")]
-        public IActionResult SaveAnswer(int id, int questionId, int answer)
+        public IActionResult SaveAnswer([FromBody]SaveAnswerViewModel answer)
         {
-            if (QuestionWrapper.TrySaveFeedback(_context, id, questionId, answer))
+            if (QuestionWrapper.TrySaveFeedback(_context, answer.UserId, answer.QuestionId, answer.Answer))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

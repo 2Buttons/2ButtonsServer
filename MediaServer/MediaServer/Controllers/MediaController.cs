@@ -91,13 +91,13 @@ namespace MediaServer.Controllers
         }
 
         [HttpPost("uploadUserAvatar")]
-        public async Task<IActionResult> UploadFile(int userId, string size, IFormFile uploadedFile)
+        public async Task<IActionResult> UploadUserAvatar(UploadUserAvatarViewModel avatar)
         {
             // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
 
-            if (uploadedFile == null)
+            if (avatar.UploadedFile == null)
                 return BadRequest("uploadedFile is null");
-            if (size == null)
+            if (avatar.Size == null)
                 return BadRequest("size is null");
 
             var imageType = size.ToUpper() == "small".ToUpper() ? "UserSmallAvatarPhoto" : "UserFullAvatarPhoto";
@@ -106,24 +106,24 @@ namespace MediaServer.Controllers
             if (!_fileManager.IsValidImageType(imageType))
                 return BadRequest("Image type is not valid.");
 
-            var uniqueName = _fileManager.CreateUniqueName(uploadedFile.FileName);
+            var uniqueName = _fileManager.CreateUniqueName(avatar.UploadedFile.FileName);
             var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                await uploadedFile.CopyToAsync(fileStream);
+                await avatar.UploadedFile.CopyToAsync(fileStream);
             }
 
             string avatarLink = _fileManager.GetWebPath(imageType, uniqueName);
 
-            if (size.ToUpper() == "small".ToUpper())
+            if (avatar.Size.ToUpper() == "SMALL".ToUpper())
             {
-                if(UserWrapper.TryUpdateUserSmallAvatar(_context,userId, avatarLink))
+                if(UserWrapper.TryUpdateUserSmallAvatar(_context,avatar.UserId, avatarLink))
                     return Ok(_fileManager.GetWebPath(imageType, uniqueName));
                 return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
             }
             else
             {
-                if (UserWrapper.TryUpdateUserFullAvatar(_context, userId, avatarLink))
+                if (UserWrapper.TryUpdateUserFullAvatar(_context, avatar.UserId, avatarLink))
                     return Ok(_fileManager.GetWebPath(imageType, uniqueName));
                 return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
@@ -131,26 +131,26 @@ namespace MediaServer.Controllers
         }
 
         [HttpPost("uploadQuestionBackground")]
-        public async Task<IActionResult> UploadQuestionBackground(int questionId, IFormFile uploadedFile)
+        public async Task<IActionResult> UploadQuestionBackground(UploadQuestionBackgroundViewModel background)
         {
             // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
 
-            if (uploadedFile == null)
+            if (background.UploadedFile == null)
                 return BadRequest("uploadedFile is null");
             
             string imageType = "Background".ToUpper().GetMd5Hash();
             if (!_fileManager.IsValidImageType(imageType))
                 return BadRequest("Image type is not valid.");
 
-            var uniqueName = _fileManager.CreateUniqueName(uploadedFile.FileName);
+            var uniqueName = _fileManager.CreateUniqueName(background.UploadedFile.FileName);
             var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                await uploadedFile.CopyToAsync(fileStream);
+                await background.UploadedFile.CopyToAsync(fileStream);
             }
 
             string backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-            if (QuestionWrapper.TryUpdateQuestionBackground(_context, questionId, backgroundLink))
+            if (QuestionWrapper.TryUpdateQuestionBackgroundLink(_context, background.QuestionId, backgroundLink))
                 return Ok(backgroundLink);
             return BadRequest("Link is not saved in the database, but link in file system:"+ backgroundLink);
         }

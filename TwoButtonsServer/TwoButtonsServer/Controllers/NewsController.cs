@@ -7,8 +7,9 @@ using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels;
-using TwoButtonsServer.ViewModels.News;
-using TwoButtonsServer.ViewModels.UserQuestions;
+using TwoButtonsServer.ViewModels.InputParameters;
+using TwoButtonsServer.ViewModels.OutputParameters;
+using TwoButtonsServer.ViewModels.OutputParameters.NewsQuestions;
 
 
 namespace TwoButtonsServer.Controllers
@@ -27,13 +28,20 @@ namespace TwoButtonsServer.Controllers
 
 
         [HttpPost("getNews")]
-        public async  Task<IActionResult> GetNews(int userId, int questionsAmount = 100, int photosAmount = 100, int minAge = 0, int maxAge = 100, int sex = 0)
+        public async  Task<IActionResult> GetNews([FromBody]GetNewsViewModel  newsViewModel)
         {
-            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var favouriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
+            int userId= newsViewModel.UserId;
+            int questionsAmount = newsViewModel.QuestionsAmount;
+            int photosAmount = newsViewModel.PhotoParams.PhotosAmount;
+            int minAge = newsViewModel.PhotoParams.MinAge;
+            int maxAge = newsViewModel.PhotoParams.MaxAge;
+            int sex = newsViewModel.PhotoParams.Sex;
+
+            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, questionsAmount, photosAmount, minAge, maxAge, sex)).GetAwaiter().GetResult();
+            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsAmount, photosAmount, minAge, maxAge, sex)).GetAwaiter().GetResult();
+            var favouriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, questionsAmount, photosAmount, minAge, maxAge, sex)).GetAwaiter().GetResult();
+            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, questionsAmount, photosAmount, minAge, maxAge, sex)).GetAwaiter().GetResult();
+            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, questionsAmount, photosAmount, minAge, maxAge, sex)).GetAwaiter().GetResult();
 
            // await Task.WhenAll(new Task[] { askedList, answeredList, favouriteList, commentedList, recommentedList});
 

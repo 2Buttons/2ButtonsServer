@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels.InputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -23,30 +24,31 @@ namespace TwoButtonsServer.Controllers
 
         // GET api/addComment/
         [HttpPost("addComment")]
-        public IActionResult AddComment(int id, int questionId, string comment, int previousCommentId=0)
+        public IActionResult AddComment([FromBody]AddCommentViewModel comment)
         {
-            if (CommentsWrapper.TryAddComment(_context, id, questionId, comment, previousCommentId))
+            if (CommentsWrapper.TryAddComment(_context, comment.UserId, comment.QuestionId, comment.Comment, comment.PreviousCommnetId))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         // GET api/addCommentFeedback/
         [HttpPost("addCommentFeedback")]
-        public IActionResult AddCommentFeedback(int id, int questionId, int feedback=0)
+        public IActionResult AddCommentFeedback([FromBody]AddCommentFeedbackViewModel commentFeedback)
         {
-            if (CommentsWrapper.TryAddCommentFeedback(_context, id, questionId, feedback))
+            if (CommentsWrapper.TryAddCommentFeedback(_context, commentFeedback.UserId, commentFeedback.QuestionId, commentFeedback.Feedback))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         // GET api/getComments/
         [HttpPost("getComments")]
-        public IActionResult GetComments(int id, int questionId, int amount=100)
+        public IActionResult GetComments([FromBody]GetCommentsViewModel comments)
         {
-            if (CommentsWrapper.TryGetComments(_context,id,questionId,amount, out var comment))
+            if (CommentsWrapper.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.Amount, out var comment))
                 return Ok(comment);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
+
 
     }
 }

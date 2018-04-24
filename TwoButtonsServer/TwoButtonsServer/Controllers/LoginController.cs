@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels.InputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -23,18 +24,18 @@ namespace TwoButtonsServer.Controllers
 
         // GET api/login/
         [HttpPost("login")]
-        public IActionResult Login(string login, string password)
+        public IActionResult Login([FromBody]LoginViewModel login)
         {
-            if (LoginWrapper.TryGetIdentification(_context, login, password,out var userId))
+            if (LoginWrapper.TryGetIdentification(_context, login.Login, login.Password, out var userId))
                 return Ok(userId);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         // GET api/checkValidLogin/
         [HttpPost("checkValidLogin")]
-        public IActionResult CheckValidLogin(string login)
+        public IActionResult CheckValidLogin([FromBody]LoginViewModel login)
         {
-            if (LoginWrapper.TryCheckValidLogin(_context, login, out var isValid ))
+            if (LoginWrapper.TryCheckValidLogin(_context, login.Login, out var isValid ))
                 return Ok(isValid);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

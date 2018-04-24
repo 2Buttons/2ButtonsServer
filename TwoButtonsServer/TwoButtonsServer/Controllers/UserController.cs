@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels;
+using TwoButtonsServer.ViewModels.InputParameters;
+using TwoButtonsServer.ViewModels.OutputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -23,21 +25,21 @@ namespace TwoButtonsServer.Controllers
         }
 
         [HttpPost("addUser")]
-        public IActionResult AddUser(string login, string password, int age, int sex, string phone = null, string description = null, string fullAvatarLink = null, string smallAvatarLink = null)
+        public IActionResult AddUser([FromBody]UserRegistrationViewModel user)
         {
-            if (UserWrapper.TryAddUser(_context, login, password, age, sex, phone, description, fullAvatarLink, smallAvatarLink, out var userId))
+            if (UserWrapper.TryAddUser(_context, user.Login, user.Password, user.Age, user.Sex, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, out var userId))
                 return Ok(userId);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
         [HttpPost("getUserInfo")]
-        public IActionResult GetUserInfo(int id, int userId)
+        public IActionResult GetUserInfo([FromBody]UserPageIdViewModel userPage)
         {
-            if (!UserWrapper.TryGetUserInfo(_context, id, userId, out var userInfo))
+            if (!UserWrapper.TryGetUserInfo(_context, userPage.UserId, userPage.UserPageId, out var userInfo))
                 return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-            if (!UserWrapper.TryGetUserStatistics(_context, id, out var userStatistics))
+            if (!UserWrapper.TryGetUserStatistics(_context, userPage.UserId, out var userStatistics))
                 return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
-            if (!UserWrapper.TryGetUserContacts(_context, id, out var userContacts))
+            if (!UserWrapper.TryGetUserContacts(_context, userPage.UserId, out var userContacts))
                 return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
 
 
@@ -46,4 +48,5 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
     }
+
 }

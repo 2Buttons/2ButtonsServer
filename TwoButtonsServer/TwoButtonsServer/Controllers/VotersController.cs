@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -21,12 +22,12 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
         // GET api/getVoters/
-        [HttpPost("getVoters")]
-        public IActionResult GetVoters(int id, int questionId, int amount, int option, int minAge = 0, int maxAge = 100, int sex = 0, string search = "")
-        {
-            if (ResultsWrapper.TryGetAnsweredList(_context, id, questionId, amount, option, minAge, maxAge, sex, search, out var answeredList))
-                return Ok(answeredList);
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
+        //[HttpPost("getVoters")]
+        //public IActionResult GetVoters(GetVoters voters)
+        //{
+        //    if (ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.VotersAmount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
+        //        return Ok(answeredList);
+        //    return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        //}
     }
 }
