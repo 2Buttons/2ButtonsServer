@@ -10,5 +10,6 @@ namespace TwoButtonsDatabase.Entities
         public int Sex { get; set; }
         public int Age { get; set; }
         public string SmallAvatarLink { get; set; }
+        public string City { get; set; }
     }
 }

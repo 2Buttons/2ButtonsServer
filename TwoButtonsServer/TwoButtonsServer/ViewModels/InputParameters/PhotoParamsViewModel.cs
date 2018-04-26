@@ -9,5 +9,7 @@
         public int MaxAge { get; set; } = 100;
 
         public int Sex { get; set; } = 0;
+
+        public string City { get; set; } = string.Empty;
     }
 }

@@ -3,6 +3,6 @@
     public class UserContactsViewModel
     {
         public int NetworkId { get; set; }
-        public string Account { get; set; }
+        public string ContactsAccount { get; set; }
     }
 }

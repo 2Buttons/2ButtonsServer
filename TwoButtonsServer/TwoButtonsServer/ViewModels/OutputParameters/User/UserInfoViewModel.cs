@@ -6,18 +6,18 @@ namespace TwoButtonsServer.ViewModels.OutputParameters.User
     {
         public int UserId { get; set; }
         public string Login { get; set; }
-        public int? Age { get; set; }
-        public int? Sex { get; set; }
+        public int Age { get; set; }
+        public int Sex { get; set; }
         public string Description { get; set; }
         public string FullAvatarLink { get; set; }
-        public int? YouFollowed { get; set; }
-        public int? HeFollowed { get; set; }
-        public int? AskedQuestions { get; set; }
-        public int? Answers { get; set; }
-        public int? Followers { get; set; }
-        public int? Followed { get; set; }
-        public int? Favorites { get; set; }
-        public int? Comments { get; set; }
+        public bool IsYouFollowed { get; set; }
+        public bool IsHeFollowed { get; set; }
+        public int AskedQuestionsAmount { get; set; }
+        public int AnswersAmount { get; set; }
+        public int FollowersAmount { get; set; }
+        public int FollowedAmount { get; set; }
+        public int FavoritesAmount { get; set; }
+        public int CommentsAmount { get; set; }
 
         public UserStatisticsViewModel UserStatistics { get; set; }
         public List<UserContactsViewModel> Social { get; set; }

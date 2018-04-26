@@ -6,7 +6,7 @@ namespace TwoButtonsDatabase.Entities.Moderators
     {
         [Key]
         public int ComplaintId { get; set; }
-        public int? QuestionId { get; set; }
-        public int? ComplaintAmount { get; set; }
+        public int QuestionId { get; set; }
+        public int ComplaintAmount { get; set; }
     }
 }

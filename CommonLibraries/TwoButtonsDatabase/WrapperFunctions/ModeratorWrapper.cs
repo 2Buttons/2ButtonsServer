@@ -12,7 +12,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     {
         public static bool TryAddComplaint(TwoButtonsContext db, int userId, int questionId, int complaintId)
         {
-            var complaintAddDate = DateTime.Now;
+            var complaintAddDate = DateTime.UtcNow;
             try
             {
                 db.Database.ExecuteSqlCommand($"addComplaint {userId}, {questionId}, {complaintId}, {complaintAddDate}");

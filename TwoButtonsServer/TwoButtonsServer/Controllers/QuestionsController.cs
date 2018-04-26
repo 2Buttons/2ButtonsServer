@@ -28,6 +28,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("addQuestion")]
         public IActionResult AddQuestion([FromBody]AddQuestionViewModel question)
         {
+            if (question == null)
+                return BadRequest($"Input parameter  is null");
+
             if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.Anonymity, question.Audience, question.QuestionType, question.StandartPictureId, question.FirstOption, question.SecondOption, question.BackgroundImageLink, out var questionId))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -48,12 +51,27 @@ namespace TwoButtonsServer.Controllers
                     };
                 return BadRequest(response);
             }
-            return Ok();   
+            return Ok(questionId);   
+        }
+
+        [HttpPost("deleteQuestion")]
+        public IActionResult DeleteQuestion([FromBody]QuestionIdViewModel questionId)
+        {
+            if (questionId == null)
+                return BadRequest($"Input parameter  is null");
+
+            if (!QuestionWrapper.TryDeleteQuestion(_context, questionId.QuestionId))
+                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+          
+            return Ok();
         }
 
         [HttpPost("addAnswer")]
         public IActionResult AddAnswer([FromBody]AddAnswerViewModel answer)
         {
+            if (answer == null)
+                return BadRequest($"Input parameter  is null");
+
             if (QuestionWrapper.TryAddAnswer( _context, answer.UserId, answer.QuestionId, answer.Answer, answer.YourFeedback))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -62,6 +80,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("addComplaint")]
         public IActionResult AddComplaint([FromBody]AddComplaintViewModel complaint)
         {
+            if (complaint == null)
+                return BadRequest($"Input parameter  is null");
+
             if (ModeratorWrapper.TryAddComplaint(_context, complaint.UserId, complaint.QuestionId, complaint.ComplaintId))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -70,6 +91,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("addTag")]
         public IActionResult AddTag([FromBody]AddTagViewModel tag)
         {
+            if (tag == null)
+                return BadRequest($"Input parameter  is null");
+
             if (TagsWrapper.TryAddTag(_context, tag.QuestionId, tag.TagText, tag.Position))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -78,6 +102,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("addRecommendedQuestion")]
         public IActionResult AddRecommendedQuestion([FromBody]AddRecommendedQuestionViewModel recommendedQuestion)
         {
+            if (recommendedQuestion == null)
+                return BadRequest($"Input parameter  is null");
+
             if (UserQuestionsWrapper.TryAddRecommendedQuestion(_context, recommendedQuestion.UserToId, recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -87,6 +114,7 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getComplaints")]
         public IActionResult GetComplaints()
         {
+
             if (ModeratorWrapper.TryGetComplaints(_context, out IEnumerable<ComplaintDb> complaints))
                 return Ok(complaints);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -95,43 +123,34 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getQuestionResults")]
         public IActionResult GetQuestionResults([FromBody]GetQuestionResultsViewModel question)
         {
-            if (ResultsWrapper.TryGetResults(_context, question.UserId, question.QuestionId, question.MinAge, question.MaxAge, question.Sex, out var results))
-                return Ok(results);
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (question == null)
+                return BadRequest($"Input parameter  is null");
+
+            if (!ResultsWrapper.TryGetResults(_context, question.UserId, question.QuestionId, question.MinAge, question.MaxAge, question.Sex, out var results))
+                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+
+            var res = results.Select(x => new
+            {
+                FirstOption = x.FirstOption,
+                SecondOption = x.SecondOption,
+                YourAnswer = x.YourAnswer.GetValueOrDefault(0)
+            });
+
+            return Ok(res);
+            
         }
 
         [HttpPost("getVoters")]
         public IActionResult GetVoters([FromBody]GetVoters voters)
         {
+            if (voters == null)
+                return BadRequest($"Input parameter  is null");
+
             if (ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.VotersAmount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
                 return Ok(answeredList);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
-        [HttpPost("saveFeedback")]
-        public IActionResult SaveFeedback([FromBody]SaveFeedbackViewModel feedback)
-        {
-            if (QuestionWrapper.TrySaveFeedback(_context, feedback.UserId, feedback.QuestionId, feedback.Feeback))
-                return Ok();
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
-
-       
-        [HttpPost("saveFavorites")]
-        public IActionResult SaveFavorites([FromBody]SaveFavoritesViewModel favorites)
-        {
-            if (QuestionWrapper.TrySaveFeedback(_context, favorites.UserId, favorites.QuestionId, favorites.InFavorites))
-                return Ok();
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
-
-   
-        [HttpPost("saveAnswer")]
-        public IActionResult SaveAnswer([FromBody]SaveAnswerViewModel answer)
-        {
-            if (QuestionWrapper.TrySaveFeedback(_context, answer.UserId, answer.QuestionId, answer.Answer))
-                return Ok();
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
+      
     }
 }

@@ -11,7 +11,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     {
         public static bool TryAddRecommendedQuestion(TwoButtonsContext db, int userToId, int userFromId, int questionId)
         {
-            var recommendedDate = DateTime.Now;
+            var recommendedDate = DateTime.UtcNow;
             try
             {
                 db.Database.ExecuteSqlCommand($"addTag {userToId}, {userFromId}, {questionId}, {recommendedDate}");

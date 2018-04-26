@@ -8,9 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels.InputParameters;
+using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
+    /// <summary> 
+    ///  This class performs an important function. 
+    /// </summary> 
     [Produces("application/json")]
     [EnableCors("AllowAllOrigin")]
     //[Route("api/[controller]")]
@@ -22,19 +26,28 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-        // GET api/addComment/
+        /// <summary>
+        /// This method for something
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         [HttpPost("addComment")]
         public IActionResult AddComment([FromBody]AddCommentViewModel comment)
         {
-            if (CommentsWrapper.TryAddComment(_context, comment.UserId, comment.QuestionId, comment.Comment, comment.PreviousCommnetId))
-                return Ok();
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            if (comment == null)
+                return BadRequest($"Input parameter  is null");
+            if (!CommentsWrapper.TryAddComment(_context, comment.UserId, comment.QuestionId, comment.CommentText, comment.PreviousCommnetId, out var commentId))
+                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+            return Ok(commentId);
+            
         }
 
         // GET api/addCommentFeedback/
         [HttpPost("addCommentFeedback")]
         public IActionResult AddCommentFeedback([FromBody]AddCommentFeedbackViewModel commentFeedback)
         {
+            if (commentFeedback == null)
+                return BadRequest($"Input parameter {nameof(commentFeedback)} is null");
             if (CommentsWrapper.TryAddCommentFeedback(_context, commentFeedback.UserId, commentFeedback.QuestionId, commentFeedback.Feedback))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -44,7 +57,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getComments")]
         public IActionResult GetComments([FromBody]GetCommentsViewModel comments)
         {
-            if (CommentsWrapper.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.Amount, out var comment))
+            if (comments == null)
+                return BadRequest($"Input parameter {nameof(comments)} is null");
+            if (CommentsWrapper.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.CommentsAmount, out var comment))
                 return Ok(comment);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

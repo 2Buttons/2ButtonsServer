@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels.InputParameters;
+using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -26,6 +27,8 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody]LoginViewModel login)
         {
+            if (login == null)
+                return BadRequest($"Input parameter  is null");
             if (LoginWrapper.TryGetIdentification(_context, login.Login, login.Password, out var userId))
                 return Ok(userId);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -35,6 +38,8 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("checkValidLogin")]
         public IActionResult CheckValidLogin([FromBody]LoginViewModel login)
         {
+            if (login == null)
+                return BadRequest($"Input parameter  is null");
             if (LoginWrapper.TryCheckValidLogin(_context, login.Login, out var isValid ))
                 return Ok(isValid);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");

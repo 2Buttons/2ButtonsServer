@@ -12,10 +12,10 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
     {
         public static NewsAnsweredQuestionViewModel MapToNewsAnsweredQuestionsViewModel(
             this NewsAnsweredQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             viewModel.AnsweredFollowTo = dbEntity.AnsweredFollowTo;
             viewModel.AnswerDate = dbEntity.AnswerDate;
             return viewModel;
@@ -23,17 +23,17 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
         public static NewsAskedQuestionViewModel MapToNewsAskedQuestionsViewModel(
             this NewsAskedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
-            return QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+            return QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
         }
 
         public static NewsCommentedQuestionViewModel MapToNewsCommentedQuestionsViewModel(
             this NewsCommentedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<NewsCommentedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<NewsCommentedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
 
             viewModel.CommentUserId = dbEntity.CommentUserId;
             viewModel.CommentUserLogin = dbEntity.CommentUserLogin;
@@ -44,10 +44,10 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
         public static NewsFavoriteQuestionViewModel MapToNewsFavoriteQuestionsViewModel(
             this NewsFavoriteQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<NewsFavoriteQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<NewsFavoriteQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             viewModel.FavoriteAddedUserId = dbEntity.FavoriteAddedUserId;
             viewModel.FavoriteAddedUserLogin = dbEntity.FavoriteAddedUserLogin;
             viewModel.FavoriteAddDate = dbEntity.FavoriteAddDate;
@@ -57,11 +57,11 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
         public static NewsRecommendedQuestionViewModel MapNewsRecommendedQuestionsViewModel(
             this NewsRecommendedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
                 QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos,
-                    dbSecondPhotos);
+                    dbSecondPhotos, dbComments);
             viewModel.RecommendedUserId = dbEntity.RecommendedUserId;
             viewModel.RecommendedUserLogin = dbEntity.RecommendedUserLogin;
             viewModel.RecommendedDate = dbEntity.RecommendedDate;
@@ -71,89 +71,89 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
         public static UserAnsweredQuestionsViewModel MapToUserAnsweredQuestionsViewModel(
             this UserAnsweredQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<UserAnsweredQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<UserAnsweredQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
         public static UserAskedQuestionsViewModel MapToUserAskedQuestionsViewModel(
             this UserAskedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<UserAskedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<UserAskedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
         public static UserCommentedQuestionsViewModel MapToUserCommentedQuestionsViewModel(
             this UserCommentedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
 
             viewModel.CommentId = dbEntity.CommentId;
-            viewModel.Comment = dbEntity.Comment;
-            viewModel.CommentLikes = dbEntity.CommentLikes;
-            viewModel.CommentDislikes = dbEntity.CommentDislikes;
-            viewModel.YourCommentFeedback = dbEntity.YourFeedback;
-            viewModel.PreviousCommentId = dbEntity.PreviousCommentId;
+            viewModel.CommentText = dbEntity.Comment;
+            viewModel.CommentLikesAmount = dbEntity.CommentLikes;
+            viewModel.CommentDislikesAmount = dbEntity.CommentDislikes;
+            viewModel.YourCommentFeedback = dbEntity.YourFeedback.GetValueOrDefault(0);
+            viewModel.PreviousCommentId = dbEntity.PreviousCommentId.GetValueOrDefault(0);
             viewModel.CommentAddDate = dbEntity.CommentAddDate;
             return viewModel;
         }
 
         public static UserFavoriteQuestionsViewModel MapToUserFavoriteQuestionsViewModel(
             this UserFavoriteQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<UserFavoriteQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<UserFavoriteQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
 
         public static TopQuestionsViewModel MapToTopQuestionsViewModel(
             this TopQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<TopQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<TopQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
 
         public static AskedQuestionsViewModel MapToAskedQuestionsViewModel(
             this AskedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<AskedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<AskedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
         public static LikedQuestionsViewModel MapToLikedQuestionsViewModel(
             this LikedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<LikedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<LikedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
         public static SavedQuestionsViewModel MapToSavedQuestionsViewModel(
             this SavedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
-            IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
-                QuestionDbToViewModel<SavedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+                QuestionDbToViewModel<SavedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
             return viewModel;
         }
 
 
         private static T QuestionDbToViewModel<T>(QuestionBaseDb dbEntity, IEnumerable<TagDb> dbTags,
-            IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos)
+            IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
             where T : QuestionBaseViewModel, new()
         {
             var question = new T
@@ -168,45 +168,64 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 UserId = dbEntity.UserId,
                 Login = dbEntity.Login,
                 SmallAvatarLink = dbEntity.SmallAvatarLink,
-                Shows = dbEntity.Shows,
-                Likes = dbEntity.Likes,
-                Dislikes = dbEntity.Dislikes,
-                YourFeedback = dbEntity.YourFeedback,
-                YourAnswer = dbEntity.YourAnswer,
-                InFavorites = dbEntity.InFavorites,
-                Comments = dbEntity.Comments,
+                ShowsAmount = dbEntity.Shows,
+                QuestionLikesAmount = dbEntity.Likes,
+                QuestionDislikesAmount = dbEntity.Dislikes,
+                YourFeedback = dbEntity.YourFeedback.GetValueOrDefault(0),
+                YourAnswer = dbEntity.YourAnswer.GetValueOrDefault(0),
+                InFavoritesAmount = dbEntity.InFavorites,
+                CommentsAmount = dbEntity.Comments,
 
-                FirstAnswers = dbEntity.FirstAnswers,
-                SecondAnswers = dbEntity.SecondAnswers,
+                FirstAnswersAmount = dbEntity.FirstAnswers,
+                SecondAnswersAmount = dbEntity.SecondAnswers,
 
-                Tags = dbTags.TagDbToTagViewModel(),
-                FirstPhotos = dbFirstPhotos.PhotoDbToViewModel(),
-                SecondPhotos = dbSecondPhotos.PhotoDbToViewModel()
+                Tags = dbTags.TagsDbToTagViewModel(),
+                FirstPhotos = dbFirstPhotos.PhotosDbToViewModel(),
+                SecondPhotos = dbSecondPhotos.PhotosDbToViewModel(),
+                Comments = dbComments.CommentsDbToViewModel()
             };
             return question;
         }
 
-        public static List<TagViewModel> TagDbToTagViewModel(this IEnumerable<TagDb> dbTags)
+        public static List<TagViewModel> TagsDbToTagViewModel(this IEnumerable<TagDb> dbTags)
         {
             return dbTags.Select(tag => new TagViewModel
-                {
-                    TagId = tag.TagId,
-                    TagText = tag.TagText,
-                    Position = tag.Position
-                })
+            {
+                TagId = tag.TagId,
+                TagText = tag.TagText,
+                Position = tag.Position
+            })
                 .ToList();
         }
 
-        public static List<PhotoViewModel> PhotoDbToViewModel(this IEnumerable<PhotoDb> photosDb)
+        public static List<PhotoViewModel> PhotosDbToViewModel(this IEnumerable<PhotoDb> photosDb)
         {
             return photosDb.Select(p => new PhotoViewModel
-                {
-                    UserId = p.UserId,
-                    Age = p.Age,
-                    Login = p.Login,
-                    Sex = p.Sex,
-                    SmallAvatarLink = p.SmallAvatarLink
-                })
+            {
+                UserId = p.UserId,
+                Age = p.Age,
+                Login = p.Login,
+                Sex = p.Sex,
+                SmallAvatarLink = p.SmallAvatarLink
+            })
+                .ToList();
+        }
+
+        public static List<CommentViewModel> CommentsDbToViewModel(this IEnumerable<CommentDb> commentsDb)
+        {
+            return commentsDb.Select(c => new CommentViewModel
+            {
+                CommentId = c.CommentId,
+                UserId = c.UserId,
+                Login = c.Login,
+                SmallAvatarLink = c.SmallAvatarLink,
+                CommentText = c.Comment,
+                CommentLikesAmount = c.Likes,
+                CommentDislikesAmount = c.Dislikes,
+                YourFeedback = c.YourFeedback.GetValueOrDefault(0),
+                PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
+                CommentAddDate = c.CommentAddDate,
+            })
                 .ToList();
         }
     }

@@ -27,12 +27,12 @@ namespace TwoButtonsDatabase.WrapperFunctions
         }
 
         public static bool TryGetPhotos(TwoButtonsContext db, int userId, int questionId, int answer, int amount, int minAge,
-            int maxAge, int sex, out IEnumerable<PhotoDb> photos)
+            int maxAge, int sex, string city, out IEnumerable<PhotoDb> photos)
         {
             try
             {
                 photos = db.PhotoDb
-                    .FromSql($"select * from dbo.getPhotos({userId}, {questionId}, {answer}, {amount}, {minAge}, {maxAge}, {sex})")
+                    .FromSql($"select * from dbo.getPhotos({userId}, {questionId}, {answer}, {amount}, {minAge}, {maxAge}, {sex}, {city})")
                     .ToList();
                 return true;
             }

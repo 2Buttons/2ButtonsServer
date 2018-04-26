@@ -6,7 +6,7 @@ namespace TwoButtonsDatabase.Entities
     {
         [Key]
         public int FirstOption { get; set; }
-        public int? SecondOption { get; set; }
+        public int SecondOption { get; set; }
         public int? YourAnswer { get; set; }
     }
 }

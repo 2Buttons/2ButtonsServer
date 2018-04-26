@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace TwoButtonsServer.ViewModels.InputParameters
+﻿namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
 {
 
     public class AddCommentViewModel : QuestionIdViewModel
     {
-        public string Comment { get; set; }
+        public string CommentText { get; set; }
         public int PreviousCommnetId { get; set; } = 0;
 
     }
@@ -21,7 +16,7 @@ namespace TwoButtonsServer.ViewModels.InputParameters
 
     public class GetCommentsViewModel : QuestionIdViewModel
     {
-        public int Amount { get; set; }
+        public int CommentsAmount { get; set; } = 100;
 
     }
 }

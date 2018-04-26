@@ -18,14 +18,14 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 Sex = dbEntity.Sex,
                 Description = dbEntity.Description,
                 FullAvatarLink = dbEntity.FullAvatarLink,
-                YouFollowed = dbEntity.YouFollowed,
-                HeFollowed = dbEntity.HeFollowed,
-                AskedQuestions = dbEntity.AskedQuestions,
-                Answers = dbEntity.Answers,
-                Followers = dbEntity.Followers,
-                Followed = dbEntity.Followed,
-                Favorites = dbEntity.Favorites,
-                Comments = dbEntity.Comments,
+                IsYouFollowed = dbEntity.YouFollowed ==1,
+                IsHeFollowed = dbEntity.HeFollowed==1,
+                AskedQuestionsAmount = dbEntity.AskedQuestions,
+                AnswersAmount = dbEntity.Answers,
+                FollowersAmount = dbEntity.Followers,
+                FollowedAmount = dbEntity.Followed,
+                FavoritesAmount = dbEntity.Favorites,
+                CommentsAmount = dbEntity.Comments,
 
                 UserStatistics = statisticsDb.MapToUserStatisticsViewModel(),
 
@@ -67,7 +67,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         {
             return userContactsDb.Select(contact => new UserContactsViewModel
             {
-                Account = contact.Account,
+                ContactsAccount = contact.Account,
                 NetworkId = contact.NetworkId
             })
                 .ToList();

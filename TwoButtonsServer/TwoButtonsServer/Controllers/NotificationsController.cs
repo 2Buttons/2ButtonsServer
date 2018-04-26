@@ -30,6 +30,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getNotifications")]
         public IActionResult GetNotifications([FromBody]UserIdViewModel userId)
         {
+            if (userId == null)
+                return BadRequest($"Input parameter  is null");
+
             if (!NotificationsWrapper.TryGetNotifications(_context, userId.UserId, out var notifications))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
            

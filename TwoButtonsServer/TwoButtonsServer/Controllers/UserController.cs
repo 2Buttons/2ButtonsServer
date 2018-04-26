@@ -27,6 +27,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("addUser")]
         public IActionResult AddUser([FromBody]UserRegistrationViewModel user)
         {
+            if (user == null)
+                return BadRequest($"Input parameter  is null");
+
             if (UserWrapper.TryAddUser(_context, user.Login, user.Password, user.Age, user.Sex, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, out var userId))
                 return Ok(userId);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -35,6 +38,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getUserInfo")]
         public IActionResult GetUserInfo([FromBody]UserPageIdViewModel userPage)
         {
+            if (userPage == null)
+                return BadRequest($"Input parameter  is null");
+
             if (!UserWrapper.TryGetUserInfo(_context, userPage.UserId, userPage.UserPageId, out var userInfo))
                 return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
             if (!UserWrapper.TryGetUserStatistics(_context, userPage.UserId, out var userStatistics))

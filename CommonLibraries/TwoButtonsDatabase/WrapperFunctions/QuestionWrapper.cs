@@ -13,7 +13,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
         public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption,  string backgroundImageLink, out int questionId)
         {
-            var questionAddDate = DateTime.Now;
+            var questionAddDate = DateTime.UtcNow;
 
             var questionIdDb = new SqlParameter
             {
@@ -35,9 +35,24 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
+        public static bool TryDeleteQuestion(TwoButtonsContext db, int questionId)
+        {
+            try
+            {
+                db.Database.ExecuteSqlCommand($"deleteQuestion {questionId}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return false;
+        }
+
+
         public static bool TryAddAnswer(TwoButtonsContext db, int userId, int questionId, string answer, int yourFeedback)
         {
-            var anwserAddDate = DateTime.Now;
+            var anwserAddDate = DateTime.UtcNow;
             try
             {
                 db.Database.ExecuteSqlCommand($"addAnswer {userId}, {questionId}, {answer}, {yourFeedback}, {anwserAddDate}");
@@ -55,54 +70,6 @@ namespace TwoButtonsDatabase.WrapperFunctions
             try
             {
                 db.Database.ExecuteSqlCommand($"updateQuestionBackground {questionId}, {backgroundImageLink}");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return false;
-        }
-
-        public static bool TrySaveFeedback(TwoButtonsContext db, int userId, int questionId, int feedback)
-        {
-            var answered = DateTime.Now;
-
-            try
-            {
-                db.Database.ExecuteSqlCommand($"insertFeedback {userId}, {questionId}, {feedback}, {answered}");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return false;
-        }
-
-        public static bool TrySaveFavorites(TwoButtonsContext db, int userId, int questionId, int inFavorites)
-        {
-            var added = DateTime.Now;
-
-            try
-            {
-                db.Database.ExecuteSqlCommand($"insertFavorites {userId}, {questionId}, {inFavorites}, {added}");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return false;
-        }
-
-        public static bool TrySaveAnswer(TwoButtonsContext db, int userId, int questionId, int answer)
-        {
-            var answered = DateTime.Now;
-
-            try
-            {
-                db.Database.ExecuteSqlCommand($"insertAnswer {userId}, {questionId}, {answer}, {answered}");
                 return true;
             }
             catch (Exception e)

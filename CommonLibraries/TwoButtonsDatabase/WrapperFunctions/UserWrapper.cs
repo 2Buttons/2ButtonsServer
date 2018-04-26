@@ -21,7 +21,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
                 Direction = ParameterDirection.Output,
             };
 
-            var regDate = DateTime.Now;
+            var regDate = DateTime.UtcNow;
 
             try
             {
@@ -70,12 +70,10 @@ namespace TwoButtonsDatabase.WrapperFunctions
         {
             try
             {
-                userInfo = db.UserInfoDb
-                               .FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})").FirstOrDefault() ??
-                           new UserInfoDb();
+                userInfo = db.UserInfoDb.FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})").FirstOrDefault() ?? new UserInfoDb();
 
                 if (userId != getUserId)
-                    if (userInfo.YouFollowed.HasValue && userInfo.YouFollowed == 1)
+                    if (userInfo.YouFollowed == 1)
                         TryUpdateVisits(db, userId, getUserId);
                 return true;
             }
@@ -175,21 +173,6 @@ namespace TwoButtonsDatabase.WrapperFunctions
             //return raiting;
         }
 
-        public static bool TryGetPosts(TwoButtonsContext db, int userId, int getUserId, int amount,
-            out IEnumerable<PostDb> posts)
-        {
-            try
-            {
-                posts = db.PostDb
-                    .FromSql($"select * from dbo.getPosts({userId}, {getUserId}, {amount})").ToList();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            posts = new List<PostDb>();
-            return false;
-        }
+       
     }
 }

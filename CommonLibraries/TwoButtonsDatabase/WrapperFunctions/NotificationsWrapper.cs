@@ -50,7 +50,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             
                 try
                 {
-                    var newLastNots = DateTime.Now;
+                    var newLastNots = DateTime.UtcNow;
                     db.Database.ExecuteSqlCommand($"updateNotsDate {userId}, {newLastNots}");
                     return true;
                 }

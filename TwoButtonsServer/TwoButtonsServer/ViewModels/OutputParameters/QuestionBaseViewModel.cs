@@ -10,25 +10,28 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
         public string BackgroundImageLink { get; set; }
-        public int? QuestionType { get; set; }
+        public int QuestionType { get; set; }
         public DateTime QuestionAddDate { get; set; }
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
         public string Login { get; set; }
         public string SmallAvatarLink { get; set; }
-        public int? Shows { get; set; }
-        public int? Likes { get; set; }
-        public int? Dislikes { get; set; }
-        public int? YourFeedback { get; set; }
-        public int? YourAnswer { get; set; }
-        public int? InFavorites { get; set; }
-        public int? Comments { get; set; }
+        public int ShowsAmount { get; set; }
+        public int QuestionLikesAmount { get; set; }
+        public int QuestionDislikesAmount { get; set; }
+        public int YourFeedback { get; set; }
+        public int YourAnswer { get; set; }
+        public int InFavoritesAmount { get; set; }
+        public int CommentsAmount { get; set; }
 
-        public int? FirstAnswers { get; set; }
-        public int? SecondAnswers { get; set; }
+        public int FirstAnswersAmount { get; set; }
+        public int SecondAnswersAmount { get; set; }
 
-        public List<TagViewModel> Tags { get; set; }
+        public List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
 
-        public List<PhotoViewModel> FirstPhotos { get; set; }
-        public List<PhotoViewModel> SecondPhotos { get; set; }
+        public List<PhotoViewModel> FirstPhotos { get; set; } = new List<PhotoViewModel>();
+        public List<PhotoViewModel> SecondPhotos { get; set; } = new List<PhotoViewModel>();
+
+        public List<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();
+
     }
 }

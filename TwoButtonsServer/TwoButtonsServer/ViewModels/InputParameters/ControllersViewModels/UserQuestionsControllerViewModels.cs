@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace TwoButtonsServer.ViewModels.InputParameters
+namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
 {
     public class UserQuestionsViewModel: UserPageIdViewModel
     {
-        public int QuestionsAmount { get; set; }
-        public PhotoParamsViewModel PhotoParams { get; set; } = new PhotoParamsViewModel();
+        public int QuestionsAmount { get; set; } = 100;
+    }
+
+    public class PersonalQuestionsViewModel : UserIdViewModel
+    {
+        public int QuestionsAmount { get; set; } = 100;
     }
 
     public class TopUserQuestions : UserIdViewModel
     {
-        public DateTime TopAfterDate { get; set; } = DateTime.Now;
+        public DateTime TopAfterDate { get; set; } = DateTime.UtcNow;
         public bool IsOnlyNew { get; set; } = true;
-        public int QuestionsAmount { get; set; }
-        public PhotoParamsViewModel PhotoParams { get; set; } = new PhotoParamsViewModel();
+        public int QuestionsAmount { get; set; } = 100;
     }
 }

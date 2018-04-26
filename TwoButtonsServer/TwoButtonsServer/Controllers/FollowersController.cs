@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels.InputParameters;
+using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -26,6 +27,8 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getFollowers")]
         public IActionResult GetFollowers([FromBody]FollowerViewModel vm)
         {
+            if (vm == null)
+                return BadRequest($"Input parameter {nameof(vm)} is null");
             if (PeopleListWrapper.TryGetFollowers(_context, vm.UserId, vm.UserPageId, vm.Amount, vm.SearchedLogin, out var followers))
                 return Ok(followers);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -34,6 +37,9 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getFollowTo")]
         public IActionResult GetFollowTo([FromBody]FollowerViewModel vm)
         {
+            if (vm == null)
+                return BadRequest($"Input parameter {nameof(vm)} is null");
+
             if (PeopleListWrapper.TryGetFollowTo(_context, vm.UserId, vm.UserPageId, vm.Amount, vm.SearchedLogin, out var follower))
                 return Ok(follower);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");

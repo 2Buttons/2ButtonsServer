@@ -94,13 +94,14 @@ namespace MediaServer.Controllers
         public async Task<IActionResult> UploadUserAvatar(UploadUserAvatarViewModel avatar)
         {
             // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
-
+            if(avatar == null)
+                return BadRequest("Input parameter is null");
             if (avatar.UploadedFile == null)
                 return BadRequest("uploadedFile is null");
             if (avatar.Size == null)
                 return BadRequest("size is null");
 
-            var imageType = size.ToUpper() == "small".ToUpper() ? "UserSmallAvatarPhoto" : "UserFullAvatarPhoto";
+            var imageType = avatar.Size.ToUpper() == "small".ToUpper() ? "UserSmallAvatarPhoto" : "UserFullAvatarPhoto";
 
             imageType = imageType.ToUpper().GetMd5Hash();
             if (!_fileManager.IsValidImageType(imageType))
@@ -134,7 +135,8 @@ namespace MediaServer.Controllers
         public async Task<IActionResult> UploadQuestionBackground(UploadQuestionBackgroundViewModel background)
         {
             // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
-
+            if (background == null)
+                return BadRequest("Input parameter is null");
             if (background.UploadedFile == null)
                 return BadRequest("uploadedFile is null");
             
