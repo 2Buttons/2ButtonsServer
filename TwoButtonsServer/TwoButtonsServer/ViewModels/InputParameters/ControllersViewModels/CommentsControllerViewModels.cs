@@ -8,15 +8,16 @@
 
     }
 
-    public class AddCommentFeedbackViewModel : QuestionIdViewModel
+    public class AddCommentFeedbackViewModel : UserIdViewModel
     {
+        public int CommentId { get; set; }
         public int Feedback { get; set; }
 
     }
 
     public class GetCommentsViewModel : QuestionIdViewModel
     {
-        public int CommentsAmount { get; set; } = 100;
+        public int CommentsAmount { get; set; } = 10000;
 
     }
 }

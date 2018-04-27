@@ -11,8 +11,8 @@ namespace TwoButtonsServer.ViewModels.InputParameters
         public string Login { get; set; }
         [Required]
         public string Password { get; set; }
-        [Compare("Password", ErrorMessage = "Пароли не совпадают")]
-        public string ConfirmPassword { get; set; }
+        //[Compare("Password", ErrorMessage = "Пароли не совпадают")]
+        //public string ConfirmPassword { get; set; }
         public int Age { get; set; }
         public int Sex { get; set; }
         public string Phone { get; set; } = null;

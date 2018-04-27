@@ -8,14 +8,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class PeopleListWrapper
     {
-        public static bool TryGetFollowers(TwoButtonsContext db, int loggedId, int userId, int amount, string searchedLogin,
+        public static bool TryGetFollowers(TwoButtonsContext db, int loggedId, int userId, int page, int amount, string searchedLogin,
             out IEnumerable<FollowerDb> followers)
         {
-            
-                try
+            int fromLine = page * amount;
+            int toLine = (page + 1) * amount;
+            try
                 {
                     followers = db.FollowerDb
-                        .FromSql($"select * from dbo.getFollowers({loggedId}, {userId}, {amount}, {searchedLogin})").ToList();
+                        .FromSql($"select * from dbo.getFollowers({loggedId}, {userId}, {fromLine}, {toLine}, {searchedLogin})").ToList();
                     return true;
                 }
                 catch (Exception e)
@@ -27,14 +28,16 @@ namespace TwoButtonsDatabase.WrapperFunctions
             
         }
 
-        public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int amount, string searchedLogin,
+        public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int page, int amount, string searchedLogin,
             out IEnumerable<FollowerDb> followers)
         {
-            
-                try
+            int fromLine = page * amount;
+            int toLine = (page + 1) * amount;
+
+            try
                 {
                     followers = db.FollowerDb
-                        .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {amount}, {searchedLogin})").ToList();
+                        .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {fromLine}, {toLine}, {searchedLogin})").ToList();
                     return true;
                 }
                 catch (Exception e)
@@ -49,8 +52,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetRecommendedFromContacts(TwoButtonsContext db, int userId, string searchedLogin,
             out IEnumerable<RecommendedFromContactsDb> recommendedFromContacts)
         {
-            
-                try
+            try
                 {
                     recommendedFromContacts = db.RecommendedFromContactsDb
                         .FromSql($"select * from dbo.getRecommendedFromContacts({userId}, {searchedLogin})").ToList();
@@ -84,14 +86,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
             
         }
 
-        public static bool TryGetRecommendedStrangers(TwoButtonsContext db, int userId, int amount, string searchedLogin,
+        public static bool TryGetRecommendedStrangers(TwoButtonsContext db, int userId, int page, int amount, string searchedLogin,
             out IEnumerable<RecommendedStrangersDb> recommendedStrangers)
         {
-            
-                try
+            int fromLine = page * amount;
+            int toLine = (page + 1) * amount;
+            try
                 {
                     recommendedStrangers = db.RecommendedStrangersDb
-                        .FromSql($"select * from dbo.getRecommendedStrangers({userId}, {amount}, {searchedLogin})").ToList();
+                        .FromSql($"select * from dbo.getRecommendedStrangers({userId}, {fromLine}, {toLine}, {searchedLogin})").ToList();
                     return true;
                 }
                 catch (Exception e)

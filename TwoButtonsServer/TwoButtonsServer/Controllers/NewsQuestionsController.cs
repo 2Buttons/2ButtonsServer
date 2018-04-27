@@ -29,17 +29,18 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getNews")]
         public async  Task<IActionResult> GetNews([FromBody]GetNewsViewModel  newsViewModel)
         {
-            if (newsViewModel == null)
+            if (newsViewModel == null || newsViewModel.PageParams == null)
                 return BadRequest($"Input parameter  is null");
 
             int userId= newsViewModel.UserId;
-            int questionsAmount = newsViewModel.QuestionsAmount;
+            int questionsPage = newsViewModel.PageParams.Page;
+            int questionsAmount = newsViewModel.PageParams.Amount;
 
-            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var favoriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
-            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, questionsAmount)).GetAwaiter().GetResult();
+            var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();
+            var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();
+            var favoriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();
+            var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();
+            var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();
 
          
 
@@ -58,9 +59,9 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-        private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int questionsAmount = 100)
+        private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int questionsPage=1, int questionsAmount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, questionsAmount, out var userAskedQuestions))
+            if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, questionsPage, questionsAmount, out var userAskedQuestions))
                 return new List<NewsAskedQuestionViewModel>();
 
             var result = new List<NewsAskedQuestionViewModel>();
@@ -85,9 +86,9 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int questionsAmount = 100)
+        private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context, userId, questionsAmount,
+            if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context, userId, questionsPage, questionsAmount,
                 out var userAnsweredQuestions))
                 return new List<NewsAnsweredQuestionViewModel>();
 
@@ -104,9 +105,9 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int questionsAmount = 100)
+        private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context, userId, questionsAmount,
+            if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context, userId, questionsPage, questionsAmount,
                 out var userFavoriteQuestions))
                 return new List<NewsFavoriteQuestionViewModel>();
 
@@ -123,9 +124,9 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions( int userId, int questionsAmount = 100)
+        private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions( int userId, int questionsPage = 1, int questionsAmount = 100)
         {
-            if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context, userId, questionsAmount,
+            if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context, userId, questionsPage, questionsAmount,
                 out var userCommentedQuestions))
                 return new List<NewsCommentedQuestionViewModel>();
 
@@ -142,10 +143,10 @@ namespace TwoButtonsServer.Controllers
         }
 
 
-        private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int questionsAmount = 100)
+        private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
         {
 
-            if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, questionsAmount,
+            if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, questionsPage, questionsAmount,
                 out var newsRecommendedQuestions))
                 return new List<NewsRecommendedQuestionViewModel>();
 
@@ -164,7 +165,7 @@ namespace TwoButtonsServer.Controllers
         private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
             out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
         {
-            var commentsAmount = 100;
+            var commentsAmount = 10000;
             var photosAmount = 100;
             var minAge = 0;
             var maxAge = 100;

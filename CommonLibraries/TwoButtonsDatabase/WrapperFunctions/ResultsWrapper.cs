@@ -8,23 +8,23 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class ResultsWrapper
     {
-        public static bool TryGetResults(TwoButtonsContext db, int userId, int questionId, int minAge, int maxAge,
-            int sex, out IEnumerable<ResultsDb> results)
-        {
-            try
-            {
-                results = db.ResultsDb
-                    .FromSql($"select * from dbo.getResults({userId}, {questionId}, {minAge}, {maxAge}, {sex})")
-                    .ToList();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            results = new List<ResultsDb>();
-            return false;
-        }
+        //public static bool TryGetResults(TwoButtonsContext db, int userId, int questionId, int minAge, int maxAge,
+        //    int sex, out IEnumerable<ResultsDb> results)
+        //{
+        //    try
+        //    {
+        //        results = db.ResultsDb
+        //            .FromSql($"select * from dbo.getResults({userId}, {questionId}, {minAge}, {maxAge}, {sex})")
+        //            .ToList();
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e);
+        //    }
+        //    results = new List<ResultsDb>();
+        //    return false;
+        //}
 
         public static bool TryGetPhotos(TwoButtonsContext db, int userId, int questionId, int answer, int amount, int minAge,
             int maxAge, int sex, string city, out IEnumerable<PhotoDb> photos)
@@ -44,9 +44,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int amount, int answer,
+        public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int page, int amount, int answer,
             int minAge, int maxAge, int sex, string search, out IEnumerable<AnsweredListDb> answeredList)
         {
+            int fromLine = page * amount;
+            int toLine = (page + 1) * amount;
             try
             {
                 answeredList = db.AnsweredListDb

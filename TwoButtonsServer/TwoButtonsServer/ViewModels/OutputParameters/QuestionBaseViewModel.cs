@@ -20,7 +20,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         public int QuestionDislikesAmount { get; set; }
         public int YourFeedback { get; set; }
         public int YourAnswer { get; set; }
-        public int InFavoritesAmount { get; set; }
+        public bool IsInFavorites { get; set; }
         public int CommentsAmount { get; set; }
 
         public int FirstAnswersAmount { get; set; }

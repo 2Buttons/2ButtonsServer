@@ -27,11 +27,10 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getUserAskedQuestions")]
         public IActionResult GetUserAskedQuestions([FromBody] UserQuestionsViewModel userQuestions)
         {
-            if (userQuestions == null)
+            if (userQuestions == null || userQuestions.PageParams == null)
                 return BadRequest($"Input parameter  is null");
 
-            if (!UserQuestionsWrapper.TryGetUserAskedQuestions(_context, userQuestions.UserId, userQuestions.UserPageId,
-                userQuestions.QuestionsAmount, out var userAskedQuestions))
+            if (!UserQuestionsWrapper.TryGetUserAskedQuestions(_context, userQuestions.UserId, userQuestions.UserPageId, userQuestions.PageParams.Page, userQuestions.PageParams.Amount, out var userAskedQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var result = new List<UserAskedQuestionsViewModel>();
@@ -49,11 +48,11 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getUserAnsweredQuestions")]
         public IActionResult GetUserAnsweredQuestions([FromBody] UserQuestionsViewModel userQuestions)
         {
-            if (userQuestions == null)
+            if (userQuestions == null || userQuestions.PageParams == null)
                 return BadRequest($"Input parameter  is null");
 
             if (!UserQuestionsWrapper.TryGetUserAnsweredQuestions(_context, userQuestions.UserId,
-                userQuestions.UserPageId, userQuestions.QuestionsAmount, out var userAnsweredQuestions))
+                userQuestions.UserPageId, userQuestions.PageParams.Page, userQuestions.PageParams.Amount, out var userAnsweredQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var result = new List<UserAnsweredQuestionsViewModel>();
@@ -70,11 +69,11 @@ namespace TwoButtonsServer.Controllers
         [HttpPost("getUserFavoriteQuestions")]
         public IActionResult GetUserFavoriteQuestions([FromBody] UserQuestionsViewModel userQuestions)
         {
-            if (userQuestions == null)
+            if (userQuestions == null || userQuestions.PageParams == null)
                 return BadRequest($"Input parameter  is null");
 
             if (!UserQuestionsWrapper.TryGetUserFavoriteQuestions(_context, userQuestions.UserId,
-                userQuestions.UserPageId, userQuestions.QuestionsAmount, out var userFavoriteQuestions))
+                userQuestions.UserPageId, userQuestions.PageParams.Page, userQuestions.PageParams.Amount, out var userFavoriteQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var result = new List<UserFavoriteQuestionsViewModel>();
@@ -96,7 +95,7 @@ namespace TwoButtonsServer.Controllers
                 return BadRequest($"Input parameter  is null");
 
             if (!UserQuestionsWrapper.TryGetUserCommentedQuestions(_context, userQuestions.UserId,
-                userQuestions.UserPageId, userQuestions.QuestionsAmount, out var userCommentedQuestions))
+                userQuestions.UserPageId, userQuestions.PageParams.Page, userQuestions.PageParams.Amount,  out var userCommentedQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var result = new List<UserCommentedQuestionsViewModel>();
@@ -118,8 +117,8 @@ namespace TwoButtonsServer.Controllers
                 return BadRequest($"Input parameter  is null");
 
 
-            if (!UserQuestionsWrapper.TryGeTopQuestions(_context, userQuestions.UserId, userQuestions.IsOnlyNew,
-                userQuestions.QuestionsAmount, userQuestions.TopAfterDate, out var userTopQuestions))
+            if (!UserQuestionsWrapper.TryGeTopQuestions(_context, userQuestions.UserId, userQuestions.IsOnlyNew, userQuestions.PageParams.Page,
+                userQuestions.PageParams.Amount, userQuestions.TopAfterDate, out var userTopQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var result = new List<TopQuestionsViewModel>();
@@ -133,76 +132,10 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-
-        [HttpPost("getAskedQuestions")]
-        public IActionResult TryGetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
-        {
-            if (userQuestions == null)
-                return BadRequest($"Input parameter  is null");
-
-            if (!UserQuestionsWrapper.TryGetAskedQuestions(_context, userQuestions.UserId, userQuestions.UserId,
-                userQuestions.QuestionsAmount, out var userAskedQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-
-            var result = new List<AskedQuestionsViewModel>();
-
-            foreach (var question in userAskedQuestions)
-            {
-                GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
-            }
-            return Ok(result);
-        }
-
-
-        [HttpPost("getLikedQuestions")]
-        public IActionResult TryGetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
-        {
-            if (userQuestions == null)
-                return BadRequest($"Input parameter  is null");
-
-            if (!UserQuestionsWrapper.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.UserId,
-                userQuestions.QuestionsAmount, out var userAnsweredQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-
-            var result = new List<LikedQuestionsViewModel>();
-
-            foreach (var question in userAnsweredQuestions)
-            {
-                GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
-            }
-            return Ok(result);
-        }
-
-        [HttpPost("getSavedQuestions")]
-        public IActionResult TryGetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
-        {
-            if (userQuestions == null)
-                return BadRequest($"Input parameter  is null");
-
-            if (!UserQuestionsWrapper.TryGetSavedQuestions(_context, userQuestions.UserId,
-                userQuestions.QuestionsAmount, out var userFavoriteQuestions))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-
-            var result = new List<SavedQuestionsViewModel>();
-
-
-            foreach (var question in userFavoriteQuestions)
-            {
-                GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
-            }
-            return Ok(result);
-        }
-
         private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
             out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
         {
-            var commentsAmount = 100;
+            var commentsAmount = 10000;
             var photosAmount = 100;
             var minAge = 0;
             var maxAge = 100;

@@ -19,8 +19,8 @@ namespace TwoButtonsServer.ViewModels.OutputParameters.User
         public int FavoritesAmount { get; set; }
         public int CommentsAmount { get; set; }
 
-        public UserStatisticsViewModel UserStatistics { get; set; }
-        public List<UserContactsViewModel> Social { get; set; }
+        public UserStatisticsViewModel UserStatistics { get; set; } = new UserStatisticsViewModel();
+        public List<UserContactsViewModel> Social { get; set; } = new List<UserContactsViewModel>();
     }
 
     

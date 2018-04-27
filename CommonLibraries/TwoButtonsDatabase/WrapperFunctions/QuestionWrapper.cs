@@ -50,7 +50,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
         }
 
 
-        public static bool TryAddAnswer(TwoButtonsContext db, int userId, int questionId, string answer, int yourFeedback)
+        public static bool TryAddAnswer(TwoButtonsContext db, int userId, int questionId, int answer, int yourFeedback)
         {
             var anwserAddDate = DateTime.UtcNow;
             try
@@ -79,13 +79,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+        public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
         {
             var isAnonimus = 1;
+            int fromLine = page * amount;
+            int toLine = (page + 1) * amount;
             try
             {
                 userAskedQuestions = db.UserAskedQuestionsDb
-                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {fromLine}, {toLine}, {isAnonimus})")
                     .ToList();
                 return true;
             }
@@ -97,13 +99,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+        public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
         {
             var isAnonimus = 1;
+            int fromLine = page * amount;
+            int toLine = (page + 1) * amount;
             try
             {
                 userAskedQuestions = db.UserAskedQuestionsDb
-                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {amount}, {isAnonimus})")
+                    .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {fromLine}, {toLine}, {isAnonimus})")
                     .ToList();
                 return true;
             }

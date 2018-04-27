@@ -15,6 +15,6 @@ namespace TwoButtonsDatabase.Entities
         public string SmallAvatarLink { get; set; }
         public int Answers { get; set; }
         public int Raiting { get; set; }
-        public int? YourFeedback { get; set; }
+        public int YourFeedback { get; set; }
     }
 }

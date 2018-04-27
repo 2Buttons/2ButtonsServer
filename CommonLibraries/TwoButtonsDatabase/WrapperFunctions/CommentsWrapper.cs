@@ -49,12 +49,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryGetComments(TwoButtonsContext db, int userId, int questionId, int amount,
-            out IEnumerable<CommentDb> comments)
+        public static bool TryGetComments(TwoButtonsContext db, int userId, int questionId, int amount, out IEnumerable<CommentDb> comments)
         {
             try
             {
-                comments = db.CommentDb.FromSql($"select * from dbo.getComments({userId}, {questionId}, {amount})")
+                comments = db.CommentDb.FromSql($"select * from dbo.getComments({userId}, {questionId}, {1}, {amount})")
                     .ToList();
                 return true;
             }

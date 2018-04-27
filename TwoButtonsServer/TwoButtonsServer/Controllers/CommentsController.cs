@@ -12,9 +12,7 @@ using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace TwoButtonsServer.Controllers
 {
-    /// <summary> 
-    ///  This class performs an important function. 
-    /// </summary> 
+
     [Produces("application/json")]
     [EnableCors("AllowAllOrigin")]
     //[Route("api/[controller]")]
@@ -26,11 +24,6 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-        /// <summary>
-        /// This method for something
-        /// </summary>
-        /// <param name="comment"></param>
-        /// <returns></returns>
         [HttpPost("addComment")]
         public IActionResult AddComment([FromBody]AddCommentViewModel comment)
         {
@@ -42,18 +35,16 @@ namespace TwoButtonsServer.Controllers
             
         }
 
-        // GET api/addCommentFeedback/
         [HttpPost("addCommentFeedback")]
         public IActionResult AddCommentFeedback([FromBody]AddCommentFeedbackViewModel commentFeedback)
         {
             if (commentFeedback == null)
                 return BadRequest($"Input parameter {nameof(commentFeedback)} is null");
-            if (CommentsWrapper.TryAddCommentFeedback(_context, commentFeedback.UserId, commentFeedback.QuestionId, commentFeedback.Feedback))
+            if (CommentsWrapper.TryAddCommentFeedback(_context, commentFeedback.UserId, commentFeedback.CommentId, commentFeedback.Feedback))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
-        // GET api/getComments/
         [HttpPost("getComments")]
         public IActionResult GetComments([FromBody]GetCommentsViewModel comments)
         {

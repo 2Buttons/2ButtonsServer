@@ -88,16 +88,6 @@ namespace TwoButtonsServer.Controllers
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
-        [HttpPost("addTag")]
-        public IActionResult AddTag([FromBody]AddTagViewModel tag)
-        {
-            if (tag == null)
-                return BadRequest($"Input parameter  is null");
-
-            if (TagsWrapper.TryAddTag(_context, tag.QuestionId, tag.TagText, tag.Position))
-                return Ok();
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
 
         [HttpPost("addRecommendedQuestion")]
         public IActionResult AddRecommendedQuestion([FromBody]AddRecommendedQuestionViewModel recommendedQuestion)
@@ -120,25 +110,18 @@ namespace TwoButtonsServer.Controllers
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
-        [HttpPost("getQuestionResults")]
-        public IActionResult GetQuestionResults([FromBody]GetQuestionResultsViewModel question)
-        {
-            if (question == null)
-                return BadRequest($"Input parameter  is null");
+        //[HttpPost("getQuestionResults")]
+        //public IActionResult GetQuestionResults([FromBody]GetQuestionResultsViewModel question)
+        //{
+        //    if (question == null)
+        //        return BadRequest($"Input parameter  is null");
 
-            if (!ResultsWrapper.TryGetResults(_context, question.UserId, question.QuestionId, question.MinAge, question.MaxAge, question.Sex, out var results))
-                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        //    if (!ResultsWrapper.TryGetResults(_context, question.UserId, question.QuestionId, question.MinAge, question.MaxAge, question.Sex, out var results))
+        //        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-            var res = results.Select(x => new
-            {
-                FirstOption = x.FirstOption,
-                SecondOption = x.SecondOption,
-                YourAnswer = x.YourAnswer.GetValueOrDefault(0)
-            });
-
-            return Ok(res);
+        //    return Ok(results);
             
-        }
+        //}
 
         [HttpPost("getVoters")]
         public IActionResult GetVoters([FromBody]GetVoters voters)
@@ -146,11 +129,11 @@ namespace TwoButtonsServer.Controllers
             if (voters == null)
                 return BadRequest($"Input parameter  is null");
 
-            if (ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.VotersAmount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
-                return Ok(answeredList);
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
+            if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId,voters.PageParams.Page, voters.PageParams.Amount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
+                return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-      
+            return Ok(answeredList);
+            
+        }
     }
 }

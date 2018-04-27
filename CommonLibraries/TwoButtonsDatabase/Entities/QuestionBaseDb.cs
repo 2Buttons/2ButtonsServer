@@ -21,8 +21,8 @@ namespace TwoButtonsDatabase.Entities
         public int Shows { get; set; }
         public int Likes { get; set; }
         public int Dislikes { get; set; }
-        public int? YourFeedback { get; set; }
-        public int? YourAnswer { get; set; }
+        public int YourFeedback { get; set; }
+        public int YourAnswer { get; set; }
         public int InFavorites { get; set; }
         public int Comments { get; set; }
 

@@ -2,7 +2,7 @@
 {
     public class FollowerViewModel : UserPageIdViewModel
     {
-        public int Amount { get; set; } = 100;
+        public PageParams PageParams { get; set; } = new PageParams();
         public string SearchedLogin { get; set; } = "";
     }
 }

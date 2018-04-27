@@ -10,13 +10,14 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 {
     public static class MappingQuestionDbToViewModel
     {
+
         public static NewsAnsweredQuestionViewModel MapToNewsAnsweredQuestionsViewModel(
             this NewsAnsweredQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
             IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
         {
             var viewModel =
                 QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, dbComments);
-            viewModel.AnsweredFollowTo = dbEntity.AnsweredFollowTo;
+            viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
             viewModel.AnswerDate = dbEntity.AnswerDate;
             return viewModel;
         }
@@ -37,7 +38,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
             viewModel.CommentUserId = dbEntity.CommentUserId;
             viewModel.CommentUserLogin = dbEntity.CommentUserLogin;
-            viewModel.CommentsAmount = dbEntity.CommentsAmount;
+            viewModel.UserCommentsAmount = dbEntity.CommentsAmount;
             viewModel.CommentAddDate = dbEntity.CommentAddDate;
             return viewModel;
         }
@@ -98,7 +99,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             viewModel.CommentText = dbEntity.Comment;
             viewModel.CommentLikesAmount = dbEntity.CommentLikes;
             viewModel.CommentDislikesAmount = dbEntity.CommentDislikes;
-            viewModel.YourCommentFeedback = dbEntity.YourFeedback.GetValueOrDefault(0);
+            viewModel.YourCommentFeedback = dbEntity.YourFeedback;
             viewModel.PreviousCommentId = dbEntity.PreviousCommentId.GetValueOrDefault(0);
             viewModel.CommentAddDate = dbEntity.CommentAddDate;
             return viewModel;
@@ -171,9 +172,9 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 ShowsAmount = dbEntity.Shows,
                 QuestionLikesAmount = dbEntity.Likes,
                 QuestionDislikesAmount = dbEntity.Dislikes,
-                YourFeedback = dbEntity.YourFeedback.GetValueOrDefault(0),
-                YourAnswer = dbEntity.YourAnswer.GetValueOrDefault(0),
-                InFavoritesAmount = dbEntity.InFavorites,
+                YourFeedback = dbEntity.YourFeedback,
+                YourAnswer = dbEntity.YourAnswer,
+                IsInFavorites = dbEntity.InFavorites==1,
                 CommentsAmount = dbEntity.Comments,
 
                 FirstAnswersAmount = dbEntity.FirstAnswers,
@@ -222,7 +223,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 CommentText = c.Comment,
                 CommentLikesAmount = c.Likes,
                 CommentDislikesAmount = c.Dislikes,
-                YourFeedback = c.YourFeedback.GetValueOrDefault(0),
+                YourFeedback = c.YourFeedback,
                 PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
                 CommentAddDate = c.CommentAddDate,
             })

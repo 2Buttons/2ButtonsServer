@@ -2,6 +2,6 @@
 {
     public class GetNewsViewModel : UserIdViewModel
     {
-        public int QuestionsAmount { get; set; } = 100;
+        public PageParams PageParams { get; set; } = new PageParams();
     }
 }
