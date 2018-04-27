@@ -14,11 +14,11 @@ namespace TwoButtonsServer.Controllers
     [EnableCors("AllowAllOrigin")]
     [Produces("application/json")]
     //[Route("api/[controller]")]
-    public class UserQuestionsController : Controller //To get user's posts
+    public class UserPageQuestionsController : Controller //To get user's posts
     {
         private readonly TwoButtonsContext _context;
 
-        public UserQuestionsController(TwoButtonsContext context)
+        public UserPageQuestionsController(TwoButtonsContext context)
         {
             _context = context;
         }
