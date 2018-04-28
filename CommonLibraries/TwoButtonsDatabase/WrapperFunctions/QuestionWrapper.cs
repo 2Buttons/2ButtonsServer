@@ -11,7 +11,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     public static class QuestionWrapper
     {
 
-        public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, int anonymity, int audience, int questionType, int standartPictureId, string firstOption, string secondOption,  string backgroundImageLink, out int questionId)
+        public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, string backgroundImageLink, int anonymity, int audience, int questionType, string firstOption, string secondOption,  out int questionId)
         {
             var questionAddDate = DateTime.UtcNow;
 
@@ -23,7 +23,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
             try
             {
-                db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {standartPictureId}, {firstOption}, {secondOption}, {questionIdDb} OUT");
+                db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
                 questionId = (int)questionIdDb.Value;
                 return true;
             }

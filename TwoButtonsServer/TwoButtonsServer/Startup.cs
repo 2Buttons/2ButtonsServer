@@ -15,40 +15,42 @@ using TwoButtonsDatabase;
 
 namespace TwoButtonsServer
 {
-    public class Startup
+  public class Startup
+  {
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
-                    .AllowAnyMethod());
-            });
-            services.AddDbContext<TwoButtonsContext>(options=> options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsDatabase")));
-        }
-
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-
-            app.UseMvc();
-        }
-
-       
+      Configuration = configuration;
     }
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc();
+      services.AddCors(options =>
+      {
+        options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
+                  .AllowAnyMethod());
+      });
+      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsDatabase")));
+    }
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    {
+      loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+      loggerFactory.AddDebug();
+
+      if (env.IsDevelopment())
+      {
+        app.UseDeveloperExceptionPage();
+      }
+
+      app.UseDefaultFiles();
+      app.UseStaticFiles();
+
+      app.UseMvc();
+    }
+
+
+  }
 }

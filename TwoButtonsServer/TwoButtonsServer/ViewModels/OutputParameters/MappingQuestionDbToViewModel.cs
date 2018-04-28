@@ -180,15 +180,15 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 FirstAnswersAmount = dbEntity.FirstAnswers,
                 SecondAnswersAmount = dbEntity.SecondAnswers,
 
-                Tags = dbTags.TagsDbToTagViewModel(),
-                FirstPhotos = dbFirstPhotos.PhotosDbToViewModel(),
-                SecondPhotos = dbSecondPhotos.PhotosDbToViewModel(),
-                Comments = dbComments.CommentsDbToViewModel()
+                Tags = dbTags.MapTagsDbToTagViewModel(),
+                FirstPhotos = dbFirstPhotos.MapPhotosDbToViewModel(),
+                SecondPhotos = dbSecondPhotos.MapPhotosDbToViewModel(),
+                Comments = dbComments.MapCommentsDbToViewModel()
             };
             return question;
         }
 
-        public static List<TagViewModel> TagsDbToTagViewModel(this IEnumerable<TagDb> dbTags)
+        public static List<TagViewModel> MapTagsDbToTagViewModel(this IEnumerable<TagDb> dbTags)
         {
             return dbTags.Select(tag => new TagViewModel
             {
@@ -199,7 +199,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 .ToList();
         }
 
-        public static List<PhotoViewModel> PhotosDbToViewModel(this IEnumerable<PhotoDb> photosDb)
+        public static List<PhotoViewModel> MapPhotosDbToViewModel(this IEnumerable<PhotoDb> photosDb)
         {
             return photosDb.Select(p => new PhotoViewModel
             {
@@ -212,7 +212,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 .ToList();
         }
 
-        public static List<CommentViewModel> CommentsDbToViewModel(this IEnumerable<CommentDb> commentsDb)
+        public static List<CommentViewModel> MapCommentsDbToViewModel(this IEnumerable<CommentDb> commentsDb)
         {
             return commentsDb.Select(c => new CommentViewModel
             {
@@ -229,5 +229,22 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             })
                 .ToList();
         }
-    }
+
+
+      public static List<AnsweredListViewModel> MapAnsweredListDbToViewModel(this IEnumerable<AnsweredListDb> answeredList)
+      {
+        return answeredList.Select(v => new AnsweredListViewModel
+          {
+            UserId = v.UserId,
+            Login= v.Login,
+            SmallAvatarLink = v.SmallAvatarLink,
+            Age = v.Age,
+            Sex = v.Sex,
+            IsHeFollowed = v.HeFollowed,
+            IsYouFollowed = v.YouFollowed,
+        })
+          .ToList();
+      }
+  }
 }
+

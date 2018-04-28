@@ -5,7 +5,7 @@ using TwoButtonsServer.ViewModels.OutputParameters.User;
 
 namespace TwoButtonsServer.ViewModels.OutputParameters
 {
-    public static class MappintUserDbToViewModel
+    public static class MappingUserDbToViewModel
     {
         public static UserInfoViewModel MapToUserInfoViewModel(
             this UserInfoDb dbEntity, UserStatisticsDb statisticsDb, IEnumerable<UserContactsDb> userContactsDb)
@@ -34,7 +34,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             return viewModel;
         }
 
-        public static UserStatisticsViewModel MapToUserStatisticsViewModel(
+    public static UserStatisticsViewModel MapToUserStatisticsViewModel(
             this UserStatisticsDb dbEntity)
         {
             var viewModel = new UserStatisticsViewModel

@@ -9,6 +9,7 @@ using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
 using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
+using TwoButtonsServer.ViewModels.OutputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -30,7 +31,7 @@ namespace TwoButtonsServer.Controllers
             if (vm == null || vm.PageParams == null)
                 return BadRequest($"Input parameter {nameof(vm)} is null");
             if (PeopleListWrapper.TryGetFollowers(_context, vm.UserId, vm.UserPageId, vm.PageParams.Page, vm.PageParams.Amount, vm.SearchedLogin, out var followers))
-                return Ok(followers);
+                return Ok(followers.MapToUserContactsViewModel());
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 
@@ -41,7 +42,7 @@ namespace TwoButtonsServer.Controllers
                 return BadRequest($"Input parameter {nameof(vm)} is null");
 
             if (PeopleListWrapper.TryGetFollowTo(_context, vm.UserId, vm.UserPageId, vm.PageParams.Page, vm.PageParams.Amount, vm.SearchedLogin, out var follower))
-                return Ok(follower);
+                return Ok(follower.MapToUserContactsViewModel());
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
 

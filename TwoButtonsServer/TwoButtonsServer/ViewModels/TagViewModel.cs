@@ -1,4 +1,4 @@
-﻿namespace TwoButtonsServer.ViewModels.InputParameters
+﻿namespace TwoButtonsServer.ViewModels
 {
     public class TagViewModel
     {

@@ -9,8 +9,10 @@ using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.Moderators;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.ViewModels;
 using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
+using TwoButtonsServer.ViewModels.OutputParameters;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -31,7 +33,7 @@ namespace TwoButtonsServer.Controllers
             if (question == null)
                 return BadRequest($"Input parameter  is null");
 
-            if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.Anonymity, question.Audience, question.QuestionType, question.StandartPictureId, question.FirstOption, question.SecondOption, question.BackgroundImageLink, out var questionId))
+            if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.BackgroundImageLink, question.Anonymity, question.Audience, question.QuestionType, question.FirstOption, question.SecondOption, out var questionId))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
             var badAddedTags = new List<TagViewModel>();
@@ -132,7 +134,7 @@ namespace TwoButtonsServer.Controllers
             if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId,voters.PageParams.Page, voters.PageParams.Amount, voters.Option, voters.MinAge, voters.MaxAge, voters.Sex, voters.SearchedLogin, out var answeredList))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-            return Ok(answeredList);
+            return Ok(answeredList.MapAnsweredListDbToViewModel());
             
         }
     }
