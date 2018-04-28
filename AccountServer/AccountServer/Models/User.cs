@@ -1,4 +1,4 @@
-﻿namespace AuthorizationServer.Models
+﻿namespace AccountServer.Models
 {
     public class User
     {

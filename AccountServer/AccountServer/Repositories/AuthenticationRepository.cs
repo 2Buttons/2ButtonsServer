@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AuthorizationServer.Models
+namespace AccountServer.Repositories
 {
-    public class Question
+    public class AuthenticationRepository
     {
-        public string OwnerId { get; set; }
     }
 }

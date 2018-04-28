@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthorizationServer.Models
+namespace AccountServer.Models
 {
     public class DemoDbContext : DbContext
     {

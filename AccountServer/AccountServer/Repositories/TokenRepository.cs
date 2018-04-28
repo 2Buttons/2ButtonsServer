@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using AuthorizationServer.Models;
+using AccountServer.Models;
 
-namespace AuthorizationServer.Repositories
+namespace AccountServer.Repositories
 {
     public class TokenRepository : ITokenRepository
     {

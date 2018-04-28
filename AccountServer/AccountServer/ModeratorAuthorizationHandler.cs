@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AuthorizationServer.Models;
+﻿using System.Threading.Tasks;
+using AccountServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace AuthorizationServer
+namespace AccountServer
 {
     public class ModeratorAuthorizationHandler : AuthorizationHandler<ModeratorRequirement, Question>
     {

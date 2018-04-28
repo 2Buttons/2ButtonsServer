@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AuthorizationServer.Models;
-using AuthorizationServer.Repositories;
-using AuthorizationServer.ViewModels;
+using AccountServer.Models;
+using AccountServer.Repositories;
+using AccountServer.ViewModels;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
 
-namespace AuthorizationServer.Controllers
+namespace AccountServer.Controllers
 {
     [EnableCors("AllowAllOrigin")]
     [Route("/token")]

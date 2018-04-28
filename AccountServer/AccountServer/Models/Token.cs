@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AuthorizationServer.Models
+namespace AccountServer.Models
 {
     [Table("token")]
     public class Token

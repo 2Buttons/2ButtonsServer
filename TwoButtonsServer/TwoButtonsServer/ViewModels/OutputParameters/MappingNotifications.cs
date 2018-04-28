@@ -13,7 +13,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 UserId = n.UserId,
                 Login = n.Login,
                 SmallAvatarLink = n.SmallAvatarLink,
-                Action = n.Action,  /*1 - follow, 2 - recommend, 3 - answer*/
+                Action = (ActionType)n.Action,  /*1 - follow, 2 - recommend, 3 - answer*/
                 EmmiterId = n.EmmiterId,
                 ActionDate = n.ActionDate
                 }

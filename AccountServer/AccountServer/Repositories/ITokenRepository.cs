@@ -1,6 +1,6 @@
-﻿using AuthorizationServer.Models;
+﻿using AccountServer.Models;
 
-namespace AuthorizationServer.Repositories
+namespace AccountServer.Repositories
 {
     public interface ITokenRepository
     {

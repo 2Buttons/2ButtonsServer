@@ -1,4 +1,4 @@
-﻿namespace AuthorizationServer.ViewModels
+﻿namespace AccountServer.ViewModels
 {
     public class LoginViewModel
     {
