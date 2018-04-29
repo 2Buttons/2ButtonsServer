@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AccountServer.Repositories
+namespace AccountServer.ViewModels.OutputParameters
 {
-    public class AuthenticationContext
+    public class ReturnedToken
     {
     }
 }

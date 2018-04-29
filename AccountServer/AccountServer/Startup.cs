@@ -1,7 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AccountServer.Entities;
+using AccountServer.Models;
+using AccountServer.Repositories;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using TwoButtonsDatabase;
 
 namespace AccountServer
 {
@@ -25,18 +32,29 @@ namespace AccountServer
             });
             services.AddOptions();
             services.Configure<Audience>(Configuration.GetSection("Audience"));
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+          services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsDatabase")));
+          services.AddDbContext<AccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountDatabase")));
+       //   services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+      loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+          loggerFactory.AddDebug();
 
+          if (env.IsDevelopment())
+          {
+            app.UseDeveloperExceptionPage();
+          }
 
-            app.UseMvc();
+          app.UseDefaultFiles();
+          app.UseStaticFiles();
+
+          app.UseAuthentication();
+
+      app.UseMvc();
 
         }
     }
