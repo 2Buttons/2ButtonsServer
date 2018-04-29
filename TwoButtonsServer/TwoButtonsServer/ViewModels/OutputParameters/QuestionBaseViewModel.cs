@@ -10,7 +10,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         public string FirstOption { get; set; }
         public string SecondOption { get; set; }
         public string BackgroundImageLink { get; set; }
-        public int QuestionType { get; set; }
+        public QuestionType QuestionType { get; set; }
         public DateTime QuestionAddDate { get; set; }
         public int UserId { get; set; }
         public string Login { get; set; }
@@ -18,8 +18,8 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         public int ShowsAmount { get; set; }
         public int QuestionLikesAmount { get; set; }
         public int QuestionDislikesAmount { get; set; }
-        public int YourFeedback { get; set; }
-        public int YourAnswer { get; set; }
+        public FeedbackType YourFeedbackType { get; set; }
+        public AnswerType YourAnswerType { get; set; }
         public bool IsInFavorites { get; set; }
         public int CommentsAmount { get; set; }
 

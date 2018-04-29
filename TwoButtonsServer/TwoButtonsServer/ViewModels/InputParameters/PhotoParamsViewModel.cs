@@ -1,4 +1,6 @@
-﻿namespace TwoButtonsServer.ViewModels.InputParameters
+﻿using TwoButtonsServer.ViewModels.OutputParameters;
+
+namespace TwoButtonsServer.ViewModels.InputParameters
 {
     public class PhotoParamsViewModel
     {
@@ -8,7 +10,7 @@
 
         public int MaxAge { get; set; } = 100;
 
-        public int Sex { get; set; } = 0;
+        public SexType SexType { get; set; } = 0;
 
         public string City { get; set; } = string.Empty;
     }

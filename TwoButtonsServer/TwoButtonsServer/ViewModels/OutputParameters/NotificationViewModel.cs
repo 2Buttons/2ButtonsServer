@@ -11,12 +11,4 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         public int EmmiterId { get; set; }
         public DateTime ActionDate { get; set; } 
     }
-
-  public enum ActionType
-  {
-    Follow=1,
-    Recommend = 2,
-    Answer = 3
-  }
-
 }

@@ -20,20 +20,5 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             )
                 .ToList();
         }
-
-        private static string DescribeAction(int? action)
-        {
-            switch (action)
-            {
-                case 1:
-                    return "follow";
-                case 2:
-                    return "recommend";
-                case 3:
-                    return "answer";
-                default:
-                    return string.Empty;
-            }
-        }
     }
 }

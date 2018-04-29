@@ -11,7 +11,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       public string Login { get; set; }
       public string SmallAvatarLink { get; set; }
       public int Age { get; set; }
-      public int Sex { get; set; }
+      public SexType SexType { get; set; }
       public bool IsHeFollowed { get; set; }
       public bool IsYouFollowed { get; set; }
   }

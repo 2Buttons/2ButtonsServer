@@ -72,7 +72,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
               Login = f.Login,
               SmallAvatarLink = f.SmallAvatarLink,
               Age = f.Age,
-              Sex = f.Sex,
+              SexType = (SexType)f.Sex,
               IsYouFollowed = f.YouFollowed,
               IsHeFollowed = f.HeFollowed,
             })

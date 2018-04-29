@@ -99,7 +99,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             viewModel.CommentText = dbEntity.Comment;
             viewModel.CommentLikesAmount = dbEntity.CommentLikes;
             viewModel.CommentDislikesAmount = dbEntity.CommentDislikes;
-            viewModel.YourCommentFeedback = dbEntity.YourFeedback;
+            viewModel.YourCommentFeedbackType = (FeedbackType)dbEntity.YourFeedback;
             viewModel.PreviousCommentId = dbEntity.PreviousCommentId.GetValueOrDefault(0);
             viewModel.CommentAddDate = dbEntity.CommentAddDate;
             return viewModel;
@@ -164,7 +164,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 FirstOption = dbEntity.FirstOption,
                 SecondOption = dbEntity.SecondOption,
                 BackgroundImageLink = dbEntity.BackgroundImageLink,
-                QuestionType = dbEntity.QuestionType,
+                QuestionType = (QuestionType)dbEntity.QuestionType,
                 QuestionAddDate = dbEntity.QuestionAddDate,
                 UserId = dbEntity.UserId,
                 Login = dbEntity.Login,
@@ -172,8 +172,8 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 ShowsAmount = dbEntity.Shows,
                 QuestionLikesAmount = dbEntity.Likes,
                 QuestionDislikesAmount = dbEntity.Dislikes,
-                YourFeedback = dbEntity.YourFeedback,
-                YourAnswer = dbEntity.YourAnswer,
+                YourFeedbackType = (FeedbackType)dbEntity.YourFeedback,
+                YourAnswerType = (AnswerType)dbEntity.YourAnswer,
                 IsInFavorites = dbEntity.InFavorites==1,
                 CommentsAmount = dbEntity.Comments,
 
@@ -206,7 +206,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 UserId = p.UserId,
                 Age = p.Age,
                 Login = p.Login,
-                Sex = p.Sex,
+                SexType = (SexType)p.Sex,
                 SmallAvatarLink = p.SmallAvatarLink
             })
                 .ToList();
@@ -223,7 +223,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 CommentText = c.Comment,
                 CommentLikesAmount = c.Likes,
                 CommentDislikesAmount = c.Dislikes,
-                YourFeedback = c.YourFeedback,
+                YourFeedbackType = (FeedbackType)c.YourFeedback,
                 PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
                 CommentAddDate = c.CommentAddDate,
             })
@@ -239,7 +239,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             Login= v.Login,
             SmallAvatarLink = v.SmallAvatarLink,
             Age = v.Age,
-            Sex = v.Sex,
+            SexType = (SexType)v.Sex,
             IsHeFollowed = v.HeFollowed,
             IsYouFollowed = v.YouFollowed,
         })

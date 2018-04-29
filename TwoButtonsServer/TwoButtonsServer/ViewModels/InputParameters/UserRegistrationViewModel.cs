@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using TwoButtonsServer.ViewModels.OutputParameters;
 
 namespace TwoButtonsServer.ViewModels.InputParameters
 {
@@ -14,7 +15,7 @@ namespace TwoButtonsServer.ViewModels.InputParameters
         //[Compare("Password", ErrorMessage = "Пароли не совпадают")]
         //public string ConfirmPassword { get; set; }
         public int Age { get; set; }
-        public int Sex { get; set; }
+        public SexType SexType { get; set; }
         public string Phone { get; set; } = null;
         public string Description { get; set; } = null;
         public string FullAvatarLink { get; set; } = null;

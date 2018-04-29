@@ -8,7 +8,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters.UserQuestions
         public string CommentText { get; set; }
         public int CommentLikesAmount { get; set; }
         public int CommentDislikesAmount { get; set; }
-        public int YourCommentFeedback { get; set; }
+        public FeedbackType YourCommentFeedbackType { get; set; }
         public int PreviousCommentId { get; set; }
         public DateTime CommentAddDate { get; set; }
     }

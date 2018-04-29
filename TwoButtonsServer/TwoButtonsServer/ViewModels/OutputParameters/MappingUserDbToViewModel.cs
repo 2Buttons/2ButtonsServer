@@ -15,7 +15,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 UserId = dbEntity.UserId,
                 Login = dbEntity.Login,
                 Age = dbEntity.Age,
-                Sex = dbEntity.Sex,
+                SexType = (SexType)dbEntity.Sex,
                 Description = dbEntity.Description,
                 FullAvatarLink = dbEntity.FullAvatarLink,
                 IsYouFollowed = dbEntity.YouFollowed ==1,
@@ -68,7 +68,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             return userContactsDb.Select(contact => new UserContactsViewModel
             {
                 ContactsAccount = contact.Account,
-                NetworkId = contact.NetworkId
+                NetworkType = (NetworkType)contact.NetworkId
             })
                 .ToList();
         }

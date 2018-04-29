@@ -29,9 +29,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetUserAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page,  int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
         {
             var isAnonimus = 0;
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
-            try
+           // int fromLine = page * amount;
+           // int toLine = (page + 1) * amount;
+          int fromLine = page * amount-amount+1;
+          int toLine = page * amount;
+      try
             {
                 userAskedQuestions = db.UserAskedQuestionsDb
                     .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {fromLine}, {toLine}, {isAnonimus})")

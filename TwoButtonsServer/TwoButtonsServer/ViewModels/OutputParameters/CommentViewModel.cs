@@ -14,7 +14,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         public string CommentText { get; set; }
         public int CommentLikesAmount { get; set; }
         public int CommentDislikesAmount { get; set; }
-        public int YourFeedback { get; set; }
+        public FeedbackType YourFeedbackType { get; set; }
         public int PreviousCommentId { get; set; }
         public DateTime CommentAddDate { get; set; }
     }

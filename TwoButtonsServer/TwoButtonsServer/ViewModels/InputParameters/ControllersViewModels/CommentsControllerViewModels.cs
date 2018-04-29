@@ -1,4 +1,6 @@
-﻿namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
+﻿using TwoButtonsServer.ViewModels.OutputParameters;
+
+namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
 {
 
     public class AddCommentViewModel : QuestionIdViewModel
@@ -11,7 +13,7 @@
     public class AddCommentFeedbackViewModel : UserIdViewModel
     {
         public int CommentId { get; set; }
-        public int Feedback { get; set; }
+        public FeedbackType FeedbackType { get; set; }
 
     }
 
