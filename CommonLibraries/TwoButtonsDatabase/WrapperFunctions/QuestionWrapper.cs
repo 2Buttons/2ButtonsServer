@@ -82,8 +82,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
         {
             var isAnonimus = 1;
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 userAskedQuestions = db.UserAskedQuestionsDb
@@ -102,8 +102,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
         {
             var isAnonimus = 1;
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 userAskedQuestions = db.UserAskedQuestionsDb

@@ -11,8 +11,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetNewsAskedQuestions(TwoButtonsContext db, int userId, int page, int amount,
             out IEnumerable<NewsAskedQuestionsDb> newsAskedQuestions)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 newsAskedQuestions = db.NewsAskedQuestionsDb
@@ -31,8 +31,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetNewsAnsweredQuestions(TwoButtonsContext db, int userId, int page, int amount,
             out IEnumerable<NewsAnsweredQuestionsDb> newsAnsweredQuestions)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 newsAnsweredQuestions = db.NewsAnsweredQuestionsDb
@@ -52,8 +52,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetNewsFavoriteQuestions(TwoButtonsContext db, int userId, int page, int amount,
             out IEnumerable<NewsFavoriteQuestionsDb> newsFavoriteQuestions)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 newsFavoriteQuestions = db.NewsFavoriteQuestionsDb
@@ -73,8 +73,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetNewsCommentedQuestions(TwoButtonsContext db, int userId, int page, int amount,
             out IEnumerable<NewsCommentedQuestionsDb> newsCommentedQuestions)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 newsCommentedQuestions = db.NewsCommentedQuestionsDb
@@ -92,8 +92,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetNewsRecommendedQuestions(TwoButtonsContext db, int userId, int page, int amount,
             out IEnumerable<NewsRecommendedQuestionDb> newRecommendedQuestion)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 newRecommendedQuestion = db.NewsRecommendedQuestionDb

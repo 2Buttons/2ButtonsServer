@@ -11,8 +11,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetFollowers(TwoButtonsContext db, int loggedId, int userId, int page, int amount, string searchedLogin,
             out IEnumerable<FollowerDb> followers)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
                 {
                     followers = db.FollowerDb
@@ -31,8 +31,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int page, int amount, string searchedLogin,
             out IEnumerable<FollowerDb> followers)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
 
             try
                 {
@@ -89,8 +89,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetRecommendedStrangers(TwoButtonsContext db, int userId, int page, int amount, string searchedLogin,
             out IEnumerable<RecommendedStrangersDb> recommendedStrangers)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
                 {
                     recommendedStrangers = db.RecommendedStrangersDb

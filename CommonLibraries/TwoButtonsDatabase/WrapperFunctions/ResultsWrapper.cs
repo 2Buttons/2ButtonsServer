@@ -47,8 +47,8 @@ namespace TwoButtonsDatabase.WrapperFunctions
         public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int page, int amount, int answerType,
             int minAge, int maxAge, int sex, string search, out IEnumerable<AnsweredListDb> answeredList)
         {
-            int fromLine = page * amount;
-            int toLine = (page + 1) * amount;
+            int fromLine = page * amount - amount + 1;
+            int toLine = page * amount;
             try
             {
                 answeredList = db.AnsweredListDb
