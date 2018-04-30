@@ -19,7 +19,7 @@ namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
 
     public class GetCommentsViewModel : QuestionIdViewModel
     {
-        public int CommentsAmount { get; set; } = 10000;
+        public int Amount { get; set; } = 10000;
 
     }
 }

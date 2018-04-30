@@ -8,24 +8,6 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class ResultsWrapper
     {
-        //public static bool TryGetResults(TwoButtonsContext db, int userId, int questionId, int minAge, int maxAge,
-        //    int sex, out IEnumerable<ResultsDb> results)
-        //{
-        //    try
-        //    {
-        //        results = db.ResultsDb
-        //            .FromSql($"select * from dbo.getResults({userId}, {questionId}, {minAge}, {maxAge}, {sex})")
-        //            .ToList();
-        //        return true;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //    }
-        //    results = new List<ResultsDb>();
-        //    return false;
-        //}
-
         public static bool TryGetPhotos(TwoButtonsContext db, int userId, int questionId, int answer, int amount, int minAge,
             int maxAge, int sex, string city, out IEnumerable<PhotoDb> photos)
         {

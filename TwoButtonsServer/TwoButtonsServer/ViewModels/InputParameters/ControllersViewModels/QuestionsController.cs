@@ -8,13 +8,29 @@ namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
     public string Condition { get; set; }
     public int Anonymity { get; set; }
     public int Audience { get; set; }
-    public int QuestionType { get; set; }
+    public QuestionType QuestionType { get; set; }
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }
     public string BackgroundImageLink { get; set; } = null;
 
     public List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
   }
+
+  public class UpdateQuestionFeedbackViewModel : QuestionIdViewModel
+  {
+    public FeedbackType FeedbackType { get; set; }
+  }
+
+  public class UpdateQuestionAnswerViewModel : QuestionIdViewModel
+  {
+    public AnswerType AnswerType { get; set; }
+  }
+
+  public class UpdateQuestionFavoriteViewModel : QuestionIdViewModel
+  {
+    public bool IsInFavorites { get; set; }
+  }
+
 
   public class AddAnswerViewModel : QuestionIdViewModel
   {

@@ -50,7 +50,7 @@ namespace TwoButtonsServer.Controllers
         {
             if (comments == null)
                 return BadRequest($"Input parameter {nameof(comments)} is null");
-            if (CommentsWrapper.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.CommentsAmount, out var comment))
+            if (CommentsWrapper.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.Amount, out var comment))
                 return Ok(comment);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

@@ -97,11 +97,11 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
             viewModel.CommentId = dbEntity.CommentId;
             viewModel.CommentText = dbEntity.Comment;
-            viewModel.CommentLikesAmount = dbEntity.CommentLikes;
-            viewModel.CommentDislikesAmount = dbEntity.CommentDislikes;
+            viewModel.LikesAmount = dbEntity.CommentLikes;
+            viewModel.DislikesAmount = dbEntity.CommentDislikes;
             viewModel.YourCommentFeedbackType = (FeedbackType)dbEntity.YourFeedback;
             viewModel.PreviousCommentId = dbEntity.PreviousCommentId.GetValueOrDefault(0);
-            viewModel.CommentAddDate = dbEntity.CommentAddDate;
+            viewModel.AddDate = dbEntity.CommentAddDate;
             return viewModel;
         }
 
@@ -153,7 +153,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         }
 
 
-        private static T QuestionDbToViewModel<T>(QuestionBaseDb dbEntity, IEnumerable<TagDb> dbTags,
+        public static T QuestionDbToViewModel<T>(this QuestionBaseDb dbEntity, IEnumerable<TagDb> dbTags,
             IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> dbComments)
             where T : QuestionBaseViewModel, new()
         {
@@ -165,13 +165,13 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 SecondOption = dbEntity.SecondOption,
                 BackgroundImageLink = dbEntity.BackgroundImageLink,
                 QuestionType = (QuestionType)dbEntity.QuestionType,
-                QuestionAddDate = dbEntity.QuestionAddDate,
+                AddDate = dbEntity.QuestionAddDate,
                 UserId = dbEntity.UserId,
                 Login = dbEntity.Login,
                 SmallAvatarLink = dbEntity.SmallAvatarLink,
                 ShowsAmount = dbEntity.Shows,
-                QuestionLikesAmount = dbEntity.Likes,
-                QuestionDislikesAmount = dbEntity.Dislikes,
+                LikesAmount = dbEntity.Likes,
+                DislikesAmount = dbEntity.Dislikes,
                 YourFeedbackType = (FeedbackType)dbEntity.YourFeedback,
                 YourAnswerType = (AnswerType)dbEntity.YourAnswer,
                 IsInFavorites = dbEntity.InFavorites==1,
@@ -220,12 +220,12 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
                 UserId = c.UserId,
                 Login = c.Login,
                 SmallAvatarLink = c.SmallAvatarLink,
-                CommentText = c.Comment,
-                CommentLikesAmount = c.Likes,
-                CommentDislikesAmount = c.Dislikes,
+                Text = c.Comment,
+                LikesAmount = c.Likes,
+                DislikesAmount = c.Dislikes,
                 YourFeedbackType = (FeedbackType)c.YourFeedback,
                 PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
-                CommentAddDate = c.CommentAddDate,
+                AddDate = c.CommentAddDate,
             })
                 .ToList();
         }
