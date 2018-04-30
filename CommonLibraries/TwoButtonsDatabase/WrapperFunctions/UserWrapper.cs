@@ -12,7 +12,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
     public static class UserWrapper
     {
 
-        public static bool TryAddUser(TwoButtonsContext db, string login, string password, int age, int sex, string phone, string description, string fullAvatarLink, string smallAvatarLink, out int userId)
+      //private readonly TwoButtonsContext _db;
+
+      //public UserWrapper(TwoButtonsContext db)
+      //{
+      //  _db = db;
+      //}
+
+
+    public static bool TryAddUser(TwoButtonsContext db, string login, string password, int age, int sex, string phone, string description, string fullAvatarLink, string smallAvatarLink, out int userId)
         {
 
             var userIdDb = new SqlParameter

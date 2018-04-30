@@ -6,119 +6,104 @@ using AccountServer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using System.Web;
+using Microsoft.EntityFrameworkCore;
 
 namespace AccountServer.Repositories
 {
-    public class AuthenticationRepository
+  public class AuthenticationRepository : IDisposable
+  {
+    private readonly AccountContext _context;
+
+
+    public AuthenticationRepository(AccountContext context)
     {
-      private AccountContext _context;
+      _context = context;
+    }
+
+    public async Task<bool> AddClient(Client client)
+    {
+      await _context.Clients.AddAsync(client);
+      return await _context.SaveChangesAsync()>0;
+    }
+
+    public async Task<bool> UpdateClient(Client client)
+    {
+      _context.Entry(client).State = EntityState.Modified;
+      return await _context.SaveChangesAsync() > 0;
+    }
 
 
-      public AuthenticationRepository(AccountContext context)
+    public bool TryFindClient(int clientId, string secret, out Client client)
+    {
+      if (clientId !=0 && !string.IsNullOrEmpty(secret))
       {
-        _context = context;
+        client = _context.Clients.SingleOrDefault(x=>x.ClientId==clientId && x.Secret == secret);
+        return true;
       }
 
-      //public async Task<IdentityResult> RegisterUser(UserModel userModel)
-      //{
-      //  IdentityUser user = new IdentityUser
-      //  {
-      //    UserName = userModel.UserName
-      //  };
+      client = new Client();
+      return false;
+    }
 
-      //  var result = await _userManager.CreateAsync(user, userModel.Password);
+    public async Task<bool> AddToken(Token token)
+    {
 
-      //  return result;
-      //}
+      var existingToken = _context.RefreshTokens.SingleOrDefault(r => r.UserId == token.UserId && r.ClientId == token.ClientId);
 
-      //public async Task<IdentityUser> FindUser(string userName, string password)
-      //{
-      //  IdentityUser user = await _userManager.FindAsync(userName, password);
-
-      //  return user;
-      //}
-
-      public Client FindClient(string clientId)
+      if (existingToken != null)
       {
-        var client = _context.Clients.Find(clientId);
-
-        return client;
+        await RemoveToken(existingToken);
       }
 
-      public async Task<bool> AddRefreshToken(RefreshToken token)
-      {
+      _context.RefreshTokens.Add(token);
 
-        var existingToken = _context.RefreshTokens.Where(r => r.Subject == token.Subject && r.ClientId == token.ClientId).SingleOrDefault();
+      return await _context.SaveChangesAsync() > 0;
+    }
 
-        if (existingToken != null)
-        {
-           await RemoveRefreshToken(existingToken);
-        }
+    public async Task<bool> RemoveToken(string refreshTokenId)
+    {
+      var refreshToken = await _context.RefreshTokens.FindAsync(refreshTokenId);
 
-        _context.RefreshTokens.Add(token);
+      if (refreshToken == null) return false;
 
-        return await _context.SaveChangesAsync() > 0;
-      }
+      _context.RefreshTokens.Remove(refreshToken);
+      return await _context.SaveChangesAsync() > 0;
+    }
 
-      public async Task<bool> RemoveRefreshToken(string refreshTokenId)
-      {
-        var refreshToken = await _context.RefreshTokens.FindAsync(refreshTokenId);
+    public async Task<bool> RemoveToken(Token refreshToken)
+    {
+      _context.RefreshTokens.Remove(refreshToken);
+      return await _context.SaveChangesAsync() > 0;
+    }
 
-        if (refreshToken == null) return false;
 
-        _context.RefreshTokens.Remove(refreshToken);
-        return await _context.SaveChangesAsync() > 0;
-      }
+    public async Task<Token> FindToken(string refreshTokenId)
+    {
+      var refreshToken = await _context.RefreshTokens.FindAsync(refreshTokenId);
 
-      public async Task<bool> RemoveRefreshToken(RefreshToken refreshToken)
-      {
-        _context.RefreshTokens.Remove(refreshToken);
-        return await _context.SaveChangesAsync() > 0;
-      }
+      return refreshToken;
+    }
 
-      public async Task<RefreshToken> FindRefreshToken(string refreshTokenId)
-      {
-        var refreshToken = await _context.RefreshTokens.FindAsync(refreshTokenId);
 
-        return refreshToken;
-      }
+    public Token GetToken(int clientId, int userId, string refreshToken)
+    {
+      return _context.RefreshTokens.FirstOrDefault(x => x.ClientId == clientId && x.UserId == userId &&
+                                                        x.RefreshToken == refreshToken);
+    }
 
-      public List<RefreshToken> GetAllRefreshTokens()
-      {
-        return _context.RefreshTokens.ToList();
-      }
+    public List<Token> GetAllTokens()
+    {
+      return _context.RefreshTokens.ToList();
+    }
 
-      //public async Task<IdentityUser> FindAsync(UserLoginInfo loginInfo)
-      //{
-      //  IdentityUser user = await _userManager.FindAsync(loginInfo);
 
-      //  return user;
-      //}
+    public void Dispose()
+    {
+      _context.Dispose();
 
-      //public async Task<IdentityResult> CreateAsync(IdentityUser user)
-      //{
-      //  var result = await _userManager.CreateAsync(user);
+    }
 
-      //  return result;
-      //}
 
-      //public async Task<IdentityResult> AddLoginAsync(string userId, UserLoginInfo login)
-      //{
-      //  var result = await _userManager.AddLoginAsync(userId, login);
-
-      //  return result;
-      //}
-
-      public void Dispose()
-      {
-        _context.Dispose();
-
-      }
   }
 }

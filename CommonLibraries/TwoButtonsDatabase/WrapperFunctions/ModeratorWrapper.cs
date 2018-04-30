@@ -46,7 +46,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
         {
             try
             {
-                role = db.RoleDb.FromSql($"select * from dbo.identification({userId})").FirstOrDefault()?.RoleId ?? 1;
+                role = db.RoleDb.FromSql($"select * from dbo.getRole({userId})").FirstOrDefault()?.RoleId ?? 1;
                 return true;
             }
             catch (Exception e)

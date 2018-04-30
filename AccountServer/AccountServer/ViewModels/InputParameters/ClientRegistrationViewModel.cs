@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AccountServer.Models;
 
-namespace AccountServer.ViewModels
+namespace AccountServer.ViewModels.InputParameters
 {
     public class ClientRegistrationViewModel
-    {
-    }
+  {
+      public ApplicationTypes ApplicationType { get; set; }
+  }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace AccountServer
+namespace AccountServer.Claims
 {
     public class ModeratorRequirement : IAuthorizationRequirement
     {

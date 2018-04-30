@@ -1,11 +1,13 @@
-﻿namespace AccountServer.ViewModels
+﻿namespace AccountServer.ViewModels.InputParameters
 {
-    public class LoginViewModel
-    {
-        public string grant_type { get; set; }
-        public string refresh_token { get; set; }
-        public string user_id { get; set; }
-        public string login { get; set; }
-        public string password { get; set; }
-    }
+  public class LoginViewModel
+  {
+    public string GrantType { get; set; }
+    public string Login { get; set; }
+    public string Password { get; set; }
+    public string RefreshToken { get; set; }
+    public int UserId { get; set; }
+    public int ClientId { get; set; }
+    public string Secret { get; set; }  
+  }
 }

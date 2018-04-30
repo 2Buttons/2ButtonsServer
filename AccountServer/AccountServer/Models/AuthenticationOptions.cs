@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AccountServer.Models
 {
-    public class AuthOptions
+    public class AuthenticationOptions
     {
         public string Key { get; set; }
         public string Issuer { get; set; }

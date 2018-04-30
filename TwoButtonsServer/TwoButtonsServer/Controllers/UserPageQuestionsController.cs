@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
@@ -23,8 +24,8 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-
-        [HttpPost("getUserAskedQuestions")]
+      [Authorize]
+    [HttpPost("getUserAskedQuestions")]
         public IActionResult GetUserAskedQuestions([FromBody] UserQuestionsViewModel userQuestions)
         {
             if (userQuestions == null || userQuestions.PageParams == null)

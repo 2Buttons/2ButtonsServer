@@ -38,12 +38,13 @@ namespace TwoButtonsServer.Controllers
 
             var badAddedTags = new List<TagViewModel>();
 
-            foreach (var tag in question.Tags)
-            {
-                if (!TagsWrapper.TryAddTag(_context, questionId, tag.TagText, tag.Position))
-                    badAddedTags.Add(tag);
-            }
-            if (badAddedTags.Count != 0)
+          for (var i = 0; i < question.Tags.Count; i++)
+          {
+            var tag = question.Tags[i];
+            if (!TagsWrapper.TryAddTag(_context, questionId, tag.TagText, i))
+              badAddedTags.Add(tag);
+          }
+          if (badAddedTags.Count != 0)
             {
                 var response =
                     new

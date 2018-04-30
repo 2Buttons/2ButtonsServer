@@ -194,7 +194,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             {
                 TagId = tag.TagId,
                 TagText = tag.TagText,
-                Position = tag.Position
+               // Position = tag.Position
             })
                 .ToList();
         }

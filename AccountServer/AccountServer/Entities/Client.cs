@@ -1,21 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using AccountServer.Models;
 
 namespace AccountServer.Entities
 {
+  [Table("Clients")]
     public class Client
     {
       [Key]
-      public string ClientId { get; set; }
-      [Required]
+      public int ClientId { get; set; }
       public string Secret { get; set; }
-      [Required]
-      [MaxLength(100)]
-      public string Name { get; set; }
       public ApplicationTypes ApplicationType { get; set; }
-      public bool Active { get; set; }
-      public int RefreshTokenLifeTime { get; set; }
-      [MaxLength(100)]
+      public bool IsActive { get; set; }
+      public long RefreshTokenLifeTime { get; set; }
       public string AllowedOrigin { get; set; }
   }
 }

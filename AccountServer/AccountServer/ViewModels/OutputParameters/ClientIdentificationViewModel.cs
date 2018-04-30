@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AccountServer.ViewModels
+﻿namespace AccountServer.ViewModels.OutputParameters
 {
-    public class ClientRegistrationViewModel
+    public class ClientIdentificationViewModel
     {
-    }
+      public string ClientId { get; set; }
+      public string Secret { get; set; }
+  }
 }
