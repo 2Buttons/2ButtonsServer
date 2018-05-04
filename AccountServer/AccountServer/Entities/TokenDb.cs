@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AccountServer.Entities
 {
-  public class Token
+  [Table("Tokens")]
+  public class TokenDb
   {
     [Key]
     public int TokenId { get; set; }

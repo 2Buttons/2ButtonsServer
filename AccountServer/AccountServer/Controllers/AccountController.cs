@@ -1,4 +1,6 @@
-﻿using AccountServer.ViewModels;
+﻿using System.Security.Claims;
+using AccountServer.Entities;
+using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,7 @@ using TwoButtonsDatabase.WrapperFunctions;
 namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
-  [Route("/account")]
+ // [Route("/account")]
   public class AccountController : Controller
   {
     private readonly TwoButtonsContext _twoButtonsContext;
@@ -32,19 +34,45 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
+      var role = RoleType.User;
+
       if (UserWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
-        user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, out var userId))
+        user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int)role, out var userId))
         return Ok(userId);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
 
-    [HttpPost("checkValidLogin")]
-    public IActionResult CheckValidLogin(string login)
+    [HttpPost("checkLogin")]
+    public IActionResult CheckValidLogin([FromBody] LoginViewModel login)
     {
-      if (LoginWrapper.TryCheckValidLogin(_twoButtonsContext, login, out var isValid))
-        return Ok(isValid);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      if (string.IsNullOrEmpty(login?.Login))
+        return BadRequest($"Input parameter  is null");
+      if (!LoginWrapper.TryCheckValidLogin(_twoButtonsContext, login.Login, out var isValid))
+        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return Ok(isValid);
     }
+
+    [HttpPost("getUserInfoAuth")]
+    public IActionResult GetUserInfo([FromBody]UserPageIdViewModel userPage)
+    {
+      if (userPage == null)
+        return BadRequest($"Input parameter  is null");
+
+      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
+
+      if (!UserWrapper.TryGetUserInfo(_twoButtonsContext, userId, userPage.UserPageId, out var userInfo))
+        return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+      if (!UserWrapper.TryGetUserStatistics(_twoButtonsContext, userId, out var userStatistics))
+        return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+      if (!UserWrapper.TryGetUserContacts(_twoButtonsContext, userId, out var userContacts))
+        return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
+
+
+      var result = userInfo.MapToUserInfoViewModel(userStatistics, userContacts);
+
+      return Ok(result);
+    }
+
   }
 }

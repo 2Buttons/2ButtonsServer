@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AccountServer.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
-using System.Web;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountServer.Repositories
@@ -21,89 +17,83 @@ namespace AccountServer.Repositories
       _context = context;
     }
 
-    public async Task<bool> AddClient(Client client)
+
+    public void Dispose()
     {
-      await _context.Clients.AddAsync(client);
-      return await _context.SaveChangesAsync()>0;
+      _context.Dispose();
     }
 
-    public async Task<bool> UpdateClient(Client client)
+    public async Task<bool> AddClient(ClientDb client)
+    {
+      await _context.Clients.AddAsync(client);
+      return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> UpdateClient(ClientDb client)
     {
       _context.Entry(client).State = EntityState.Modified;
       return await _context.SaveChangesAsync() > 0;
     }
 
 
-    public bool TryFindClient(int clientId, string secret, out Client client)
+    public bool TryFindClient(int clientId, string secret, out ClientDb client)
     {
-      if (clientId !=0 && !string.IsNullOrEmpty(secret))
+      if (clientId != 0 && !string.IsNullOrEmpty(secret))
       {
-        client = _context.Clients.SingleOrDefault(x=>x.ClientId==clientId && x.Secret == secret);
+        client = _context.Clients.SingleOrDefault(x => x.ClientId == clientId && x.Secret == secret);
         return true;
       }
 
-      client = new Client();
+      client = new ClientDb();
       return false;
     }
 
-    public async Task<bool> AddToken(Token token)
+    public async Task<bool> AddToken(TokenDb token)
     {
-
-      var existingToken = _context.RefreshTokens.SingleOrDefault(r => r.UserId == token.UserId && r.ClientId == token.ClientId);
+      var existingToken =
+        _context.Tokens.SingleOrDefault(r => r.UserId == token.UserId && r.ClientId == token.ClientId);
 
       if (existingToken != null)
-      {
         await RemoveToken(existingToken);
-      }
 
-      _context.RefreshTokens.Add(token);
+      _context.Tokens.Add(token);
 
       return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> RemoveToken(string refreshTokenId)
     {
-      var refreshToken = await _context.RefreshTokens.FindAsync(refreshTokenId);
+      var refreshToken = await _context.Tokens.FindAsync(refreshTokenId);
 
       if (refreshToken == null) return false;
 
-      _context.RefreshTokens.Remove(refreshToken);
+      _context.Tokens.Remove(refreshToken);
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveToken(Token refreshToken)
+    public async Task<bool> RemoveToken(TokenDb refreshToken)
     {
-      _context.RefreshTokens.Remove(refreshToken);
+      _context.Tokens.Remove(refreshToken);
       return await _context.SaveChangesAsync() > 0;
     }
 
 
-    public async Task<Token> FindToken(string refreshTokenId)
+    public async Task<TokenDb> FindToken(string refreshTokenId)
     {
-      var refreshToken = await _context.RefreshTokens.FindAsync(refreshTokenId);
+      var refreshToken = await _context.Tokens.FindAsync(refreshTokenId);
 
       return refreshToken;
     }
 
 
-    public Token GetToken(int clientId, int userId, string refreshToken)
+    public TokenDb GetToken(int clientId, string refreshToken)
     {
-      return _context.RefreshTokens.FirstOrDefault(x => x.ClientId == clientId && x.UserId == userId &&
-                                                        x.RefreshToken == refreshToken);
+      return _context.Tokens.FirstOrDefault(x => x.ClientId == clientId && x.RefreshToken == refreshToken);
     }
 
-    public List<Token> GetAllTokens()
+    public List<TokenDb> GetAllTokens()
     {
-      return _context.RefreshTokens.ToList();
+      return _context.Tokens.ToList();
     }
-
-
-    public void Dispose()
-    {
-      _context.Dispose();
-
-    }
-
-
   }
 }

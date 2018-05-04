@@ -1,4 +1,6 @@
-﻿namespace AccountServer.ViewModels.InputParameters
+﻿using AccountServer.Models;
+
+namespace AccountServer.ViewModels.InputParameters
 {
   public class LoginViewModel
   {
@@ -6,8 +8,8 @@
     public string Login { get; set; }
     public string Password { get; set; }
     public string RefreshToken { get; set; }
-    public int UserId { get; set; }
     public int ClientId { get; set; }
-    public string Secret { get; set; }  
+    public string Secret { get; set; }
+    public ApplicationTypes ApplicationType { get; set; }
   }
 }
