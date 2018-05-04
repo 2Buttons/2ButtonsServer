@@ -2,6 +2,7 @@
 using AccountServer.Entities;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
@@ -37,7 +38,7 @@ namespace AccountServer.Controllers
       var role = RoleType.User;
 
       if (UserWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
-        user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int)role, out var userId))
+        user.City, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int)role, out var userId))
         return Ok(userId);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -53,8 +54,9 @@ namespace AccountServer.Controllers
       return Ok(isValid);
     }
 
+    [Authorize]
     [HttpPost("getUserInfoAuth")]
-    public IActionResult GetUserInfo([FromBody]UserPageIdViewModel userPage)
+    public IActionResult GetUserInfoAuth([FromBody]UserPageIdViewModel userPage)
     {
       if (userPage == null)
         return BadRequest($"Input parameter  is null");
@@ -66,6 +68,27 @@ namespace AccountServer.Controllers
       if (!UserWrapper.TryGetUserStatistics(_twoButtonsContext, userId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       if (!UserWrapper.TryGetUserContacts(_twoButtonsContext, userId, out var userContacts))
+        return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
+
+
+      var result = userInfo.MapToUserInfoViewModel(userStatistics, userContacts);
+
+      return Ok(result);
+    }
+
+    [HttpPost("getUserInfo")]
+    public IActionResult GetUserInfo([FromBody]UserPageIdViewModel userPage)
+    {
+      if (userPage == null)
+        return BadRequest($"Input parameter  is null");
+
+      //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
+
+      if (!UserWrapper.TryGetUserInfo(_twoButtonsContext, userPage.UserId, userPage.UserPageId, out var userInfo))
+        return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+      if (!UserWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserId, out var userStatistics))
+        return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+      if (!UserWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserId, out var userContacts))
         return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
 
 

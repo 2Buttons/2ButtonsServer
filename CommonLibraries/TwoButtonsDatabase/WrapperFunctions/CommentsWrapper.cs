@@ -35,11 +35,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryAddCommentFeedback(TwoButtonsContext db, int userId, int commentId, int feedback)
+        public static bool TryUpdateCommentFeedback(TwoButtonsContext db, int userId, int commentId, int feedback)
         {
             try
             {
-                db.Database.ExecuteSqlCommand($"addCommentFeedback {userId}, {commentId}, {feedback}");
+                db.Database.ExecuteSqlCommand($"updateCommentFeedback {userId}, {commentId}, {feedback}");
                 return true;
             }
             catch (Exception e)

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.User;
-using TwoButtonsServer.ViewModels.OutputParameters.User;
+
 
 namespace TwoButtonsServer.ViewModels.OutputParameters
 {

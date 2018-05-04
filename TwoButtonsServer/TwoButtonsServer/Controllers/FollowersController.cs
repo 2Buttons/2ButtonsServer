@@ -46,8 +46,8 @@ namespace TwoButtonsServer.Controllers
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
-    [HttpPost("addFollow")]
-    public IActionResult AddFollow([FromBody]FollowViewModel vm)
+    [HttpPost("follow")]
+    public IActionResult Follow([FromBody]FollowViewModel vm)
     {
       if (vm == null)
         return BadRequest($"Input parameter is null");
@@ -57,8 +57,8 @@ namespace TwoButtonsServer.Controllers
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
-    [HttpPost("deleteFollow")]
-    public IActionResult DeleteFollow([FromBody]FollowViewModel vm)
+    [HttpPost("Unfollow")]
+    public IActionResult Unfollow([FromBody]FollowViewModel vm)
     {
       if (vm == null)
         return BadRequest($"Input parameter is null");

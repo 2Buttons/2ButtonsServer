@@ -20,7 +20,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     //}
 
 
-    public static bool TryAddUser(TwoButtonsContext db, string login, string password, int age, int sex, string phone, string description, string fullAvatarLink, string smallAvatarLink, int role, out int userId)
+    public static bool TryAddUser(TwoButtonsContext db, string login, string password, int age, int sex, string city, string phone, string description, string fullAvatarLink, string smallAvatarLink, int role, out int userId)
     {
 
       var userIdDb = new SqlParameter
@@ -33,7 +33,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand($"addUser {login}, {password}, {age}, {sex}, {phone}, {description}, {fullAvatarLink}, {smallAvatarLink}, {role}, {registrationDate}, {userIdDb} OUT");
+        db.Database.ExecuteSqlCommand($"addUser {login}, {password}, {age}, {sex}, {city}, {phone}, {description}, {fullAvatarLink}, {smallAvatarLink}, {role}, {registrationDate}, {userIdDb} OUT");
         userId = (int)userIdDb.Value;
         return true;
       }

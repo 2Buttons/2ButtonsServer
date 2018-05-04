@@ -100,21 +100,11 @@ namespace TwoButtonsServer.Controllers
       return Ok();
     }
 
-    [HttpPost("addAnswer")]
-    public IActionResult AddAnswer([FromBody]AddAnswerViewModel answer)
-    {
-      if (answer == null)
-        return BadRequest($"Input parameter  is null");
-
-      if (QuestionWrapper.TryAddAnswer(_context, answer.UserId, answer.QuestionId, (int)answer.AnswerType, (int)answer.YourFeedbackType))
-        return Ok();
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-    }
 
     [HttpPost("updateFeedback")]
     public IActionResult UpdateFeedback([FromBody]UpdateQuestionFeedbackViewModel feedback)
     {
-      if (QuestionWrapper.TryUpdateFeedback(_context, feedback.UserId, feedback.QuestionId, (int)feedback.FeedbackType))
+      if (QuestionWrapper.TryUpdateQuestionFeedback(_context, feedback.UserId, feedback.QuestionId, (int)feedback.FeedbackType))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -154,7 +144,6 @@ namespace TwoButtonsServer.Controllers
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
-
 
     [HttpPost("addRecommendedQuestion")]
     public IActionResult AddRecommendedQuestion([FromBody]AddRecommendedQuestionViewModel recommendedQuestion)

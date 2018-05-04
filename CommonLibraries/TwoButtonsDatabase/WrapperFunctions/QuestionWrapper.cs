@@ -67,13 +67,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryUpdateFeedback(TwoButtonsContext db, int userId, int questionId, int feedback)
+    public static bool TryUpdateQuestionFeedback(TwoButtonsContext db, int userId, int questionId, int feedback)
     {
-      var answered = DateTime.Now;
-
       try
       {
-        db.Database.ExecuteSqlCommand($"insertFeedback {userId}, {questionId}, {feedback}, {answered}");
+        db.Database.ExecuteSqlCommand($"updateQuestionFeedback {userId}, {questionId}, {feedback}");
         return true;
       }
       catch (Exception e)
@@ -89,7 +87,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand($"insertFavorites {userId}, {questionId}, {1}, {inFavorites}, {added}");
+        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {1}, {inFavorites}, {added}");
         return true;
       }
       catch (Exception e)
@@ -105,7 +103,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand($"insertFavorites {userId}, {questionId}, {0}, {inFavorites}, {added}");
+        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {0}, {inFavorites}, {added}");
         return true;
       }
       catch (Exception e)
@@ -121,7 +119,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand($"insertAnswer {userId}, {questionId}, {answer}, {answered}");
+        db.Database.ExecuteSqlCommand($"updateAnswer {userId}, {questionId}, {answer}, {answered}");
         return true;
       }
       catch (Exception e)
@@ -131,26 +129,11 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryUpdateBackgroundLink(TwoButtonsContext db, int questionId, string backgroundImageLink)
+    public static bool TryUpdateQuestionBackgroundLink(TwoButtonsContext db, int questionId, string backgroundImageLink)
     {
       try
       {
         db.Database.ExecuteSqlCommand($"updateQuestionBackground {questionId}, {backgroundImageLink}");
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return false;
-    }
-
-    public static bool TryAddAnswer(TwoButtonsContext db, int userId, int questionId, int answer, int yourFeedback)
-    {
-      var anwserAddDate = DateTime.UtcNow;
-      try
-      {
-        db.Database.ExecuteSqlCommand($"addAnswer {userId}, {questionId}, {answer}, {yourFeedback}, {anwserAddDate}");
         return true;
       }
       catch (Exception e)

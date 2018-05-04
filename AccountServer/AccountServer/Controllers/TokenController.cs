@@ -45,7 +45,7 @@ namespace AccountServer.Controllers
       _dbMain = context;
     }
 
-    [HttpPost("login")]
+    [HttpPost("logIn")]
     public async Task<IActionResult> LogIn([FromBody]LoginViewModel login)
     {
       if (login == null)
@@ -121,7 +121,7 @@ namespace AccountServer.Controllers
         return BadRequest("Sorry, we can not find such login and password in out database.");
 
 
-      if (!_dbToken.TryFindClient(login.ClientId, login.Secret, out var client))
+      if (!_dbToken.TryFindClient(login.ClientId, login.SecretKey, out var client))
       {
         client = new ClientDb
         {
@@ -173,10 +173,10 @@ namespace AccountServer.Controllers
       var nowTime = DateTime.UtcNow;
       int expiresInTime = 30;
 
-      if (string.IsNullOrEmpty(login.Login) || string.IsNullOrEmpty(login.Secret))
+      if (string.IsNullOrEmpty(login.Login) || string.IsNullOrEmpty(login.SecretKey))
         return BadRequest("Invalid username or password.");
 
-      if (!_dbToken.TryFindClient(login.ClientId, login.Secret, out var client) || !client.IsActive)
+      if (!_dbToken.TryFindClient(login.ClientId, login.SecretKey, out var client) || !client.IsActive)
       {
         return BadRequest("Sorry, you have not loge in yet or your connection with authorization server is expired. Plese, get access token again");
       }
@@ -239,7 +239,7 @@ namespace AccountServer.Controllers
         AccessToken = encodedJwt,
         UserId = userId,
         ClientId = clientId,
-        ClientSecret = clientSecret,
+        SecretKey = clientSecret,
         ExpiresIn = expireTime,
         RefreshToken = refreshToken,
       };
@@ -281,7 +281,7 @@ namespace AccountServer.Controllers
       if (string.IsNullOrEmpty(userLogin) || !LoginWrapper.TryCheckValidLogin(_dbMain, userLogin, out var isValid) || !isValid)
         return BadRequest("Invalid username or password.");
 
-      if (!_dbToken.TryFindClient(login.ClientId, login.Secret, out var client) || !client.IsActive)
+      if (!_dbToken.TryFindClient(login.ClientId, login.SecretKey, out var client) || !client.IsActive)
       {
         return BadRequest("You are allready out of the system.");
       }
@@ -296,7 +296,7 @@ namespace AccountServer.Controllers
       if (!await _dbToken.RemoveToken(token))
         return BadRequest("Your account out of the system");
 
-      return Ok("Account is oot of the system");
+      return Ok("Account is out of the system");
     }
 
     [HttpPost("fullLogOut")]

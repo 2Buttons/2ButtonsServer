@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AccountServer.ViewModels.InputParameters;
+﻿using System.Collections.Generic;
 
 namespace AccountServer.ViewModels.OutputParameters.User
 {
