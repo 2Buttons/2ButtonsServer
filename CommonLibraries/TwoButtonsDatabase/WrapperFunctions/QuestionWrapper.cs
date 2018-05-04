@@ -83,13 +83,29 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
+    public static bool TryUpdateSaved(TwoButtonsContext db, int userId, int questionId, int inFavorites)
+    {
+      var added = DateTime.Now;
+
+      try
+      {
+        db.Database.ExecuteSqlCommand($"insertFavorites {userId}, {questionId}, {1}, {inFavorites}, {added}");
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      return false;
+    }
+
     public static bool TryUpdateFavorites(TwoButtonsContext db, int userId, int questionId, int inFavorites)
     {
       var added = DateTime.Now;
 
       try
       {
-        db.Database.ExecuteSqlCommand($"insertFavorites {userId}, {questionId}, {inFavorites}, {added}");
+        db.Database.ExecuteSqlCommand($"insertFavorites {userId}, {questionId}, {0}, {inFavorites}, {added}");
         return true;
       }
       catch (Exception e)

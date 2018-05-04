@@ -112,15 +112,24 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("updateFeedback")]
-    public IActionResult SaveFeedback([FromBody]UpdateQuestionFeedbackViewModel feedback)
+    public IActionResult UpdateFeedback([FromBody]UpdateQuestionFeedbackViewModel feedback)
     {
       if (QuestionWrapper.TryUpdateFeedback(_context, feedback.UserId, feedback.QuestionId, (int)feedback.FeedbackType))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
+
+    [HttpPost("updateSaved")]
+    public IActionResult UpdateSaved([FromBody]UpdateQuestionFavoriteViewModel favorite)
+    {
+      if (QuestionWrapper.TryUpdateSaved(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites ? 1 : 0))
+        return Ok();
+      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+    }
+
     [HttpPost("updateFavorites")]
-    public IActionResult SaveFavorites([FromBody]UpdateQuestionFavoriteViewModel favorite)
+    public IActionResult UpdateFavorites([FromBody]UpdateQuestionFavoriteViewModel favorite)
     {
       if (QuestionWrapper.TryUpdateFavorites(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites? 1:0))
         return Ok();
@@ -128,7 +137,7 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("updateAnswer")]
-    public IActionResult SaveAnswer([FromBody]UpdateQuestionAnswerViewModel answer)
+    public IActionResult UpdateAnswer([FromBody]UpdateQuestionAnswerViewModel answer)
     {
       if (QuestionWrapper.TryUpdateAnswer(_context, answer.UserId, answer.QuestionId, (int)answer.AnswerType))
         return Ok();

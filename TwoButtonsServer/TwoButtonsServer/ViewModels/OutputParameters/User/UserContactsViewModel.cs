@@ -2,7 +2,7 @@
 {
     public class UserContactsViewModel
     {
-        public NetworkType NetworkType { get; set; }
+        public SocialNetType NetworkType { get; set; }
         public string ContactsAccount { get; set; }
     }
 }

@@ -24,16 +24,17 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-        [HttpPost("addUser")]
-        public IActionResult AddUser([FromBody]UserRegistrationViewModel user)
-        {
-            if (user == null)
-                return BadRequest($"Input parameter  is null");
+        //[HttpPost("addUser")]
+        //public IActionResult AddUser([FromBody]UserRegistrationViewModel user)
+        //{
+        //    //if (user == null)
+        //    //    return BadRequest($"Input parameter  is null");
+        //    //var role = UserRole
 
-            if (UserWrapper.TryAddUser(_context, user.Login, user.Password, user.Age, (int)user.SexType, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, out var userId))
-                return Ok(userId);
-            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-        }
+        //    //if (UserWrapper.TryAddUser(_context, user.Login, user.Password, user.Age, (int)user.SexType, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, out var userId))
+        //    //    return Ok(userId);
+        //    //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        //}
 
         [HttpPost("getUserInfo")]
         public IActionResult GetUserInfo([FromBody]UserPageIdViewModel userPage)

@@ -9,6 +9,8 @@ using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 using TwoButtonsServer.ViewModels.OutputParameters;
 using TwoButtonsServer.ViewModels.OutputParameters.UserQuestions;
+using System.Linq;
+using System.Security.Claims;
 
 namespace TwoButtonsServer.Controllers
 {
@@ -24,16 +26,17 @@ namespace TwoButtonsServer.Controllers
             _context = context;
         }
 
-      [Authorize]
+    //  [Authorize(Roles ="Guest,  User")]
     [HttpPost("getUserAskedQuestions")]
         public IActionResult GetUserAskedQuestions([FromBody] UserQuestionsViewModel userQuestions)
-        {
+      {
             if (userQuestions == null || userQuestions.PageParams == null)
                 return BadRequest($"Input parameter  is null");
-
-            if (!UserQuestionsWrapper.TryGetUserAskedQuestions(_context, userQuestions.UserId, userQuestions.UserPageId, userQuestions.PageParams.Page, userQuestions.PageParams.Amount, out var userAskedQuestions))
+    //  var u = User;
+      
+      if (!UserQuestionsWrapper.TryGetUserAskedQuestions(_context, userQuestions.UserId, userQuestions.UserPageId, userQuestions.PageParams.Page, userQuestions.PageParams.Amount, out var userAskedQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-
+       // int o = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
             var result = new List<UserAskedQuestionsViewModel>();
 
             foreach (var question in userAskedQuestions)

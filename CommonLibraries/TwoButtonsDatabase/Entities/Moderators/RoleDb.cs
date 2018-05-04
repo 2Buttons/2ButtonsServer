@@ -5,6 +5,6 @@ namespace TwoButtonsDatabase.Entities.Moderators
     public class RoleDb
     {
         [Key]
-        public int RoleId { get; set; }
+        public int Role { get; set; }
     }
 }
