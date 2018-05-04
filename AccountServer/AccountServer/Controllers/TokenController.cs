@@ -11,6 +11,7 @@ using AccountServer.Repositories;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -45,21 +46,19 @@ namespace AccountServer.Controllers
       _dbMain = context;
     }
 
-    [HttpPost("logIn")]
+    [HttpPost("login")]
     public async Task<IActionResult> LogIn([FromBody]LoginViewModel login)
     {
       if (login == null)
         return BadRequest("Input parameter  is null");
-      if (string.IsNullOrEmpty(login.GrantType))
-        return BadRequest("Grant type is null");
 
-      switch (login.GrantType.ToLower())
+      switch (login.GrantType)
       {
-        case "guest":
+        case GrantType.Guest:
           return await GuestToken();
-        case "password":
+        case GrantType.Password:
           return await AccessToken(login);
-        case "refreshtoken":
+        case GrantType.RefreshToken:
           return await RefreshToken(login);
         default:
           return BadRequest("Sorry, we can not find such grant type.");
@@ -159,11 +158,11 @@ namespace AccountServer.Controllers
 
       if (!await _dbToken.AddToken(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
-        //return BadRequest(new BadRequestJustGuest
-        //{
-        //  Message= "Can not add token to database. You entered just as a guest.",
-        //  Token = GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken)
-        //});
+      //return BadRequest(new BadRequestJustGuest
+      //{
+      //  Message= "Can not add token to database. You entered just as a guest.",
+      //  Token = GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken)
+      //});
       return Ok(GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
 
     }
@@ -224,7 +223,7 @@ namespace AccountServer.Controllers
       var now = nowUtc;
       var expiresIn = now.Add(TimeSpan.FromMinutes(expireTime));
 
-      var indentity = GetIdentity(userId,  role);
+      var indentity = GetIdentity(userId, role);
       var jwt = new JwtSecurityToken(
         issuer: _settings.Value.Issuer,
         audience: _settings.Value.Audience,
@@ -247,7 +246,7 @@ namespace AccountServer.Controllers
       return JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented });
     }
 
-    private ClaimsIdentity GetIdentity(int userId,  string role)
+    private ClaimsIdentity GetIdentity(int userId, string role)
     {
       var claims = new List<Claim>
       {
@@ -267,59 +266,31 @@ namespace AccountServer.Controllers
       return new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
     }
 
-
-    [HttpPost("logOut")]
-    public async Task<IActionResult> LogOut([FromBody]LoginViewModel login)
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> LogOut([FromBody]LogoutParams logout)
     {
-      if (login == null)
+      if (string.IsNullOrEmpty(logout?.SecretKey))
         return BadRequest($"Input parameter  is null");
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
 
-      var userLogin = login.Login.Trim();
-
-      if (string.IsNullOrEmpty(userLogin) || !LoginWrapper.TryCheckValidLogin(_dbMain, userLogin, out var isValid) || !isValid)
-        return BadRequest("Invalid username or password.");
-
-      if (!_dbToken.TryFindClient(login.ClientId, login.SecretKey, out var client) || !client.IsActive)
+      if (!_dbToken.TryFindClient(logout.ClientId, logout.SecretKey, out var client) || !client.IsActive)
       {
         return BadRequest("You are allready out of the system.");
       }
-
-      var token = _dbToken.GetToken(login.ClientId, login.RefreshToken);
-
-      if (token == null)
-      {
-        return BadRequest("Your account out of the system");
-      }
-
-      if (!await _dbToken.RemoveToken(token))
-        return BadRequest("Your account out of the system");
-
-      return Ok("Account is out of the system");
+      client.IsActive = false;
+      var isInActive = await _dbToken.UpdateClient(client);
+      if (isInActive && !client.IsActive)
+        return Ok("Account is out of the system");
+      return BadRequest("Your account out of the system");
     }
 
-    [HttpPost("fullLogOut")]
-    public async Task<IActionResult> FullLogOut([FromBody]LoginViewModel login)
+    [Authorize]
+    [HttpPost("fullLogout")]
+    public async Task<IActionResult> FullLogOut()
     {
-
-      if (login == null)
-        return BadRequest($"Input parameter  is null");
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
-      var userLogin = login.Login.Trim();
-
-      if (string.IsNullOrEmpty(userLogin) || !LoginWrapper.TryCheckValidLogin(_dbMain, userLogin, out var isValid) || !isValid)
-        return BadRequest("Invalid username or password.");
-
-
+      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
       var tokens = _dbToken.GetAllTokens();
-      foreach (var token in tokens)
-      {
-        await _dbToken.RemoveToken(token);
-      }
-
+      await _dbToken.RemoveTokens(tokens.Where(x => x.UserId == userId));
       return Ok("You are not in your devices");
     }
   }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AccountServer.Models;
 
 namespace AccountServer.ViewModels.InputParameters
 {
@@ -20,7 +21,8 @@ namespace AccountServer.ViewModels.InputParameters
     public SexType SexType { get; set; }
 
     public string City { get; set; } = null;
-    public string Phone { get; set; } = null;
+    [Required]
+    public string Phone { get; set; }
     public string Description { get; set; } = null;
     public string FullAvatarLink { get; set; } = null;
     public string SmallAvatarLink { get; set; } = null;

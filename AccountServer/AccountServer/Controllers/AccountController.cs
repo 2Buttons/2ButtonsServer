@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using AccountServer.Entities;
+using AccountServer.Models;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using Microsoft.AspNetCore.Authorization;
@@ -41,17 +42,6 @@ namespace AccountServer.Controllers
         user.City, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int)role, out var userId))
         return Ok(userId);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-    }
-
-
-    [HttpPost("checkLogin")]
-    public IActionResult CheckValidLogin([FromBody] LoginViewModel login)
-    {
-      if (string.IsNullOrEmpty(login?.Login))
-        return BadRequest($"Input parameter  is null");
-      if (!LoginWrapper.TryCheckValidLogin(_twoButtonsContext, login.Login, out var isValid))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-      return Ok(isValid);
     }
 
     [Authorize]

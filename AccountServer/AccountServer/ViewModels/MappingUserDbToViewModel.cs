@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AccountServer.Models;
 using AccountServer.ViewModels.OutputParameters.User;
 using TwoButtonsDatabase.Entities.User;
 

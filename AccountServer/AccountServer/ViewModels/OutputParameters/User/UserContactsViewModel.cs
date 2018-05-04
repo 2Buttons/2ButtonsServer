@@ -1,4 +1,6 @@
-﻿namespace AccountServer.ViewModels.OutputParameters.User
+﻿using AccountServer.Models;
+
+namespace AccountServer.ViewModels.OutputParameters.User
 {
   public class UserContactsViewModel
   {

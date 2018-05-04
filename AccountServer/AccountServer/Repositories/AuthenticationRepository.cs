@@ -77,6 +77,12 @@ namespace AccountServer.Repositories
       return await _context.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> RemoveTokens(IEnumerable<TokenDb> tokens)
+    {
+     _context.Tokens.RemoveRange(tokens);
+      return await _context.SaveChangesAsync() > 0;
+    }
+
 
     public async Task<TokenDb> FindToken(string refreshTokenId)
     {
