@@ -8,46 +8,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
     public static class PeopleListWrapper
     {
-        public static bool TryGetFollowers(TwoButtonsContext db, int loggedId, int userId, int page, int amount, string searchedLogin,
-            out IEnumerable<FollowerDb> followers)
-        {
-            int fromLine = page * amount - amount + 1;
-            int toLine = page * amount;
-            try
-                {
-                    followers = db.FollowerDb
-                        .FromSql($"select * from dbo.getFollowers({loggedId}, {userId}, {fromLine}, {toLine}, {searchedLogin})").ToList();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                followers = new List<FollowerDb>();
-                return false;
-            
-        }
-
-        public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int page, int amount, string searchedLogin,
-            out IEnumerable<FollowerDb> followers)
-        {
-            int fromLine = page * amount - amount + 1;
-            int toLine = page * amount;
-
-            try
-                {
-                    followers = db.FollowerDb
-                        .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {fromLine}, {toLine}, {searchedLogin})").ToList();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                followers = new List<FollowerDb>();
-                return false;
-            
-        }
+       
 
         public static bool TryGetRecommendedFromContacts(TwoButtonsContext db, int userId, string searchedLogin,
             out IEnumerable<RecommendedFromContactsDb> recommendedFromContacts)
