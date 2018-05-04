@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.Followers;
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {

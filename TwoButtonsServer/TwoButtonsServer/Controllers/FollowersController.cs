@@ -57,7 +57,7 @@ namespace TwoButtonsServer.Controllers
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
-    [HttpPost("Unfollow")]
+    [HttpPost("unfollow")]
     public IActionResult Unfollow([FromBody]FollowViewModel vm)
     {
       if (vm == null)

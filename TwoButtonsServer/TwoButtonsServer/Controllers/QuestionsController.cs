@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -101,7 +102,7 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    [HttpPost("updateFeedback")]
+    [HttpPost("updateQuestionFeedback")]
     public IActionResult UpdateFeedback([FromBody]UpdateQuestionFeedbackViewModel feedback)
     {
       if (QuestionWrapper.TryUpdateQuestionFeedback(_context, feedback.UserId, feedback.QuestionId, (int)feedback.FeedbackType))
@@ -160,7 +161,15 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("getComplaints")]
     public IActionResult GetComplaints()
     {
+      if (ModeratorWrapper.TryGetComplaints(_context, out IEnumerable<ComplaintDb> complaints))
+        return Ok(complaints);
+      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+    }
 
+    [Authorize(Roles = "moderator, admin")]
+    [HttpPost("getComplaintsAuth")]
+    public IActionResult GetComplaintsAuth()
+    {
       if (ModeratorWrapper.TryGetComplaints(_context, out IEnumerable<ComplaintDb> complaints))
         return Ok(complaints);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");

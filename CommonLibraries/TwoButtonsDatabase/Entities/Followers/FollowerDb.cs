@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TwoButtonsDatabase.Entities
+namespace TwoButtonsDatabase.Entities.Followers
 {
     public partial class FollowerDb
     {

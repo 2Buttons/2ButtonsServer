@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.Followers;
 using TwoButtonsDatabase.Entities.ForScalarFunctions;
 using TwoButtonsDatabase.Entities.Moderators;
 using TwoButtonsDatabase.Entities.NewsQuestions;

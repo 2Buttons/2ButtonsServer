@@ -10,8 +10,8 @@ namespace TwoButtonsDatabase.Entities
         public string SmallAvatarLink { get; set; }
         public int Age { get; set; }
         public int Sex { get; set; }
-        public bool HeFollowed { get; set; }
-        public bool YouFollowed { get; set; }
+        public int HeFollowed { get; set; }
+        public int YouFollowed { get; set; }
     }
 
 }

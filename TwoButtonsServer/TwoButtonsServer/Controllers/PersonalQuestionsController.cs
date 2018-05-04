@@ -89,7 +89,29 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-        private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
+      [HttpPost("getTopQuestions")]
+      public IActionResult GetTopQuestions([FromBody] TopUserQuestions userQuestions)
+      {
+        if (userQuestions == null)
+          return BadRequest($"Input parameter  is null");
+
+
+        if (!UserQuestionsWrapper.TryGeTopQuestions(_context, userQuestions.UserId, userQuestions.IsOnlyNew, userQuestions.PageParams.Page,
+          userQuestions.PageParams.Amount, userQuestions.TopAfterDate, out var userTopQuestions))
+          return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+
+        var result = new List<TopQuestionsViewModel>();
+
+        foreach (var question in userTopQuestions)
+        {
+          GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
+            out var secondPhotos, out var comments);
+          result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+        }
+        return Ok(result);
+      }
+
+    private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
             out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
         {
             var commentsAmount = 10000;

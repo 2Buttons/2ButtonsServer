@@ -151,14 +151,13 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
     public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount, out IEnumerable<LikedQuestionDb> userAnsweredQuestions)
     {
-      var isAnonimus = 1;
       int fromLine = page * amount - amount + 1;
       int toLine = page * amount;
       try
       {
         userAnsweredQuestions = db.LikedQuestionsDb
             .FromSql(
-                $"select * from dbo.getUserLikedQuestions({userId}, {pageUserId}, {fromLine}, {toLine}, {isAnonimus})")
+                $"select * from dbo.getUserLikedQuestions({userId}, {pageUserId}, {fromLine}, {toLine}")
             .ToList();
         return true;
       }
@@ -179,7 +178,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
       {
         userFavoriteQuestions = db.SavedQuestionsDb
             .FromSql(
-                $"select * from dbo.getUserFavoriteQuestions({userId}, {fromLine}, {toLine}, {isAnonimus})")
+                $"select * from dbo.getUserFavoriteQuestions({userId}, {userId}, {fromLine}, {toLine}, {isAnonimus})")
             .ToList();
         return true;
       }

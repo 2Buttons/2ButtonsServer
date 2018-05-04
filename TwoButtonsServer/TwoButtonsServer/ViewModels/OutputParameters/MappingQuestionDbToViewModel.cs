@@ -240,8 +240,8 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
             SmallAvatarLink = v.SmallAvatarLink,
             Age = v.Age,
             SexType = (SexType)v.Sex,
-            IsHeFollowed = v.HeFollowed,
-            IsYouFollowed = v.YouFollowed,
+            IsHeFollowed = v.HeFollowed ==1,
+            IsYouFollowed = v.YouFollowed==1,
         })
           .ToList();
       }
