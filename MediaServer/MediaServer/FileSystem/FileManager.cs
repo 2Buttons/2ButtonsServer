@@ -23,6 +23,14 @@ namespace MediaServer.FileSystem
       InitConfiguration();
     }
 
+    public bool IsUrlValid(string url)
+    {
+      var serverUrl = Path.Combine(url.Split("/")[1], url.Split("/")[2]);
+      var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.Value.RootFolderRelativePath,
+        MediaOptions.Value.RootFolderName, serverUrl);
+      return File.Exists(path);
+    }
+
     public List<string> GetMediaFolders()
     {
       return _folders.Values.ToList();

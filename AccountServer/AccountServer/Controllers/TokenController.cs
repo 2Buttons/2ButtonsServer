@@ -103,7 +103,7 @@ namespace AccountServer.Controllers
       if (!await _dbToken.AddToken(token))
         return BadRequest("Can not add token to database");
 
-      return Ok(GetJwt(token.UserId, login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
+      return Ok(GenerateEncodedToken(token.UserId, login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
     }
 
 
@@ -163,7 +163,7 @@ namespace AccountServer.Controllers
       //  Message= "Can not add token to database. You entered just as a guest.",
       //  Token = GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken)
       //});
-      return Ok(GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
+      return Ok(GenerateEncodedToken(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
 
     }
 
@@ -215,10 +215,10 @@ namespace AccountServer.Controllers
       //store the refresh_token 
       if (!await _dbToken.AddToken(newToken) || !updateFlag)
         return BadRequest("Can not add token to database");
-      return Ok(GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
+      return Ok(GenerateEncodedToken(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
     }
 
-    private string GetJwt(int userId, string login, int clientId, string clientSecret, string role, DateTime nowUtc, int expireTime, string refreshToken)
+    private string GenerateEncodedToken(int userId, string login, int clientId, string clientSecret, string role, DateTime nowUtc, int expireTime, string refreshToken)
     {
       var now = nowUtc;
       var expiresIn = now.Add(TimeSpan.FromMinutes(expireTime));

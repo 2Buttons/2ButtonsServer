@@ -86,13 +86,12 @@ namespace AccountServer.Controllers
       return Ok(result);
     }
 
-    [HttpPost("isUserIdExist")]
-    public IActionResult IsUserIdExist([FromBody]UserIdValidationViewModel user)
+    [HttpPost("IsUserIdValid")]
+    public IActionResult IsUserIdValid([FromBody]UserIdValidationViewModel user)
     {
-      if (!LoginWrapper.TryGetIdentification(_twoButtonsContext, user.UserId.ToString(), "", out var userId))
-        return BadRequest("Sorry, we can not find such login and password in out database.");
-
-      return Ok(new { IsExist = userId == -1});
+      if (!LoginWrapper.TryIsUserIdValid(_twoButtonsContext, user.UserId, out var isValid))
+        return BadRequest("Sorry, we can not get information from our database.");
+      return Ok(new { IsValid = isValid});
     }
   }
 }

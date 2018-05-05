@@ -89,6 +89,16 @@ namespace MediaServer.Controllers
       return Ok("Hello");
     }
 
+    [HttpPost("isUrlValid")]
+    public IActionResult IsUrlValid([FromBody]IsUrlValidViewModel url)
+    {
+      // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
+      if (url == null)
+        return BadRequest("Input parameter is null");
+
+      return Ok(new {IsValid = _fileManager.IsUrlValid(url.Url)});
+    }
+
     [HttpPost("uploadUserAvatar")]
     public async Task<IActionResult> UploadUserAvatar(UploadUserAvatarViewModel avatar)
     {

@@ -62,7 +62,7 @@ namespace TwoButtonsDatabase
 
     //for scalara functions
     public virtual DbSet<IdentificationDb> IdentificationDb { get; set; }
-    public virtual DbSet<CheckValidLoginDb> CheckValidLoginDb { get; set; }
+    public virtual DbSet<CheckValidLoginDb> IsUserIdValidDb { get; set; }
     public virtual DbSet<CheckValidUserDb> CheckValidUserDb { get; set; }
 
 

@@ -42,12 +42,12 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryCheckValidLogin(TwoButtonsContext db, string login, out bool isValid)
+        public static bool TryIsUserIdValid(TwoButtonsContext db, int userId, out bool isValid)
         {
             try
             {
-                var intIsValid = (db.CheckValidLoginDb
-                             .FromSql($"select * from dbo.checkValidLogin({login})").FirstOrDefault()
+                var intIsValid = (db.IsUserIdValidDb
+                             .FromSql($"select * from dbo.isUserIdValid({userId})").FirstOrDefault()
                              ?.IsValid  ?? 0);
                 isValid = intIsValid == 1;
                 return true;
