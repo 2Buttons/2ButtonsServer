@@ -9,10 +9,10 @@ namespace AccountServer.Repositories
 {
   public class AuthenticationRepository : IDisposable
   {
-    private readonly AccountContext _context;
+    private readonly TwoButtonsAccountContext _context;
 
 
-    public AuthenticationRepository(AccountContext context)
+    public AuthenticationRepository(TwoButtonsAccountContext context)
     {
       _context = context;
     }

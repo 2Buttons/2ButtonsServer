@@ -52,7 +52,7 @@ namespace TwoButtonsServer.Controllers
             if (userQuestions == null)
                 return BadRequest($"Input parameter  is null");
 
-            if (!UserQuestionsWrapper.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Page,
+            if (!UserQuestionsWrapper.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Page,
                 userQuestions.PageParams.Amount, out var userAnsweredQuestions))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 

@@ -39,7 +39,7 @@ namespace AccountServer.Controllers
 
       if (UserWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
         user.City, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int) role, out var userId))
-        return Ok(userId);
+        return Ok("Account created");
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
@@ -86,7 +86,7 @@ namespace AccountServer.Controllers
       return Ok(result);
     }
 
-    [HttpPost("IsUserIdValid")]
+    [HttpPost("isUserIdValid")]
     public IActionResult IsUserIdValid([FromBody]UserIdValidationViewModel user)
     {
       if (!LoginWrapper.TryIsUserIdValid(_twoButtonsContext, user.UserId, out var isValid))

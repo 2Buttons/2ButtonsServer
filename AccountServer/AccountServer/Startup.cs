@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Net;
 using System.Text;
+using AccountServer.Auth;
 using AccountServer.Entities;
+using AccountServer.Extensions;
 using AccountServer.Models;
 using AccountServer.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using TwoButtonsDatabase;
@@ -28,7 +34,9 @@ namespace AccountServer
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc();
+      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+
       services.AddCors(options =>
       {
         options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
@@ -36,44 +44,64 @@ namespace AccountServer
       });
 
       services.AddOptions();
-      services.Configure<AuthenticationOptions>(Configuration.GetSection("AuthenticationOptions"));
-      var authenticationOptions = Configuration.GetSection("AuthenticationOptions");
-      var symmetricKeyAsBase64 = authenticationOptions["SecretKey"];
+
+      services.AddSingleton<IJwtFactory, JwtFactory>();
+      services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+      services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
+
+      var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
+      var symmetricKeyAsBase64 = jwtAppSettingOptions["SecretKey"];
       var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
       var signingKey = new SymmetricSecurityKey(keyByteArray);
 
+      services.Configure<JwtIssuerOptions>(options=>
+      {
+        options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+        options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
+        options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+      });
 
-      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsDatabase")));
-      services.AddDbContext<AccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountDatabase")));
       //   services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
 
       services.AddTransient<AuthenticationRepository>();
 
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+      var tokenValidationParameters = new TokenValidationParameters
+      {
+        // укзывает, будет ли валидироваться издатель при валидации токена
+        ValidateIssuer = true,
+        // строка, представляющая издателя
+        ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
+
+        // будет ли валидироваться потребитель токена
+        ValidateAudience = true,
+        // установка потребителя токена
+        ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
+        
+
+        // установка ключа безопасности
+        IssuerSigningKey = signingKey,
+        // валидация ключа безопасности
+        ValidateIssuerSigningKey = true,
+
+        // будет ли валидироваться время существования
+        ValidateLifetime = true,
+       // RequireExpirationTime = false,
+        ClockSkew = TimeSpan.Zero
+      };
+
+      services.AddAuthentication(options=>
         {
-          options.RequireHttpsMetadata = false;
-          options.TokenValidationParameters = new TokenValidationParameters
-          {
-            // укзывает, будет ли валидироваться издатель при валидации токена
-            ValidateIssuer = true,
-            // строка, представляющая издателя
-            ValidIssuer = authenticationOptions["Issuer"],
-
-            // будет ли валидироваться потребитель токена
-            ValidateAudience = true,
-            // установка потребителя токена
-            ValidAudience = authenticationOptions["Audience"],
-            // будет ли валидироваться время существования
-            ValidateLifetime = true,
-
-            // установка ключа безопасности
-            IssuerSigningKey = signingKey,
-            // валидация ключа безопасности
-            ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.Zero
-          };
+          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(configureOptions =>
+        {
+          configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+          configureOptions.RequireHttpsMetadata = false;
+          configureOptions.TokenValidationParameters = tokenValidationParameters;
         });
+
+      services.AddMvc();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,15 +113,35 @@ namespace AccountServer
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
+        app.UseDatabaseErrorPage();
+        app.UseBrowserLink();
       }
+
+      // обработка ошибок HTTP
+      app.UseExceptionHandler(
+        builder =>
+        {
+          builder.Run(
+            async context =>
+            {
+              context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+              context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+              var error = context.Features.Get<IExceptionHandlerFeature>();
+              if (error != null)
+              {
+                context.Response.AddApplicationError(error.Error.Message);
+                await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
+              }
+            });
+        });
+
+     // app.UseStatusCodePages();
 
       app.UseDefaultFiles();
       app.UseStaticFiles();
-
       app.UseAuthentication();
-
       app.UseMvc();
-
     }
   }
 }

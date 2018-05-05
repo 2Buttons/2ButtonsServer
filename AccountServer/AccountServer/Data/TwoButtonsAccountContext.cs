@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AccountServer.Repositories
 {
-  public class AccountContext : DbContext
+  public class TwoButtonsAccountContext : DbContext
   {
     public DbSet<ClientDb> Clients { get; set; }
     public DbSet<TokenDb> Tokens { get; set; }
 
-    public AccountContext(DbContextOptions<AccountContext> options)
+    public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)
       : base(options)
     {
     }

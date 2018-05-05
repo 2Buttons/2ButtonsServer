@@ -46,10 +46,9 @@ namespace TwoButtonsDatabase.WrapperFunctions
         {
             try
             {
-                var intIsValid = (db.IsUserIdValidDb
+              isValid = (db.IsUserIdValidDb
                              .FromSql($"select * from dbo.isUserIdValid({userId})").FirstOrDefault()
-                             ?.IsValid  ?? 0);
-                isValid = intIsValid == 1;
+                             ?.IsValid  ?? false);
                 return true;
             }
             catch (Exception e)

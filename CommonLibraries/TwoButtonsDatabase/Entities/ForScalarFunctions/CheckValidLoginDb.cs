@@ -8,6 +8,6 @@ namespace TwoButtonsDatabase.Entities.ForScalarFunctions
     public class CheckValidLoginDb
     {
         [Key]
-        public int IsValid { get; set; }
+        public bool IsValid { get; set; }
     }
 }
