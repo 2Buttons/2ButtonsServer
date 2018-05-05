@@ -6,8 +6,8 @@ namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
   public class AddQuestionViewModel : UserIdViewModel
   {
     public string Condition { get; set; }
-    public int Anonymity { get; set; }
-    public int Audience { get; set; }
+    public bool IsAnonymity { get; set; }
+    public bool IsAudience { get; set; }
     public QuestionType QuestionType { get; set; }
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }

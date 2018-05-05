@@ -49,7 +49,7 @@ namespace MediaServer
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory,mediaOptions.Value.RootFolderRelativePath, mediaOptions.Value.RootFolderName.ToUpper())),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory,mediaOptions.Value.RootFolderRelativePath, mediaOptions.Value.RootFolderName)),
                 RequestPath = "/images"
             });
 

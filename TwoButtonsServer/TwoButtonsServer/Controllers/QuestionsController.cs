@@ -65,7 +65,7 @@ namespace TwoButtonsServer.Controllers
       if (question == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.BackgroundImageLink, question.Anonymity, question.Audience, (int)question.QuestionType, question.FirstOption, question.SecondOption, out var questionId))
+      if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.BackgroundImageLink, question.IsAnonymity ? 1:0, question.IsAudience ? 1 : 0, (int)question.QuestionType, question.FirstOption, question.SecondOption, out var questionId))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var badAddedTags = new List<TagViewModel>();

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.Followers;
 
 
 namespace TwoButtonsServer.ViewModels.OutputParameters
