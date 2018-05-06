@@ -1,4 +1,4 @@
-﻿namespace AccountServer.Entities
+﻿namespace AccountServer.Data.Entities
 {
   public enum ApplicationType
   {

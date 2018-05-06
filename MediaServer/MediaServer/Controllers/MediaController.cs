@@ -121,7 +121,7 @@ namespace MediaServer.Controllers
           {
             await avatar.UploadedFile.CopyToAsync(fileStream);
           }
-          if (UserWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
+          if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
@@ -130,7 +130,7 @@ namespace MediaServer.Controllers
           {
             await avatar.UploadedFile.CopyToAsync(fileStream);
           }
-          if (UserWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
+          if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
         default:

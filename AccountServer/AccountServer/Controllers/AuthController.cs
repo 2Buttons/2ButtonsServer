@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AccountServer.Auth;
 using AccountServer.Data;
-using AccountServer.Entities;
+using AccountServer.Data.Entities;
 using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.ViewModels;

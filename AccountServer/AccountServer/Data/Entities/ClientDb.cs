@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using AccountServer.Models;
 
-namespace AccountServer.Entities
+namespace AccountServer.Data.Entities
 {
   [Table("Clients")]
     public class ClientDb

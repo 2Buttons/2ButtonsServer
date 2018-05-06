@@ -3,9 +3,11 @@ using System.Net;
 using System.Text;
 using AccountServer.Auth;
 using AccountServer.Data;
-using AccountServer.Entities;
 using AccountServer.Extensions;
 using AccountServer.Models;
+using AccountServer.Models.Facebook;
+using AccountServer.Models.Vk;
+using AccountServer.ViewModels.InputParameters.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -49,6 +51,7 @@ namespace AccountServer
       services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
+      services.Configure<VkAuthSettings>(Configuration.GetSection(nameof(VkAuthSettings)));
 
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
       var symmetricKeyAsBase64 = jwtAppSettingOptions["SecretKey"];

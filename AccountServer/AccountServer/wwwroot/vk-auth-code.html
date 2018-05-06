@@ -1,0 +1,101 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>VK Authentication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script>
+    
+    // if we don't receive an access token then login failed and/or the user has not connected properly
+    //var start = window.location.href.indexOf("code=") + 5;
+    //var end = window.location.href.indexOf("&state=");
+    var code = getParameterByName("code");
+    var message = {};
+    if (code) {
+        message.status = true;
+        message.code = code;
+    }
+    else {
+        message.status = false;
+        message.error = getParameterByName("error");
+        message.errorDescription = getParameterByName("error_description");
+    }
+
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var json = JSON.stringify(message);
+    var myInit = { method: 'POST',
+        headers: myHeaders,
+        mode: 'cors',
+        cache: 'default',
+        body: json
+    };
+
+        fetch("http://localhost:6256/vk/code", myInit).then(function(response) {
+            /*что-то сделать при успешном запросе*/
+            window.close();
+        });
+
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&#]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+//    alert(window.location.href);
+//    // if we don't receive an access token then login failed and/or the user has not connected properly
+//    var start = window.location.href.indexOf("code=") + 5;
+//    var end = window.location.href.indexOf("&state=");
+//    var code = window.location.href.substring(start,end);
+//    alert(code);
+//    var accessToken = getParameterByName("access_token");
+//    var message = {};
+//    // if (accessToken) {
+//    message.status = true;
+//    message.accessToken = accessToken;
+//    message.code = code;
+//    //}
+//    //else {
+//    //    message.status = false;
+//    //    message.error = getParameterByName("error");
+//    //    message.errorDescription = getParameterByName("error_description");
+//    //}
+//    console.log(window.location.href);
+//    console.log(JSON.stringify(message));
+//    //window.postMessage(JSON.stringify(message), "http://localhost:6256/");
+
+//    var myHeaders = new Headers();
+//    myHeaders.append("Content-Type", "application/json");
+//    var json = JSON.stringify(message);
+        
+//    var myInit = { method: 'POST',
+//        headers: myHeaders,
+//        mode: 'cors',
+//        cache: 'default',
+//        body: json
+//    };
+
+//    console.log(json);
+
+//    if (code !== null )
+//        fetch("http://localhost:6256/vk/code", myInit).then(function(response) {
+///*что-то сделать при успешном запросе*/
+//        });
+//    else
+//        fetch("http://localhost:6256/vk", myInit).then(function(response) {
+///*что-то сделать при успешном запросе*/
+//        });
+
+
+    //  window.close();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AccountServer.Entities
+namespace AccountServer.Data.Entities
 {
   [Table("Tokens")]
   public class TokenDb

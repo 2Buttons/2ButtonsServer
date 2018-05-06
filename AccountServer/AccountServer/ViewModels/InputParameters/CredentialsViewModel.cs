@@ -1,4 +1,4 @@
-﻿using AccountServer.Entities;
+﻿using AccountServer.Data.Entities;
 using AccountServer.Models;
 
 namespace AccountServer.ViewModels.InputParameters

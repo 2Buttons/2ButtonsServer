@@ -1,0 +1,55 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>JwtAuthDemo - Facebook Auth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="assets/util.js"></script>
+</head>
+<body>
+<script>
+    alert(window.location.href);
+    console.log(window.location.href);
+    // if we don't receive an access token then login failed and/or the user has not connected properly
+    var accessToken = getParameterByName("access_token");
+    var expireIn = getParameterByName("expire_in");
+    var userId = getParameterByName("user_id");
+    var state = getParameterByName("state");
+
+    var message = {};
+    if (accessToken) {
+        message.status = true;
+        message.accessToken = accessToken;
+        message.expireIn = expireIn;
+        message.userId = userId;
+        message.state = state;
+    }
+    else {
+        message.status = false;
+        message.error = getParameterByName("error");
+        message.errorDescription = getParameterByName("error_description");
+    }
+    console.log(window.location.href);
+    console.log(JSON.stringify(message));
+    //window.postMessage(JSON.stringify(message), "http://localhost:6256/");
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var json = JSON.stringify(message);
+        
+    var myInit = { method: 'POST',
+        headers: myHeaders,
+        mode: 'cors',
+        cache: 'default',
+        body: json
+    };
+
+    fetch("http://localhost:6256/vk", myInit).then(function(response) {
+/*что-то сделать при успешном запросе*/
+    });
+
+    //  window.close();
+</script>
+</body>
+</html>

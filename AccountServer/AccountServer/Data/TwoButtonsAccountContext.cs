@@ -1,4 +1,4 @@
-﻿using AccountServer.Entities;
+﻿using AccountServer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountServer.Data
