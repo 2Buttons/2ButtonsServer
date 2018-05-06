@@ -58,12 +58,11 @@ namespace AccountServer.Controllers
 
       switch (credentials.GrantType)
       {
+        case GrantType.NoGrantType:
         case GrantType.Password:
           return await AccessToken(credentials);
         case GrantType.RefreshToken:
           return await RefreshToken(credentials);
-        case GrantType.NoGrantType:
-          return BadRequest("Sorry, we can not find such grant type. You sended \"0\" as Grant Type");
         default:
           return BadRequest("Sorry, we can not find such grant type.");
       }
@@ -80,7 +79,7 @@ namespace AccountServer.Controllers
       int userId = 0;
       var role = RoleType.Guest;
 
-      if (!credentials.IsGuset)
+      if (credentials.GrantType == GrantType.NoGrantType)
       {
         if (string.IsNullOrEmpty(credentials.Login) || string.IsNullOrEmpty(credentials.Password))
           return BadRequest("Invalid username or password.");
@@ -169,7 +168,7 @@ namespace AccountServer.Controllers
       }
 
       RoleType role = RoleType.Guest;
-      if (!credentials.IsGuset && oldToken.UserId != 0)
+      if (oldToken.UserId != 0)
       {
         AccountWrapper.TryGetUserRole(_dbMain, oldToken.UserId, out var roleDb);
         role = (RoleType)roleDb;

@@ -36,7 +36,7 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
-      var role = RoleType.User;
+      const RoleType role = RoleType.User;
 
       if (AccountWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
         user.City, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int) role, out var userId))
@@ -71,8 +71,6 @@ namespace AccountServer.Controllers
     {
       if (userPage == null)
         return BadRequest($"Input parameter  is null");
-
-      //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
       if (!AccountWrapper.TryGetUserInfo(_twoButtonsContext, userPage.UserId, userPage.UserPageId, out var userInfo))
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");

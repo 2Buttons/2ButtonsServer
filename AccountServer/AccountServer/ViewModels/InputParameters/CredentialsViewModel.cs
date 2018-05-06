@@ -17,6 +17,5 @@ namespace AccountServer.ViewModels.InputParameters
 
 
     public bool IsRememberMe { get; set; }
-    public bool IsGuset { get; set; }
   }
 }
