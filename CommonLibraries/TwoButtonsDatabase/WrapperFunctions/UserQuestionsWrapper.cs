@@ -49,7 +49,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
     public static bool TryGetUserAnsweredQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount, out IEnumerable<UserAnsweredQuestionDb> userAnsweredQuestions)
     {
-      var isAnonimus = 0;
+      var isAnonimus = userId == pageUserId ? 1 : 0;
       int fromLine = page * amount - amount + 1;
       int toLine = page * amount;
       try

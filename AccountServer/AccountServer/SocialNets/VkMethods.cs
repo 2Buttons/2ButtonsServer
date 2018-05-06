@@ -16,17 +16,23 @@ namespace AccountServer.SocialNets
       _accessToken = accessToken;
     }
 
-      public async Task<string> GetAccountInfo()
-      {
-      return await Client.GetStringAsync(
-        $"https://api.vk.com/method/account.getInfo?fields=phone,email&access_token={_accessToken}&v=5.74");
-      //https://api.vk.com/method/METHOD_NAME?PARAMETERS&access_token=ACCESS_TOKEN&v=V 
-    }
+    //  public async Task<string> GetAccountInfo()
+    //  {
+    //  return await Client.GetStringAsync(
+    //    $"https://api.vk.com/method/account.getInfo?fields=phone,email&access_token={_accessToken}&v=5.74");
+    //  //https://api.vk.com/method/METHOD_NAME?PARAMETERS&access_token=ACCESS_TOKEN&v=V 
+    //}
 
       public async Task<string> GetFriends(int userId, int count=5000, int offset = 0)
       {
         return await Client.GetStringAsync(
-          $"https://api.vk.com/method/friends.get?userid={userId}&order=name&count={count}&offset={offset}&fields=nickname,first_name,last_name,domain&name_case=nom&access_token={_accessToken}&v=5.74");
+          $"https://api.vk.com/method/friends.get?userid={userId}&order=name&count={count}&offset={offset}&fields=nickname,first_name,last_name,domain,photo_id&name_case=nom&access_token={_accessToken}&v=5.74");
+      }
+
+      public async Task<string> UsersGet(IEnumerable<int> userIds)
+      {
+        return await Client.GetStringAsync(
+          $"https://api.vk.com/method/users.get?userid={userId}&order=name&count={count}&offset={offset}&fields=nickname,first_name,last_name,domain,photo_id&name_case=nom&access_token={_accessToken}&v=5.74");
       }
   }
 }
