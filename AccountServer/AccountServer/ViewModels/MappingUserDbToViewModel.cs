@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.ViewModels.OutputParameters.User;
-using TwoButtonsDatabase.Entities.User;
+using TwoButtonsDatabase.Entities.Account;
 
 namespace AccountServer.ViewModels
 {
@@ -43,11 +44,8 @@ namespace AccountServer.ViewModels
       var viewModel = new UserStatisticsViewModel
       {
         PublicAskedQuestions = dbEntity.PublicAskedQuestions,
-        AskedQuestions = dbEntity.AskedQuestions,
         AnsweredQuestions = dbEntity.AnsweredQuestions,
-        SeenQuestions = dbEntity.SeenQuestions,
         PublicFavoriteQuestions = dbEntity.PublicFavoriteQuestions,
-        FavoriteQuestions = dbEntity.FavoriteQuestions,
         CommentsWritten = dbEntity.CommentsWritten,
 
         UserQuestionsShows = dbEntity.UserQuestionsShows,

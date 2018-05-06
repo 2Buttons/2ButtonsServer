@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using AccountServer.Helpers;
 using AccountServer.Models;
 using Microsoft.Extensions.Options;
 
@@ -20,22 +21,15 @@ namespace AccountServer.Auth
       ThrowIfInvalidOptions(_jwtOptions);
     }
 
-    public async Task<string> GenerateEncodedToken(string userName, ClaimsIdentity identity)
+    public async Task<string> GenerateEncodedToken(int userId, RoleType role)
     {
-      var claims = new[]
-      {
-        new Claim(JwtRegisteredClaimNames.Sub, userName),
-        new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
-        new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
-        identity.FindFirst(Helpers.Constants.Strings.JwtClaimIdentifiers.Rol),
-        identity.FindFirst(Helpers.Constants.Strings.JwtClaimIdentifiers.Id)
-      };
+      var claimsIdentity = await GenerateClaimsIdentity(userId, role);
 
       // Create the JWT security token and encode it.
       var jwt = new JwtSecurityToken(
         issuer: _jwtOptions.Issuer,
         audience: _jwtOptions.Audience,
-        claims: claims,
+        claims: claimsIdentity.Claims,
         notBefore: _jwtOptions.NotBefore,
         expires: _jwtOptions.Expiration,
         signingCredentials: _jwtOptions.SigningCredentials);
@@ -45,20 +39,21 @@ namespace AccountServer.Auth
       return encodedJwt;
     }
 
-    public ClaimsIdentity GenerateClaimsIdentity(string userName, string id)
+    public async Task<ClaimsIdentity> GenerateClaimsIdentity(int userId, RoleType role)
     {
-      return new ClaimsIdentity(new GenericIdentity(userName, "Token"), new[]
+      var claims = new List<Claim>
       {
-        new Claim(Helpers.Constants.Strings.JwtClaimIdentifiers.Id, id),
-        new Claim(Helpers.Constants.Strings.JwtClaimIdentifiers.Rol, Helpers.Constants.Strings.JwtClaims.ApiAccess)
-      });
+       // new Claim(JwtRegisteredClaimNames.Sub, login),
+        new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
+        new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
+        new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString(), ClaimValueTypes.Integer,  _jwtOptions.Issuer),
+        new Claim(ClaimsIdentity.DefaultRoleClaimType, role.ToString(),ClaimValueTypes.String, _jwtOptions.Issuer)
+      };
+      return new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
     }
 
     /// <returns>Date converted to seconds since Unix epoch (Jan 1, 1970, midnight UTC).</returns>
-    private static long ToUnixEpochDate(DateTime date)
-      => (long)Math.Round((date.ToUniversalTime() -
-                           new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero))
-        .TotalSeconds);
+    private static long ToUnixEpochDate(DateTime date) => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
 
     private static void ThrowIfInvalidOptions(JwtIssuerOptions options)
     {

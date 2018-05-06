@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
@@ -37,7 +38,7 @@ namespace AccountServer.Controllers
 
       var role = RoleType.User;
 
-      if (UserWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
+      if (AccountWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
         user.City, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int) role, out var userId))
         return Ok("Account created");
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -52,11 +53,11 @@ namespace AccountServer.Controllers
 
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
-      if (!UserWrapper.TryGetUserInfo(_twoButtonsContext, userId, userPage.UserPageId, out var userInfo))
+      if (!AccountWrapper.TryGetUserInfo(_twoButtonsContext, userId, userPage.UserPageId, out var userInfo))
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-      if (!UserWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
+      if (!AccountWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
-      if (!UserWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserPageId, out var userContacts))
+      if (!AccountWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserPageId, out var userContacts))
         return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
 
 
@@ -73,11 +74,11 @@ namespace AccountServer.Controllers
 
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
-      if (!UserWrapper.TryGetUserInfo(_twoButtonsContext, userPage.UserId, userPage.UserPageId, out var userInfo))
+      if (!AccountWrapper.TryGetUserInfo(_twoButtonsContext, userPage.UserId, userPage.UserPageId, out var userInfo))
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-      if (!UserWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
+      if (!AccountWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
-      if (!UserWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserPageId, out var userContacts))
+      if (!AccountWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserPageId, out var userContacts))
         return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
 
 
@@ -89,7 +90,7 @@ namespace AccountServer.Controllers
     [HttpPost("isUserIdValid")]
     public IActionResult IsUserIdValid([FromBody]UserIdValidationViewModel user)
     {
-      if (!LoginWrapper.TryIsUserIdValid(_twoButtonsContext, user.UserId, out var isValid))
+      if (!AccountWrapper.TryIsUserIdValid(_twoButtonsContext, user.UserId, out var isValid))
         return BadRequest("Sorry, we can not get information from our database.");
       return Ok(new { IsValid = isValid});
     }

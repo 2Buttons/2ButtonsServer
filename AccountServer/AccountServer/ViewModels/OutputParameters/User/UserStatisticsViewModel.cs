@@ -3,11 +3,8 @@
   public class UserStatisticsViewModel
   {
     public int PublicAskedQuestions { get; set; }
-    public int AskedQuestions { get; set; }
     public int AnsweredQuestions { get; set; }
-    public int SeenQuestions { get; set; }
     public int PublicFavoriteQuestions { get; set; }
-    public int FavoriteQuestions { get; set; }
     public int CommentsWritten { get; set; }
 
     public int UserQuestionsShows { get; set; }

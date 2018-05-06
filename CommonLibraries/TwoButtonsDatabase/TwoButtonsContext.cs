@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using TwoButtonsDatabase.Entities;
+using TwoButtonsDatabase.Entities.Account;
 using TwoButtonsDatabase.Entities.Followers;
 using TwoButtonsDatabase.Entities.ForScalarFunctions;
 using TwoButtonsDatabase.Entities.Moderators;
 using TwoButtonsDatabase.Entities.NewsQuestions;
-using TwoButtonsDatabase.Entities.User;
 using TwoButtonsDatabase.Entities.UserQuestions;
 
 

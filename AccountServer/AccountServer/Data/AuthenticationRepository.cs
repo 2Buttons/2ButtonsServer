@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AccountServer.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccountServer.Repositories
+namespace AccountServer.Data
 {
   public class AuthenticationRepository : IDisposable
   {
@@ -61,9 +61,9 @@ namespace AccountServer.Repositories
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveToken(string refreshTokenId)
+    public async Task<bool> RemoveToken(int tokenId)
     {
-      var refreshToken = await _context.Tokens.FindAsync(refreshTokenId);
+      var refreshToken = await _context.Tokens.FindAsync(tokenId);
 
       if (refreshToken == null) return false;
 

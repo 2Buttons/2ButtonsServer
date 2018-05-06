@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TwoButtonsDatabase.Entities.User
+namespace TwoButtonsDatabase.Entities.Account
 {
   public partial class UserInfoDb
   {

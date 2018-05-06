@@ -5,11 +5,12 @@ using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.User;
+using TwoButtonsDatabase.Entities.Account;
+
 
 namespace TwoButtonsDatabase.WrapperFunctions
 {
-  public static class UserWrapper
+  public static class AccountWrapper
   {
 
     //private readonly TwoButtonsContext _db;
@@ -44,6 +45,72 @@ namespace TwoButtonsDatabase.WrapperFunctions
       userId = -1;
       return false;
 
+    }
+
+    public static bool TryGetIdentification(TwoButtonsContext db, string login, string password, out int userId)
+    {
+      try
+      {
+        userId = db.IdentificationDb
+                   .FromSql($"select * from dbo.identification({login}, {password})").FirstOrDefault()
+                   ?.UserId ?? -1;
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      userId = -1;
+      return false;
+    }
+
+    public static bool TryCheckValidUser(TwoButtonsContext db, string phone, string login, out int returnsCode)
+    {
+      try
+      {
+        returnsCode = db.CheckValidUserDb
+                        .FromSql($"select * from dbo.checkValidUser({phone}, {login})").FirstOrDefault()
+                        ?.ReturnCode ?? -1;
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      returnsCode = -1;
+      return false;
+    }
+
+    public static bool TryIsUserIdValid(TwoButtonsContext db, int userId, out bool isValid)
+    {
+      try
+      {
+        isValid = (db.IsUserIdValidDb
+                     .FromSql($"select * from dbo.isUserIdValid({userId})").FirstOrDefault()
+                     ?.IsValid ?? false);
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      isValid = false;
+      return false;
+    }
+
+    public static bool TryGetUserRole(TwoButtonsContext db, int userId, out int role)
+    {
+      try
+      {
+        role = db.RoleDb.FromSql($"select * from dbo.getRole({userId})").FirstOrDefault()?.Role ?? 1;
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      role = 1;
+      return false;
     }
 
     public static bool TryUpdateUserFullAvatar(TwoButtonsContext db, int userId, string fullAvatarLink)
@@ -180,7 +247,5 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       //return raiting;
     }
-
-
   }
 }

@@ -1,7 +1,7 @@
 ﻿using AccountServer.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccountServer.Repositories
+namespace AccountServer.Data
 {
   public class TwoButtonsAccountContext : DbContext
   {

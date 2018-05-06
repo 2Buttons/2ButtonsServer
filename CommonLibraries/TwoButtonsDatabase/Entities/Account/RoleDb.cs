@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TwoButtonsDatabase.Entities.Moderators
+namespace TwoButtonsDatabase.Entities.Account
 {
     public class RoleDb
     {

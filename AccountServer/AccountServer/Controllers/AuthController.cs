@@ -5,9 +5,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AccountServer.Auth;
+using AccountServer.Data;
 using AccountServer.Entities;
+using AccountServer.Helpers;
 using AccountServer.Models;
-using AccountServer.Repositories;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters;
@@ -25,11 +27,12 @@ namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   //[Route("/account")]
-  public class TokenController : Controller
+  public class AuthController : Controller
   {
     //some config in the appsettings.json
-    private IOptions<AuthenticationOptions> _settings;
+    private JwtIssuerOptions _jwtOptions;
 
+    private IJwtFactory _jwtFactory;
     //repository to handler the sqlite database
 
 
@@ -38,95 +41,85 @@ namespace AccountServer.Controllers
     private TwoButtonsContext _dbMain;
     private AuthenticationRepository _dbToken;
 
-    public TokenController(IOptions<AuthenticationOptions> settings, TwoButtonsContext context, AuthenticationRepository repository)
+    public AuthController(IOptions<JwtIssuerOptions> settings, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, TwoButtonsContext context, AuthenticationRepository repository)
     {
-      _settings = settings;
+      _jwtOptions = settings.Value;
       _dbToken = repository;
       // _cache = memoryCache;
+      _jwtFactory = jwtFactory;
       _dbMain = context;
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LogIn([FromBody]LoginViewModel login)
+    public async Task<IActionResult> LogIn([FromBody]CredentialsViewModel credentials)
     {
-      if (login == null)
+      if (credentials == null)
         return BadRequest("Input parameter  is null");
 
-      switch (login.GrantType)
+      switch (credentials.GrantType)
       {
-        case GrantType.Guest:
-          return await GuestToken();
         case GrantType.Password:
-          return await AccessToken(login);
+          return await AccessToken(credentials);
         case GrantType.RefreshToken:
-          return await RefreshToken(login);
+          return await RefreshToken(credentials);
+        case GrantType.NoGrantType:
+          return BadRequest("Sorry, we can not find such grant type. You sended \"0\" as Grant Type");
         default:
           return BadRequest("Sorry, we can not find such grant type.");
       }
     }
 
-    private async Task<IActionResult> GuestToken()
+
+
+
+    private async Task<IActionResult> AccessToken(CredentialsViewModel credentials)
     {
       var nowTime = DateTime.UtcNow;
-      int expiresInTime = 60 * 24 * 7 * 4;
+      int expiresAccessTokenInTime = 5;
 
-      var userId = 0;
-      var login = "";
-      var client = new ClientDb
-      {
-        Secret = Guid.NewGuid().ToString().Replace("-", ""),
-        IsActive = true,
-        RefreshTokenLifeTime = expiresInTime
-      };
-      await _dbToken.AddClient(client);
+      int userId = 0;
+      var role = RoleType.Guest;
 
-      if (!client.IsActive)
+      if (!credentials.IsGuset)
       {
-        client.IsActive = true;
-        await _dbToken.UpdateClient(client);
+        if (string.IsNullOrEmpty(credentials.Login) || string.IsNullOrEmpty(credentials.Password))
+          return BadRequest("Invalid username or password.");
+
+        if (!AccountWrapper.TryGetIdentification(_dbMain, credentials.Login, credentials.Password.Trim(),
+              out userId) || userId == -1)
+          return BadRequest("Sorry, we can not find such login and password in out database.");
+
+        if (!AccountWrapper.TryGetUserRole(_dbMain, userId, out var roleDb))
+          return BadRequest("Sorry, we can not find role for the user.");
+        role = (RoleType)roleDb;
       }
 
-      var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
 
-      var token = new TokenDb
+      if (!string.IsNullOrEmpty(credentials.SecretKey) &&
+          !_dbToken.TryFindClient(credentials.ClientId, credentials.SecretKey, out ClientDb client)) { }
+      else
       {
-        UserId = userId,
-        ClientId = client.ClientId,
-        IssuedUtc = nowTime,
-        ExpiresUtc = nowTime.AddMinutes(expiresInTime),
-        RefreshToken = refreshToken
-      };
+        int expiresRefreshTokenInTime;
+        switch (role)
+        {
+          case RoleType.Guest:
+            expiresRefreshTokenInTime = 60 * 24 * 7 * 4; // 1 month
+            break;
+          case RoleType.User when credentials.IsRememberMe:
+          case RoleType.Moderator when credentials.IsRememberMe:
+          case RoleType.Admin when credentials.IsRememberMe:
+            expiresRefreshTokenInTime = 60 * 24 * 7 * 2; //2 weeks
+            break;
+          default:
+            expiresRefreshTokenInTime = 120; //2 hours
+            break;
+        }
 
-      var userRole = RoleType.Guest.ToString();
-
-      //store the refresh_token 
-      if (!await _dbToken.AddToken(token))
-        return BadRequest("Can not add token to database");
-
-      return Ok(GenerateEncodedToken(token.UserId, login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
-    }
-
-
-    private async Task<IActionResult> AccessToken(LoginViewModel login)
-    {
-      var nowTime = DateTime.UtcNow;
-      int expiresInTime = 5;
-
-      if (string.IsNullOrEmpty(login.Login) || string.IsNullOrEmpty(login.Password))
-        return BadRequest("Invalid username or password.");
-
-      if (!LoginWrapper.TryGetIdentification(_dbMain, login.Login, login.Password.Trim(),
-            out var userId) || userId == -1)
-        return BadRequest("Sorry, we can not find such login and password in out database.");
-
-
-      if (!_dbToken.TryFindClient(login.ClientId, login.SecretKey, out var client))
-      {
         client = new ClientDb
         {
-          Secret = Guid.NewGuid().ToString().Replace("-", ""),
+          Secret = Guid.NewGuid().ToString(),
           IsActive = true,
-          RefreshTokenLifeTime = expiresInTime
+          RefreshTokenLifeTime = expiresRefreshTokenInTime
         };
         await _dbToken.AddClient(client);
       }
@@ -137,133 +130,70 @@ namespace AccountServer.Controllers
         await _dbToken.UpdateClient(client);
       }
 
-      var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
+      var refreshToken = Guid.NewGuid().ToString();
 
       var token = new TokenDb
       {
         UserId = userId,
         ClientId = client.ClientId,
         IssuedUtc = nowTime,
-        ExpiresUtc = nowTime.AddMinutes(expiresInTime),
+        ExpiresUtc = nowTime.AddMinutes(client.RefreshTokenLifeTime),
         RefreshToken = refreshToken
       };
 
-      if (!ModeratorWrapper.TryGetUserRole(_dbMain, userId, out var role))
-      {
-        role = 0;
-      }
-
-      var userRole = ((RoleType)role).ToString();
-
-
       if (!await _dbToken.AddToken(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
-      //return BadRequest(new BadRequestJustGuest
-      //{
-      //  Message= "Can not add token to database. You entered just as a guest.",
-      //  Token = GetJwt(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken)
-      //});
-      return Ok(GenerateEncodedToken(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
+
+
+      _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
+      return Ok(Tokens.GenerateJwt(_jwtFactory,client.ClientId, client.Secret, token.RefreshToken,token.UserId, role, _jwtOptions));
 
     }
 
-    private async Task<IActionResult> RefreshToken(LoginViewModel login)
+    private async Task<IActionResult> RefreshToken(CredentialsViewModel credentials)
     {
       var nowTime = DateTime.UtcNow;
-      int expiresInTime = 30;
 
-      if (string.IsNullOrEmpty(login.Login) || string.IsNullOrEmpty(login.SecretKey))
-        return BadRequest("Invalid username or password.");
+      if (string.IsNullOrEmpty(credentials.RefreshToken) || string.IsNullOrEmpty(credentials.SecretKey))
+        return BadRequest("RefreshToken or SecretKey is null or empty. Please, send again.");
 
-      if (!_dbToken.TryFindClient(login.ClientId, login.SecretKey, out var client) || !client.IsActive)
+      if (!_dbToken.TryFindClient(credentials.ClientId, credentials.SecretKey, out var client) || !client.IsActive)
       {
         return BadRequest("Sorry, you have not loge in yet or your connection with authorization server is expired. Plese, get access token again");
       }
 
-      var token = _dbToken.GetToken(login.ClientId, login.RefreshToken);
-      if (token == null)
+      var oldToken = _dbToken.GetToken(credentials.ClientId, credentials.RefreshToken);
+      if (oldToken == null)
       {
-        return BadRequest("Sorry, we can not find your refresh token. Plese, get access token again.");
+        return BadRequest("Sorry, we can not find your \"refresh token\". Plese, get access token again.");
       }
 
-      if (token.ExpiresUtc.CompareTo(DateTime.UtcNow) < 0)
+      RoleType role = RoleType.Guest;
+      if (!credentials.IsGuset && oldToken.UserId != 0)
       {
-        return BadRequest("Refresh token has expired. Plese, get access token again.");
+        AccountWrapper.TryGetUserRole(_dbMain, oldToken.UserId, out var roleDb);
+        role = (RoleType)roleDb;
       }
 
-      var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
+      var refreshToken = Guid.NewGuid().ToString();
 
-      //expire the old refresh_token and add a new refresh_token
-      var updateFlag = await _dbToken.RemoveToken(token);
-
-      var newToken = new TokenDb
+      var token = new TokenDb
       {
-        UserId = token.UserId,
+        UserId = oldToken.UserId,
         ClientId = client.ClientId,
         IssuedUtc = nowTime,
-        ExpiresUtc = nowTime.AddMinutes(expiresInTime),
+        ExpiresUtc = nowTime.AddMinutes(client.RefreshTokenLifeTime),
         RefreshToken = refreshToken
       };
 
-      if (!ModeratorWrapper.TryGetUserRole(_dbMain, token.UserId, out var role))
-      {
-        role = 0;
-      }
+      bool isDeleted =  await _dbToken.RemoveToken(oldToken);
+      bool isAdded = await _dbToken.AddToken(token);
 
-      var userRole = ((RoleType)role).ToString();
+      if (!isDeleted || !isAdded)
+        return BadRequest("Can not add token to database. Plese, get access token again or enter like a guest");
 
-      //store the refresh_token 
-      if (!await _dbToken.AddToken(newToken) || !updateFlag)
-        return BadRequest("Can not add token to database");
-      return Ok(GenerateEncodedToken(token.UserId, login.Login, token.ClientId, client.Secret, userRole, nowTime, expiresInTime, refreshToken));
-    }
-
-    private string GenerateEncodedToken(int userId, string login, int clientId, string clientSecret, string role, DateTime nowUtc, int expireTime, string refreshToken)
-    {
-      var now = nowUtc;
-      var expiresIn = now.Add(TimeSpan.FromMinutes(expireTime));
-
-      var indentity = GetIdentity(userId, role);
-      var jwt = new JwtSecurityToken(
-        issuer: _settings.Value.Issuer,
-        audience: _settings.Value.Audience,
-        claims: indentity.Claims,
-        notBefore: now,
-        expires: expiresIn,
-        signingCredentials: GetSigningCredentials());
-      var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-      var response = new IdentityRespose
-      {
-        AccessToken = encodedJwt,
-        UserId = userId,
-        ClientId = clientId,
-        SecretKey = clientSecret,
-        ExpiresIn = expireTime,
-        RefreshToken = refreshToken,
-      };
-
-      return JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented });
-    }
-
-    private ClaimsIdentity GetIdentity(int userId, string role)
-    {
-      var claims = new List<Claim>
-      {
-     //   new Claim(ClaimsIdentity.., userId.ToString(), ClaimValueTypes.Integer32, _settings.Value.Issuer),
-        new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString(), ClaimValueTypes.Integer,  _settings.Value.Issuer),
-        new Claim(ClaimsIdentity.DefaultRoleClaimType, role,ClaimValueTypes.String, _settings.Value.Issuer)
-      };
-      return new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-    }
-
-    private SigningCredentials GetSigningCredentials()
-    {
-      var symmetricKeyAsBase64 = _settings.Value.SecretKey;
-      var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
-      var signingKey = new SymmetricSecurityKey(keyByteArray);
-
-      return new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+      _jwtOptions.ValidFor = TimeSpan.FromMinutes(client.RefreshTokenLifeTime);
+      return Ok(Tokens.GenerateJwt(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role, _jwtOptions));
     }
 
     [Authorize]

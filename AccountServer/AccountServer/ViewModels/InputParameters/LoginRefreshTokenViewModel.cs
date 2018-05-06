@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AccountServer.ViewModels.InputParameters.CredentialsViewModel
+﻿namespace AccountServer.ViewModels.InputParameters
 {
     public class LoginRefreshTokenViewModel
     {
-    }
+
+      public string RefreshToken { get; set; }
+
+
+  }
 }

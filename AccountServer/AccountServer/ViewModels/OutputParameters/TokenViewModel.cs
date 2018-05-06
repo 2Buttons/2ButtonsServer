@@ -1,6 +1,6 @@
 ﻿namespace AccountServer.ViewModels.OutputParameters
 {
-  public class IdentityRespose
+  public class TokenViewModel
   {
     public string AccessToken { get; set; }
     public int UserId { get; set; }

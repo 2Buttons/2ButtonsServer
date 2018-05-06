@@ -8,7 +8,7 @@
 
   public enum GrantType
   {
-    Guest = 0,
+    NoGrantType = 0,
     Password = 1,
     RefreshToken = 2
   }

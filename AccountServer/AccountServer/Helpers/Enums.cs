@@ -1,4 +1,4 @@
-﻿namespace AccountServer.Models
+﻿namespace AccountServer.Helpers
 {
   public enum SexType
   {

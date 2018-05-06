@@ -1,4 +1,4 @@
-﻿namespace AccountServer.Claims
+﻿namespace AccountServer.Auth.Claims
 {
     //public class ModeratorAuthorizationHandler : AuthorizationHandler<ModeratorRequirement, Question>
     //{

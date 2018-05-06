@@ -41,20 +41,5 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
 
         }
-
-        public static bool TryGetUserRole(TwoButtonsContext db, int userId, out int role)
-        {
-            try
-            {
-                role = db.RoleDb.FromSql($"select * from dbo.getRole({userId})").FirstOrDefault()?.Role ?? 1;
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            role = 1;
-            return false;
-        }
     }
 }

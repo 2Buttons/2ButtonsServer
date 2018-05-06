@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TwoButtonsDatabase.Entities.User
+namespace TwoButtonsDatabase.Entities.Account
 {
     public class UserStatisticsDb
     {
@@ -8,11 +8,8 @@ namespace TwoButtonsDatabase.Entities.User
         public int UserId { get; set; }
 
         public int PublicAskedQuestions { get; set; }
-        public int AskedQuestions { get; set; }
         public int AnsweredQuestions { get; set; }
-        public int SeenQuestions { get; set; }
         public int PublicFavoriteQuestions { get; set; }
-        public int FavoriteQuestions { get; set; }
         public int CommentsWritten { get; set; }
 
         public int UserQuestionsShows { get; set; }

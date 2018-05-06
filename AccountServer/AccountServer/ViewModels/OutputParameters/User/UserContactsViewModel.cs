@@ -1,4 +1,5 @@
-﻿using AccountServer.Models;
+﻿using AccountServer.Helpers;
+using AccountServer.Models;
 
 namespace AccountServer.ViewModels.OutputParameters.User
 {
