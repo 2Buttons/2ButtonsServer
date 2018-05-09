@@ -4,15 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using AccountServer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using TwoButtonsAccountDatabase.Entities;
 
-namespace AccountServer.Data
+namespace TwoButtonsAccountDatabase
 {
   public class AuthenticationRepository : IDisposable
   {
-    private readonly TwoButtonsAccountContext1 _context;
+    private readonly TwoButtonsAccountContext _context;
 
 
-    public AuthenticationRepository(TwoButtonsAccountContext1 context)
+    public AuthenticationRepository(TwoButtonsAccountContext context)
     {
       _context = context;
     }

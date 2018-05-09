@@ -37,7 +37,7 @@ namespace AccountServer
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+      services.AddDbContext<TwoButtonsAccountContext1>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddCors(options =>
       {

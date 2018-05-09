@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using Tokens = AccountServer.Data.Entities.Tokens;
 
 namespace AccountServer.Controllers
 {
@@ -81,12 +82,12 @@ namespace AccountServer.Controllers
 
       if (credentials.GrantType == GrantType.NoGrantType)
       {
-        if (string.IsNullOrEmpty(credentials.Login) || string.IsNullOrEmpty(credentials.Password))
-          return BadRequest("Invalid username or password.");
+      //  if (string.IsNullOrEmpty(credentials.Login) || string.IsNullOrEmpty(credentials.Password))
+      //    return BadRequest("Invalid username or password.");
 
-        if (!AccountWrapper.TryGetIdentification(_dbMain, credentials.Login, credentials.Password.Trim(),
-              out userId) || userId == -1)
-          return BadRequest("Sorry, we can not find such login and password in out database.");
+        //if (!AccountWrapper.TryGetIdentification(_dbMain, credentials.Login, credentials.Password.Trim(),
+      //        out userId) || userId == -1)
+      //    return BadRequest("Sorry, we can not find such login and password in out database.");
 
         if (!AccountWrapper.TryGetUserRole(_dbMain, userId, out var roleDb))
           return BadRequest("Sorry, we can not find role for the user.");

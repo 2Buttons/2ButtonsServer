@@ -98,20 +98,20 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetUserRole(TwoButtonsContext db, int userId, out int role)
-    {
-      try
-      {
-        role = db.RoleDb.FromSql($"select * from dbo.getRole({userId})").FirstOrDefault()?.Role ?? 1;
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      role = 1;
-      return false;
-    }
+    //public static bool TryGetUserRole(TwoButtonsContext db, int userId, out int role)
+    //{
+    //  try
+    //  {
+    //    role = db.RoleDb.FromSql($"select * from dbo.getRole({userId})").FirstOrDefault()?.Role ?? 1;
+    //    return true;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    Console.WriteLine(e);
+    //  }
+    //  role = 1;
+    //  return false;
+    //}
 
     public static bool TryUpdateUserFullAvatar(TwoButtonsContext db, int userId, string fullAvatarLink)
     {
@@ -178,22 +178,22 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetUserContacts(TwoButtonsContext db, int userId, out List<UserContactsDb> userContacts)
-    {
-      try
-      {
-        userContacts = db.UserContactsDb
-                           .FromSql($"select * from dbo.getUserContacts({userId})").ToList();
+    //public static bool TryGetUserContacts(TwoButtonsContext db, int userId, out List<UserContactsDb> userContacts)
+    //{
+    //  try
+    //  {
+    //    userContacts = db.UserContactsDb
+    //                       .FromSql($"select * from dbo.getUserContacts({userId})").ToList();
 
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      userContacts = new List<UserContactsDb>();
-      return false;
-    }
+    //    return true;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    Console.WriteLine(e);
+    //  }
+    //  userContacts = new List<UserContactsDb>();
+    //  return false;
+    //}
 
     public static bool TryUpdateVisits(TwoButtonsContext db, int userId, int getUserId)
     {

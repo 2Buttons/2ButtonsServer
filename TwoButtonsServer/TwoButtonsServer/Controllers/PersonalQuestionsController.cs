@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
@@ -91,20 +92,40 @@ namespace TwoButtonsServer.Controllers
             return Ok(result);
         }
 
-      [HttpPost("getTopQuestions")]
-      public IActionResult GetTopQuestions([FromBody] TopUserQuestions userQuestions)
+      [HttpPost("getTopDayQuestions")]
+      public IActionResult GetTopDayQuestions([FromBody] TopDayQuestions questions)
       {
-        if (userQuestions == null)
+        if (questions == null)
           return BadRequest($"Input parameter  is null");
 
-
-        if (!UserQuestionsWrapper.TryGeTopQuestions(_context, userQuestions.UserId, userQuestions.IsOnlyNew, userQuestions.PageParams.Page,
-          userQuestions.PageParams.Amount, userQuestions.TopAfterDate, userQuestions.SortType.ToPredicate<TopQuestionDb>(), out var userTopQuestions))
+        if (!UserQuestionsWrapper.TryGeTopQuestions(_context, questions.UserId, questions.IsOnlyNew, questions.PageParams.Page,
+          questions.PageParams.Amount, questions.TopAfterDate, questions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
           return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
         var result = new List<TopQuestionsViewModel>();
 
-        foreach (var question in userTopQuestions)
+        foreach (var question in topQuestions)
+        {
+          GetTagsAndPhotos(questions.UserId, question.QuestionId, out var tags, out var firstPhotos,
+            out var secondPhotos, out var comments);
+          result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+        }
+        return Ok(result);
+      }
+
+      [HttpPost("getTopAllQuestions")]
+      public IActionResult GetTopAllQuestions([FromBody] TopAllQuestions userQuestions)
+      {
+        if (userQuestions == null)
+          return BadRequest($"Input parameter  is null");
+
+          if (!UserQuestionsWrapper.TryGeTopQuestions(_context, userQuestions.UserId, userQuestions.IsOnlyNew, userQuestions.PageParams.Page,
+            userQuestions.PageParams.Amount, DateTime.MinValue, userQuestions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
+            return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+
+        var result = new List<TopQuestionsViewModel>();
+
+        foreach (var question in topQuestions)
         {
           GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
             out var secondPhotos, out var comments);

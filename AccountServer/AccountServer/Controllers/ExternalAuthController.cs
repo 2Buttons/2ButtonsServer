@@ -70,7 +70,7 @@ namespace AccountServer.Controllers
       model.AccessToken = JsonConvert.DeserializeObject<VkAppAccessTokenCode>(z).AccessToken;
       model.UserId = JsonConvert.DeserializeObject<VkAppAccessTokenCode>(z).UserId;
       var vk = new VkMethods(model.AccessToken);
-      var info = await vk.GetAccountInfo();
+      //var info = await vk.GetAccountInfo();
       
       var friends = await vk.GetFriends(model.UserId);
       return Ok();
@@ -132,7 +132,7 @@ namespace AccountServer.Controllers
     {
 
       var vk = new VkMethods(model.AccessToken);
-      var info = await vk.GetAccountInfo();
+   //   var info = await vk.GetAccountInfo();
 
       var friends = await vk.GetFriends(model.UserId);
 

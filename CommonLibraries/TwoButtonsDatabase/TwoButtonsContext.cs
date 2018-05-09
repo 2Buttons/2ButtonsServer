@@ -52,11 +52,9 @@ namespace TwoButtonsDatabase
     public virtual DbSet<LikedQuestionDb> LikedQuestionsDb { get; set; }
 
     public virtual DbSet<ComplaintDb> ComplaintDb { get; set; }
-    public virtual DbSet<RoleDb> RoleDb { get; set; }
 
     public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
     public virtual DbSet<UserStatisticsDb> UserStatisticsDb { get; set; }
-    public virtual DbSet<UserContactsDb> UserContactsDb { get; set; }
     public virtual DbSet<PhotoDb> PhotoDb { get; set; }
 
 
