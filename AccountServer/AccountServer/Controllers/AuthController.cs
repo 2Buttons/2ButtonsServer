@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AccountServer.Auth;
+using AccountServer.Data.Entities;
 using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.ViewModels;
@@ -18,8 +19,11 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using TwoButtonsAccountDatabase;
+using TwoButtonsAccountDatabase.Entities;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using RoleType = AccountServer.Helpers.RoleType;
 
 namespace AccountServer.Controllers
 {

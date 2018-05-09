@@ -67,18 +67,16 @@ namespace AccountServer.Controllers
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts =  _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
-
       var result = userInfo.MapToUserInfoViewModel();
       result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
       
       result.Social = ConvertContactsDtoToViewModel(await userContacts);
 
-
       return Ok(result);
     }
 
     [HttpPost("getUserInfo")]
-    public IActionResult GetUserInfo([FromBody] UserPageIdViewModel userPage)
+    public async Task<IActionResult> GetUserInfo([FromBody] UserPageIdViewModel userPage)
     {
       if (userPage == null)
         return BadRequest($"Input parameter  is null");
@@ -87,13 +85,12 @@ namespace AccountServer.Controllers
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
       if (!AccountWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
-      if (!AccountWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserPageId, out var userContacts))
-        return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
-
+      var userContacts = _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
       result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
-      result.Social = ConvertContactsDtoToViewModel(userContacts);
+
+      result.Social = ConvertContactsDtoToViewModel(await userContacts);
 
       return Ok(result);
     }

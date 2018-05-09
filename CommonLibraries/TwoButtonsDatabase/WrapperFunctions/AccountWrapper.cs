@@ -21,7 +21,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     //}
 
 
-    public static bool TryAddUser(TwoButtonsContext db, string login, string password, int age, int sex, string city, string phone, string description, string fullAvatarLink, string smallAvatarLink, int role, out int userId)
+    public static bool TryAddUser(TwoButtonsContext db, string login, int age, int sex, string city, string description, string fullAvatarLink, string smallAvatarLink, out int userId)
     {
 
       var userIdDb = new SqlParameter
@@ -34,7 +34,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand($"addUser {login}, {password}, {age}, {sex}, {city}, {phone}, {description}, {fullAvatarLink}, {smallAvatarLink}, {role}, {registrationDate}, {userIdDb} OUT");
+        db.Database.ExecuteSqlCommand($"addUser {login}, {""}, {age}, {sex}, {city}, {""}, {description}, {fullAvatarLink}, {smallAvatarLink}, {1}, {registrationDate}, {userIdDb} OUT");
         userId = (int)userIdDb.Value;
         return true;
       }
@@ -47,56 +47,56 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
     }
 
-    public static bool TryGetIdentification(TwoButtonsContext db, string login, string password, out int userId)
-    {
-      try
-      {
-        userId = db.IdentificationDb
-                   .FromSql($"select * from dbo.identification({login}, {password})").FirstOrDefault()
-                   ?.UserId ?? -1;
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      userId = -1;
-      return false;
-    }
+    //public static bool TryGetIdentification(TwoButtonsContext db, string login, string password, out int userId)
+    //{
+    //  try
+    //  {
+    //    userId = db.IdentificationDb
+    //               .FromSql($"select * from dbo.identification({login}, {password})").FirstOrDefault()
+    //               ?.UserId ?? -1;
+    //    return true;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    Console.WriteLine(e);
+    //  }
+    //  userId = -1;
+    //  return false;
+    //}
 
-    public static bool TryCheckValidUser(TwoButtonsContext db, string phone, string login, out int returnsCode)
-    {
-      try
-      {
-        returnsCode = db.CheckValidUserDb
-                        .FromSql($"select * from dbo.checkValidUser({phone}, {login})").FirstOrDefault()
-                        ?.ReturnCode ?? -1;
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      returnsCode = -1;
-      return false;
-    }
+    //public static bool TryCheckValidUser(TwoButtonsContext db, string phone, string login, out int returnsCode)
+    //{
+    //  try
+    //  {
+    //    returnsCode = db.CheckValidUserDb
+    //                    .FromSql($"select * from dbo.checkValidUser({phone}, {login})").FirstOrDefault()
+    //                    ?.ReturnCode ?? -1;
+    //    return true;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    Console.WriteLine(e);
+    //  }
+    //  returnsCode = -1;
+    //  return false;
+    //}
 
-    public static bool TryIsUserIdValid(TwoButtonsContext db, int userId, out bool isValid)
-    {
-      try
-      {
-        isValid = (db.IsUserIdValidDb
-                     .FromSql($"select * from dbo.isUserIdValid({userId})").FirstOrDefault()
-                     ?.IsValid ?? false);
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      isValid = false;
-      return false;
-    }
+    //public static bool TryIsUserIdValid(TwoButtonsContext db, int userId, out bool isValid)
+    //{
+    //  try
+    //  {
+    //    isValid = (db.IsUserIdValidDb
+    //                 .FromSql($"select * from dbo.isUserIdValid({userId})").FirstOrDefault()
+    //                 ?.IsValid ?? false);
+    //    return true;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    Console.WriteLine(e);
+    //  }
+    //  isValid = false;
+    //  return false;
+    //}
 
     //public static bool TryGetUserRole(TwoButtonsContext db, int userId, out int role)
     //{

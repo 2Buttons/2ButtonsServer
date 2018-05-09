@@ -181,7 +181,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         YourFeedbackType = (FeedbackType) dbEntity.YourFeedback,
         YourAnswerType = (AnswerType) dbEntity.YourAnswer,
         IsInFavorites = dbEntity.InFavorites == 1,
-        IsSaved = dbEntity.IsSaved == 1,
+        IsSaved = dbEntity.IsSaved,
         CommentsAmount = dbEntity.Comments,
 
         FirstAnswersAmount = dbEntity.FirstAnswers,

@@ -27,8 +27,8 @@ namespace TwoButtonsConsoleTests
             {
                 //var user = db.UserDb.FirstOrDefault();
                 //Console.WriteLine(user?.Login);
-                if (AccountWrapper.TryGetIdentification(db, "govjad", "1", out int userId))
-                    Console.WriteLine(userId);
+                //if (AccountWrapper.TryGetIdentification(db, "govjad", "1", out int userId))
+                //    Console.WriteLine(userId);
             }
 
             Console.WriteLine("Hello World!");
