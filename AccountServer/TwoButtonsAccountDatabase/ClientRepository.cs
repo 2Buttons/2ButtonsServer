@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AccountServer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using TwoButtonsAccountDatabase.Entities;
 
 namespace TwoButtonsAccountDatabase
 {
-  public class AuthenticationRepository : IDisposable
+  public class ClientRepository : IDisposable
   {
     private readonly TwoButtonsAccountContext _context;
 
 
-    public AuthenticationRepository(TwoButtonsAccountContext context)
+    public ClientRepository(TwoButtonsAccountContext context)
     {
       _context = context;
     }
-
 
     public void Dispose()
     {
@@ -26,7 +23,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> AddClient(ClientDb client)
     {
-      await _context.Clients.AddAsync(client);
+      _context.Clients.Add(client);
       return await _context.SaveChangesAsync() > 0;
     }
 
@@ -37,70 +34,19 @@ namespace TwoButtonsAccountDatabase
     }
 
 
-    public bool TryFindClient(int clientId, string secret, out ClientDb client)
+    public async Task<ClientDb> FindClient(int clientId, string secret)
     {
-      if (clientId != 0 && !string.IsNullOrEmpty(secret))
-      {
-        client = _context.Clients.SingleOrDefault(x => x.ClientId == clientId && x.Secret == secret);
-        return true;
-      }
-
-      client = new ClientDb();
-      return false;
+      var client =  await _context.Clients.FindAsync(clientId);
+      return client.Secret == secret ? client : null;
     }
 
-    public async Task<bool> AddToken(TokenDb token)
+    public async Task<bool> RemoveClient(int clientId, string secret)
     {
-      var existingToken =
-        _context.Tokens.SingleOrDefault(r => r.UserId == token.UserId && r.ClientId == token.ClientId);
-
-      if (existingToken != null)
-        await RemoveToken(existingToken);
-
-      _context.Tokens.Add(token);
-
+      var client = await FindClient(clientId, secret);
+      if (client == null)
+        return false;
+      _context.Clients.Remove(client);
       return await _context.SaveChangesAsync() > 0;
-    }
-
-    public async Task<bool> RemoveToken(int tokenId)
-    {
-      var refreshToken = await _context.Tokens.FindAsync(tokenId);
-
-      if (refreshToken == null) return false;
-
-      _context.Tokens.Remove(refreshToken);
-      return await _context.SaveChangesAsync() > 0;
-    }
-
-    public async Task<bool> RemoveToken(TokenDb refreshToken)
-    {
-      _context.Tokens.Remove(refreshToken);
-      return await _context.SaveChangesAsync() > 0;
-    }
-
-    public async Task<bool> RemoveTokens(IEnumerable<TokenDb> tokens)
-    {
-     _context.Tokens.RemoveRange(tokens);
-      return await _context.SaveChangesAsync() > 0;
-    }
-
-
-    public async Task<TokenDb> FindToken(string refreshTokenId)
-    {
-      var refreshToken = await _context.Tokens.FindAsync(refreshTokenId);
-
-      return refreshToken;
-    }
-
-
-    public TokenDb GetToken(int clientId, string refreshToken)
-    {
-      return _context.Tokens.FirstOrDefault(x => x.ClientId == clientId && x.RefreshToken == refreshToken);
-    }
-
-    public List<TokenDb> GetAllTokens()
-    {
-      return _context.Tokens.ToList();
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿namespace AccountServer.Data.Entities
+﻿namespace TwoButtonsAccountDatabase
 {
   public enum ApplicationType
   {
@@ -19,5 +19,16 @@
     User = 1,
     Moderator = 2,
     Admin = 3
+  }
+
+  public enum SocialNetType
+  {
+    Nothing = 0,
+    Facebook = 1,
+    VK = 2,
+    Twiter = 3,
+    GooglePlus = 4,
+    Telegram = 5,
+    Badoo = 6
   }
 }

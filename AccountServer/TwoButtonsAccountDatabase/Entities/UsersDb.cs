@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TwoButtonsAccountDatabase;
 
 namespace AccountServer
 {
@@ -9,7 +10,7 @@ namespace AccountServer
   public partial class UserDb
   {
     [Key]
-    public string UserId { get; set; }
+    public int UserId { get; set; }
     public int AccessFailedCount { get; set; }
     public string Email { get; set; }
     public bool EmailConfirmed { get; set; }
