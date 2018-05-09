@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.UserQuestions;
 
 namespace TwoButtonsDatabase.WrapperFunctions
@@ -25,18 +25,17 @@ namespace TwoButtonsDatabase.WrapperFunctions
     }
 
 
-
-    public static bool TryGetUserAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+    public static bool TryGetUserAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount,
+      Expression<Func<UserAskedQuestionDb, object>> predicate, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
     {
       var isAnonimus = 0;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
-
+      var fromLine = page * amount - amount;
       try
       {
         userAskedQuestions = db.UserAskedQuestionsDb
-            .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+          .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {isAnonimus})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -47,17 +46,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetUserAnsweredQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount, out IEnumerable<UserAnsweredQuestionDb> userAnsweredQuestions)
+    public static bool TryGetUserAnsweredQuestions(TwoButtonsContext db, int userId, int pageUserId, int page,
+      int amount, out IEnumerable<UserAnsweredQuestionDb> userAnsweredQuestions)
     {
       var isAnonimus = userId == pageUserId ? 1 : 0;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
         userAnsweredQuestions = db.UserAnsweredQuestionsDb
-            .FromSql(
-                $"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+          .FromSql($"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {isAnonimus})")
+          .Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -68,17 +68,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount, out IEnumerable<UserFavoriteQuestionDb> userFavoriteQuestions)
+    public static bool TryGetUserFavoriteQuestions(TwoButtonsContext db, int userId, int pageUserId, int page,
+      int amount, Expression<Func<UserFavoriteQuestionDb, object>> predicate,
+      out IEnumerable<UserFavoriteQuestionDb> userFavoriteQuestions)
     {
       var isAnonimus = 0;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
       try
       {
         userFavoriteQuestions = db.UserFavoriteQuestionsDb
-            .FromSql(
-                $"select * from dbo.getUserFavoriteQuestions({userId}, {pageUserId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+          .FromSql($"select * from dbo.getUserFavoriteQuestions({userId}, {pageUserId}, {isAnonimus})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -89,15 +90,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetUserCommentedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount,
-        out IEnumerable<UserCommentedQuestionDb> userCommentedQuestions)
+    public static bool TryGetUserCommentedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page,
+      int amount, Expression<Func<UserCommentedQuestionDb, object>> predicate,
+      out IEnumerable<UserCommentedQuestionDb> userCommentedQuestions)
     {
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
         userCommentedQuestions = db.UserCommentedQuestionsDb
-            .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId}, {fromLine}, {toLine})").ToList();
+          .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -108,15 +112,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGeTopQuestions(TwoButtonsContext db, int userId, bool isOnlyNew, int page, int amount, DateTime topAfterDate,
-        out IEnumerable<TopQuestionDb> topQuestions)
+    public static bool TryGeTopQuestions(TwoButtonsContext db, int userId, bool isOnlyNew, int page, int amount,
+       DateTime topAfterDate,Expression<Func<TopQuestionDb, object>> predicate,
+      out IEnumerable<TopQuestionDb> topQuestions)
     {
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
         topQuestions = db.TopQuestionsDb
-            .FromSql($"select * from dbo.getTop({userId}, {fromLine}, {toLine}, {topAfterDate}, {isOnlyNew})").ToList();
+          .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -127,18 +134,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-
-
-    public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount, out IEnumerable<AskedQuestionDb> userAskedQuestions)
+    public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int pageUserId, int page, int amount,
+      Expression<Func<AskedQuestionDb, object>> predicate, out IEnumerable<AskedQuestionDb> userAskedQuestions)
     {
       var isAnonimus = 1;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
         userAskedQuestions = db.AskedQuestionsDb
-            .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+          .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId},   {isAnonimus})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -149,16 +156,17 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int page, int amount, out IEnumerable<LikedQuestionDb> userAnsweredQuestions)
+    public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int page, int amount,
+      Expression<Func<LikedQuestionDb, object>> predicate, out IEnumerable<LikedQuestionDb> userAnsweredQuestions)
     {
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
         userAnsweredQuestions = db.LikedQuestionsDb
-            .FromSql(
-                $"select * from dbo.getUserLikedQuestions({userId}, {fromLine}, {toLine})")
-            .ToList();
+          .FromSql($"select * from dbo.getUserLikedQuestions({userId})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
@@ -169,17 +177,18 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetSavedQuestions(TwoButtonsContext db, int userId, int page, int amount, out IEnumerable<SavedQuestionDb> userFavoriteQuestions)
+    public static bool TryGetSavedQuestions(TwoButtonsContext db, int userId, int page, int amount,
+      Expression<Func<SavedQuestionDb, object>> predicate, out IEnumerable<SavedQuestionDb> userFavoriteQuestions)
     {
       var isAnonimus = 1;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
         userFavoriteQuestions = db.SavedQuestionsDb
-            .FromSql(
-                $"select * from dbo.getUserFavoriteQuestions({userId}, {userId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+          .FromSql($"select * from dbo.getUserFavoriteQuestions({userId}, {userId}, {isAnonimus})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)

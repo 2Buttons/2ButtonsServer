@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace TwoButtonsServer.ViewModels.OutputParameters
+﻿namespace TwoButtonsServer.ViewModels
 {
   public enum SexType
   {
@@ -59,5 +54,12 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
     VerbalAbuse = 2,
     RepulsiveContent = 3,
     AdultContent=4
+  }
+  public enum SortType
+  {
+    DateTime = 0,
+    LikesAmount = 1,
+    DislikesAmount = 2,
+    ShowsAmount = 3
   }
 }

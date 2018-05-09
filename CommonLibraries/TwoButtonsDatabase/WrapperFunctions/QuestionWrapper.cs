@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.UserQuestions;
@@ -13,7 +14,6 @@ namespace TwoButtonsDatabase.WrapperFunctions
   {
     public static bool TryGetQuestion(TwoButtonsContext db, int userId, int questionId, out QuestionDb question)
     {
-
       try
       {
         question = db.QuestionDb
@@ -29,20 +29,22 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, string backgroundImageLink, int anonymity, int audience, int questionType, string firstOption, string secondOption, out int questionId)
+    public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, string backgroundImageLink,
+      int anonymity, int audience, int questionType, string firstOption, string secondOption, out int questionId)
     {
       var questionAddDate = DateTime.UtcNow;
 
       var questionIdDb = new SqlParameter
       {
         SqlDbType = SqlDbType.Int,
-        Direction = ParameterDirection.Output,
+        Direction = ParameterDirection.Output
       };
 
       try
       {
-        db.Database.ExecuteSqlCommand($"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
-        questionId = (int)questionIdDb.Value;
+        db.Database.ExecuteSqlCommand(
+          $"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
+        questionId = (int) questionIdDb.Value;
         return true;
       }
       catch (Exception e)
@@ -143,43 +145,47 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+    public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount,
+      Expression<Func<AskedQuestionDb, object>> predicate, out IEnumerable<AskedQuestionDb> askedQuestions)
     {
       var isAnonimus = 1;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
-        userAskedQuestions = db.UserAskedQuestionsDb
-            .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+        askedQuestions = db.AskedQuestionsDb
+          .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {isAnonimus})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userAskedQuestions = new List<UserAskedQuestionDb>();
+      askedQuestions = new List<AskedQuestionDb>();
       return false;
     }
 
-    public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+    public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount,
+      Expression<Func<LikedQuestionDb, object>> predicate, out IEnumerable<LikedQuestionDb> likedQuestions)
     {
       var isAnonimus = 1;
-      int fromLine = page * amount - amount + 1;
-      int toLine = page * amount;
+      var fromLine = page * amount - amount;
+
       try
       {
-        userAskedQuestions = db.UserAskedQuestionsDb
-            .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {fromLine}, {toLine}, {isAnonimus})")
-            .ToList();
+        likedQuestions = db.LikedQuestionsDb
+          .FromSql($"select * from dbo.getUserLikedQuestions({userId}, {getUserId},   {isAnonimus})")
+          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .ToList();
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userAskedQuestions = new List<UserAskedQuestionDb>();
+      likedQuestions = new List<LikedQuestionDb>();
       return false;
     }
   }
