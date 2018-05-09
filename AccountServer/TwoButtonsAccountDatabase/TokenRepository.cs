@@ -23,20 +23,20 @@ namespace TwoButtonsAccountDatabase
       _context.Dispose();
     }
 
-    public async Task<bool> AddToken(TokenDb token)
+    public async Task<bool> AddTokenAsync(TokenDb token)
     {
       var existingToken =
         _context.Tokens.SingleOrDefault(r => r.UserId == token.UserId && r.ClientId == token.ClientId);
 
       if (existingToken != null)
-        await RemoveToken(existingToken);
+        await RemoveTokenAsync(existingToken);
 
       _context.Tokens.Add(token);
 
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveToken(int tokenId)
+    public async Task<bool> RemoveTokenAsync(int tokenId)
     {
       var refreshToken = await _context.Tokens.FindAsync(tokenId);
 
@@ -46,33 +46,33 @@ namespace TwoButtonsAccountDatabase
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveToken(TokenDb refreshToken)
+    public async Task<bool> RemoveTokenAsync(TokenDb refreshToken)
     {
       _context.Tokens.Remove(refreshToken);
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveTokens(IEnumerable<TokenDb> tokens)
+    public async Task<bool> RemoveTokensAsync(IEnumerable<TokenDb> tokens)
     {
      _context.Tokens.RemoveRange(tokens);
       return await _context.SaveChangesAsync() >= tokens.Count();
     }
 
 
-    public async Task<TokenDb> FindToken(string tokenId)
+    public async Task<TokenDb> FindTokenAsync(string tokenId)
     {
       return await _context.Tokens.FindAsync(tokenId);
     }
 
 
-    public TokenDb GetToken(int clientId, string refreshToken)
+    public async Task<TokenDb> GetTokenAsync(int clientId, string token)
     {
-      return _context.Tokens.FirstOrDefault(x => x.ClientId == clientId && x.RefreshToken == refreshToken);
+      return await _context.Tokens.AsNoTracking().FirstOrDefaultAsync(x => x.ClientId == clientId && x.RefreshToken == token);
     }
 
-    public List<TokenDb> GetAllTokens()
+    public async Task<List<TokenDb>> GetAllTokensAsync()
     {
-      return _context.Tokens.ToList();
+      return await _context.Tokens.AsNoTracking().ToListAsync();
     }
   }
 }

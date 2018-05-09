@@ -6,8 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AccountServer.Auth;
-using AccountServer.Data;
-using AccountServer.Data.Entities;
 using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.ViewModels;
@@ -22,7 +20,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
-using Tokens = AccountServer.Data.Entities.Tokens;
 
 namespace AccountServer.Controllers
 {

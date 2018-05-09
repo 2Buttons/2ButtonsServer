@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using TwoButtonsAccountDatabase;
 using TwoButtonsDatabase;
 
 namespace AccountServer
@@ -37,7 +38,7 @@ namespace AccountServer
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddDbContext<TwoButtonsAccountContext1>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddCors(options =>
       {
@@ -67,7 +68,7 @@ namespace AccountServer
 
       //   services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
 
-      services.AddTransient<AuthenticationRepository>();
+      services.AddTransient<AccountUnitOfWork>();
 
       var tokenValidationParameters = new TokenValidationParameters
       {

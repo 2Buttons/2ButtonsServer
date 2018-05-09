@@ -5,7 +5,7 @@ namespace AccountServer.ViewModels.OutputParameters.User
 {
   public class UserContactsViewModel
   {
-    public SocialNetType NetworkType { get; set; }
-    public string ContactsAccount { get; set; }
+    public SocialNetType SocialNetType { get; set; }
+    public string AccountUrl { get; set; }
   }
 }

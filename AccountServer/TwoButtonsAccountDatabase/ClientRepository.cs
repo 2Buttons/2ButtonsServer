@@ -21,28 +21,28 @@ namespace TwoButtonsAccountDatabase
       _context.Dispose();
     }
 
-    public async Task<bool> AddClient(ClientDb client)
+    public async Task<bool> AddClientAsync(ClientDb client)
     {
       _context.Clients.Add(client);
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> UpdateClient(ClientDb client)
+    public async Task<bool> UpdateClientAsync(ClientDb client)
     {
       _context.Entry(client).State = EntityState.Modified;
       return await _context.SaveChangesAsync() > 0;
     }
 
 
-    public async Task<ClientDb> FindClient(int clientId, string secret)
+    public async Task<ClientDb> FindClientAsync(int clientId, string secret)
     {
       var client =  await _context.Clients.FindAsync(clientId);
       return client.Secret == secret ? client : null;
     }
 
-    public async Task<bool> RemoveClient(int clientId, string secret)
+    public async Task<bool> RemoveClientAsync(int clientId, string secret)
     {
-      var client = await FindClient(clientId, secret);
+      var client = await FindClientAsync(clientId, secret);
       if (client == null)
         return false;
       _context.Clients.Remove(client);

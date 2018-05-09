@@ -1,13 +1,19 @@
-﻿using System.Security.Claims;
-using AccountServer.Helpers;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AccountServer.Models;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
+using AccountServer.ViewModels.OutputParameters.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using TwoButtonsAccountDatabase;
+using TwoButtonsAccountDatabase.Models;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
+using RoleType = AccountServer.Helpers.RoleType;
+using SocialNetType = AccountServer.Helpers.SocialNetType;
 
 namespace AccountServer.Controllers
 {
@@ -16,10 +22,12 @@ namespace AccountServer.Controllers
   public class AccountController : Controller
   {
     private readonly TwoButtonsContext _twoButtonsContext;
+    private readonly AccountUnitOfWork _accountDb;
 
-    public AccountController(TwoButtonsContext context)
+    public AccountController(TwoButtonsContext context, AccountUnitOfWork accountDb)
     {
       _twoButtonsContext = context;
+      _accountDb = accountDb;
     }
 
     [HttpGet("register")]
@@ -46,7 +54,7 @@ namespace AccountServer.Controllers
 
     [Authorize]
     [HttpPost("getUserInfoAuth")]
-    public IActionResult GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
+    public async Task<IActionResult> GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
     {
       if (userPage == null)
         return BadRequest($"Input parameter  is null");
@@ -57,11 +65,14 @@ namespace AccountServer.Controllers
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
       if (!AccountWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
-      if (!AccountWrapper.TryGetUserContacts(_twoButtonsContext, userPage.UserPageId, out var userContacts))
-        return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
+      var userContacts =  _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
 
-      var result = userInfo.MapToUserInfoViewModel(userStatistics, userContacts);
+      var result = userInfo.MapToUserInfoViewModel();
+      result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
+      
+      result.Social = ConvertContactsDtoToViewModel(await userContacts);
+
 
       return Ok(result);
     }
@@ -80,7 +91,9 @@ namespace AccountServer.Controllers
         return BadRequest("Something goes wrong in TryGetUserContacts. We will fix it!... maybe)))");
 
 
-      var result = userInfo.MapToUserInfoViewModel(userStatistics, userContacts);
+      var result = userInfo.MapToUserInfoViewModel();
+      result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
+      result.Social = ConvertContactsDtoToViewModel(userContacts);
 
       return Ok(result);
     }
@@ -92,5 +105,16 @@ namespace AccountServer.Controllers
         return BadRequest("Sorry, we can not get information from our database.");
       return Ok(new { IsValid = isValid});
     }
+
+    private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDTO userContacts)
+    {
+      var result = new List<UserContactsViewModel>();
+
+      if (userContacts.VkId != 0) result.Add(new UserContactsViewModel{SocialNetType = SocialNetType.VK, AccountUrl = "https://vk.com/id" + userContacts.VkId.ToString()});
+      if (userContacts.FacebookId != 0) result.Add(new UserContactsViewModel { SocialNetType = SocialNetType.Facebook, AccountUrl = "https://www.facebook.com/profile.php?id="+userContacts.FacebookId.ToString() });
+
+      return result;
+    }
+
   }
 }

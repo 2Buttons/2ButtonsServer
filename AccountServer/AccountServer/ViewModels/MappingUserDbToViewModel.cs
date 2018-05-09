@@ -10,7 +10,7 @@ namespace AccountServer.ViewModels
   public static class MappingUserDbToViewModel
   {
     public static UserInfoViewModel MapToUserInfoViewModel(
-      this UserInfoDb dbEntity, UserStatisticsDb statisticsDb, IEnumerable<UserContactsDb> userContactsDb)
+      this UserInfoDb dbEntity)
     {
       var viewModel = new UserInfoViewModel
       {
@@ -30,10 +30,6 @@ namespace AccountServer.ViewModels
         FollowedAmount = dbEntity.Followed,
         FavoritesAmount = dbEntity.Favorites,
         CommentsAmount = dbEntity.Comments,
-
-        UserStatistics = statisticsDb.MapToUserStatisticsViewModel(),
-
-        Social = userContactsDb.MapToUserContactsViewModel()
       };
       return viewModel;
     }
@@ -64,15 +60,15 @@ namespace AccountServer.ViewModels
       return viewModel;
     }
 
-    public static List<UserContactsViewModel> MapToUserContactsViewModel(
-      this IEnumerable<UserContactsDb> userContactsDb)
-    {
-      return userContactsDb.Select(contact => new UserContactsViewModel
-        {
-          ContactsAccount = contact.Account,
-          NetworkType = (SocialNetType) contact.NetworkId
-        })
-        .ToList();
-    }
+    //public static List<UserContactsViewModel> MapToUserContactsViewModel(
+    //  this IEnumerable<UserContactsDb> userContactsDb)
+    //{
+    //  return userContactsDb.Select(contact => new UserContactsViewModel
+    //    {
+    //      ContactsAccount = contact.Account,
+    //      NetworkType = (SocialNetType) contact.NetworkId
+    //    })
+    //    .ToList();
+    //}
   }
 }
