@@ -56,7 +56,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
       {
         userAnsweredQuestions = db.UserAnsweredQuestionsDb
           .FromSql($"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {isAnonimus})")
-          .Skip(fromLine).Take(amount)
+          .OrderBy(x=>x.QuestionAddDate).Skip(fromLine).Take(amount)
           .ToList();
         return true;
       }

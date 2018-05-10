@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.UserQuestions;
@@ -30,7 +31,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     }
 
     public static bool TryAddQuestion(TwoButtonsContext db, int userId, string condition, string backgroundImageLink,
-      int anonymity, int audience, int questionType, string firstOption, string secondOption, out int questionId)
+      int anonymity, int audience, QuestionType questionType, string firstOption, string secondOption, out int questionId)
     {
       var questionAddDate = DateTime.UtcNow;
 
@@ -69,7 +70,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryUpdateQuestionFeedback(TwoButtonsContext db, int userId, int questionId, int feedback)
+    public static bool TryUpdateQuestionFeedback(TwoButtonsContext db, int userId, int questionId, FeedbackType feedback)
     {
       try
       {
@@ -115,7 +116,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryUpdateAnswer(TwoButtonsContext db, int userId, int questionId, int answer)
+    public static bool TryUpdateAnswer(TwoButtonsContext db, int userId, int questionId, AnswerType answer)
     {
       var answered = DateTime.Now;
 

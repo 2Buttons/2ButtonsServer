@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonLibraries;
 
 namespace TwoButtonsServer.ViewModels.OutputParameters
 {

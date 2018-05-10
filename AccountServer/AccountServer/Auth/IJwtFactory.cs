@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountServer.Helpers;
+using CommonLibraries;
 
 namespace AccountServer.Auth
 {

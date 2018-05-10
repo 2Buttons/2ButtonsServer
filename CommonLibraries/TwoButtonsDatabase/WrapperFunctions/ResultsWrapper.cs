@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 
@@ -28,15 +29,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int page, int amount, int answerType,
-      int minAge, int maxAge, int sex, string searchedLogin, out IEnumerable<AnsweredListDb> answeredList)
+    public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int page, int amount, AnswerType answerType,
+      int minAge, int maxAge, SexType sexType, string searchedLogin, out IEnumerable<AnsweredListDb> answeredList)
     {
       var fromLine = page * amount - amount;
 
       try
       {
         answeredList = db.AnsweredListDb
-          .FromSql($"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {minAge}, {maxAge}, {sex}, {searchedLogin})")
+          .FromSql($"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {minAge}, {maxAge}, {sexType}, {searchedLogin})")
           .Skip(fromLine).Take(amount)
           .ToList();
         return true;

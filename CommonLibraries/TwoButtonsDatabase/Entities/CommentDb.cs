@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using CommonLibraries;
 
 namespace TwoButtonsDatabase.Entities
 {
@@ -13,7 +14,7 @@ namespace TwoButtonsDatabase.Entities
         public string Comment { get; set; }
         public int Likes { get; set; }
         public int Dislikes { get; set; }
-        public int YourFeedback { get; set; }
+        public FeedbackType YourFeedback { get; set; }
         public int? PreviousCommentId { get; set; }
         public DateTime CommentAddDate { get; set; }
     }

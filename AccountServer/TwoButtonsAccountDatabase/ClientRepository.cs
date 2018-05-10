@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AccountServer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using TwoButtonsAccountDatabase.Entities;
 
 namespace TwoButtonsAccountDatabase
 {

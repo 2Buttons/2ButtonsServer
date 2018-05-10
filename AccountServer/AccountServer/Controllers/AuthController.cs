@@ -1,59 +1,119 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using AccountServer.Auth;
-using AccountServer.Data.Entities;
 using AccountServer.Helpers;
 using AccountServer.Models;
-using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
-using AccountServer.ViewModels.OutputParameters;
+using CommonLibraries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using TwoButtonsAccountDatabase;
 using TwoButtonsAccountDatabase.Entities;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
-using RoleType = AccountServer.Helpers.RoleType;
 
 namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
-  //[Route("/account")]
+  //[Route("/auth")]
   public class AuthController : Controller
   {
-    //some config in the appsettings.json
-    private JwtIssuerOptions _jwtOptions;
-
-    private IJwtFactory _jwtFactory;
     //repository to handler the sqlite database
 
+    private readonly AccountUnitOfWork _accountDb;
 
-    private IMemoryCache _cache;
+    private readonly IJwtFactory _jwtFactory;
 
-    private TwoButtonsContext _dbMain;
-    private AuthenticationRepository _dbToken;
+    //some config in the appsettings.json
+    private readonly JwtIssuerOptions _jwtOptions;
 
-    public AuthController(IOptions<JwtIssuerOptions> settings, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, TwoButtonsContext context, AuthenticationRepository repository)
+    private readonly TwoButtonsContext _twoButtonsContext;
+
+    public AuthController(IOptions<JwtIssuerOptions> settings, IJwtFactory jwtFactory,
+      IOptions<JwtIssuerOptions> jwtOptions, TwoButtonsContext twoButtonsContext, AccountUnitOfWork accountDb)
     {
       _jwtOptions = settings.Value;
-      _dbToken = repository;
-      // _cache = memoryCache;
+      _accountDb = accountDb;
       _jwtFactory = jwtFactory;
-      _dbMain = context;
+      _twoButtonsContext = twoButtonsContext;
+    }
+
+    [HttpGet("register")]
+    public IActionResult AddUser()
+    {
+      return BadRequest("Please, use POST request.");
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationViewModel user)
+    {
+      if (user == null)
+        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+      var isExistByPhone = _accountDb.Users.IsUserExistByPhoneAsync(user.Phone);
+      var isExistByEmail = _accountDb.Users.IsUserExistByPhoneAsync(user.Email);
+
+      await Task.WhenAll(isExistByPhone, isExistByEmail);
+
+      if (isExistByEmail.Result || isExistByPhone.Result)
+        return BadRequest($"You are already registered.");
+
+      const RoleType role = RoleType.User;
+
+      var userDb = new UserDb
+      {
+        Email = user.Email,
+        PhoneNumber = user.Phone,
+        RoleType = role,
+        PasswordHash = user.Password.GetHashString()
+      };
+      var isAdded = await _accountDb.Users.AddUserAsync(userDb);
+      if (!isAdded || userDb.UserId == 0)
+        return BadRequest($"We are not able to add you. Please, say us about it.");
+
+      if (!AccountWrapper.TryAddUser(_twoButtonsContext, userDb.UserId, user.Login, user.Age,  user.SexType,
+        user.City, user.Description, user.FullAvatarLink, user.SmallAvatarLink))
+      {
+        await _accountDb.Users.RemoveUserAsync(userDb.UserId);
+        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      }
+
+      var nowTime = DateTime.UtcNow;
+      var expiresAccessTokenInTime = 60 * 24 * 7 * 2;
+
+      var client = new ClientDb
+      {
+        Secret = Guid.NewGuid().ToString(),
+        IsActive = true,
+        RefreshTokenLifeTime = expiresAccessTokenInTime
+      };
+      await _accountDb.Clients.AddClientAsync(client);
+
+      var refreshToken = Guid.NewGuid().ToString();
+
+      var token = new TokenDb
+      {
+        UserId = userDb.UserId,
+        ClientId = client.ClientId,
+        IssuedUtc = nowTime,
+        ExpiresUtc = nowTime.AddMinutes(client.RefreshTokenLifeTime),
+        RefreshToken = refreshToken
+      };
+
+      if (!await _accountDb.Tokens.AddTokenAsync(token))
+        return BadRequest("Can not add token to database. You entered just as a guest.");
+
+
+      _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
+      return Ok(await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role, _jwtOptions));
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LogIn([FromBody]CredentialsViewModel credentials)
+    public async Task<IActionResult> Login([FromBody] CredentialsViewModel credentials)
     {
       if (credentials == null)
         return BadRequest("Input parameter  is null");
@@ -61,7 +121,13 @@ namespace AccountServer.Controllers
       switch (credentials.GrantType)
       {
         case GrantType.NoGrantType:
+          return await AccessToken(credentials);
         case GrantType.Password:
+          if (string.IsNullOrEmpty(credentials.Phone) || string.IsNullOrEmpty(credentials.Password))
+            return BadRequest("Phone and (or) password is incorrect");
+          if (await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone,
+                credentials.Password.GetHashString()) == null)
+            return BadRequest("Please register or login via Social Network");
           return await AccessToken(credentials);
         case GrantType.RefreshToken:
           return await RefreshToken(credentials);
@@ -70,35 +136,22 @@ namespace AccountServer.Controllers
       }
     }
 
-
-
-
     private async Task<IActionResult> AccessToken(CredentialsViewModel credentials)
     {
       var nowTime = DateTime.UtcNow;
-      int expiresAccessTokenInTime = 5;
+      var expiresAccessTokenInTime = 5;
 
-      int userId = 0;
+      var userId = 0;
       var role = RoleType.Guest;
 
       if (credentials.GrantType == GrantType.NoGrantType)
-      {
-      //  if (string.IsNullOrEmpty(credentials.Login) || string.IsNullOrEmpty(credentials.Password))
-      //    return BadRequest("Invalid username or password.");
+        role = await _accountDb.Users.GetUserRoleAsync(userId);
 
-        //if (!AccountWrapper.TryGetIdentification(_dbMain, credentials.Login, credentials.Password.Trim(),
-      //        out userId) || userId == -1)
-      //    return BadRequest("Sorry, we can not find such login and password in out database.");
+      ClientDb client = null;
+      if (!string.IsNullOrEmpty(credentials.SecretKey))
+        client = await _accountDb.Clients.FindClientAsync(credentials.ClientId, credentials.SecretKey);
 
-        if (!AccountWrapper.TryGetUserRole(_dbMain, userId, out var roleDb))
-          return BadRequest("Sorry, we can not find role for the user.");
-        role = (RoleType)roleDb;
-      }
-
-
-      if (!string.IsNullOrEmpty(credentials.SecretKey) &&
-          !_dbToken.TryFindClient(credentials.ClientId, credentials.SecretKey, out ClientDb client)) { }
-      else
+      if (client == null)
       {
         int expiresRefreshTokenInTime;
         switch (role)
@@ -122,13 +175,12 @@ namespace AccountServer.Controllers
           IsActive = true,
           RefreshTokenLifeTime = expiresRefreshTokenInTime
         };
-        await _dbToken.AddClient(client);
+        await _accountDb.Clients.AddClientAsync(client);
       }
-
       if (!client.IsActive)
       {
         client.IsActive = true;
-        await _dbToken.UpdateClient(client);
+        await _accountDb.Clients.UpdateClientAsync(client);
       }
 
       var refreshToken = Guid.NewGuid().ToString();
@@ -142,13 +194,13 @@ namespace AccountServer.Controllers
         RefreshToken = refreshToken
       };
 
-      if (!await _dbToken.AddToken(token))
+      if (!await _accountDb.Tokens.AddTokenAsync(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
 
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
-      return Ok(Tokens.GenerateJwt(_jwtFactory,client.ClientId, client.Secret, token.RefreshToken,token.UserId, role, _jwtOptions));
-
+      return Ok(Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
+        _jwtOptions));
     }
 
     private async Task<IActionResult> RefreshToken(CredentialsViewModel credentials)
@@ -158,23 +210,18 @@ namespace AccountServer.Controllers
       if (string.IsNullOrEmpty(credentials.RefreshToken) || string.IsNullOrEmpty(credentials.SecretKey))
         return BadRequest("RefreshToken or SecretKey is null or empty. Please, send again.");
 
-      if (!_dbToken.TryFindClient(credentials.ClientId, credentials.SecretKey, out var client) || !client.IsActive)
-      {
-        return BadRequest("Sorry, you have not loge in yet or your connection with authorization server is expired. Plese, get access token again");
-      }
+      var client = await _accountDb.Clients.FindClientAsync(credentials.ClientId, credentials.SecretKey);
+      if (client == null || !client.IsActive)
+        return BadRequest(
+          "Sorry, you have not loge in yet or your connection with authorization server is expired. Plese, get access token again");
 
-      var oldToken = _dbToken.GetToken(credentials.ClientId, credentials.RefreshToken);
+      var oldToken = await _accountDb.Tokens.FindTokenAsync(credentials.ClientId, credentials.RefreshToken);
       if (oldToken == null)
-      {
         return BadRequest("Sorry, we can not find your \"refresh token\". Plese, get access token again.");
-      }
 
-      RoleType role = RoleType.Guest;
+      var role = RoleType.Guest;
       if (oldToken.UserId != 0)
-      {
-        AccountWrapper.TryGetUserRole(_dbMain, oldToken.UserId, out var roleDb);
-        role = (RoleType)roleDb;
-      }
+        role = await _accountDb.Users.GetUserRoleAsync(oldToken.UserId);
 
       var refreshToken = Guid.NewGuid().ToString();
 
@@ -187,29 +234,34 @@ namespace AccountServer.Controllers
         RefreshToken = refreshToken
       };
 
-      bool isDeleted =  await _dbToken.RemoveToken(oldToken);
-      bool isAdded = await _dbToken.AddToken(token);
+      var isDeleted = await _accountDb.Tokens.RemoveTokenAsync(oldToken);
+      var isAdded = await _accountDb.Tokens.AddTokenAsync(token);
 
       if (!isDeleted || !isAdded)
         return BadRequest("Can not add token to database. Plese, get access token again or enter like a guest");
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(client.RefreshTokenLifeTime);
-      return Ok(Tokens.GenerateJwt(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role, _jwtOptions));
+      return Ok(Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
+        _jwtOptions));
     }
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> LogOut([FromBody]LogoutParams logout)
+    public async Task<IActionResult> LogOut([FromBody] LogoutParams logout)
     {
       if (string.IsNullOrEmpty(logout?.SecretKey))
         return BadRequest($"Input parameter  is null");
 
-      if (!_dbToken.TryFindClient(logout.ClientId, logout.SecretKey, out var client) || !client.IsActive)
+      if((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) == RoleType.Guest)
       {
-        return BadRequest("You are allready out of the system.");
+        return BadRequest($"You are guest.");
       }
+
+      var client = await _accountDb.Clients.FindClientAsync(logout.ClientId, logout.SecretKey);
+      if (client == null || !client.IsActive)
+        return BadRequest("You are allready out of the system.");
       client.IsActive = false;
-      var isInActive = await _dbToken.UpdateClient(client);
+      var isInActive = await _accountDb.Clients.UpdateClientAsync(client);
       if (isInActive && !client.IsActive)
         return Ok("Account is out of the system");
       return BadRequest("Your account out of the system");
@@ -219,9 +271,13 @@ namespace AccountServer.Controllers
     [HttpPost("fullLogout")]
     public async Task<IActionResult> FullLogOut()
     {
+      if ((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) == RoleType.Guest)
+      {
+        return BadRequest($"You are guest.");
+      }
+
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var tokens = _dbToken.GetAllTokens();
-      await _dbToken.RemoveTokens(tokens.Where(x => x.UserId == userId));
+      await _accountDb.Tokens.RemoveTokensAsync(x => x.UserId == userId);
       return Ok("You are not in your devices");
     }
   }

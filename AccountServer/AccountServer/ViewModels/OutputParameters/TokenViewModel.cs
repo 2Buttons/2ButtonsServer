@@ -1,9 +1,12 @@
-﻿namespace AccountServer.ViewModels.OutputParameters
+﻿using CommonLibraries;
+
+namespace AccountServer.ViewModels.OutputParameters
 {
   public class TokenViewModel
   {
     public string AccessToken { get; set; }
     public int UserId { get; set; }
+    public RoleType RoleType { get; set; }
     public int ClientId { get; set; }
     public string SecretKey { get; set; }
     public int ExpiresIn { get; set; }

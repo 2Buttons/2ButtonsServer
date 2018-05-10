@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using CommonLibraries;
 
 namespace TwoButtonsDatabase.Entities
 {
@@ -12,7 +13,7 @@ namespace TwoButtonsDatabase.Entities
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }
     public string BackgroundImageLink { get; set; }
-    public int QuestionType { get; set; }
+    public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
     public int UserId { get; set; }
     public string Login { get; set; }
@@ -20,8 +21,8 @@ namespace TwoButtonsDatabase.Entities
     public int Shows { get; set; }
     public int Likes { get; set; }
     public int Dislikes { get; set; }
-    public int YourFeedback { get; set; }
-    public int YourAnswer { get; set; }
+    public FeedbackType YourFeedback { get; set; }
+    public AnswerType YourAnswer { get; set; }
     public int InFavorites { get; set; }
     public bool IsSaved { get; set; }
     public int Comments { get; set; }

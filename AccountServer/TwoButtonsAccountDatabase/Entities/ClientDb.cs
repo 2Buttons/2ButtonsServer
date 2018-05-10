@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TwoButtonsAccountDatabase;
+using CommonLibraries;
 
-namespace AccountServer.Data.Entities
+namespace TwoButtonsAccountDatabase.Entities
 {
   [Table("Clients")]
     public class ClientDb

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AccountServer.Helpers;
-using AccountServer.Models;
+using CommonLibraries;
 
 namespace AccountServer.ViewModels.InputParameters
 {
@@ -16,14 +15,16 @@ namespace AccountServer.ViewModels.InputParameters
     public string ConfirmPassword { get; set; }
 
     [Required]
-    public int Age { get; set; }
+    public int Age { get; set; } = 0;
 
     [Required]
     public SexType SexType { get; set; }
 
-    public string City { get; set; } = null;
     [Required]
     public string Phone { get; set; }
+
+    public string Email { get; set; } = null;
+    public string City { get; set; } = null;
     public string Description { get; set; } = null;
     public string FullAvatarLink { get; set; } = null;
     public string SmallAvatarLink { get; set; } = null;

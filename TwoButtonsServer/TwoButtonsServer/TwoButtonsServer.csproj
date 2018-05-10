@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommonLibraries\CommonLibraries\CommonLibraries.csproj" />
     <ProjectReference Include="..\..\CommonLibraries\TwoButtonsDatabase\TwoButtonsDatabase.csproj" />
   </ItemGroup>
 

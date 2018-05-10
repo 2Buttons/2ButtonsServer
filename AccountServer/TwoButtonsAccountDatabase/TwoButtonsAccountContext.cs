@@ -1,6 +1,4 @@
-﻿using AccountServer;
-using AccountServer.Data.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TwoButtonsAccountDatabase.Entities;
 
 namespace TwoButtonsAccountDatabase

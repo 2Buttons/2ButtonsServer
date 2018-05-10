@@ -40,7 +40,7 @@ namespace TwoButtonsServer.Controllers
         {
             if (commentFeedback == null)
                 return BadRequest($"Input parameter {nameof(commentFeedback)} is null");
-            if (CommentsWrapper.TryUpdateCommentFeedback(_context, commentFeedback.UserId, commentFeedback.CommentId, (int)commentFeedback.FeedbackType))
+            if (CommentsWrapper.TryUpdateCommentFeedback(_context, commentFeedback.UserId, commentFeedback.CommentId, commentFeedback.FeedbackType))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }

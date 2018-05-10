@@ -1,4 +1,6 @@
-﻿namespace TwoButtonsServer.ViewModels.OutputParameters
+﻿using CommonLibraries;
+
+namespace TwoButtonsServer.ViewModels.OutputParameters
 {
     public class PhotoViewModel
     {

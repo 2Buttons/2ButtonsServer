@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsConsoleTests", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsDatabase", "..\CommonLibraries\TwoButtonsDatabase\TwoButtonsDatabase.csproj", "{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibraries", "..\CommonLibraries\CommonLibraries\CommonLibraries.csproj", "{D6C08942-9469-4C9E-8151-12559F10A14C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6C08942-9469-4C9E-8151-12559F10A14C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6C08942-9469-4C9E-8151-12559F10A14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6C08942-9469-4C9E-8151-12559F10A14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6C08942-9469-4C9E-8151-12559F10A14C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

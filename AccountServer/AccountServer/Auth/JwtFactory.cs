@@ -7,6 +7,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using AccountServer.Helpers;
 using AccountServer.Models;
+using CommonLibraries;
 using Microsoft.Extensions.Options;
 
 namespace AccountServer.Auth

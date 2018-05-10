@@ -1,19 +1,62 @@
-﻿using Newtonsoft.Json;
+﻿using CommonLibraries;
+using Newtonsoft.Json;
 
 namespace AccountServer.Models.Vk
 {
+
+  internal class AccountGetProfileInfoResponse
+  {
+    [JsonProperty("response")]
+    public VkUserData Response { get; set; }
+  }
+
+  internal class UsersGetResponse
+  {
+    [JsonProperty("response")]
+    public VkUserData[] Response { get; set; }
+  }
+
   internal class VkUserData
   {
-    public long Id { get; set; }
-    public string Email { get; set; }
-    public string Name { get; set; }
+    private SexType _vkSexType;
+
     [JsonProperty("first_name")]
     public string FirstName { get; set; }
     [JsonProperty("last_name")]
     public string LastName { get; set; }
-    public string Gender { get; set; }
-    public string Locale { get; set; }
-    public VkPictureData Picture { get; set; }
+    [JsonProperty("sex")]
+    public SexType Sex { get
+
+    {switch (_vkSexType)
+        {
+          case SexType.Man:
+            return SexType.Woman;
+          case SexType.Woman:
+            return SexType.Man;
+          case SexType.Both:
+          default:
+            return SexType.Both;
+        }
+      }
+      set => _vkSexType = value;
+    }
+
+    [JsonProperty("bdate")]
+    public string Birthday{ get; set; }
+    [JsonProperty("city")]
+    public VkCity City { get; set; }
+    [JsonProperty("photo_100")]
+    public string SmallPhoto { get; set; }
+    [JsonProperty("photo_max_orig")]
+    public string FullPhoto { get; set; }
+  }
+
+  public class VkCity
+  {
+    [JsonProperty("id ")]
+    public int CityId { get; set; }
+    [JsonProperty("title ")]
+    public string Title { get; set; }
   }
 
   internal class VkPictureData
@@ -51,9 +94,17 @@ namespace AccountServer.Models.Vk
 
   internal class VkAppAccessToken
   {
-    [JsonProperty("token_type")]
-    public string TokenType { get; set; }
     [JsonProperty("access_token")]
-    public string AccessToken { get; set; }
+    public string ExternalToken { get; set; }
+    [JsonProperty("expires_in")]
+    public int ExpiresIn { get; set; }
+    [JsonProperty("user_id")]
+    public int VkUserId { get; set; }
+    [JsonProperty("email")]
+    public string Email { get; set; }
+    [JsonProperty("error")]
+    public string Error { get; set; }
+    [JsonProperty("error_description")]
+    public string ErrorDescription { get; set; }
   }
 }

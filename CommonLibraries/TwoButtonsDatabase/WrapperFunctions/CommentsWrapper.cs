@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 
@@ -35,7 +36,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
             return false;
         }
 
-        public static bool TryUpdateCommentFeedback(TwoButtonsContext db, int userId, int commentId, int feedback)
+        public static bool TryUpdateCommentFeedback(TwoButtonsContext db, int userId, int commentId, FeedbackType feedback)
         {
             try
             {

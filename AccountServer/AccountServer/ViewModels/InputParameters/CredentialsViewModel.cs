@@ -1,5 +1,5 @@
-﻿using AccountServer.Data.Entities;
-using AccountServer.Models;
+﻿using AccountServer.Models;
+using CommonLibraries;
 
 namespace AccountServer.ViewModels.InputParameters
 {

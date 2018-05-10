@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.Account;
@@ -21,7 +22,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     //}
 
 
-    public static bool TryAddUser(TwoButtonsContext db, string login, int age, int sex, string city, string description, string fullAvatarLink, string smallAvatarLink, out int userId)
+    public static bool TryAddUser(TwoButtonsContext db, int userId, string login, int age, SexType sex, string city, string description, string fullAvatarLink, string smallAvatarLink)
     {
 
       var userIdDb = new SqlParameter
@@ -35,14 +36,12 @@ namespace TwoButtonsDatabase.WrapperFunctions
       try
       {
         db.Database.ExecuteSqlCommand($"addUser {login}, {""}, {age}, {sex}, {city}, {""}, {description}, {fullAvatarLink}, {smallAvatarLink}, {1}, {registrationDate}, {userIdDb} OUT");
-        userId = (int)userIdDb.Value;
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userId = -1;
       return false;
 
     }

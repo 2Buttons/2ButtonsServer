@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsAccountDatabase.Entities;
@@ -58,6 +59,13 @@ namespace TwoButtonsAccountDatabase
       return await _context.SaveChangesAsync() >= tokens.Count();
     }
 
+    public async Task<bool> RemoveTokensAsync(Expression<Func<TokenDb, bool>>predicate)
+    {
+      var tokensForRemoving = _context.Tokens.AsNoTracking().Where(predicate);
+      _context.Tokens.RemoveRange(tokensForRemoving);
+      return await _context.SaveChangesAsync() >= tokensForRemoving.Count();
+    }
+
 
     public async Task<TokenDb> FindTokenAsync(string tokenId)
     {
@@ -65,7 +73,7 @@ namespace TwoButtonsAccountDatabase
     }
 
 
-    public async Task<TokenDb> GetTokenAsync(int clientId, string token)
+    public async Task<TokenDb> FindTokenAsync(int clientId, string token)
     {
       return await _context.Tokens.AsNoTracking().FirstOrDefaultAsync(x => x.ClientId == clientId && x.RefreshToken == token);
     }

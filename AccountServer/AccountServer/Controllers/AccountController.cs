@@ -5,15 +5,16 @@ using AccountServer.Models;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
+using CommonLibraries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsAccountDatabase;
-using TwoButtonsAccountDatabase.Models;
+using TwoButtonsAccountDatabase.DTO;
+using TwoButtonsAccountDatabase.Entities;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
-using RoleType = AccountServer.Helpers.RoleType;
-using SocialNetType = AccountServer.Helpers.SocialNetType;
+
 
 namespace AccountServer.Controllers
 {
@@ -28,28 +29,6 @@ namespace AccountServer.Controllers
     {
       _twoButtonsContext = context;
       _accountDb = accountDb;
-    }
-
-    [HttpGet("register")]
-    public IActionResult AddUser()
-    {
-      return BadRequest("Please, use POST request.");
-    }
-
-    [HttpPost("register")]
-    public IActionResult RegisterUser([FromBody] UserRegistrationViewModel user)
-    {
-      if (user == null)
-        return BadRequest($"Input parameter  is null");
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
-      const RoleType role = RoleType.User;
-
-      if (AccountWrapper.TryAddUser(_twoButtonsContext, user.Login, user.Password, user.Age, (int) user.SexType,
-        user.City, user.Phone, user.Description, user.FullAvatarLink, user.SmallAvatarLink, (int) role, out var userId))
-        return Ok("Account created");
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [Authorize]
@@ -96,18 +75,17 @@ namespace AccountServer.Controllers
     }
 
     [HttpPost("isUserIdValid")]
-    public IActionResult IsUserIdValid([FromBody]UserIdValidationViewModel user)
+    public async Task<IActionResult> IsUserIdValid([FromBody]UserIdValidationViewModel user)
     {
-      if (!AccountWrapper.TryIsUserIdValid(_twoButtonsContext, user.UserId, out var isValid))
-        return BadRequest("Sorry, we can not get information from our database.");
-      return Ok(new { IsValid = isValid});
+      var isValid = await _accountDb.Users.IsUserIdExistAsync(user.UserId);
+      return Ok(new { IsValid = !isValid});
     }
 
-    private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDTO userContacts)
+    private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
     {
       var result = new List<UserContactsViewModel>();
 
-      if (userContacts.VkId != 0) result.Add(new UserContactsViewModel{SocialNetType = SocialNetType.VK, AccountUrl = "https://vk.com/id" + userContacts.VkId.ToString()});
+      if (userContacts.VkId != 0) result.Add(new UserContactsViewModel{SocialNetType = SocialNetType.Vk, AccountUrl = "https://vk.com/id" + userContacts.VkId.ToString()});
       if (userContacts.FacebookId != 0) result.Add(new UserContactsViewModel { SocialNetType = SocialNetType.Facebook, AccountUrl = "https://www.facebook.com/profile.php?id="+userContacts.FacebookId.ToString() });
 
       return result;

@@ -1,4 +1,5 @@
-﻿using TwoButtonsServer.ViewModels.OutputParameters;
+﻿using CommonLibraries;
+using TwoButtonsServer.ViewModels.OutputParameters;
 
 namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
 {

@@ -13,7 +13,7 @@
     console.log(window.location.href);
     // if we don't receive an access token then login failed and/or the user has not connected properly
     var accessToken = getParameterByName("access_token");
-    var expireIn = getParameterByName("expire_in");
+    var expiresIn = getParameterByName("expires_in");
     var userId = getParameterByName("user_id");
     var state = getParameterByName("state");
 
@@ -21,7 +21,7 @@
     if (accessToken) {
         message.status = true;
         message.accessToken = accessToken;
-        message.expireIn = expireIn;
+        message.expiresIn = expiresIn;
         message.userId = userId;
         message.state = state;
     }
@@ -37,7 +37,7 @@
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var json = JSON.stringify(message);
-        
+    console.log(json);
     var myInit = { method: 'POST',
         headers: myHeaders,
         mode: 'cors',
@@ -45,8 +45,8 @@
         body: json
     };
 
-    fetch("http://localhost:6256/vk", myInit).then(function(response) {
-/*что-то сделать при успешном запросе*/
+    fetch("http://localhost:6256/external/vkLogin", myInit).then(function (response) {
+        window.close();
     });
 
     //  window.close();

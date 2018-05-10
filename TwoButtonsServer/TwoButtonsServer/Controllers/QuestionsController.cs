@@ -65,7 +65,7 @@ namespace TwoButtonsServer.Controllers
       if (question == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.BackgroundImageLink, question.IsAnonymity ? 1:0, question.IsAudience ? 1 : 0, (int)question.QuestionType, question.FirstOption, question.SecondOption, out var questionId))
+      if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.BackgroundImageLink, question.IsAnonymity ? 1:0, question.IsAudience ? 1 : 0, question.QuestionType, question.FirstOption, question.SecondOption, out var questionId))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var badAddedTags = new List<TagViewModel>();
@@ -105,7 +105,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateQuestionFeedback")]
     public IActionResult UpdateFeedback([FromBody]UpdateQuestionFeedbackViewModel feedback)
     {
-      if (QuestionWrapper.TryUpdateQuestionFeedback(_context, feedback.UserId, feedback.QuestionId, (int)feedback.FeedbackType))
+      if (QuestionWrapper.TryUpdateQuestionFeedback(_context, feedback.UserId, feedback.QuestionId, feedback.FeedbackType))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -130,7 +130,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateAnswer")]
     public IActionResult UpdateAnswer([FromBody]UpdateQuestionAnswerViewModel answer)
     {
-      if (QuestionWrapper.TryUpdateAnswer(_context, answer.UserId, answer.QuestionId, (int)answer.AnswerType))
+      if (QuestionWrapper.TryUpdateAnswer(_context, answer.UserId, answer.QuestionId, answer.AnswerType))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -194,7 +194,7 @@ namespace TwoButtonsServer.Controllers
       if (voters == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.PageParams.Page, voters.PageParams.Amount, (int)voters.AnswerType, voters.MinAge, voters.MaxAge, (int)voters.SexType, voters.SearchedLogin, out var answeredList))
+      if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.PageParams.Page, voters.PageParams.Amount, voters.AnswerType, voters.MinAge, voters.MaxAge, voters.SexType, voters.SearchedLogin, out var answeredList))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(answeredList.MapAnsweredListDbToViewModel());

@@ -35,7 +35,7 @@
         body: json
     };
 
-        fetch("http://localhost:6256/vk/code", myInit).then(function(response) {
+    fetch("http://localhost:6256/external/vkLogin", myInit).then(function(response) {
             /*что-то сделать при успешном запросе*/
             window.close();
         });

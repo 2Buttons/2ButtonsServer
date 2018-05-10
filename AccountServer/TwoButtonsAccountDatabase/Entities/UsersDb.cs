@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TwoButtonsAccountDatabase;
+using CommonLibraries;
 
-namespace AccountServer
+namespace TwoButtonsAccountDatabase.Entities
 {
   [Table("Users")]
   public partial class UserDb

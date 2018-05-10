@@ -2,7 +2,6 @@
 using System.Net;
 using System.Text;
 using AccountServer.Auth;
-using AccountServer.Data;
 using AccountServer.Extensions;
 using AccountServer.Models;
 using AccountServer.Models.Facebook;
@@ -143,7 +142,13 @@ namespace AccountServer
      // app.UseStatusCodePages();
 
       app.UseDefaultFiles();
-      app.UseStaticFiles();
+      app.UseStaticFiles(new StaticFileOptions()
+      {
+        OnPrepareResponse = ctx =>
+        {
+          ctx.Context.Response.Headers.Add("Cache-Control", "no-store");
+        }
+      });
       app.UseAuthentication();
       app.UseMvc();
     }
