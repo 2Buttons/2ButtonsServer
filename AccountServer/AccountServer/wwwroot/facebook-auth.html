@@ -43,9 +43,10 @@
             body: json
         };
 
-        fetch("http://localhost:6256/facebook", myInit).then(function(response) {
+      fetch("http://localhost:6256/external/fbLogin", myInit).then(function (response) {
+        console.log(response);
 /*что-то сделать при успешном запросе*/
-        });
+      });
 
 
     </script>

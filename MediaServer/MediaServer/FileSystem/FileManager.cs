@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -12,12 +13,12 @@ namespace MediaServer.FileSystem
   {
     private readonly IDictionary<string, string> _folders;
 
-    public IOptions<MediaData> MediaOptions { get; }
+    public MediaData MediaOptions { get; }
     public IHostingEnvironment AppEnvironment { get; }
 
     public FileManager(IHostingEnvironment appEnvironment, IOptions<MediaData> mediaOptions)
     {
-      MediaOptions = mediaOptions;
+      MediaOptions = mediaOptions.Value;
       AppEnvironment = appEnvironment;
       _folders = new Dictionary<string, string>();
       InitConfiguration();
@@ -25,9 +26,14 @@ namespace MediaServer.FileSystem
 
     public bool IsUrlValid(string url)
     {
-      var serverUrl = Path.Combine(url.Split("/")[1], url.Split("/")[2]);
-      var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.Value.RootFolderRelativePath,
-        MediaOptions.Value.RootFolderName, serverUrl);
+      url = "/" + url;
+      var pattern = @"/+";
+      var target = "/";
+      var result = new Regex(pattern).Replace(url, target);
+      if (result.Count(x => x == '/') >= 3)
+        return false;
+      var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.RootFolderRelativePath,
+        MediaOptions.RootFolderName, Path.GetFullPath(url));
       return File.Exists(path);
     }
 
@@ -96,7 +102,7 @@ namespace MediaServer.FileSystem
 
     private string GetAbsoluteRootPath()
     {
-      return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.Value.RootFolderRelativePath + MediaOptions.Value.RootFolderName, "");
+      return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.RootFolderRelativePath + MediaOptions.RootFolderName, "");
     }
 
     private string GetAbsoluteMediaFolderPath(string folderName)

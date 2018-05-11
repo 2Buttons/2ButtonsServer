@@ -142,7 +142,7 @@ namespace AccountServer.Controllers
 
 
 
-    [HttpPost("facebook")]
+    [HttpPost("fbLogin")]
     public async Task<IActionResult> Facebook([FromBody]FacebookAuthViewModel model)
     {
       // 1.generate an app access token
@@ -284,6 +284,13 @@ namespace AccountServer.Controllers
         writer.Write(requestJson);
       }
       await request.GetResponseAsync();
+
+
+      //using (var responseStream = httpResponse.GetResponseStream())
+      //using (var reader = new StreamReader(responseStream))
+      //{
+      //  string response = reader.ReadToEnd();
+      //}
     }
   }
 }

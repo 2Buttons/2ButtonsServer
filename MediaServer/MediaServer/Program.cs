@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,9 +10,9 @@ namespace MediaServer
     {
         public static IConfiguration Configuration { get; private set; }
         public static string Scheme { get; private set; }
-        public static string IPAddress { get; private set; }
+        public static string IpAddress { get; private set; }
         public static string Port { get; private set; }
-        public static string Url => Scheme + IPAddress + ":" + Port;
+        public static string Url => Scheme + IpAddress + ":" + Port;
 
 
         public static void Main(string[] args)
@@ -23,7 +24,7 @@ namespace MediaServer
             Configuration = builder.Build();
 
             Scheme = Configuration["WebHost:Scheme"];
-            IPAddress = Configuration["WebHost:IPAddress"];
+            IpAddress = Configuration["WebHost:IPAddress"];
             Port = Configuration["WebHost:Port"];
             
             BuildWebHost(args).Run();
@@ -31,8 +32,17 @@ namespace MediaServer
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+              .UseStartup<Startup>()
+              //.UseKestrel(options =>
+              //{
+              //  options.Listen(IPAddress.Loopback, 6257);
+              //  options.Listen(IPAddress.Loopback, 6258, listenOptions =>
+              //  {
+              //    listenOptions.UseHttps("testCert.pfx", "testPassword");
+              //  });
+              //})
                 .UseUrls(Url)
-                .UseStartup<Startup>()
+
                 .Build();
     }
 }
