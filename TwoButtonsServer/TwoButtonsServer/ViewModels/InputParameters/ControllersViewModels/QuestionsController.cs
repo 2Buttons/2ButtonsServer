@@ -14,7 +14,7 @@ namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
     public string SecondOption { get; set; }
     public string BackgroundImageLink { get; set; } = null;
 
-    public List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
+    public List<string> Tags { get; set; } = new List<string>();
   }
 
   public class UpdateQuestionFeedbackViewModel : QuestionIdViewModel

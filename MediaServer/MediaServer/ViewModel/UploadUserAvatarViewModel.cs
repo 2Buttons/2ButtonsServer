@@ -6,6 +6,6 @@ namespace MediaServer.ViewModel
   {
     public int UserId { get; set; }
     public AvatarSizeType Size { get; set; }
-    public IFormFile UploadedFile { get; set; }
+    public IFormFile File { get; set; }
   }
 }

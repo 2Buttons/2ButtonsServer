@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace MediaServer.ViewModel
 {
-    public class UploadQuestionBackgroundViewModel
+    public class UploadQuestionBackgroundViaLinkViewModel
     {
-        public int QuestionId { get; set; }
-        public IFormFile File { get; set; }
-    }
+      public int QuestionId { get; set; }
+      public string Url { get; set; }
+  }
 }

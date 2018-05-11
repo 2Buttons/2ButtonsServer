@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Net;
 using System.Threading.Tasks;
 using MediaServer.FileSystem;
 using MediaServer.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
@@ -27,7 +24,6 @@ namespace MediaServer.Controllers
     {
       _context = context;
       _fileManager = fileManager;
-     
     }
 
     //[HttpGet("{imageType:required}/{fileName:required}")]
@@ -90,7 +86,7 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("isUrlValid")]
-    public IActionResult IsUrlValid([FromBody]IsUrlValidViewModel url)
+    public IActionResult IsUrlValid([FromBody] IsUrlValidViewModel url)
     {
       // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
       if (url == null)
@@ -99,45 +95,93 @@ namespace MediaServer.Controllers
       return Ok(new {IsValid = _fileManager.IsUrlValid(url.Url)});
     }
 
+    [HttpPost("uploadUserAvatarViaLink")]
+    public IActionResult UploadUserAvatarViaLink([FromBody] UploadAvatarViaLinkViewModel avatar)
+    {
+      // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
+      if (avatar == null)
+        return BadRequest("Input parameter is null");
+      if (string.IsNullOrEmpty(avatar.Url))
+        return BadRequest("Url is null");
+
+      var imageType = avatar.Size.ToString().GetMd5Hash();
+      var uniqueName = _fileManager.CreateUniqueName(avatar.Url);
+      var avatarLink = _fileManager.GetWebPath(imageType, uniqueName);
+      var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
+
+      new WebClient().DownloadFileAsync(new Uri(avatar.Url), filePath);
+
+      switch (avatar.Size)
+      {
+        case AvatarSizeType.UserSmallAvatarPhoto:
+
+          if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
+            return Ok(_fileManager.GetWebPath(imageType, uniqueName));
+          return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
+
+        case AvatarSizeType.UserFullAvatarPhoto:
+          if (AccountWrapper.TryUpdateUserFullAvatar(_context, avatar.UserId, avatarLink))
+            return Ok(_fileManager.GetWebPath(imageType, uniqueName));
+          return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
+        default:
+          return BadRequest("Image type is not valid.");
+      }
+    }
+
+    [HttpPost("uploadQuestionBackgroundViaLink")]
+    public  IActionResult UploadQuestionBackgroundViaLink([FromBody]UploadQuestionBackgroundViaLinkViewModel background)
+    {
+      if (background == null)
+        return BadRequest("Input parameter is null");
+      if (string.IsNullOrEmpty(background.Url))
+        return BadRequest("Url is null");
+
+      var imageType = BackgroundType.Background.ToString().GetMd5Hash();
+      var uniqueName = _fileManager.CreateUniqueName(background.Url);
+      var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
+
+      new WebClient().DownloadFileAsync(new Uri(background.Url), filePath);
+
+      var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
+      if (QuestionWrapper.TryUpdateQuestionBackgroundLink(_context, background.QuestionId, backgroundLink))
+        return Ok(backgroundLink);
+      return BadRequest("Link is not saved in the database, but link in file system:" + backgroundLink);
+    }
+
     [HttpPost("uploadUserAvatar")]
     public async Task<IActionResult> UploadUserAvatar(UploadUserAvatarViewModel avatar)
     {
       // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
       if (avatar == null)
         return BadRequest("Input parameter is null");
-      if (avatar.UploadedFile == null)
+      if (avatar.File == null)
         return BadRequest("uploadedFile is null");
 
       var imageType = avatar.Size.ToString().GetMd5Hash();
-      var uniqueName = _fileManager.CreateUniqueName(avatar.UploadedFile.FileName);
+      var uniqueName = _fileManager.CreateUniqueName(avatar.File.FileName);
       var avatarLink = _fileManager.GetWebPath(imageType, uniqueName);
       var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
 
+      using (var fileStream = new FileStream(filePath, FileMode.Create))
+      {
+        await avatar.File.CopyToAsync(fileStream);
+      }
       switch (avatar.Size)
       {
         case AvatarSizeType.UserSmallAvatarPhoto:
 
-          using (var fileStream = new FileStream(filePath, FileMode.Create))
-          {
-            await avatar.UploadedFile.CopyToAsync(fileStream);
-          }
+
           if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
         case AvatarSizeType.UserFullAvatarPhoto:
-          using (var fileStream = new FileStream(filePath, FileMode.Create))
-          {
-            await avatar.UploadedFile.CopyToAsync(fileStream);
-          }
-          if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
+          if (AccountWrapper.TryUpdateUserFullAvatar(_context, avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
         default:
           return BadRequest("Image type is not valid.");
       }
-
-    
     }
 
     [HttpPost("uploadQuestionBackground")]
@@ -145,16 +189,16 @@ namespace MediaServer.Controllers
     {
       if (background == null)
         return BadRequest("Input parameter is null");
-      if (background.UploadedFile == null)
+      if (background.File == null)
         return BadRequest("uploadedFile is null");
 
       var imageType = BackgroundType.Background.ToString().GetMd5Hash();
-      var uniqueName = _fileManager.CreateUniqueName(background.UploadedFile.FileName);
+      var uniqueName = _fileManager.CreateUniqueName(background.File.FileName);
       var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
 
       using (var fileStream = new FileStream(filePath, FileMode.Create))
       {
-        await background.UploadedFile.CopyToAsync(fileStream);
+        await background.File.CopyToAsync(fileStream);
       }
 
       var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);

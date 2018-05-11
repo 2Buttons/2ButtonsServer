@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace AccountServer.Models.Vk
 {
 
-  internal class AccountGetProfileInfoResponse
+  internal class VkUserDataResponse
   {
     [JsonProperty("response")]
     public VkUserData Response { get; set; }
@@ -20,6 +20,8 @@ namespace AccountServer.Models.Vk
   {
     private SexType _vkSexType;
 
+    [JsonProperty("user_id")]
+    public int UserId { get; set; }
     [JsonProperty("first_name")]
     public string FirstName { get; set; }
     [JsonProperty("last_name")]
@@ -95,11 +97,11 @@ namespace AccountServer.Models.Vk
   internal class VkAppAccessToken
   {
     [JsonProperty("access_token")]
-    public string ExternalToken { get; set; }
+    public string AccessToken { get; set; }
     [JsonProperty("expires_in")]
     public int ExpiresIn { get; set; }
     [JsonProperty("user_id")]
-    public int VkUserId { get; set; }
+    public int UserId { get; set; }
     [JsonProperty("email")]
     public string Email { get; set; }
     [JsonProperty("error")]

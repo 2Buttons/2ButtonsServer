@@ -68,12 +68,12 @@ namespace TwoButtonsServer.Controllers
       if (!QuestionWrapper.TryAddQuestion(_context, question.UserId, question.Condition, question.BackgroundImageLink, question.IsAnonymity ? 1:0, question.IsAudience ? 1 : 0, question.QuestionType, question.FirstOption, question.SecondOption, out var questionId))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-      var badAddedTags = new List<TagViewModel>();
+      var badAddedTags = new List<string>();
 
       for (var i = 0; i < question.Tags.Count; i++)
       {
         var tag = question.Tags[i];
-        if (!TagsWrapper.TryAddTag(_context, questionId, tag.TagText, i))
+        if (!TagsWrapper.TryAddTag(_context, questionId, tag, i))
           badAddedTags.Add(tag);
       }
       if (badAddedTags.Count != 0)

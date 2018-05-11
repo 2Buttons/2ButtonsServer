@@ -37,10 +37,16 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
+        if(loggedId == userId)
         followers = db.FollowerDb
           .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {searchedLogin})")
-          .Skip(fromLine).Take(amount)
+          .OrderBy(x=>x.Visits).Skip(fromLine).Take(amount)
           .ToList();
+        else
+          followers = db.FollowerDb
+            .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {searchedLogin})")
+            .Skip(fromLine).Take(amount)
+            .ToList();
         return true;
       }
       catch (Exception e)

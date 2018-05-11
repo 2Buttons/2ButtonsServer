@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -63,45 +64,31 @@ namespace AccountServer.Controllers
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;
       _vkAuthSettings = vkAuthSettingsAccessor.Value;
-      //_userManager = userManager;
-      //_appDbContext = appDbContext;
       _jwtFactory = jwtFactory;
       _jwtOptions = jwtOptions.Value;
       _accountDb = accountDb;
     }
 
-    private void ImlicitFlow()
-    {
-      //var appAccessTokenResponse = await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=https://oauth.vk.com/blank.html&code={model.Code}");
-      //var appAccessToken = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
-    }
-
-
 
     [HttpPost("vkLogin")]
-    public async Task<IActionResult> VkLogin([FromBody]VkAuthThokenViewModel vkAuth)
+    public async Task<IActionResult> VkLogin([FromBody]VkAuthCodeViewModel vkAuth)
     {
       if (vkAuth == null)
         return BadRequest("Input parameters is null.");
       if (!vkAuth.Status || !string.IsNullOrEmpty(vkAuth.Error))
         return BadRequest(vkAuth.Error + " " + vkAuth.ErrorDescription);
-      if (string.IsNullOrEmpty(vkAuth.AccessToken))
+      if (string.IsNullOrEmpty(vkAuth.Code))
         return BadRequest("AccessToken is null or empty.");
 
+      var appAccessTokenResponse = await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=http://localhost:6256/vk-auth-code.html&code={vkAuth.Code}");
+      var appAccessToken = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
 
-
-      //var appAccessTokenResponse = await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=https://oauth.vk.com/blank.html&code={model.Code}");
-      //var appAccessToken = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
-      //// 2. validate the user access token
-      //var userAccessTokenValidationResponse = await Client.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={model.AccessToken}&access_token={appAccessToken.AccessToken}");
-      //var userAccessTokenValidation = JsonConvert.DeserializeObject<FacebookUserAccessTokenValidation>(userAccessTokenValidationResponse);
-
-      var user = await _accountDb.Users.GetUserByExternalUserIdAsync(vkAuth.UserId, SocialNetType.Vk);
+      var user = await _accountDb.Users.GetUserByExternalUserIdAsync(appAccessToken.UserId, SocialNetType.Vk);
       if (user != null)
       {
-        if (string.IsNullOrEmpty(vkAuth.Email) && user.Email != vkAuth.Email && (string.IsNullOrEmpty(user.Email) || !user.EmailConfirmed))
+        if (string.IsNullOrEmpty(appAccessToken.Email) && user.Email != appAccessToken.Email && (string.IsNullOrEmpty(user.Email) || !user.EmailConfirmed))
         {
-          user.Email = vkAuth.Email;
+          user.Email = appAccessToken.Email;
           user.EmailConfirmed = true;
           await _accountDb.Users.ChangeUserEmail(user.UserId, user.Email, user.EmailConfirmed);
         }
@@ -109,107 +96,50 @@ namespace AccountServer.Controllers
         return await AccessToken(user);
       }
 
-      return await AccessToken(await CreateUserAccountFromVk(vkAuth.UserId, vkAuth.AccessToken, vkAuth.Email));
+      var newUser = await CreateUserAccountFromVk(appAccessToken.UserId, appAccessToken.AccessToken,
+        appAccessToken.Email);
+      if (newUser == null)
+        return BadRequest("We can not create you.");
 
-      //// 3. we've got a valid token so we can request user data from fb
+      return await AccessToken(newUser);
 
-
-
-      ////   model.AccessToken = JsonConvert.DeserializeObject<VkAppAccessTokenCode>(z).AccessToken;
-      ////    model.UserId = JsonConvert.DeserializeObject<VkAppAccessTokenCode>(z).UserId;
-      //var vk = new VkMethods(vkAuth.AccessToken);
-      ////var info = await vk.GetAccountInfo();
-
-      //var friends = await vk.GetFriends(vkAuth.UserId);
-      //return Ok();
-      //// 1.generate an app access token
-      //var appAccessTokenResponse = await Client.GetStringAsync($"https://graph.facebook.com/oauth/access_token?client_id={_fbAuthSettings.AppId}&client_secret={_fbAuthSettings.AppSecret}&grant_type=client_credentials");
-      //var appAccessToken = JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
-      //// 2. validate the user access token
-      //var userAccessTokenValidationResponse = await Client.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={vkAuth.AccessToken}&access_token={appAccessToken.AccessToken}");
-      //var userAccessTokenValidation = JsonConvert.DeserializeObject<FacebookUserAccessTokenValidation>(userAccessTokenValidationResponse);
-
-      //if (!userAccessTokenValidation.Data.IsValid)
-      //{
-      //  return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid facebook token.", ModelState));
-      //}
-
-      //// 3. we've got a valid token so we can request user data from fb
-      //var userInfoResponse = await Client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name,gender,locale,birthday,picture&access_token={vkAuth.AccessToken}");
-      //var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
-
-      //var p = 5;
-      //// 4. ready to create the local user account (if necessary) and jwt
-      //// var user = await _userManager.FindByEmailAsync(userInfo.Email);
-
-      ////if (user == null)
-      ////{
-      ////  var appUser = new AppUser
-      ////  {
-      ////    FirstName = userInfo.FirstName,
-      ////    LastName = userInfo.LastName,
-      ////    FacebookId = userInfo.Id,
-      ////    Email = userInfo.Email,
-      ////    UserName = userInfo.Email,
-      ////    PictureUrl = userInfo.Picture.Data.Url
-      ////  };
-
-      ////  var result = await _userManager.CreateAsync(appUser, Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8));
-
-      ////  if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
-
-      ////  await _appDbContext.Customers.AddAsync(new Customer { IdentityId = appUser.Id, Location = "", Locale = userInfo.Locale, Gender = userInfo.Gender });
-      ////  await _appDbContext.SaveChangesAsync();
-      ////}
-
-      ////// generate the jwt for the local user...
-      ////var localUser = await _userManager.FindByNameAsync(userInfo.Email);
-
-      ////if (localUser == null)
-      ////{
-      ////  return BadRequest(Errors.AddErrorToModelState("login_failure", "Failed to create local user account.", ModelState));
-      ////}
-
-      ////var jwt = await Tokens.GenerateJwt(_jwtFactory.GenerateClaimsIdentity(localUser.UserName, localUser.Id), _jwtFactory, localUser.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
-
-      //return new OkObjectResult("Good");
     }
 
     private async Task<UserDto> CreateUserAccountFromVk(int externalUserId, string externalToken, string email)
     {
 
-      Task<string> userInfoResponse =  Client.GetStringAsync($"https://api.vk.com/method/account.getProfileInfo&access_token={externalToken}&v=5.74");
-      
-
-      Task<string> userPhotosInfoResponse =  Client.GetStringAsync($"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=photo_100,photo_max_orig&access_token={userAccessToken}&v=5.74");
-
-      await Task.WhenAll(userInfoResponse, userPhotosInfoResponse);
-
-      var userInfo = JsonConvert.DeserializeObject<AccountGetProfileInfoResponse>(userInfoResponse.Result).Response;
-      var userInfoPhotos = JsonConvert.DeserializeObject<UsersGetResponse>(userInfoResponse.Result).Response;
-
-     // AccountWrapper.TryAddUser(_dbMain,)
+      var userInfoResponse = await Client.GetStringAsync($"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,city,photo_100,photo_max_orig&access_token={_vkAuthSettings.AppSecret}&v=5.74");
+      var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response;
 
       var userDb = new UserDb
       {
         RoleType = RoleType.User,
         Email = email,
-        EmailConfirmed = !string.IsNullOrEmpty(email)
+        EmailConfirmed = !string.IsNullOrEmpty(email),
+        VkId = externalUserId,
+        VkToken = externalToken
       };
-
-      userDb.FacebookId = externalUserId;
-      userDb.FacebookToken = externalToken;
-
       await _accountDb.Users.AddUserAsync(userDb);
+
+      // AccountWrapper.TryAddUser(_dbMain,)
+
+     // await UploadAvatars(userInfo.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
+
+      
       return userDb.ToUserDto();
 
     }
 
-    private static async Task DownloadFileAsync(string uriFrom, string uriTo)
+    private async Task UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)
     {
-      var client = new WebClient();
-      await client.DownloadFileTaskAsync(new Uri(uriFrom), uriTo);
+      var jsonSmall = JsonConvert.SerializeObject(new { userId, size = 0, url = smallPhotoUrl });
+      var jsonFull = JsonConvert.SerializeObject(new { userId, size = 1, url = fullPhotoUrl });
+      var s = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonSmall);
+      var f = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonFull);
+
+      await Task.WhenAll(s, f);
     }
+
 
 
     [HttpPost("facebook")]
@@ -231,7 +161,6 @@ namespace AccountServer.Controllers
       var userInfoResponse = await Client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name,gender,locale,birthday,picture&access_token={model.AccessToken}");
       var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
 
-      var p = 5;
       // 4. ready to create the local user account (if necessary) and jwt
       // var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
@@ -271,8 +200,7 @@ namespace AccountServer.Controllers
     private async Task<IActionResult> AccessToken(UserDto user)
     {
       var nowTime = DateTime.UtcNow;
-      var expiresAccessTokenInTime = 60 * 24 * 7 * 4 * 6; // half a week
-
+      const int expiresAccessTokenInTime = 60 * 24 * 7 * 4 * 6; // half a week
 
       ClientDb client = null;
 
@@ -297,7 +225,6 @@ namespace AccountServer.Controllers
 
       if (!await _accountDb.Tokens.AddTokenAsync(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
-
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
       return Ok(Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, user.RoleType,
@@ -344,6 +271,19 @@ namespace AccountServer.Controllers
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(client.RefreshTokenLifeTime);
       return Ok(Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
         _jwtOptions));
+    }
+
+    private static async Task UploadPhotoViaLink(string url, string requestJson)
+    {
+      var request = WebRequest.Create(url);
+      request.Method = "POST";
+      request.ContentType = "application/json";
+      using (var requestStream = request.GetRequestStream())
+      using (var writer = new StreamWriter(requestStream))
+      {
+        writer.Write(requestJson);
+      }
+      await request.GetResponseAsync();
     }
   }
 }

@@ -13,6 +13,8 @@
     console.log(window.location.href);
     // if we don't receive an access token then login failed and/or the user has not connected properly
     var accessToken = getParameterByName("access_token");
+
+    console.log(accessToken);
     var expiresIn = getParameterByName("expires_in");
     var userId = getParameterByName("user_id");
     var state = getParameterByName("state");
@@ -30,23 +32,24 @@
         message.error = getParameterByName("error");
         message.errorDescription = getParameterByName("error_description");
     }
-    console.log(window.location.href);
     console.log(JSON.stringify(message));
-    //window.postMessage(JSON.stringify(message), "http://localhost:6256/");
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var json = JSON.stringify(message);
     console.log(json);
-    var myInit = { method: 'POST',
+    var myInit = { method: 'GET',
         headers: myHeaders,
-        mode: 'cors',
-        cache: 'default',
-        body: json
+        mode: 'no-cors',
+        cache: 'default'
+        //body: json
     };
 
-    fetch("http://localhost:6256/external/vkLogin", myInit).then(function (response) {
-        window.close();
+    console.log("https://api.vk.com/method/account.getProfileInfo&access_token=" + accessToken + "&v=5.74");
+
+    fetch("https://api.vk.com/method/account.getProfileInfo?&access_token=" + accessToken + "&v=5.74", myInit).then(function (response) {
+        console.log(response);
+       // window.close();
     });
 
     //  window.close();
