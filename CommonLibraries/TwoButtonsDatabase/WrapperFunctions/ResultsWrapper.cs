@@ -10,14 +10,14 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
   public static class ResultsWrapper
   {
-    public static bool TryGetPhotos(TwoButtonsContext db, int userId, int questionId, int answer, int amount,
+    public static bool TryGetPhotos(TwoButtonsContext db, int userId, int questionId, int answer, int count,
       int minAge,
       int maxAge, int sex, string city, out IEnumerable<PhotoDb> photos)
     {
       try
       {
         photos = db.PhotoDb
-          .FromSql($"select * from dbo.getPhotos({userId}, {questionId}, {answer}, {amount}, {minAge}, {maxAge}, {sex}, {city})")
+          .FromSql($"select * from dbo.getPhotos({userId}, {questionId}, {answer}, {count}, {minAge}, {maxAge}, {sex}, {city})")
           .ToList();
         return true;
       }
@@ -29,16 +29,16 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int page, int amount, AnswerType answerType,
+    public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int offset, int count, AnswerType answerType,
       int minAge, int maxAge, SexType sexType, string searchedLogin, out IEnumerable<AnsweredListDb> answeredList)
     {
-      var fromLine = page * amount - amount;
+      
 
       try
       {
         answeredList = db.AnsweredListDb
           .FromSql($"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {minAge}, {maxAge}, {sexType}, {searchedLogin})")
-          .Skip(fromLine).Take(amount)
+          .Skip(offset).Take(count)
           .ToList();
         return true;
       }

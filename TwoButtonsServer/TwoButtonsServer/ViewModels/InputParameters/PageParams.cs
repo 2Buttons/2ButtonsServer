@@ -7,7 +7,7 @@ namespace TwoButtonsServer.ViewModels.InputParameters
 {
     public class PageParams
     {
-        public int Page { get; set; } = 1;
-        public int Amount { get; set; } = 100;
+        public int Offset { get; set; } = 0;
+        public int Count { get; set; } = 100;
     }
 }

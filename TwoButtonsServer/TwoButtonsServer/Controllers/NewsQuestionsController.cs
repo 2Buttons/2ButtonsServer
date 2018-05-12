@@ -33,8 +33,8 @@ namespace TwoButtonsServer.Controllers
                 return BadRequest($"Input parameter  is null");
 
             int userId= newsViewModel.UserId;
-            int questionsPage = newsViewModel.PageParams.Page;
-            int questionsAmount = newsViewModel.PageParams.Amount;
+            int questionsPage = newsViewModel.PageParams.Offset;
+            int questionsAmount = newsViewModel.PageParams.Count;
 
             var askedList = Task.Run(()=>GetNewsAskedQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();
             var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsPage, questionsAmount)).GetAwaiter().GetResult();

@@ -8,16 +8,16 @@ namespace TwoButtonsDatabase.WrapperFunctions
 {
   public class FollowersWrapper
   {
-    public static bool TryGetFollowers(TwoButtonsContext db, int loggedId, int userId, int page, int amount,
+    public static bool TryGetFollowers(TwoButtonsContext db, int loggedId, int userId, int offset, int count,
       string searchedLogin,
       out IEnumerable<FollowerDb> followers)
     {
-      var fromLine = page * amount - amount;
+      
       try
       {
         followers = db.FollowerDb
           .FromSql($"select * from dbo.getFollowers({loggedId}, {userId}, {searchedLogin})")
-          .Skip(fromLine).Take(amount)
+          .Skip(offset).Take(count)
           .ToList();
         return true;
       }
@@ -29,23 +29,23 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int page, int amount,
+    public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int offset, int count,
       string searchedLogin,
       out IEnumerable<FollowToDb> followers)
     {
-      var fromLine = page * amount - amount;
+      
 
       try
       {
         if(loggedId == userId)
         followers = db.FolloToDb
           .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {searchedLogin})")
-          .OrderBy(x=>x.Visits).Skip(fromLine).Take(amount)
+          .OrderBy(x=>x.Visits).Skip(offset).Take(count)
           .ToList();
         else
           followers = db.FolloToDb
             .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {searchedLogin})")
-            .Skip(fromLine).Take(amount)
+            .Skip(offset).Take(count)
             .ToList();
         return true;
       }

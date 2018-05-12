@@ -194,7 +194,7 @@ namespace TwoButtonsServer.Controllers
       if (voters == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.PageParams.Page, voters.PageParams.Amount, voters.AnswerType, voters.MinAge, voters.MaxAge, voters.SexType, voters.SearchedLogin, out var answeredList))
+      if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.PageParams.Offset, voters.PageParams.Count, voters.AnswerType, voters.MinAge, voters.MaxAge, voters.SexType, voters.SearchedLogin, out var answeredList))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(answeredList.MapAnsweredListDbToViewModel());

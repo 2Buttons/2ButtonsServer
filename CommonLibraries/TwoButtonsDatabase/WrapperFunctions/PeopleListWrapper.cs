@@ -43,16 +43,16 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetRecommendedStrangers(TwoButtonsContext db, int userId, int page, int amount, string searchedLogin,
+    public static bool TryGetRecommendedStrangers(TwoButtonsContext db, int userId, int offset, int count, string searchedLogin,
       out IEnumerable<RecommendedStrangersDb> recommendedStrangers)
     {
-      var fromLine = page * amount - amount;
+      
 
       try
       {
         recommendedStrangers = db.RecommendedStrangersDb
           .FromSql($"select * from dbo.getRecommendedStrangers({userId},   {searchedLogin})")
-          .Skip(fromLine).Take(amount)
+          .Skip(offset).Take(count)
           .ToList();
         return true;
       }

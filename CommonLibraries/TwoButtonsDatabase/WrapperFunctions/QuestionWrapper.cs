@@ -146,17 +146,17 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount,
+    public static bool TryGetAskedQuestions(TwoButtonsContext db, int userId, int getUserId, int offset, int count,
       Expression<Func<AskedQuestionDb, object>> predicate, out IEnumerable<AskedQuestionDb> askedQuestions)
     {
       var isAnonimus = 1;
-      var fromLine = page * amount - amount;
+      
 
       try
       {
         askedQuestions = db.AskedQuestionsDb
           .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {getUserId}, {isAnonimus})")
-          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .OrderBy(predicate).Skip(offset).Take(count)
           .ToList();
         return true;
       }
@@ -168,17 +168,17 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int page, int amount,
+    public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int getUserId, int offset, int count,
       Expression<Func<LikedQuestionDb, object>> predicate, out IEnumerable<LikedQuestionDb> likedQuestions)
     {
       var isAnonimus = 1;
-      var fromLine = page * amount - amount;
+      
 
       try
       {
         likedQuestions = db.LikedQuestionsDb
           .FromSql($"select * from dbo.getUserLikedQuestions({userId}, {getUserId},   {isAnonimus})")
-          .OrderBy(predicate).Skip(fromLine).Take(amount)
+          .OrderBy(predicate).Skip(offset).Take(count)
           .ToList();
         return true;
       }

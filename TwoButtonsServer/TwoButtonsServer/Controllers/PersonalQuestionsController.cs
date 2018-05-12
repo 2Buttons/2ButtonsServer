@@ -34,8 +34,8 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetAskedQuestions(_context, userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Page,
-          userQuestions.PageParams.Amount, userQuestions.SortType.ToPredicate<AskedQuestionDb>(), out var userAskedQuestions))
+      if (!UserQuestionsWrapper.TryGetAskedQuestions(_context, userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Offset,
+          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<AskedQuestionDb>(), out var userAskedQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<AskedQuestionsViewModel>();
@@ -56,8 +56,8 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Page,
-          userQuestions.PageParams.Amount, userQuestions.SortType.ToPredicate<LikedQuestionDb>(), out var userAnsweredQuestions))
+      if (!UserQuestionsWrapper.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Offset,
+          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<LikedQuestionDb>(), out var userAnsweredQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<LikedQuestionsViewModel>();
@@ -77,8 +77,8 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetSavedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Page,
-          userQuestions.PageParams.Amount, userQuestions.SortType.ToPredicate<SavedQuestionDb>(), out var userFavoriteQuestions))
+      if (!UserQuestionsWrapper.TryGetSavedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Offset,
+          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<SavedQuestionDb>(), out var userFavoriteQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<SavedQuestionsViewModel>();
@@ -100,8 +100,8 @@ namespace TwoButtonsServer.Controllers
         return BadRequest($"Input parameter  is null");
       var dateTime = questions.DeltaUnixTime == 0? DateTime.MinValue : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      if (!UserQuestionsWrapper.TryGeTopQuestions(_context, questions.UserId, questions.IsOnlyNew, questions.PageParams.Page,
-        questions.PageParams.Amount, dateTime, questions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
+      if (!UserQuestionsWrapper.TryGeTopQuestions(_context, questions.UserId, questions.IsOnlyNew, questions.PageParams.Offset,
+        questions.PageParams.Count, dateTime, questions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<TopQuestionsViewModel>();
