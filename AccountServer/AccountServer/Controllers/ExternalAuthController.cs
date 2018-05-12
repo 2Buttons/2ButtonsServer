@@ -299,7 +299,7 @@ namespace AccountServer.Controllers
 
     public async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
     {
-      var cityName = "";
+      string data;
       WebRequest request = WebRequest.CreateHttp($"https://api.vk.com/method/database.getCitiesById?city_ids=1&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       request.Headers.Add("Cookie", $"remixlang={language}");
       WebResponse response = await request.GetResponseAsync();
@@ -307,11 +307,11 @@ namespace AccountServer.Controllers
       {
         using (StreamReader reader = new StreamReader(stream))
         {
-          cityName =reader.ReadToEnd();
+          data =reader.ReadToEnd();
         }
       }
       response.Close();
-      return cityName;
+      return JsonConvert.DeserializeObject<VkCityResponse>(data).Response.FirstOrDefault().Title;
     }
   }
 }

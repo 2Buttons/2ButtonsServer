@@ -15,6 +15,12 @@ namespace AccountServer.Models.Vk
     public VkUserData[] Response { get; set; }
   }
 
+  internal class VkCityResponse
+  {
+    [JsonProperty("response")]
+    public VkCity[] Response { get; set; }
+  }
+
   internal class VkUserData
   {
     private SexType _vkSexType;
