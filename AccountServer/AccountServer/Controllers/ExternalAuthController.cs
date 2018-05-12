@@ -39,25 +39,15 @@ namespace AccountServer.Controllers
   public class ExternalAuthController : Controller
   {
     //some config in the appsettings.json
-    private JwtIssuerOptions _jwtOptions;
+    private readonly JwtIssuerOptions _jwtOptions;
 
-    private IJwtFactory _jwtFactory;
+    private readonly IJwtFactory _jwtFactory;
     //repository to handler the sqlite database
 
-
-
-
-    private TwoButtonsContext _dbMain;
-
-    private AccountUnitOfWork _accountDb;
-    //  private static readonly HttpClient Client = new HttpClient();
-
-
-
+    private readonly TwoButtonsContext _dbMain;
+    private readonly AccountUnitOfWork _accountDb;
     private readonly FacebookAuthSettings _fbAuthSettings;
     private readonly VkAuthSettings _vkAuthSettings;
-    //private readonly IJwtFactory _jwtFactory;
-    //private readonly JwtIssuerOptions _jwtOptions;
     private static readonly HttpClient Client = new HttpClient();
 
     public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor, IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,TwoButtonsContext buttonsContext, AccountUnitOfWork accountDb)
@@ -69,6 +59,8 @@ namespace AccountServer.Controllers
       _accountDb = accountDb;
       _dbMain = buttonsContext;
     }
+
+    //https://habr.com/post/270273/ - lets encrypt
 
 
     [HttpPost("vkLogin")]
@@ -142,8 +134,8 @@ namespace AccountServer.Controllers
       var s = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonSmall);
       var f = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonFull);
 
-      await Task.WhenAll(s, f);
-      return (s.Result, f.Result);
+      await Task.WhenAll(f, s);
+      return (f.Result, s.Result);
     }
 
 
@@ -300,7 +292,7 @@ namespace AccountServer.Controllers
     public async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
     {
       string data;
-      WebRequest request = WebRequest.CreateHttp($"https://api.vk.com/method/database.getCitiesById?city_ids=1&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+      WebRequest request = WebRequest.CreateHttp($"https://api.vk.com/method/database.getCitiesById?city_ids={cityId}&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       request.Headers.Add("Cookie", $"remixlang={language}");
       WebResponse response = await request.GetResponseAsync();
       using (Stream stream = response.GetResponseStream())

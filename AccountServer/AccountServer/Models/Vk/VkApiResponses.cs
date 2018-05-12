@@ -21,6 +21,41 @@ namespace AccountServer.Models.Vk
     public VkCity[] Response { get; set; }
   }
 
+  internal class VkFriendIdsResponse
+  {
+    [JsonProperty("response")]
+    public VkFriendItems<int> Response { get; set; }
+  }
+
+  internal class VkFriendsDataResponse
+  {
+    [JsonProperty("response")]
+    public VkFriendItems<VkFriendData> Response { get; set; }
+  }
+
+  internal class VkFriendItems<T>
+  {
+    [JsonProperty("count")]
+    public int Count { get; set; }
+    [JsonProperty("items")]
+    public T[] Items { get; set; }
+  }
+
+  internal class VkFriendData
+  {
+    [JsonProperty("id")]
+    public int UserId { get; set; }
+
+    [JsonProperty("first_name")]
+    public string FirstName { get; set; }
+
+    [JsonProperty("last_name")]
+    public string LastName { get; set; }
+
+    [JsonProperty("photo_100")]
+    public string SmallPhoto { get; set; }
+  }
+
   internal class VkUserData
   {
     private SexType _vkSexType;
