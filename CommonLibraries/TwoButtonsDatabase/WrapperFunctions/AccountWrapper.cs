@@ -25,17 +25,15 @@ namespace TwoButtonsDatabase.WrapperFunctions
     public static bool TryAddUser(TwoButtonsContext db, int userId, string login, int age, SexType sex, string city, string description, string fullAvatarLink, string smallAvatarLink)
     {
 
-      var userIdDb = new SqlParameter
+      var returnsCode = new SqlParameter
       {
         SqlDbType = SqlDbType.Int,
         Direction = ParameterDirection.Output,
       };
 
-      var registrationDate = DateTime.UtcNow;
-
       try
       {
-        db.Database.ExecuteSqlCommand($"addUser {login}, {""}, {age}, {sex}, {city}, {""}, {description}, {fullAvatarLink}, {smallAvatarLink}, {1}, {registrationDate}, {userIdDb} OUT");
+        db.Database.ExecuteSqlCommand($"addUser {userId}, {login}, {age}, {sex}, {city},  {description}, {fullAvatarLink}, {smallAvatarLink}, {returnsCode} OUT");
         return true;
       }
       catch (Exception e)

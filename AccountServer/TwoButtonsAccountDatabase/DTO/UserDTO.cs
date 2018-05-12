@@ -17,7 +17,7 @@ namespace TwoButtonsAccountDatabase.DTO
       public bool TwoFactorEnabled { get; set; }
       public int VkId { get; set; }
       public string VkToken { get; set; }
-      public int FacebookId { get; set; }
+      public long FacebookId { get; set; }
       public string FacebookToken { get; set; }
   }
 }

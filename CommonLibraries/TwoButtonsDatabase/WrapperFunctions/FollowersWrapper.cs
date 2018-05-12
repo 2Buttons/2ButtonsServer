@@ -31,19 +31,19 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
     public static bool TryGetFollowTo(TwoButtonsContext db, int loggedId, int userId, int page, int amount,
       string searchedLogin,
-      out IEnumerable<FollowerDb> followers)
+      out IEnumerable<FollowToDb> followers)
     {
       var fromLine = page * amount - amount;
 
       try
       {
         if(loggedId == userId)
-        followers = db.FollowerDb
+        followers = db.FolloToDb
           .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {searchedLogin})")
           .OrderBy(x=>x.Visits).Skip(fromLine).Take(amount)
           .ToList();
         else
-          followers = db.FollowerDb
+          followers = db.FolloToDb
             .FromSql($"select * from dbo.getFollowTo({loggedId}, {userId}, {searchedLogin})")
             .Skip(fromLine).Take(amount)
             .ToList();
@@ -53,7 +53,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
       {
         Console.WriteLine(e);
       }
-      followers = new List<FollowerDb>();
+      followers = new List<FollowToDb>();
       return false;
     }
 

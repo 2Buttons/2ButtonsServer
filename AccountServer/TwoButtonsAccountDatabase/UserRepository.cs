@@ -142,7 +142,7 @@ namespace TwoButtonsAccountDatabase
       return user?.ToUserDto();
     }
 
-    public async Task<int> GetExternalUserIdAsync(int userId, SocialNetType socialType)
+    public async Task<long> GetExternalUserIdAsync(int userId, SocialNetType socialType)
     {
       var user = await _context.Users.FindAsync(userId);
       if (user == null) return 0;

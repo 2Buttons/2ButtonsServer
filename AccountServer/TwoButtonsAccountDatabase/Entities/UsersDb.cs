@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
@@ -19,7 +20,8 @@ namespace TwoButtonsAccountDatabase.Entities
     public bool TwoFactorEnabled { get; set; }
     public int VkId { get; set; }
     public string VkToken { get; set; }
-    public int FacebookId { get; set; }
+    public long FacebookId { get; set; }
     public string FacebookToken { get; set; }
+    public DateTime RegistrationDate { get; set; }
   }
 }

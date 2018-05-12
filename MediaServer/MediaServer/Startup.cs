@@ -54,10 +54,10 @@ namespace MediaServer
                 RequestPath = "/images"
             });
 
-          app.UseForwardedHeaders(new ForwardedHeadersOptions
-          {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-          });
+          //app.UseForwardedHeaders(new ForwardedHeadersOptions
+          //{
+          //  ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+          //});
 
       app.UseMvc();
         }

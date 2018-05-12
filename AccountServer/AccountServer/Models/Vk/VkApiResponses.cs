@@ -3,11 +3,10 @@ using Newtonsoft.Json;
 
 namespace AccountServer.Models.Vk
 {
-
   internal class VkUserDataResponse
   {
     [JsonProperty("response")]
-    public VkUserData Response { get; set; }
+    public VkUserData[] Response { get; set; }
   }
 
   internal class UsersGetResponse
@@ -20,16 +19,22 @@ namespace AccountServer.Models.Vk
   {
     private SexType _vkSexType;
 
-    [JsonProperty("user_id")]
+    [JsonProperty("id")]
     public int UserId { get; set; }
+
     [JsonProperty("first_name")]
     public string FirstName { get; set; }
+
     [JsonProperty("last_name")]
     public string LastName { get; set; }
-    [JsonProperty("sex")]
-    public SexType Sex { get
 
-    {switch (_vkSexType)
+    [JsonProperty("sex")]
+    public SexType Sex
+    {
+      get
+
+      {
+        switch (_vkSexType)
         {
           case SexType.Man:
             return SexType.Woman;
@@ -44,20 +49,24 @@ namespace AccountServer.Models.Vk
     }
 
     [JsonProperty("bdate")]
-    public string Birthday{ get; set; }
+    public string Birthday { get; set; }
+
     [JsonProperty("city")]
     public VkCity City { get; set; }
+
     [JsonProperty("photo_100")]
     public string SmallPhoto { get; set; }
+
     [JsonProperty("photo_max_orig")]
     public string FullPhoto { get; set; }
   }
 
-  public class VkCity
+  internal class VkCity
   {
-    [JsonProperty("id ")]
+    [JsonProperty("id")]
     public int CityId { get; set; }
-    [JsonProperty("title ")]
+
+    [JsonProperty("title")]
     public string Title { get; set; }
   }
 
@@ -70,8 +79,10 @@ namespace AccountServer.Models.Vk
   {
     public int Height { get; set; }
     public int Width { get; set; }
+
     [JsonProperty("is_silhouette")]
     public bool IsSilhouette { get; set; }
+
     public string Url { get; set; }
   }
 
@@ -79,12 +90,16 @@ namespace AccountServer.Models.Vk
   {
     [JsonProperty("app_id")]
     public long AppId { get; set; }
+
     public string Type { get; set; }
     public string Application { get; set; }
+
     [JsonProperty("expires_at")]
     public long ExpiresAt { get; set; }
+
     [JsonProperty("is_valid")]
     public bool IsValid { get; set; }
+
     [JsonProperty("user_id")]
     public long UserId { get; set; }
   }
@@ -98,14 +113,19 @@ namespace AccountServer.Models.Vk
   {
     [JsonProperty("access_token")]
     public string AccessToken { get; set; }
+
     [JsonProperty("expires_in")]
     public int ExpiresIn { get; set; }
+
     [JsonProperty("user_id")]
     public int UserId { get; set; }
+
     [JsonProperty("email")]
     public string Email { get; set; }
+
     [JsonProperty("error")]
     public string Error { get; set; }
+
     [JsonProperty("error_description")]
     public string ErrorDescription { get; set; }
   }

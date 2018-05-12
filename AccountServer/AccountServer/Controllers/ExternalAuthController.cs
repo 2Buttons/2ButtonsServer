@@ -60,13 +60,14 @@ namespace AccountServer.Controllers
     //private readonly JwtIssuerOptions _jwtOptions;
     private static readonly HttpClient Client = new HttpClient();
 
-    public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor, IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, AccountUnitOfWork accountDb)
+    public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor, IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,TwoButtonsContext buttonsContext, AccountUnitOfWork accountDb)
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;
       _vkAuthSettings = vkAuthSettingsAccessor.Value;
       _jwtFactory = jwtFactory;
       _jwtOptions = jwtOptions.Value;
       _accountDb = accountDb;
+      _dbMain = buttonsContext;
     }
 
 
@@ -108,8 +109,8 @@ namespace AccountServer.Controllers
     private async Task<UserDto> CreateUserAccountFromVk(int externalUserId, string externalToken, string email)
     {
 
-      var userInfoResponse = await Client.GetStringAsync($"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,city,photo_100,photo_max_orig&access_token={_vkAuthSettings.AppSecret}&v=5.74");
-      var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response;
+      var userInfoResponse = await Client.GetStringAsync($"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
+      var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response.FirstOrDefault();
 
       var userDb = new UserDb
       {
@@ -117,27 +118,31 @@ namespace AccountServer.Controllers
         Email = email,
         EmailConfirmed = !string.IsNullOrEmpty(email),
         VkId = externalUserId,
-        VkToken = externalToken
+        VkToken = externalToken,
+        RegistrationDate = DateTime.UtcNow
       };
       await _accountDb.Users.AddUserAsync(userDb);
 
-      // AccountWrapper.TryAddUser(_dbMain,)
+      var bdate = Convert.ToDateTime(userInfo.Birthday);
 
-     // await UploadAvatars(userInfo.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
+      var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
+      AccountWrapper.TryAddUser(_dbMain, userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, DateTime.Now.AddYears(-bdate.Year).Year, userInfo.Sex,
+        userInfo.City.Title, "", links.Item1, links.Item2);
 
-      
+
       return userDb.ToUserDto();
 
     }
 
-    private async Task UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)
+    private async Task<(string, string)> UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)
     {
-      var jsonSmall = JsonConvert.SerializeObject(new { userId, size = 0, url = smallPhotoUrl });
-      var jsonFull = JsonConvert.SerializeObject(new { userId, size = 1, url = fullPhotoUrl });
+      var jsonSmall = JsonConvert.SerializeObject(new { userId=userId, size = 0, url = smallPhotoUrl });
+      var jsonFull = JsonConvert.SerializeObject(new { userId=userId, size = 1, url = fullPhotoUrl });
       var s = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonSmall);
       var f = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonFull);
 
       await Task.WhenAll(s, f);
+      return (s.Result, f.Result);
     }
 
 
@@ -273,7 +278,7 @@ namespace AccountServer.Controllers
         _jwtOptions));
     }
 
-    private static async Task UploadPhotoViaLink(string url, string requestJson)
+    private static async Task<string> UploadPhotoViaLink(string url, string requestJson)
     {
       var request = WebRequest.Create(url);
       request.Method = "POST";
@@ -283,14 +288,12 @@ namespace AccountServer.Controllers
       {
         writer.Write(requestJson);
       }
-      await request.GetResponseAsync();
-
-
-      //using (var responseStream = httpResponse.GetResponseStream())
-      //using (var reader = new StreamReader(responseStream))
-      //{
-      //  string response = reader.ReadToEnd();
-      //}
+      var webResponse = await request.GetResponseAsync();
+      using (var responseStream = webResponse.GetResponseStream())
+      using (var reader = new StreamReader(responseStream))
+      {
+        return reader.ReadToEnd();
+      }
     }
   }
 }

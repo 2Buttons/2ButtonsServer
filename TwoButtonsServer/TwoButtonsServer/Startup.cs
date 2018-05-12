@@ -87,12 +87,10 @@ namespace TwoButtonsServer
       app.UseDefaultFiles();
       app.UseStaticFiles();
 
-      app.UseForwardedHeaders(new ForwardedHeadersOptions
-      {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-      });
-
-      app.UseAuthentication();
+      //app.UseForwardedHeaders(new ForwardedHeadersOptions
+      //{
+      //  ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+      //});
 
       app.UseAuthentication();
 
