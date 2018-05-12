@@ -111,6 +111,7 @@ namespace AccountServer.Controllers
 
       var userInfoResponse = await Client.GetStringAsync($"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
       var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response.FirstOrDefault();
+      var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Русский);
 
       var userDb = new UserDb
       {
@@ -127,7 +128,7 @@ namespace AccountServer.Controllers
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
       AccountWrapper.TryAddUser(_dbMain, userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, DateTime.Now.AddYears(-bdate.Year).Year, userInfo.Sex,
-        userInfo.City.Title, "", links.Item1, links.Item2);
+        (await cityName) ?? userInfo.City.Title, "", links.Item1, links.Item2);
 
 
       return userDb.ToUserDto();
@@ -294,6 +295,23 @@ namespace AccountServer.Controllers
       {
         return reader.ReadToEnd();
       }
+    }
+
+    public async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
+    {
+      var cityName = "";
+      WebRequest request = WebRequest.CreateHttp($"https://api.vk.com/method/database.getCitiesById?city_ids=1&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+      request.Headers.Add("Cookie", $"remixlang={language}");
+      WebResponse response = await request.GetResponseAsync();
+      using (Stream stream = response.GetResponseStream())
+      {
+        using (StreamReader reader = new StreamReader(stream))
+        {
+          cityName =reader.ReadToEnd();
+        }
+      }
+      response.Close();
+      return cityName;
     }
   }
 }
