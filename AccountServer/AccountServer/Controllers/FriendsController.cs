@@ -52,8 +52,8 @@ namespace AccountServer.Controllers
       _dbMain = buttonsContext;
     }
 
-    [HttpPost("getRecommendedFriends")]
-    public async Task<IActionResult> GetRecommendedFriends([FromBody] UserIdViewModel user)
+    [HttpPost("getRecommendedUsers")]
+    public async Task<IActionResult> GetRecommendedUsers([FromBody] UserIdViewModel user)
 
     {
       var vkUserId = (await _accountDb.Users.GetUserByUserId(user.UserId)).VkId;
@@ -62,11 +62,51 @@ namespace AccountServer.Controllers
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
       var dkIds = _accountDb.Users.GetUserIdFromVkId(vkFriendIds);
-      if (!PeopleListWrapper.TryGetRecommendedFromUsersId(_dbMain, dkIds.Select(x => x.UserId).ToList(),
-        out var potentialFriends))
+      if (!RecommendedSubscribersWrapper.TryGetRecommendedFromUsersId(_dbMain, dkIds.Select(x => x.UserId).ToList(),
+        out var socialFriends))
+        return BadRequest("Something goes wrong.");
+      if (!RecommendedSubscribersWrapper.TryGetRecommendedFromFollowers(_dbMain, user.UserId,
+          out var followers))
+          return BadRequest("Something goes wrong.");
+      if (!RecommendedSubscribersWrapper.TryGetRecommendedFromFollows(_dbMain, user.UserId,
+        out var sameFollows))
         return BadRequest("Something goes wrong.");
 
-      return Ok(potentialFriends);
+      List<RecommendedUserViewModel> result = new List<RecommendedUserViewModel>();
+      foreach (var item in socialFriends)
+      {
+        result.Add(new RecommendedUserViewModel
+        {
+          UserId = item.UserId,
+          Login = item.Login,
+          SmallAvatarLink = item.SmallAvatarLink,
+          SexType = item.Sex
+        });
+      }
+
+      foreach (var item in followers)
+      {
+        result.Add(new RecommendedUserViewModel
+        {
+          UserId = item.UserId,
+          Login = item.Login,
+          SmallAvatarLink = item.SmallAvatarLink,
+          SexType = item.Sex
+        });
+      }
+
+      foreach (var item in sameFollows)
+      {
+        result.Add(new RecommendedUserViewModel
+        {
+          UserId = item.UserId,
+          Login = item.Login,
+          SmallAvatarLink = item.SmallAvatarLink,
+          SexType = item.Sex
+        });
+      }
+
+      return Ok(result);
     }
 
 
