@@ -75,7 +75,7 @@ namespace AccountServer.Controllers
       if (!isAdded || userDb.UserId == 0)
         return BadRequest($"We are not able to add you. Please, say us about it.");
 
-      if (!AccountWrapper.TryAddUser(_twoButtonsContext, userDb.UserId, user.Login, user.Age,  user.SexType,
+      if (!AccountWrapper.TryAddUser(_twoButtonsContext, userDb.UserId, user.Login, user.BirthDate,  user.SexType,
         user.City, user.Description, user.FullAvatarLink, user.SmallAvatarLink))
       {
         await _accountDb.Users.RemoveUserAsync(userDb.UserId);

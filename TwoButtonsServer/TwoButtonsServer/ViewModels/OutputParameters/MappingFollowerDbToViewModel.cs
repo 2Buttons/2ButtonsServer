@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CommonLibraries;
+using CommonLibraries.Extensions;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.Followers;
 
@@ -73,7 +75,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
           UserId = f.UserId,
           Login = f.Login,
           SmallAvatarLink = f.SmallAvatarLink,
-          Age = f.Age,
+          Age = f.BirthDate.Age(),
           SexType = f.Sex,
           IsYouFollowed = f.YouFollowed,
           IsHeFollowed = f.HeFollowed,
@@ -88,7 +90,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
               UserId = f.UserId,
               Login = f.Login,
               SmallAvatarLink = f.SmallAvatarLink,
-              Age = f.Age,
+              Age = f.BirthDate.Age(),
               SexType = f.Sex,
               VisitsAmount = f.Visits,
               IsYouFollowed = f.YouFollowed,

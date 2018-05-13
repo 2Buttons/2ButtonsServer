@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AccountServer.Helpers;
-using AccountServer.Models;
-using AccountServer.ViewModels.OutputParameters.User;
+﻿using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
+using CommonLibraries.Extensions;
 using TwoButtonsDatabase.Entities.Account;
 
 namespace AccountServer.ViewModels
@@ -17,7 +14,7 @@ namespace AccountServer.ViewModels
       {
         UserId = dbEntity.UserId,
         Login = dbEntity.Login,
-        Age = dbEntity.Age,
+        Age = dbEntity.BirthDate.Age(),
         SexType = (SexType) dbEntity.Sex,
         Description = dbEntity.Description,
         FullAvatarLink = dbEntity.FullAvatarLink,

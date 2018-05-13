@@ -19,6 +19,7 @@ using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.InputParameters.Auth;
 using AccountServer.ViewModels.OutputParameters;
 using CommonLibraries;
+using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -119,7 +120,7 @@ namespace AccountServer.Controllers
       var bdate = Convert.ToDateTime(userInfo.Birthday);
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
-      AccountWrapper.TryAddUser(_dbMain, userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, DateTime.Now.AddYears(-bdate.Year).Year, userInfo.Sex,
+      AccountWrapper.TryAddUser(_dbMain, userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate, userInfo.Sex,
         (await cityName) ?? userInfo.City.Title, "", links.Item1, links.Item2);
 
 

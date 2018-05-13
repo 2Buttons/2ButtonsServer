@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.UserQuestions;
 using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsServer.Extensions;
 using TwoButtonsServer.ViewModels;
 using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;

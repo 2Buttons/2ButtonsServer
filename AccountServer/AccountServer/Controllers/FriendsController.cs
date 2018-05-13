@@ -61,7 +61,12 @@ namespace AccountServer.Controllers
       var vkFriendIdsResponse = await Client.GetStringAsync($"https://api.vk.com/method/friends.get?user_id={vkUserId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
-      return Ok(vkFriendIds);
+      var dkIds = _accountDb.Users.GetUserIdFromVkId(vkFriendIds);
+      if (!PeopleListWrapper.TryGetRecommendedFromUsersId(_dbMain, dkIds.Select(x => x.UserId).ToList(),
+        out var potentialFriends))
+        return BadRequest("Something goes wrong.");
+
+      return Ok(potentialFriends);
     }
 
 

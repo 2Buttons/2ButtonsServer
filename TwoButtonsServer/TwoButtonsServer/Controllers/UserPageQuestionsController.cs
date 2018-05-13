@@ -11,7 +11,9 @@ using TwoButtonsServer.ViewModels.OutputParameters;
 using TwoButtonsServer.ViewModels.OutputParameters.UserQuestions;
 using System.Linq;
 using System.Security.Claims;
+using CommonLibraries.Extensions;
 using TwoButtonsDatabase.Entities.UserQuestions;
+using TwoButtonsServer.Extensions;
 using TwoButtonsServer.ViewModels;
 
 namespace TwoButtonsServer.Controllers

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TwoButtonsDatabase.Entities;
 
 namespace TwoButtonsDatabase.WrapperFunctions
@@ -61,6 +64,37 @@ namespace TwoButtonsDatabase.WrapperFunctions
         Console.WriteLine(e);
       }
       recommendedStrangers = new List<RecommendedStrangersDb>();
+      return false;
+    }
+
+    public static bool TryGetRecommendedFromUsersId(TwoButtonsContext db, IEnumerable<int> userIds, out IEnumerable<RecommendedFromUsersIdDb> recommendedStrangers)
+    {
+
+      try
+      {
+        var dataTable = new DataTable();
+        dataTable.Columns.Add("id", typeof(int));
+        foreach (var id in userIds)
+        {
+          dataTable.Rows.Add(id);
+        }
+        var networkIdTable = new SqlParameter
+        {
+          ParameterName = "@NetworkIDTable",
+          TypeName = "dbo.idTable",
+          Value = dataTable
+        };
+
+        recommendedStrangers = db.RecommendedFromUsersIdsDb
+          .FromSql($"select * from dbo.[getRecommendedFromUsersID](@NetworkIDTable)", networkIdTable)
+          .ToList();
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      recommendedStrangers = new List<RecommendedFromUsersIdDb>();
       return false;
     }
   }

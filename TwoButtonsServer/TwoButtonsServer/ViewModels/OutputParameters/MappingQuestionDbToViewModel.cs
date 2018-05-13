@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CommonLibraries;
+using CommonLibraries.Extensions;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.NewsQuestions;
 using TwoButtonsDatabase.Entities.UserQuestions;
@@ -212,7 +213,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       return photosDb.Select(p => new PhotoViewModel
         {
           UserId = p.UserId,
-          Age = p.Age,
+          Age = p.BirthDate.Age(),
           Login = p.Login,
           SexType = p.Sex,
           SmallAvatarLink = p.SmallAvatarLink
@@ -247,7 +248,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
           UserId = v.UserId,
           Login = v.Login,
           SmallAvatarLink = v.SmallAvatarLink,
-          Age = v.Age,
+          Age = v.BirthDate.Age(),
           SexType = v.Sex,
           IsHeFollowed = v.HeFollowed == 1,
           IsYouFollowed = v.YouFollowed == 1

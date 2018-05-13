@@ -22,7 +22,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     //}
 
 
-    public static bool TryAddUser(TwoButtonsContext db, int userId, string login, int age, SexType sex, string city, string description, string fullAvatarLink, string smallAvatarLink)
+    public static bool TryAddUser(TwoButtonsContext db, int userId, string login, DateTime birthDate, SexType sex, string city, string description, string fullAvatarLink, string smallAvatarLink)
     {
 
       var returnsCode = new SqlParameter
@@ -33,7 +33,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand($"addUser {userId}, {login}, {age}, {sex}, {city},  {description}, {fullAvatarLink}, {smallAvatarLink}, {returnsCode} OUT");
+        db.Database.ExecuteSqlCommand($"addUser {userId}, {login}, {birthDate}, {sex}, {city},  {description}, {fullAvatarLink}, {smallAvatarLink}, {returnsCode} OUT");
         return true;
       }
       catch (Exception e)

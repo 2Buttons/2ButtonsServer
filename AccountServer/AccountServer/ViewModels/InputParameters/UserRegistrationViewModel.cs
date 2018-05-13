@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
 
 namespace AccountServer.ViewModels.InputParameters
@@ -15,7 +16,7 @@ namespace AccountServer.ViewModels.InputParameters
     public string ConfirmPassword { get; set; }
 
     [Required]
-    public int Age { get; set; } = 0;
+    public DateTime BirthDate { get; set; } = DateTime.Now.Date;
 
     [Required]
     public SexType SexType { get; set; }

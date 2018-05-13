@@ -27,6 +27,9 @@ namespace TwoButtonsDatabase
     public virtual DbSet<RecommendedFromFollowsDb> RecommendedFromFollowsDb { get; set; }
     public virtual DbSet<RecommendedFromContactsDb> RecommendedFromContactsDb { get; set; }
     public virtual DbSet<RecommendedStrangersDb> RecommendedStrangersDb { get; set; }
+    public virtual DbSet<RecommendedFromUsersIdDb> RecommendedFromUsersIdsDb { get; set; }
+    
+
     public virtual DbSet<ResultFollowersPhotosDb> ComResultFollowersPhotosDbments { get; set; }
     public virtual DbSet<ResultFollowToPhotoDb> ResultFollowToPhotoDb { get; set; }
     public virtual DbSet<ResultsDb> ResultsDb { get; set; }

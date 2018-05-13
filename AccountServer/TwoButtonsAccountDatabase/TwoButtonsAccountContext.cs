@@ -1,13 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TwoButtonsAccountDatabase.Entities;
+using TwoButtonsAccountDatabase.Entities.FunctionEntities;
 
 namespace TwoButtonsAccountDatabase
 {
   public class TwoButtonsAccountContext : DbContext
   {
-    public DbSet<ClientDb> Clients { get; set; }
-    public DbSet<TokenDb> Tokens { get; set; }
-    public DbSet<UserDb> Users { get; set; }
+    public DbSet<ClientDb> ClientsDb { get; set; }
+    public DbSet<TokenDb> TokensDb { get; set; }
+    public DbSet<UserDb> UsersDb { get; set; }
+
+    // functions
+    public DbSet<UserIdDb> UserIds { get; set; }
+
 
     public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)
       : base(options)

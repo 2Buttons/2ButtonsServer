@@ -3,7 +3,7 @@ using CommonLibraries;
 
 namespace TwoButtonsDatabase.Entities.Followers
 {
-  public partial class FollowToDb :FollowerDb
+  public partial class FollowToDb : FollowerBaseDb
   {
     public int Visits{ get; set; }
   }

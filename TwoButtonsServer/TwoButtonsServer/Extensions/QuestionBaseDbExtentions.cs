@@ -2,11 +2,10 @@
 using System.Linq.Expressions;
 using CommonLibraries;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsServer.ViewModels.OutputParameters;
 
-namespace TwoButtonsServer.ViewModels
+namespace TwoButtonsServer.Extensions
 {
-  public static class ExtensionsForQuestionQuery
+  public static class QuestionBaseDbExtentions
   {
     public static Expression<Func<T, object>> ToPredicate<T>(this SortType type) where T: QuestionBaseDb, new()
     {

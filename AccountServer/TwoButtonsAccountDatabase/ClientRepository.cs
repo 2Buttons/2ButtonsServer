@@ -23,7 +23,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> AddClientAsync(ClientDb client)
     {
-      _context.Clients.Add(client);
+      _context.ClientsDb.Add(client);
       return await _context.SaveChangesAsync() > 0;
     }
 
@@ -36,7 +36,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<ClientDb> FindClientAsync(int clientId, string secret)
     {
-      var client =  await _context.Clients.FindAsync(clientId);
+      var client =  await _context.ClientsDb.FindAsync(clientId);
       return client.Secret == secret ? client : null;
     }
 
@@ -45,7 +45,7 @@ namespace TwoButtonsAccountDatabase
       var client = await FindClientAsync(clientId, secret);
       if (client == null)
         return false;
-      _context.Clients.Remove(client);
+      _context.ClientsDb.Remove(client);
       return await _context.SaveChangesAsync() > 0;
     }
   }

@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Newtonsoft.Json;
 using TwoButtonsAccountDatabase.DTO;
 using TwoButtonsAccountDatabase.Entities;
+using TwoButtonsAccountDatabase.Entities.FunctionEntities;
 
 namespace TwoButtonsAccountDatabase
 {
@@ -24,14 +30,14 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> AddUserAsync(UserDb user)
     {
-      await _context.Users.AddAsync(user);
+      await _context.UsersDb.AddAsync(user);
       return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, int externalUserId, SocialNetType socialType,
       string externalToken)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return false;
       switch (socialType)
       {
@@ -59,7 +65,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> ChangeUserRoleAsync(int userId, RoleType role)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return false;
 
       user.RoleType = role;
@@ -70,7 +76,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> ChangeUserEmail(int userId, string email, bool emailConfirmed)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return false;
 
       user.Email = email;
@@ -81,7 +87,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> ChangeUserPasswordAsync(int userId, string oldPasswordHash, string newPasswordHash)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return false;
       if (user.PasswordHash != oldPasswordHash) return false;
 
@@ -92,7 +98,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<UserDto> GetUserByEmail(string email)
     {
-      var user =   await _context.Users.AsNoTracking()
+      var user =   await _context.UsersDb.AsNoTracking()
         .FirstOrDefaultAsync(x => x.Email == email);
       return user?.ToUserDto();
 
@@ -100,21 +106,40 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<UserDto> GetUserByUserId(int userId)
     {
-      var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
+      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
       return user?.ToUserDto();
+
+    }
+
+    public List<UserIdDb> GetUserIdFromVkId(IEnumerable<int> ids)
+    {
+      var dataTable = new DataTable();
+      dataTable.Columns.Add("id", typeof(int));
+      foreach (var id in ids)
+      {
+        dataTable.Rows.Add(id);
+      }
+      var vkIdTable = new SqlParameter
+      {
+        ParameterName = "@VkIDTable",
+        TypeName="dbo.idTable",
+        Value = dataTable
+      };
+      return _context.UserIds.FromSql($"select * from dbo.getUserIdFromVkId(@VkIDTable)", vkIdTable)
+        .ToList();
 
     }
 
     public async Task<UserDto> GetUserByEmailAndPasswordAsync(string email, string passwordHash)
     {
-      var user = await _context.Users.AsNoTracking()
+      var user = await _context.UsersDb.AsNoTracking()
         .FirstOrDefaultAsync(x => x.Email == email && x.PasswordHash == passwordHash);
       return user?.ToUserDto();
     }
 
     public async Task<UserDto> GetUserByPhoneAndPasswordAsync(string phone, string passwordHash)
     {
-      var user = await _context.Users.AsNoTracking()
+      var user = await _context.UsersDb.AsNoTracking()
         .FirstOrDefaultAsync(x => x.PhoneNumber == phone && x.PasswordHash == passwordHash);
       return user?.ToUserDto();
     }
@@ -125,10 +150,10 @@ namespace TwoButtonsAccountDatabase
       switch (socialType)
       {
         case SocialNetType.Facebook:
-          user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.FacebookId == externalUserId);
+          user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.FacebookId == externalUserId);
           break;
         case SocialNetType.Vk:
-          user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.VkId == externalUserId);
+          user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.VkId == externalUserId);
           break;
         case SocialNetType.Nothing:
         case SocialNetType.Twiter:
@@ -144,7 +169,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<long> GetExternalUserIdAsync(int userId, SocialNetType socialType)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return 0;
       switch (socialType)
       {
@@ -164,22 +189,22 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> IsUserIdExistAsync(int userId)
     {
-      return await _context.Users.FindAsync(userId) != null;
+      return await _context.UsersDb.FindAsync(userId) != null;
     }
 
     public async Task<bool> IsUserExistByPhoneAsync(string phone)
     {
-      return await _context.Users.AsNoTracking().AnyAsync(x => x.PhoneNumber == phone);
+      return await _context.UsersDb.AsNoTracking().AnyAsync(x => x.PhoneNumber == phone);
     }
 
     public async Task<bool> IsUserExistByEmailAsync(string email)
     {
-      return await _context.Users.AsNoTracking().AnyAsync(x=>x.Email == email);
+      return await _context.UsersDb.AsNoTracking().AnyAsync(x=>x.Email == email);
     }
 
     public async Task<RoleType> GetUserRoleAsync(int userId)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user != null)
         return user.RoleType;
       return RoleType.Guest;
@@ -188,7 +213,7 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<UserContactsDto> GetUserSocialsAsync(int userId)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return new UserContactsDto();
 
       return new UserContactsDto
@@ -200,9 +225,9 @@ namespace TwoButtonsAccountDatabase
 
     public async Task<bool> RemoveUserAsync(int userId)
     {
-      var user = await _context.Users.FindAsync(userId);
+      var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return false;
-      _context.Users.Remove(user);
+      _context.UsersDb.Remove(user);
       return await _context.SaveChangesAsync() > 0;
     }
   }
