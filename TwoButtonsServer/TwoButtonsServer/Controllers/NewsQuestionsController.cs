@@ -70,8 +70,8 @@ namespace TwoButtonsServer.Controllers
 
             Parallel.ForEach(userAskedQuestions, (x) =>
             {
-                GetTagsAndPhotos(userId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
-                var resultQuestion = x.MapToNewsAskedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+                GetTagsAndPhotos(userId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+                var resultQuestion = x.MapToNewsAskedQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             });
@@ -96,8 +96,8 @@ namespace TwoButtonsServer.Controllers
             int index = 0;
             Parallel.ForEach(userAnsweredQuestions, (question) =>
             {
-                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
-                var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+                var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             });
@@ -115,8 +115,8 @@ namespace TwoButtonsServer.Controllers
             int index = 0;
             Parallel.ForEach(userFavoriteQuestions, (question) =>
             {
-                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
-                var resultQuestion = question.MapToNewsFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+                var resultQuestion = question.MapToNewsFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             });
@@ -134,8 +134,8 @@ namespace TwoButtonsServer.Controllers
             int index = 0;
             Parallel.ForEach(userCommentedQuestions, (question) =>
             {
-                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
-                var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+                var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             });
@@ -154,8 +154,8 @@ namespace TwoButtonsServer.Controllers
             int index = 0;
             Parallel.ForEach(newsRecommendedQuestions, (question) =>
             {
-                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
-                var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+                GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+                var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos);
                 resultQuestion.IndexNumber = index++;
                 result.Add(resultQuestion);
             });
@@ -163,9 +163,8 @@ namespace TwoButtonsServer.Controllers
         }
 
         private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
-            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
+            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
         {
-            var commentsAmount = 10000;
             var photosAmount = 100;
             var minAge = 0;
             var maxAge = 100;
@@ -178,8 +177,6 @@ namespace TwoButtonsServer.Controllers
                 firstPhotos = new List<PhotoDb>();
             if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, minAge, maxAge, sex, city, out secondPhotos))
                 secondPhotos = new List<PhotoDb>();
-            if (!CommentsWrapper.TryGetComments(_context, userId, questionId, commentsAmount, out  comments))
-                comments = new List<CommentDb>();
         }
     }
 }

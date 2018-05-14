@@ -80,6 +80,7 @@ namespace AccountServer.Controllers
           UserId = item.UserId,
           Login = item.Login,
           SmallAvatarLink = item.SmallAvatarLink,
+          BirthDate = item.BirthDate,
           SexType = item.Sex
         });
       }

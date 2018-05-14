@@ -30,14 +30,14 @@ namespace TwoButtonsDatabase.WrapperFunctions
     }
 
     public static bool TryGetAnsweredList(TwoButtonsContext db, int userId, int questionId, int offset, int count, AnswerType answerType,
-      int minAge, int maxAge, SexType sexType, string searchedLogin, out IEnumerable<AnsweredListDb> answeredList)
+      DateTime bornAfter, DateTime bornBefore, SexType sexType, string searchedLogin, out IEnumerable<AnsweredListDb> answeredList)
     {
       
 
       try
       {
         answeredList = db.AnsweredListDb
-          .FromSql($"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {minAge}, {maxAge}, {sexType}, {searchedLogin})")
+          .FromSql($"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {bornAfter}, {bornBefore}, {sexType}, {searchedLogin})")
           .Skip(offset).Take(count)
           .ToList();
         return true;

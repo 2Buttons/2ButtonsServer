@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TwoButtonsAccountDatabase;
+using TwoButtonsAccountDatabase.DTO;
 using TwoButtonsAccountDatabase.Entities;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.WrapperFunctions;
@@ -60,7 +61,7 @@ namespace AccountServer.Controllers
       await Task.WhenAll(isExistByPhone, isExistByEmail);
 
       if (isExistByEmail.Result || isExistByPhone.Result)
-        return BadRequest($"You are already registered.");
+        return BadRequest($"You have already registered.");
 
       const RoleType role = RoleType.User;
 
@@ -121,13 +122,7 @@ namespace AccountServer.Controllers
       switch (credentials.GrantType)
       {
         case GrantType.NoGrantType:
-          return await AccessToken(credentials);
         case GrantType.Password:
-          if (string.IsNullOrEmpty(credentials.Phone) || string.IsNullOrEmpty(credentials.Password))
-            return BadRequest("Phone and (or) password is incorrect");
-          if (await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone,
-                credentials.Password.GetHashString()) == null)
-            return BadRequest("Please register or login via Social Network");
           return await AccessToken(credentials);
         case GrantType.RefreshToken:
           return await RefreshToken(credentials);
@@ -141,11 +136,20 @@ namespace AccountServer.Controllers
       var nowTime = DateTime.UtcNow;
       var expiresAccessTokenInTime = 5;
 
-      var userId = 0;
+      var user = new UserDto{UserId = 0};
       var role = RoleType.Guest;
 
-      if (credentials.GrantType == GrantType.NoGrantType)
-        role = await _accountDb.Users.GetUserRoleAsync(userId);
+      if (credentials.GrantType == GrantType.Password)
+      {
+        if (string.IsNullOrEmpty(credentials.Phone) || string.IsNullOrEmpty(credentials.Password))
+        return BadRequest("Phone and (or) password is incorrect");
+
+         user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, credentials.Password.GetHashString());
+        if (user == null)
+        return BadRequest("Please register or login via Social Network");
+
+         role  = await _accountDb.Users.GetUserRoleAsync(user.UserId);
+      }
 
       ClientDb client = null;
       if (!string.IsNullOrEmpty(credentials.SecretKey))
@@ -187,7 +191,7 @@ namespace AccountServer.Controllers
 
       var token = new TokenDb
       {
-        UserId = userId,
+        UserId = user.UserId,
         ClientId = client.ClientId,
         IssuedUtc = nowTime,
         ExpiresUtc = nowTime.AddMinutes(client.RefreshTokenLifeTime),
@@ -199,7 +203,7 @@ namespace AccountServer.Controllers
 
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
-      return Ok(Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
+      return Ok(await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
         _jwtOptions));
     }
 
@@ -241,7 +245,7 @@ namespace AccountServer.Controllers
         return BadRequest("Can not add token to database. Plese, get access token again or enter like a guest");
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(client.RefreshTokenLifeTime);
-      return Ok(Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
+      return Ok(await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
         _jwtOptions));
     }
 

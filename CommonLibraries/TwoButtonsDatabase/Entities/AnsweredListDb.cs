@@ -12,8 +12,8 @@ namespace TwoButtonsDatabase.Entities
         public string SmallAvatarLink { get; set; }
         public DateTime BirthDate { get; set; }
         public SexType Sex { get; set; }
-        public int HeFollowed { get; set; }
-        public int YouFollowed { get; set; }
+        public bool HeFollowed { get; set; }
+        public bool YouFollowed { get; set; }
     }
 
 }

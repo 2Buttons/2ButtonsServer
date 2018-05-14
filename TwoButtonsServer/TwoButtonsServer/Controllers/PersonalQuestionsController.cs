@@ -46,7 +46,7 @@ namespace TwoButtonsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
             out var secondPhotos, out var comments);
-        result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+        result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
     }
@@ -68,7 +68,7 @@ namespace TwoButtonsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
             out var secondPhotos, out var comments);
-        result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+        result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
     }
@@ -90,7 +90,7 @@ namespace TwoButtonsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
             out var secondPhotos, out var comments);
-        result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+        result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
     }
@@ -112,7 +112,7 @@ namespace TwoButtonsServer.Controllers
       {
         GetTagsAndPhotos(questions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos, out var comments);
-        result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+        result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
     }

@@ -54,7 +54,7 @@ namespace TwoButtonsServer.Controllers
       if (!CommentsWrapper.TryGetComments(_context, question.UserId, question.QuestionId, commentsAmount, out var comments))
         comments = new List<CommentDb>();
 
-      var result = question.QuestionDbToViewModel<QuestionBaseViewModel>(tags, firstPhotos, secondPhotos, comments);
+      var result = question.QuestionDbToViewModel<QuestionBaseViewModel>(tags, firstPhotos, secondPhotos);
 
       return Ok(result);
     }
@@ -114,7 +114,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateSaved")]
     public IActionResult UpdateSaved([FromBody]UpdateQuestionFavoriteViewModel favorite)
     {
-      if (QuestionWrapper.TryUpdateSaved(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites ? 1 : 0))
+      if (QuestionWrapper.TryUpdateSaved(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -122,7 +122,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateFavorites")]
     public IActionResult UpdateFavorites([FromBody]UpdateQuestionFavoriteViewModel favorite)
     {
-      if (QuestionWrapper.TryUpdateFavorites(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites? 1:0))
+      if (QuestionWrapper.TryUpdateFavorites(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -194,7 +194,7 @@ namespace TwoButtonsServer.Controllers
       if (voters == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.PageParams.Offset, voters.PageParams.Count, voters.AnswerType, voters.MinAge, voters.MaxAge, voters.SexType, voters.SearchedLogin, out var answeredList))
+      if (!ResultsWrapper.TryGetAnsweredList(_context, voters.UserId, voters.QuestionId, voters.PageParams.Offset, voters.PageParams.Count, voters.AnswerType, DateTime.UtcNow.AddYears(-voters.MaxAge), DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin, out var answeredList))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(answeredList.MapAnsweredListDbToViewModel());

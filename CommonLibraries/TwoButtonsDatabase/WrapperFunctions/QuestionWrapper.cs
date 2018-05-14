@@ -84,13 +84,13 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryUpdateSaved(TwoButtonsContext db, int userId, int questionId, int inFavorites)
+    public static bool TryUpdateSaved(TwoButtonsContext db, int userId, int questionId, bool isInFavorites)
     {
       var added = DateTime.Now;
 
       try
       {
-        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {1}, {inFavorites}, {added}");
+        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}");
         return true;
       }
       catch (Exception e)
@@ -100,13 +100,13 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryUpdateFavorites(TwoButtonsContext db, int userId, int questionId, int inFavorites)
+    public static bool TryUpdateFavorites(TwoButtonsContext db, int userId, int questionId, bool isInFavorites)
     {
       var added = DateTime.Now;
 
       try
       {
-        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {0}, {inFavorites}, {added}");
+        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}");
         return true;
       }
       catch (Exception e)

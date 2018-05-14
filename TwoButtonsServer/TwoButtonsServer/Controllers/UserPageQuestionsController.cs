@@ -46,8 +46,8 @@ namespace TwoButtonsServer.Controllers
             foreach (var question in userAskedQuestions)
             {
                 GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+                    out var secondPhotos);
+                result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
             }
             return Ok(result);
         }
@@ -68,8 +68,8 @@ namespace TwoButtonsServer.Controllers
             foreach (var question in userAnsweredQuestions)
             {
                 GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+                    out var secondPhotos);
+                result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos));
             }
             return Ok(result);
         }
@@ -89,8 +89,8 @@ namespace TwoButtonsServer.Controllers
             foreach (var question in userFavoriteQuestions)
             {
                 GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+                    out var secondPhotos);
+                result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
             }
             return Ok(result);
         }
@@ -111,17 +111,16 @@ namespace TwoButtonsServer.Controllers
             foreach (var question in userCommentedQuestions)
             {
                 GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-                    out var secondPhotos, out var comments);
-                result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos, comments));
+                    out var secondPhotos);
+                result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos));
             }
             return Ok(result);
         }
 
 
         private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
-            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
+            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
         {
-            var commentsAmount = 10000;
             var photosAmount = 100;
             var minAge = 0;
             var maxAge = 100;
@@ -134,8 +133,6 @@ namespace TwoButtonsServer.Controllers
                 firstPhotos = new List<PhotoDb>();
             if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, minAge, maxAge, sex, city, out secondPhotos))
                 secondPhotos = new List<PhotoDb>();
-            if (!CommentsWrapper.TryGetComments(_context, userId, questionId, commentsAmount, out comments))
-                comments = new List<CommentDb>();
         }
     }
 }

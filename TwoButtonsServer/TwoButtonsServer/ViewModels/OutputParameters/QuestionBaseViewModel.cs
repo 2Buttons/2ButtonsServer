@@ -32,8 +32,5 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
 
     public List<PhotoViewModel> FirstPhotos { get; set; } = new List<PhotoViewModel>();
     public List<PhotoViewModel> SecondPhotos { get; set; } = new List<PhotoViewModel>();
-
-    public List<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();
-
   }
 }
