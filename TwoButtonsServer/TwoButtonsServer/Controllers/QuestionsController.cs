@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -47,14 +48,14 @@ namespace TwoButtonsServer.Controllers
 
       if (!TagsWrapper.TryGetTags(_context, question.QuestionId, out var tags))
         tags = new List<TagDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, question.UserId, question.QuestionId, 1, photosAmount, minAge, maxAge, sex, city, out var firstPhotos))
+      if (!ResultsWrapper.TryGetPhotos(_context, question.UserId, question.QuestionId, 1, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out var firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, question.UserId, question.QuestionId, 2, photosAmount, minAge, maxAge, sex, city, out var secondPhotos))
+      if (!ResultsWrapper.TryGetPhotos(_context, question.UserId, question.QuestionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out var secondPhotos))
         secondPhotos = new List<PhotoDb>();
       if (!CommentsWrapper.TryGetComments(_context, question.UserId, question.QuestionId, commentsAmount, out var comments))
         comments = new List<CommentDb>();
 
-      var result = question.QuestionDbToViewModel<QuestionBaseViewModel>(tags, firstPhotos, secondPhotos);
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
 
       return Ok(result);
     }
@@ -95,18 +96,18 @@ namespace TwoButtonsServer.Controllers
       if (questionId == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!QuestionWrapper.TryDeleteQuestion(_context, questionId.QuestionId))
+      if (!QuestionWrapper.TryDeleteQuestion(_context, questionId.QuestionId, out var isChanged))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
-      return Ok();
+      return Ok(isChanged);
     }
 
 
     [HttpPost("updateQuestionFeedback")]
     public IActionResult UpdateFeedback([FromBody]UpdateQuestionFeedbackViewModel feedback)
     {
-      if (QuestionWrapper.TryUpdateQuestionFeedback(_context, feedback.UserId, feedback.QuestionId, feedback.FeedbackType))
-        return Ok();
+      if (QuestionWrapper.TryUpdateQuestionFeedback(_context, feedback.UserId, feedback.QuestionId, feedback.FeedbackType, out var isChanged))
+        return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
@@ -114,24 +115,24 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateSaved")]
     public IActionResult UpdateSaved([FromBody]UpdateQuestionFavoriteViewModel favorite)
     {
-      if (QuestionWrapper.TryUpdateSaved(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
-        return Ok();
+      if (QuestionWrapper.TryUpdateSaved(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites, out var isChanged))
+        return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("updateFavorites")]
     public IActionResult UpdateFavorites([FromBody]UpdateQuestionFavoriteViewModel favorite)
     {
-      if (QuestionWrapper.TryUpdateFavorites(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
-        return Ok();
+      if (QuestionWrapper.TryUpdateFavorites(_context, favorite.UserId, favorite.QuestionId, favorite.IsInFavorites, out var isChanged))
+        return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("updateAnswer")]
     public IActionResult UpdateAnswer([FromBody]UpdateQuestionAnswerViewModel answer)
     {
-      if (QuestionWrapper.TryUpdateAnswer(_context, answer.UserId, answer.QuestionId, answer.AnswerType))
-        return Ok();
+      if (QuestionWrapper.TryUpdateAnswer(_context, answer.UserId, answer.QuestionId, answer.AnswerType, out var isChanged))
+        return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 

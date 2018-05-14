@@ -36,6 +36,7 @@ using TwoButtonsDatabase.WrapperFunctions;
 namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
+  [Produces("application/json")]
   [Route("external")]
   public class ExternalAuthController : Controller
   {

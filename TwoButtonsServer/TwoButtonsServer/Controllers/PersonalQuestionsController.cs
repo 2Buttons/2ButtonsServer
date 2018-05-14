@@ -45,7 +45,7 @@ namespace TwoButtonsServer.Controllers
       foreach (var question in userAskedQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-            out var secondPhotos, out var comments);
+            out var secondPhotos);
         result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
@@ -67,7 +67,7 @@ namespace TwoButtonsServer.Controllers
       foreach (var question in userAnsweredQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-            out var secondPhotos, out var comments);
+            out var secondPhotos);
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
@@ -89,7 +89,7 @@ namespace TwoButtonsServer.Controllers
       foreach (var question in userFavoriteQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-            out var secondPhotos, out var comments);
+            out var secondPhotos);
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
@@ -111,7 +111,7 @@ namespace TwoButtonsServer.Controllers
       foreach (var question in topQuestions)
       {
         GetTagsAndPhotos(questions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-          out var secondPhotos, out var comments);
+          out var secondPhotos);
         result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       return Ok(result);
@@ -119,9 +119,8 @@ namespace TwoButtonsServer.Controllers
 
 
     private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
-            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
+            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
-      var commentsAmount = 10000;
       var photosAmount = 100;
       var minAge = 0;
       var maxAge = 100;
@@ -130,12 +129,10 @@ namespace TwoButtonsServer.Controllers
 
       if (!TagsWrapper.TryGetTags(_context, questionId, out tags))
         tags = new List<TagDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 1, photosAmount, minAge, maxAge, sex, city, out firstPhotos))
+      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(),minAge.WhenBorned(), sex, city, out firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, minAge, maxAge, sex, city, out secondPhotos))
+      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
         secondPhotos = new List<PhotoDb>();
-      if (!CommentsWrapper.TryGetComments(_context, userId, questionId, commentsAmount, out comments))
-        comments = new List<CommentDb>();
     }
   }
 }

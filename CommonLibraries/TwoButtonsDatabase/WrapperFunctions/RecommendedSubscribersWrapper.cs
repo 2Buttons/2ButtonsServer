@@ -18,20 +18,20 @@ namespace TwoButtonsDatabase.WrapperFunctions
     /// <param name="userId"></param>
     /// <param name="recommendedFromFollows"></param>
     /// <returns></returns>
-    public static bool TryGetRecommendedFromFollowers(TwoButtonsContext db, int userId,
-        out IEnumerable<RecommendedFromFollowersDb> recommendedFromFollows)
+    public static bool TryGetRecommendedFromFollowers(TwoButtonsContext db, int userId, int offset, int count,
+        out IEnumerable<RecommendedFromFollowersDb> recommendedFromFollowers)
       {
         try
         {
-          recommendedFromFollows = db.RecommendedFromFollowersDb
-            .FromSql($"select * from dbo.[getRecommendedFromFollowers]({userId})").OrderByDescending(x=>x.CommonFollowsTo).ToList();
+          recommendedFromFollowers = db.RecommendedFromFollowersDb
+            .FromSql($"select * from dbo.[getRecommendedFromFollowers]({userId})").OrderByDescending(x=>x.CommonFollowsTo).Skip(offset).Take(count).ToList();
           return true;
         }
         catch (Exception e)
         {
           Console.WriteLine(e);
         }
-        recommendedFromFollows = new List<RecommendedFromFollowersDb>();
+        recommendedFromFollowers = new List<RecommendedFromFollowersDb>();
         return false;
       }
 
@@ -42,13 +42,13 @@ namespace TwoButtonsDatabase.WrapperFunctions
     /// <param name="userId"></param>
     /// <param name="recommendedFromFollows"></param>
     /// <returns></returns>
-    public static bool TryGetRecommendedFromFollows(TwoButtonsContext db, int userId,
+    public static bool TryGetRecommendedFromFollows(TwoButtonsContext db, int userId, int offset, int count,
         out IEnumerable<RecommendedFromFollowsDb> recommendedFromFollows)
       {
         try
         {
           recommendedFromFollows = db.RecommendedFromFollowsDb
-            .FromSql($"select * from dbo.getRecommendedFromFollows({userId})").OrderByDescending(x => x.CommonFollowsTo).ToList();
+            .FromSql($"select * from dbo.getRecommendedFromFollows({userId})").OrderByDescending(x => x.CommonFollowsTo).Skip(offset).Take(count).ToList();
           return true;
         }
         catch (Exception e)

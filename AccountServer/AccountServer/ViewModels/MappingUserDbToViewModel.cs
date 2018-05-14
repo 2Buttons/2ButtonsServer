@@ -19,8 +19,8 @@ namespace AccountServer.ViewModels
         Description = dbEntity.Description,
         FullAvatarLink = dbEntity.FullAvatarLink,
         SmallAvatarLink = dbEntity.SmallAvatarLink,
-        IsYouFollowed = dbEntity.YouFollowed == 1,
-        IsHeFollowed = dbEntity.HeFollowed == 1,
+        IsYouFollowed = dbEntity.YouFollowed,
+        IsHeFollowed = dbEntity.HeFollowed,
 
         AskedQuestionsAmount = dbEntity.AskedQuestions,
         AnswersAmount = dbEntity.Answers,

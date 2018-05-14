@@ -43,10 +43,10 @@ namespace TwoButtonsDatabase.WrapperFunctions
 
       try
       {
-        db.Database.ExecuteSqlCommand(
+       var rows =  db.Database.ExecuteSqlCommand(
           $"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
         questionId = (int) questionIdDb.Value;
-        return true;
+        return rows >0;
       }
       catch (Exception e)
       {
@@ -56,79 +56,85 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
-    public static bool TryDeleteQuestion(TwoButtonsContext db, int questionId)
+    public static bool TryDeleteQuestion(TwoButtonsContext db, int questionId,out bool isChanged)
     {
       try
       {
-        db.Database.ExecuteSqlCommand($"deleteQuestion {questionId}");
+
+        isChanged =  db.Database.ExecuteSqlCommand($"deleteQuestion {questionId}") > 0;
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
+      isChanged = false;
       return false;
     }
 
-    public static bool TryUpdateQuestionFeedback(TwoButtonsContext db, int userId, int questionId, FeedbackType feedback)
+    public static bool TryUpdateQuestionFeedback(TwoButtonsContext db, int userId, int questionId, FeedbackType feedback, out bool isChanged)
     {
       try
       {
-        db.Database.ExecuteSqlCommand($"updateQuestionFeedback {userId}, {questionId}, {feedback}");
+        isChanged=  db.Database.ExecuteSqlCommand($"updateQuestionFeedback {userId}, {questionId}, {feedback}") > 0;
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
+      isChanged = false;
       return false;
     }
 
-    public static bool TryUpdateSaved(TwoButtonsContext db, int userId, int questionId, bool isInFavorites)
-    {
-      var added = DateTime.Now;
-
-      try
-      {
-        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}");
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return false;
-    }
-
-    public static bool TryUpdateFavorites(TwoButtonsContext db, int userId, int questionId, bool isInFavorites)
+    public static bool TryUpdateSaved(TwoButtonsContext db, int userId, int questionId, bool isInFavorites, out bool isChanged)
     {
       var added = DateTime.Now;
 
       try
       {
-        db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}");
+        isChanged =  db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}") > 0;
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
+      isChanged = false;
       return false;
     }
 
-    public static bool TryUpdateAnswer(TwoButtonsContext db, int userId, int questionId, AnswerType answer)
+    public static bool TryUpdateFavorites(TwoButtonsContext db, int userId, int questionId, bool isInFavorites, out bool isChanged)
+    {
+      var added = DateTime.Now;
+
+      try
+      {
+        isChanged =  db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}") >0;
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      isChanged = false;
+      return false;
+    }
+
+    public static bool TryUpdateAnswer(TwoButtonsContext db, int userId, int questionId, AnswerType answerType, out bool isChanged)
     {
       var answered = DateTime.Now;
 
       try
       {
-        db.Database.ExecuteSqlCommand($"updateAnswer {userId}, {questionId}, {answer}, {answered}");
+        isChanged =  db.Database.ExecuteSqlCommand($"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
         return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
+      isChanged = false;
       return false;
     }
 
@@ -136,8 +142,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
     {
       try
       {
-        db.Database.ExecuteSqlCommand($"updateQuestionBackground {questionId}, {backgroundImageLink}");
-        return true;
+        return db.Database.ExecuteSqlCommand($"updateQuestionBackground {questionId}, {backgroundImageLink}") > 0;
       }
       catch (Exception e)
       {

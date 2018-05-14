@@ -4,8 +4,10 @@ using Newtonsoft.Json;
 
 namespace AccountServer.ViewModels.OutputParameters.User
 {
-  public class RecommendedUserViewModel
+  public class RecommendedUserViewModel 
   {
+    public int Position { get; set; }
+
     public int UserId { get; set; }
     public string Login { get; set; }
     public string SmallAvatarLink { get; set; }

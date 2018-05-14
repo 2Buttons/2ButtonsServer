@@ -2,10 +2,8 @@
 
 namespace AccountServer.ViewModels.InputParameters
 {
-  public class UserPageIdViewModel
+  public class UserPageIdViewModel : UserIdViewModel
   {
-    [Required]
-    public int UserId { get; set; }
     [Required]
     public int UserPageId { get; set; }
   }

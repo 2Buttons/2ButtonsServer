@@ -15,8 +15,8 @@ namespace TwoButtonsDatabase.Entities.Account
     public string Description { get; set; }
     public string FullAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
-    public int YouFollowed { get; set; }
-    public int HeFollowed { get; set; }
+    public bool YouFollowed { get; set; }
+    public bool HeFollowed { get; set; }
 
     public int AskedQuestions { get; set; }
     public int Answers { get; set; }

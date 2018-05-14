@@ -129,9 +129,9 @@ namespace TwoButtonsServer.Controllers
 
             if (!TagsWrapper.TryGetTags(_context, questionId, out tags))
                 tags = new List<TagDb>();
-            if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 1, photosAmount, minAge, maxAge, sex, city, out firstPhotos))
+            if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out firstPhotos))
                 firstPhotos = new List<PhotoDb>();
-            if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, minAge, maxAge, sex, city, out secondPhotos))
+            if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
                 secondPhotos = new List<PhotoDb>();
         }
     }

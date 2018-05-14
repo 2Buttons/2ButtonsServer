@@ -19,6 +19,7 @@ using TwoButtonsDatabase.WrapperFunctions;
 namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
+  [Produces("application/json")]
   //[Route("/auth")]
   public class AuthController : Controller
   {
@@ -70,7 +71,7 @@ namespace AccountServer.Controllers
         Email = user.Email,
         PhoneNumber = user.Phone,
         RoleType = role,
-        PasswordHash = user.Password.GetHashString()
+        PasswordHash = user.Password.GetHashString().GetHashString()
       };
       var isAdded = await _accountDb.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0)
@@ -163,9 +164,9 @@ namespace AccountServer.Controllers
           case RoleType.Guest:
             expiresRefreshTokenInTime = 60 * 24 * 7 * 4; // 1 month
             break;
-          case RoleType.User when credentials.IsRememberMe:
-          case RoleType.Moderator when credentials.IsRememberMe:
-          case RoleType.Admin when credentials.IsRememberMe:
+          case RoleType.User:
+          case RoleType.Moderator:
+          case RoleType.Admin:
             expiresRefreshTokenInTime = 60 * 24 * 7 * 2; //2 weeks
             break;
           default:

@@ -5,6 +5,13 @@ namespace CommonLibraries.Extensions
   public static class DateTimeExtensions
   {
 
+    public static DateTime WhenBorned(this int age)
+    {
+      return DateTime.UtcNow.AddYears(-age);
+    }
+
+
+
     /// <summary>
     /// Calculates the age in years of the current System.DateTime object today.
     /// </summary>

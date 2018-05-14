@@ -145,7 +145,7 @@ namespace TwoButtonsDatabase.WrapperFunctions
         userInfo = db.UserInfoDb.FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})").FirstOrDefault() ?? new UserInfoDb();
 
         if (userId != getUserId)
-          if (userInfo.YouFollowed == 1)
+          if (userInfo.YouFollowed)
             TryUpdateVisits(db, userId, getUserId);
         return true;
       }

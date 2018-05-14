@@ -18,8 +18,10 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
     {
       var viewModel =
         QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
-      viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
       viewModel.AnswerDate = dbEntity.AnswerDate;
+
+      viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
+      viewModel.Priority = dbEntity.AnsweredFollowTo;
       return viewModel;
     }
 
@@ -27,7 +29,11 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       this NewsAskedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos)
     {
-      return QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+      var viewModel  = QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+
+      viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
+      viewModel.Priority = dbEntity.AnsweredFollowTo*4;
+      return viewModel;
     }
 
     public static NewsCommentedQuestionViewModel MapToNewsCommentedQuestionsViewModel(
@@ -41,6 +47,10 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       viewModel.CommentUserLogin = dbEntity.CommentUserLogin;
       viewModel.UserCommentsAmount = dbEntity.CommentsAmount;
       viewModel.CommentAddDate = dbEntity.CommentAddDate;
+
+      viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
+      viewModel.Priority = dbEntity.Comments* dbEntity.AnsweredFollowTo*2;
+
       return viewModel;
     }
 
@@ -53,6 +63,10 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       viewModel.FavoriteAddedUserId = dbEntity.FavoriteAddedUserId;
       viewModel.FavoriteAddedUserLogin = dbEntity.FavoriteAddedUserLogin;
       viewModel.FavoriteAddDate = dbEntity.FavoriteAddDate;
+
+      viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
+      viewModel.Priority = dbEntity.AnsweredFollowTo * 3;
+
       return viewModel;
     }
 
@@ -67,6 +81,10 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       viewModel.RecommendedUserId = dbEntity.RecommendedUserId;
       viewModel.RecommendedUserLogin = dbEntity.RecommendedUserLogin;
       viewModel.RecommendedDate = dbEntity.RecommendedDate;
+
+      viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
+      viewModel.Priority = dbEntity.AnsweredFollowTo * 7;
+
       return viewModel;
     }
 
@@ -153,6 +171,16 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
+    public static GetQuestionViewModel MapToGetQuestionsViewModel(
+      this QuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> comments)
+    {
+      var viewModel =
+        QuestionDbToViewModel<GetQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+      viewModel.Comments = comments.MapCommentsDbToViewModel();
+      return viewModel;
+    }
+
 
     public static T QuestionDbToViewModel<T>(this QuestionBaseDb dbEntity, IEnumerable<TagDb> dbTags,
       IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos)
@@ -175,7 +203,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         DislikesAmount = dbEntity.Dislikes,
         YourFeedbackType =  dbEntity.YourFeedback,
         YourAnswerType =  dbEntity.YourAnswer,
-        IsInFavorites = dbEntity.InFavorites == 1,
+        IsInFavorites = dbEntity.InFavorites,
         IsSaved = dbEntity.IsSaved,
         CommentsAmount = dbEntity.Comments,
 

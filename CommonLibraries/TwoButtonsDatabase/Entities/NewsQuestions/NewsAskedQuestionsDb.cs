@@ -1,6 +1,6 @@
 ﻿namespace TwoButtonsDatabase.Entities.NewsQuestions
 {
-    public class NewsAskedQuestionsDb : QuestionBaseDb
-    {
+    public class NewsAskedQuestionsDb : NewsQuestionBaseDb
+  {
     }
 }

@@ -23,7 +23,7 @@ namespace TwoButtonsDatabase.Entities
     public int Dislikes { get; set; }
     public FeedbackType YourFeedback { get; set; }
     public AnswerType YourAnswer { get; set; }
-    public int InFavorites { get; set; }
+    public bool InFavorites { get; set; }
     public bool IsSaved { get; set; }
     public int Comments { get; set; }
 

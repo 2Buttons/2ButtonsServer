@@ -19,6 +19,7 @@ using TwoButtonsDatabase.WrapperFunctions;
 namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
+  [Produces("application/json")]
   // [Route("/account")]
   public class AccountController : Controller
   {
