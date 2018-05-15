@@ -111,7 +111,9 @@ namespace AccountServer.Controllers
 
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
-      return Ok(await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role, _jwtOptions));
+      var result = await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken,
+        token.UserId, role, _jwtOptions);
+      return Ok(result);
     }
 
     [HttpPost("login")]
@@ -144,8 +146,8 @@ namespace AccountServer.Controllers
       {
         if (string.IsNullOrEmpty(credentials.Phone) || string.IsNullOrEmpty(credentials.Password))
         return BadRequest("Phone and (or) password is incorrect");
-
-         user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, credentials.Password.GetHashString());
+        var passwordHash = credentials.Password.GetHashString();
+         user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, passwordHash);
         if (user == null)
         return BadRequest("Please register or login via Social Network");
 
@@ -204,8 +206,9 @@ namespace AccountServer.Controllers
 
 
       _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
-      return Ok(await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
-        _jwtOptions));
+      var result= await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
+        _jwtOptions);
+      return Ok(result);
     }
 
     private async Task<IActionResult> RefreshToken(CredentialsViewModel credentials)

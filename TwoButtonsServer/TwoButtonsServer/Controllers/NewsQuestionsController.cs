@@ -31,6 +31,9 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("getNews")]
     public async Task<IActionResult> GetNews([FromBody]GetNewsViewModel newsViewModel)
     {
+
+      //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
+
       if (newsViewModel == null || newsViewModel.PageParams == null)
         return BadRequest($"Input parameter  is null");
 

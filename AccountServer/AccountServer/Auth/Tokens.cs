@@ -1,24 +1,19 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AccountServer.Auth;
+﻿using System.Threading.Tasks;
 using AccountServer.Models;
 using AccountServer.ViewModels.OutputParameters;
 using CommonLibraries;
-using Newtonsoft.Json;
 
-namespace AccountServer.Helpers
+namespace AccountServer.Auth
 {
   public class Tokens
   {
-    public static async Task<string> GenerateJwtAsync(IJwtFactory jwtFactory, int clientId, string secretKey, string refreshToken,  int userId, RoleType role, JwtIssuerOptions jwtOptions)
+    public static async Task<TokenViewModel> GenerateJwtAsync(IJwtFactory jwtFactory, int clientId, string secretKey, string refreshToken,  int userId, RoleType role, JwtIssuerOptions jwtOptions)
     {
-      return await GenerateJwt(jwtFactory,  clientId,  secretKey,  refreshToken,  userId,  role, jwtOptions,
-        new JsonSerializerSettings {Formatting = Formatting.Indented});
+      return await GenerateJwt(jwtFactory,  clientId,  secretKey,  refreshToken,  userId,  role, jwtOptions);
     }
 
-    public static async Task<string> GenerateJwt( IJwtFactory jwtFactory, int clientId, string secretKey, string refreshToken, int userId, RoleType role,
-      JwtIssuerOptions jwtOptions, JsonSerializerSettings serializerSettings)
+    public static async Task<TokenViewModel> GenerateJwt( IJwtFactory jwtFactory, int clientId, string secretKey, string refreshToken, int userId, RoleType role,
+      JwtIssuerOptions jwtOptions)
     {
       var response = new TokenViewModel
       {
@@ -31,7 +26,7 @@ namespace AccountServer.Helpers
         RefreshToken = refreshToken
       };
 
-      return JsonConvert.SerializeObject(response, serializerSettings);
+      return response;
     }
   }
 }
