@@ -202,15 +202,7 @@ namespace AccountServer.Controllers
       var nowTime = DateTime.UtcNow;
       const int expiresAccessTokenInTime = 60 * 24 * 7 * 4 * 6; // half a week
 
-      ClientDb client = null;
 
-      client = new ClientDb
-      {
-        Secret = Guid.NewGuid().ToString(),
-        IsActive = true,
-        RefreshTokenLifeTime = expiresAccessTokenInTime
-      };
-      await _accountDb.Clients.AddClientAsync(client);
 
       var refreshToken = Guid.NewGuid().ToString();
 
@@ -231,7 +223,7 @@ namespace AccountServer.Controllers
         _jwtOptions));
     }
 
-    private async Task<IActionResult> RefreshToken(CredentialsViewModel credentials)
+    private async Task<IActionResult> RefreshToken(LoginViewModel credentials)
     {
       var nowTime = DateTime.UtcNow;
 

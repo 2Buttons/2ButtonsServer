@@ -26,7 +26,12 @@ namespace AccountServer.Models
     /// <summary>
     /// 4.1.4.  "exp" (Expiration Time) Claim - The "exp" (expiration time) claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
     /// </summary>
-    public DateTime Expiration => IssuedAt.Add(ValidFor);
+    public DateTime ExpirationAccessToken => IssuedAt.Add(ValidForAccessToken);
+
+    /// <summary>
+    /// 4.1.4.  "exp" (Expiration Time) Claim - The "exp" (expiration time) claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
+    /// </summary>
+    public DateTime ExpirationRefreshToken => IssuedAt.Add(ValidForRefreshToken);
 
     /// <summary>
     /// 4.1.5.  "nbf" (Not Before) Claim - The "nbf" (not before) claim identifies the time before which the JWT MUST NOT be accepted for processing.
@@ -39,11 +44,14 @@ namespace AccountServer.Models
     public DateTime IssuedAt => DateTime.UtcNow;
 
     /// <summary>
-    /// Set the timespan the token will be valid for (default is 120 min)
+    /// Set the timespan the access token will be valid for (default is 120 min)
     /// </summary>
-    public TimeSpan ValidFor { get; set; } = TimeSpan.FromMinutes(120);
+    public TimeSpan ValidForAccessToken { get; set; } = TimeSpan.FromMinutes(120);
 
-
+    /// <summary>
+    /// Set the timespan the refresh token will be valid for (default is 60 days)
+    /// </summary>
+    public TimeSpan ValidForRefreshToken { get; set; } = TimeSpan.FromDays(60);
 
     /// <summary>
     /// "jti" (JWT ID) Claim (default ID is a GUID)

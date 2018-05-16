@@ -5,7 +5,9 @@ using AccountServer.Auth;
 using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.ViewModels.InputParameters;
+using AccountServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
+using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -75,145 +77,93 @@ namespace AccountServer.Controllers
       };
       var isAdded = await _accountDb.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0)
-        return BadRequest($"We are not able to add you. Please, say us about it.");
+        return BadRequest($"We are not able to add you. Please, tell us about it.");
 
-      if (!AccountWrapper.TryAddUser(_twoButtonsContext, userDb.UserId, user.Login, user.BirthDate,  user.SexType,
+      if (!AccountWrapper.TryAddUser(_twoButtonsContext, userDb.UserId, user.Login, user.BirthDate, user.SexType,
         user.City, user.Description, user.FullAvatarLink, user.SmallAvatarLink))
       {
         await _accountDb.Users.RemoveUserAsync(userDb.UserId);
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        return BadRequest("We are not able to add your indformation. Please, tell us about it.");
       }
 
-      var nowTime = DateTime.UtcNow;
-      var expiresAccessTokenInTime = 60 * 24 * 7 * 2;
 
-      var client = new ClientDb
-      {
-        Secret = Guid.NewGuid().ToString(),
-        IsActive = true,
-        RefreshTokenLifeTime = expiresAccessTokenInTime
-      };
-      await _accountDb.Clients.AddClientAsync(client);
-
-      var refreshToken = Guid.NewGuid().ToString();
+      var result = await Tokens.GenerateJwtAsync(_jwtFactory, userDb.UserId, role, _jwtOptions);
 
       var token = new TokenDb
       {
         UserId = userDb.UserId,
-        ClientId = client.ClientId,
-        IssuedUtc = nowTime,
-        ExpiresUtc = nowTime.AddMinutes(client.RefreshTokenLifeTime),
-        RefreshToken = refreshToken
+        ExpiresIn = result.ExpiresIn,
+        RefreshToken = result.RefreshToken
       };
 
       if (!await _accountDb.Tokens.AddTokenAsync(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
 
-
-      _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
-      var result = await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken,
-        token.UserId, role, _jwtOptions);
       return Ok(result);
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] CredentialsViewModel credentials)
+    public async Task<IActionResult> Login([FromBody] LoginViewModel credentials)
     {
       if (credentials == null)
         return BadRequest("Input parameter  is null");
 
       switch (credentials.GrantType)
       {
-        case GrantType.NoGrantType:
+        case GrantType.Guest:
         case GrantType.Password:
           return await AccessToken(credentials);
-        case GrantType.RefreshToken:
-          return await RefreshToken(credentials);
         default:
           return BadRequest("Sorry, we can not find such grant type.");
       }
     }
 
-    private async Task<IActionResult> AccessToken(CredentialsViewModel credentials)
+    private async Task<IActionResult> AccessToken(LoginViewModel credentials)
     {
-      var nowTime = DateTime.UtcNow;
-      var expiresAccessTokenInTime = 5;
-
-      var user = new UserDto{UserId = 0};
+      var user = new UserDto { UserId = 0 };
       var role = RoleType.Guest;
 
       if (credentials.GrantType == GrantType.Password)
       {
-        if (string.IsNullOrEmpty(credentials.Phone) || string.IsNullOrEmpty(credentials.Password))
-        return BadRequest("Phone and (or) password is incorrect");
+        if (credentials.Phone.IsNullOrEmpty() || credentials.Password.IsNullOrEmpty())
+          return BadRequest("Phone and (or) password is incorrect");
         var passwordHash = credentials.Password.GetHashString();
-         user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, passwordHash);
+        user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, passwordHash);
         if (user == null)
-        return BadRequest("Please register or login via Social Network");
+          return BadRequest("Please register or login via Social Network");
+        role = await _accountDb.Users.GetUserRoleAsync(user.UserId);
 
-         role  = await _accountDb.Users.GetUserRoleAsync(user.UserId);
+        if()
       }
 
-      ClientDb client = null;
-      if (!string.IsNullOrEmpty(credentials.SecretKey))
-        client = await _accountDb.Clients.FindClientAsync(credentials.ClientId, credentials.SecretKey);
 
-      if (client == null)
-      {
-        int expiresRefreshTokenInTime;
-        switch (role)
-        {
-          case RoleType.Guest:
-            expiresRefreshTokenInTime = 60 * 24 * 7 * 4; // 1 month
-            break;
-          case RoleType.User:
-          case RoleType.Moderator:
-          case RoleType.Admin:
-            expiresRefreshTokenInTime = 60 * 24 * 7 * 2; //2 weeks
-            break;
-          default:
-            expiresRefreshTokenInTime = 120; //2 hours
-            break;
-        }
 
-        client = new ClientDb
-        {
-          Secret = Guid.NewGuid().ToString(),
-          IsActive = true,
-          RefreshTokenLifeTime = expiresRefreshTokenInTime
-        };
-        await _accountDb.Clients.AddClientAsync(client);
-      }
-      if (!client.IsActive)
-      {
-        client.IsActive = true;
-        await _accountDb.Clients.UpdateClientAsync(client);
-      }
-
-      var refreshToken = Guid.NewGuid().ToString();
+      var result = await Tokens.GenerateJwtAsync(_jwtFactory, user.UserId, role, _jwtOptions);
 
       var token = new TokenDb
       {
         UserId = user.UserId,
-        ClientId = client.ClientId,
-        IssuedUtc = nowTime,
-        ExpiresUtc = nowTime.AddMinutes(client.RefreshTokenLifeTime),
-        RefreshToken = refreshToken
+        ExpiresIn = result.ExpiresIn,
+        RefreshToken = result.RefreshToken
       };
 
       if (!await _accountDb.Tokens.AddTokenAsync(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
 
-
-      _jwtOptions.ValidFor = TimeSpan.FromMinutes(expiresAccessTokenInTime);
-      var result= await Tokens.GenerateJwtAsync(_jwtFactory, client.ClientId, client.Secret, token.RefreshToken, token.UserId, role,
-        _jwtOptions);
       return Ok(result);
     }
 
-    private async Task<IActionResult> RefreshToken(CredentialsViewModel credentials)
+    [HttpPost("refreshToken")]
+    public async Task<IActionResult> RefreshToken(RefreshViewModel refresh)
     {
       var nowTime = DateTime.UtcNow;
+
+      if (refresh == null || refresh.RefreshToken.IsNullOrEmpty())
+      {
+        return BadRequest("Input parameters or is null");
+      }
+
+
 
       if (string.IsNullOrEmpty(credentials.RefreshToken) || string.IsNullOrEmpty(credentials.SecretKey))
         return BadRequest("RefreshToken or SecretKey is null or empty. Please, send again.");
@@ -255,12 +205,12 @@ namespace AccountServer.Controllers
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> LogOut([FromBody] LogoutParams logout)
+    public async Task<IActionResult> Logout([FromBody] LogoutParams logout)
     {
       if (string.IsNullOrEmpty(logout?.SecretKey))
         return BadRequest($"Input parameter  is null");
 
-      if((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) == RoleType.Guest)
+      if ((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) == RoleType.Guest)
       {
         return BadRequest($"You are guest.");
       }

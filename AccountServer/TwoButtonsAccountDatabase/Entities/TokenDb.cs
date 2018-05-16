@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CommonLibraries;
 
 namespace TwoButtonsAccountDatabase.Entities
 {
@@ -10,11 +11,10 @@ namespace TwoButtonsAccountDatabase.Entities
     [Key]
     public int TokenId { get; set; }
     public int UserId { get; set; } // именно юзер
-    public int ClientId { get; set; } // где юзе вошел или телефон или какой-то другой веб сайт короче для разных входов юзера
-    public DateTime IssuedUtc { get; set; }
-    public DateTime ExpiresUtc { get; set; }
+    public long ExpiresIn{ get; set; }
     public string RefreshToken { get; set; }
 
-
+    public ApplicationType ApplicationType { get; set; }
+    public string AllowedOrigin { get; set; }
   }
 }

@@ -27,7 +27,7 @@ namespace TwoButtonsAccountDatabase
     public async Task<bool> AddTokenAsync(TokenDb token)
     {
       var existingToken =
-        _context.TokensDb.SingleOrDefault(r => r.UserId == token.UserId && r.ClientId == token.ClientId);
+        _context.TokensDb.SingleOrDefault(r => r.UserId == token.UserId);
 
       if (existingToken != null)
         await RemoveTokenAsync(existingToken);
@@ -67,15 +67,20 @@ namespace TwoButtonsAccountDatabase
     }
 
 
-    public async Task<TokenDb> FindTokenAsync(string tokenId)
+    public async Task<TokenDb> FindTokenByIdAsync(int tokenId)
     {
       return await _context.TokensDb.FindAsync(tokenId);
     }
 
 
-    public async Task<TokenDb> FindTokenAsync(int clientId, string token)
+    public async Task<TokenDb> FindTokenAsync(string token)
     {
-      return await _context.TokensDb.AsNoTracking().FirstOrDefaultAsync(x => x.ClientId == clientId && x.RefreshToken == token);
+      return await _context.TokensDb.AsNoTracking().FirstOrDefaultAsync(x=>x.RefreshToken == token);
+    }
+
+    public async Task<int> CountTokensForUserAsync(int userId)
+    {
+      return await _context.TokensDb.CountAsync(x=>x.UserId == userId);
     }
 
     public async Task<List<TokenDb>> GetAllTokensAsync()

@@ -6,12 +6,12 @@ namespace TwoButtonsAccountDatabase
   {
     private readonly TwoButtonsAccountContext _db;
 
-    private ClientRepository _clientRepository;
+    //private ClientRepository _clientRepository;
     private TokenRepository _tokenRepository;
     private UserRepository _userRepository;
 
     public TokenRepository Tokens => _tokenRepository ?? (_tokenRepository = new TokenRepository(_db));
-    public ClientRepository Clients => _clientRepository ?? (_clientRepository = new ClientRepository(_db));
+   // public ClientRepository Clients => _clientRepository ?? (_clientRepository = new ClientRepository(_db));
     public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_db));
 
     public AccountUnitOfWork(TwoButtonsAccountContext db)

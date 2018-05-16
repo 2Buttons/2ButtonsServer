@@ -2,28 +2,22 @@
 using AccountServer.Models;
 using AccountServer.ViewModels.OutputParameters;
 using CommonLibraries;
+using CommonLibraries.Extensions;
 
 namespace AccountServer.Auth
 {
   public class Tokens
   {
-    public static async Task<TokenViewModel> GenerateJwtAsync(IJwtFactory jwtFactory, int clientId, string secretKey, string refreshToken,  int userId, RoleType role, JwtIssuerOptions jwtOptions)
-    {
-      return await GenerateJwt(jwtFactory,  clientId,  secretKey,  refreshToken,  userId,  role, jwtOptions);
-    }
-
-    public static async Task<TokenViewModel> GenerateJwt( IJwtFactory jwtFactory, int clientId, string secretKey, string refreshToken, int userId, RoleType role,
+    public static async Task<TokenViewModel> GenerateJwtAsync( IJwtFactory jwtFactory, int userId, RoleType role,
       JwtIssuerOptions jwtOptions)
     {
       var response = new TokenViewModel
       {
-        AccessToken = await jwtFactory.GenerateEncodedToken(userId, role),
         UserId = userId,
         RoleType = role,
-        ClientId = clientId,
-        SecretKey = secretKey,
-        ExpiresIn = (int) jwtOptions.ValidFor.TotalMinutes,
-        RefreshToken = refreshToken
+        AccessToken = await jwtFactory.GenerateEncodedAccessToken(userId, role),
+        ExpiresIn = jwtOptions.ExpirationAccessToken.ToUnixEpochDate(),
+        RefreshToken = await jwtFactory.GenerateEncodedRefreshToken(userId),
       };
 
       return response;

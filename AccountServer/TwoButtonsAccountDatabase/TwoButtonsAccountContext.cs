@@ -6,7 +6,7 @@ namespace TwoButtonsAccountDatabase
 {
   public class TwoButtonsAccountContext : DbContext
   {
-    public DbSet<ClientDb> ClientsDb { get; set; }
+    //public DbSet<ClientDb> ClientsDb { get; set; }
     public DbSet<TokenDb> TokensDb { get; set; }
     public DbSet<UserDb> UsersDb { get; set; }
 
@@ -21,18 +21,18 @@ namespace TwoButtonsAccountDatabase
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<ClientDb>(entity =>
-      {
-        entity.HasKey(e => e.ClientId);
+      //modelBuilder.Entity<ClientDb>(entity =>
+      //{
+      //  entity.HasKey(e => e.ClientId);
 
-        entity.Property(e => e.AllowedOrigin).HasMaxLength(50);
+      //  entity.Property(e => e.AllowedOrigin).HasMaxLength(50);
 
-        entity.Property(e => e.ApplicationType).HasDefaultValueSql("((0))");
+      //  entity.Property(e => e.ApplicationType).HasDefaultValueSql("((0))");
 
-        entity.Property(e => e.RefreshTokenLifeTime).HasDefaultValueSql("((0))");
+      //  entity.Property(e => e.RefreshTokenLifeTime).HasDefaultValueSql("((0))");
 
-        entity.Property(e => e.Secret).HasMaxLength(50);
-      });
+      //  entity.Property(e => e.Secret).HasMaxLength(50);
+      //});
 
       modelBuilder.Entity<TokenDb>(entity =>
       {
@@ -41,6 +41,10 @@ namespace TwoButtonsAccountDatabase
         entity.Property(e => e.RefreshToken)
           .IsRequired()
           .HasMaxLength(100);
+
+        entity.Property(e => e.AllowedOrigin).HasMaxLength(50);
+
+        entity.Property(e => e.ApplicationType).HasDefaultValueSql("((0))");
       });
 
       modelBuilder.Entity<UserDb>(entity =>
