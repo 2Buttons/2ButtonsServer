@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TwoButtonsAccountDatabase
+namespace TwoButtonsAccountDatabase.Repostirories
 {
   public class AccountUnitOfWork : IDisposable
   {

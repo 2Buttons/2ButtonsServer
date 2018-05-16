@@ -6,13 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Newtonsoft.Json;
 using TwoButtonsAccountDatabase.DTO;
 using TwoButtonsAccountDatabase.Entities;
 using TwoButtonsAccountDatabase.Entities.FunctionEntities;
 
-namespace TwoButtonsAccountDatabase
+namespace TwoButtonsAccountDatabase.Repostirories
 {
   public class UserRepository : IDisposable
   {

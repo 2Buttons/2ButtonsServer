@@ -11,9 +11,7 @@ namespace AccountServer.Auth
     public interface IJwtFactory
     {
       Task<string> GenerateEncodedAccessToken(int userId, RoleType role);
-      Task<ClaimsIdentity> GenerateAccessClaimsIdentity(int userId, RoleType role);
-
-      Task<string> GenerateEncodedRefreshToken(int userId);
-      Task<ClaimsIdentity> GenerateRefreshClaimsIdentity(int userId);
+      Task<string> GenerateEncodedRefreshToken(int userId, RoleType role);
+      Task<ClaimsIdentity> GenerateClaimsIdentity(int userId, RoleType role);
   }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsAccountDatabase.Entities;
 
-namespace TwoButtonsAccountDatabase
+namespace TwoButtonsAccountDatabase.Repostirories
 {
   public class TokenRepository : IDisposable
   {
@@ -66,10 +66,23 @@ namespace TwoButtonsAccountDatabase
       return await _context.SaveChangesAsync() >= tokensForRemoving.Count();
     }
 
+    public async Task<bool> RemoveTokensByUserIdAsync(int userId)
+    {
+      var tokensForRemoving = _context.TokensDb.AsNoTracking().Where(x=>x.UserId == userId);
+      var tokensCount = tokensForRemoving.Count();
+      _context.TokensDb.RemoveRange(tokensForRemoving);
+      return await _context.SaveChangesAsync() >=  tokensCount;
+    }
+
 
     public async Task<TokenDb> FindTokenByIdAsync(int tokenId)
     {
       return await _context.TokensDb.FindAsync(tokenId);
+    }
+
+    public async Task<TokenDb> FindTokenByTokenAndUserIdAsync(int userId, string token)
+    {
+      return await _context.TokensDb.SingleOrDefaultAsync(x=>x.UserId == userId && x.RefreshToken == token);
     }
 
 
