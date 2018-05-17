@@ -39,8 +39,7 @@ namespace TwoButtonsAccountDatabase
         entity.HasKey(e => e.TokenId);
 
         entity.Property(e => e.RefreshToken)
-          .IsRequired()
-          .HasMaxLength(100);
+          .IsRequired();
 
         entity.Property(e => e.AllowedOrigin).HasMaxLength(50);
 

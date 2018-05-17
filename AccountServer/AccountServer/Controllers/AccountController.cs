@@ -50,7 +50,10 @@ namespace AccountServer.Controllers
 
       var result = userInfo.MapToUserInfoViewModel();
       result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
-      
+
+      if (userPage.UserId != userPage.UserPageId)
+        result.UserStatistics.AnsweredQuestions = 0;
+
       result.Social = ConvertContactsDtoToViewModel(await userContacts);
 
       return Ok(result);
@@ -70,6 +73,9 @@ namespace AccountServer.Controllers
 
       var result = userInfo.MapToUserInfoViewModel();
       result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
+
+      if (userPage.UserId != userPage.UserPageId)
+        result.UserStatistics.AnsweredQuestions = 0;
 
       result.Social = ConvertContactsDtoToViewModel(await userContacts);
 

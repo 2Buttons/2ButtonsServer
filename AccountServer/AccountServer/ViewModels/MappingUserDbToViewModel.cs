@@ -39,6 +39,7 @@ namespace AccountServer.ViewModels
       {
         PublicAskedQuestions = dbEntity.PublicAskedQuestions,
         AnsweredQuestions = dbEntity.AnsweredQuestions,
+        PublicAnsweredQuestions = dbEntity.PublicAnsweredQuestions,
         PublicFavoriteQuestions = dbEntity.PublicFavoriteQuestions,
         CommentsWritten = dbEntity.CommentsWritten,
 

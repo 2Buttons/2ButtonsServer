@@ -17,7 +17,7 @@ namespace AccountServer.Auth
         RoleType = role,
         AccessToken = await jwtFactory.GenerateEncodedAccessToken(userId, role),
         ExpiresIn = jwtOptions.ExpirationAccessToken.ToUnixEpochDate(),
-        RefreshToken = await jwtFactory.GenerateEncodedRefreshToken(userId),
+        RefreshToken = await jwtFactory.GenerateEncodedRefreshToken(userId, role)
       };
 
       return response;

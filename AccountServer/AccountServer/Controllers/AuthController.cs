@@ -154,12 +154,12 @@ namespace AccountServer.Controllers
 
       if (!await _accountDb.Tokens.AddTokenAsync(token))
         return BadRequest("Can not add token to database. You entered just as a guest.");
-
+      //var p = new JwtSecurityTokenHandler().ReadJwtToken(result.RefreshToken).ValidTo;
       return Ok(result);
     }
 
     [HttpPost("refreshToken")]
-    public async Task<IActionResult> RefreshToken(RefreshViewModel refresh)
+    public async Task<IActionResult> RefreshToken([FromBody]RefreshViewModel refresh)
     {
       if (refresh == null || refresh.RefreshToken.IsNullOrEmpty())
         return BadRequest("Input parameters or is null");
@@ -184,9 +184,9 @@ namespace AccountServer.Controllers
       if (DateTime.UtcNow > oldTokenFromDb.ValidTo)
         return BadRequest("The refresh token is invalid. Please, login again.");
 
-      var result = await Tokens.GenerateJwtAsync(_jwtFactory, userId,
-        (RoleType) int.Parse(oldTokenFromDb.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultRoleClaimType)
-          ?.Value), _jwtOptions);
+      var role = userId == 0 ?  RoleType.Guest : await _accountDb.Users.GetUserRoleAsync(userId);
+
+      var result = await Tokens.GenerateJwtAsync(_jwtFactory, userId, role, _jwtOptions);
 
       var token = new TokenDb
       {
@@ -200,10 +200,7 @@ namespace AccountServer.Controllers
 
       if (!isDeleted || !isAdded)
         return BadRequest("Can not add token to database. Plese, get access token again or enter like a guest");
-
-      if (!await _accountDb.Tokens.AddTokenAsync(token))
-        return BadRequest("Can not add token to database. You entered just as a guest.");
-
+      //var p = new JwtSecurityTokenHandler().ReadJwtToken(result.RefreshToken).ValidTo;
       return Ok(result);
     }
 
@@ -248,17 +245,18 @@ namespace AccountServer.Controllers
 
     public bool IsValidToken(string token)
     {
-      try
-      {
-        new JwtSecurityTokenHandler().ValidateToken(token,
-          new TokenValidationParameters {ValidateIssuerSigningKey = true}, out var tokenValidation);
-        return true;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-        return false;
-      }
+      return true;
+      //try
+      //{
+      //  new JwtSecurityTokenHandler().ValidateToken(token,
+      //    new TokenValidationParameters {ValidateIssuerSigningKey = true}, out var tokenValidation);
+      //  return true;
+      //}
+      //catch (Exception e)
+      //{
+      //  Console.WriteLine(e);
+      //  return false;
+      //}
     }
   }
 }

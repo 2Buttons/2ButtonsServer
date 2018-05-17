@@ -53,7 +53,7 @@ namespace AccountServer.Auth
         audience: _jwtOptions.Audience,
         claims: claimsIdentity.Claims,
         notBefore: _jwtOptions.NotBefore,
-        expires: _jwtOptions.ExpirationAccessToken,
+        expires: _jwtOptions.ExpirationRefreshToken,
         signingCredentials: _jwtOptions.SigningCredentials);
 
       var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);

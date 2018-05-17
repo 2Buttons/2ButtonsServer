@@ -27,7 +27,7 @@ namespace TwoButtonsAccountDatabase.Repostirories
     public async Task<bool> AddTokenAsync(TokenDb token)
     {
       var existingToken =
-        _context.TokensDb.SingleOrDefault(r => r.UserId == token.UserId);
+        _context.TokensDb.SingleOrDefault(r => r.TokenId == token.TokenId);
 
       if (existingToken != null)
         await RemoveTokenAsync(existingToken);

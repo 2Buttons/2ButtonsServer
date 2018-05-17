@@ -51,7 +51,7 @@ namespace AccountServer.Models
     /// <summary>
     /// Set the timespan the refresh token will be valid for (default is 60 days)
     /// </summary>
-    public TimeSpan ValidForRefreshToken { get; set; } = TimeSpan.FromDays(60);
+    public TimeSpan ValidForRefreshToken { get; set; } = TimeSpan.FromMinutes(60*24*60);
 
     /// <summary>
     /// "jti" (JWT ID) Claim (default ID is a GUID)

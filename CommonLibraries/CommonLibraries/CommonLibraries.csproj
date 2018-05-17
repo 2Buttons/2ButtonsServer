@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Enums.cs~RFd5bb6b7.TMP" />
+  </ItemGroup>
+
 </Project>
