@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsDatabase.Repositories;
 using TwoButtonsServer.ViewModels;
 using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
@@ -20,6 +20,7 @@ namespace TwoButtonsServer.Controllers
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   //[Route("api/[controller]")]
+  [Route("news")]
   public class NewsQuestionsController : Controller //Don't receive deleted
   {
     private readonly TwoButtonsContext _context;
@@ -28,7 +29,7 @@ namespace TwoButtonsServer.Controllers
       _context = context;
     }
 
-    [HttpPost("getNews")]
+    [HttpPost]
     public async Task<IActionResult> GetNews([FromBody]GetNewsViewModel newsViewModel)
     {
 
@@ -96,7 +97,7 @@ namespace TwoButtonsServer.Controllers
 
     private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
     {
-      if (!NewsQuestionsWrapper.TryGetNewsAskedQuestions(_context, userId, questionsPage, questionsAmount, out var userAskedQuestions))
+      if (!NewsQuestionsRepository.TryGetNewsAskedQuestions(_context, userId, questionsPage, questionsAmount, out var userAskedQuestions))
         return new List<NewsAskedQuestionViewModel>();
 
       var result = new List<NewsAskedQuestionViewModel>();
@@ -113,7 +114,7 @@ namespace TwoButtonsServer.Controllers
 
     private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
     {
-      if (!NewsQuestionsWrapper.TryGetNewsAnsweredQuestions(_context, userId, questionsPage, questionsAmount,
+      if (!NewsQuestionsRepository.TryGetNewsAnsweredQuestions(_context, userId, questionsPage, questionsAmount,
           out var userAnsweredQuestions))
         return new List<NewsAnsweredQuestionViewModel>();
 
@@ -131,7 +132,7 @@ namespace TwoButtonsServer.Controllers
 
     private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
     {
-      if (!NewsQuestionsWrapper.TryGetNewsFavoriteQuestions(_context, userId, questionsPage, questionsAmount,
+      if (!NewsQuestionsRepository.TryGetNewsFavoriteQuestions(_context, userId, questionsPage, questionsAmount,
           out var userFavoriteQuestions))
         return new List<NewsFavoriteQuestionViewModel>();
 
@@ -149,7 +150,7 @@ namespace TwoButtonsServer.Controllers
 
     private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
     {
-      if (!NewsQuestionsWrapper.TryGetNewsCommentedQuestions(_context, userId, questionsPage, questionsAmount,
+      if (!NewsQuestionsRepository.TryGetNewsCommentedQuestions(_context, userId, questionsPage, questionsAmount,
           out var userCommentedQuestions))
         return new List<NewsCommentedQuestionViewModel>();
 
@@ -167,7 +168,7 @@ namespace TwoButtonsServer.Controllers
     private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1, int questionsAmount = 100)
     {
 
-      if (!NewsQuestionsWrapper.TryGetNewsRecommendedQuestions(_context, userId, questionsPage, questionsAmount,
+      if (!NewsQuestionsRepository.TryGetNewsRecommendedQuestions(_context, userId, questionsPage, questionsAmount,
           out var newsRecommendedQuestions))
         return new List<NewsRecommendedQuestionViewModel>();
 
@@ -190,11 +191,11 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!TagsWrapper.TryGetTags(_context, questionId, out tags))
+      if (!TagsRepository.TryGetTags(_context, questionId, out tags))
         tags = new List<TagDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out firstPhotos))
+      if (!ResultsRepository.TryGetPhotos(_context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
+      if (!ResultsRepository.TryGetPhotos(_context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
         secondPhotos = new List<PhotoDb>();
     }
   }

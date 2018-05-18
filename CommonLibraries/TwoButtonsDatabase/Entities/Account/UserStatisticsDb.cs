@@ -9,7 +9,7 @@ namespace TwoButtonsDatabase.Entities.Account
 
     public int PublicAskedQuestions { get; set; }
     public int AnsweredQuestions { get; set; }
-    public int PubAnsweredQuestions { get; set; }
+    public int PublicAnsweredQuestions { get; set; }
     public int PublicFavoriteQuestions { get; set; }
     public int CommentsWritten { get; set; }
 

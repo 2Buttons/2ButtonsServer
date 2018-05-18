@@ -69,7 +69,7 @@ namespace AccountServer
 
       //   services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
 
-      services.AddTransient<AccountUnitOfWork>();
+      services.AddSingleton<AccountUnitOfWork>();
 
       var tokenValidationParameters = new TokenValidationParameters
       {

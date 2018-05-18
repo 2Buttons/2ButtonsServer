@@ -33,6 +33,7 @@ namespace AccountServer.Controllers
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   // [Route("/account")]
+  [Route("api/[controller]")]
   public class FriendsController : Controller
   {
     //some config in the appsettings.json

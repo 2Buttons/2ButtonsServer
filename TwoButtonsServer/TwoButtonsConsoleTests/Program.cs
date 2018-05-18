@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.WrapperFunctions;
 
 namespace TwoButtonsConsoleTests
 {

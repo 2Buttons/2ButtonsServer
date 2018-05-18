@@ -1,6 +1,7 @@
 ﻿using System;
+using TwoButtonsAccountDatabase.Repostirories;
 
-namespace TwoButtonsAccountDatabase.Repostirories
+namespace TwoButtonsAccountDatabase
 {
   public class AccountUnitOfWork : IDisposable
   {

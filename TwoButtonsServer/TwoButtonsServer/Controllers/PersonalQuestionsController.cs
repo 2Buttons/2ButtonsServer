@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.UserQuestions;
-using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsDatabase.Repositories;
 using TwoButtonsServer.Extensions;
 using TwoButtonsServer.ViewModels;
 using TwoButtonsServer.ViewModels.InputParameters;
@@ -20,6 +20,7 @@ namespace TwoButtonsServer.Controllers
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   //[Route("api/[controller]")]
+  [Route("accountQuestions")]
   public class PersonalQuestionsController : Controller //To get user's posts
   {
     private readonly TwoButtonsContext _context;
@@ -30,13 +31,13 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    [HttpPost("getAskedQuestions")]
+    [HttpPost("asked")]
     public IActionResult GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetAskedQuestions(_context, userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Offset,
+      if (!UserQuestionsRepository.TryGetAskedQuestions(_context, userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Offset,
           userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<AskedQuestionDb>(), out var userAskedQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -52,13 +53,13 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    [HttpPost("getRecommendedQustions")]
+    [HttpPost("recommended")]
     public IActionResult GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetRecommendedQuestions(_context, userQuestions.UserId, userQuestions.UserId,
+      if (!UserQuestionsRepository.TryGetRecommendedQuestions(_context, userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset,
         userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<RecommendedQuestionDb>(),
         out var recommendedQuestions))
@@ -77,13 +78,13 @@ namespace TwoButtonsServer.Controllers
 
 
 
-    [HttpPost("getLikedQuestions")]
+    [HttpPost("liked")]
     public IActionResult GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Offset,
+      if (!UserQuestionsRepository.TryGetLikedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Offset,
           userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<LikedQuestionDb>(), out var userAnsweredQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -98,13 +99,13 @@ namespace TwoButtonsServer.Controllers
       return Ok(result);
     }
 
-    [HttpPost("getSavedQuestions")]
+    [HttpPost("saved")]
     public IActionResult GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!UserQuestionsWrapper.TryGetSavedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Offset,
+      if (!UserQuestionsRepository.TryGetSavedQuestions(_context, userQuestions.UserId, userQuestions.PageParams.Offset,
           userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<SavedQuestionDb>(), out var userFavoriteQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -120,14 +121,14 @@ namespace TwoButtonsServer.Controllers
       return Ok(result);
     }
 
-    [HttpPost("getTopQuestions")]
+    [HttpPost("top")]
     public IActionResult GetTopQuestions([FromBody] TopDayQuestions questions)
     {
       if (questions == null)
         return BadRequest($"Input parameter  is null");
       var dateTime = questions.DeltaUnixTime == 0? DateTime.MinValue : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      if (!UserQuestionsWrapper.TryGeTopQuestions(_context, questions.UserId, questions.IsOnlyNew, questions.PageParams.Offset,
+      if (!UserQuestionsRepository.TryGeTopQuestions(_context, questions.UserId, questions.IsOnlyNew, questions.PageParams.Offset,
         questions.PageParams.Count, dateTime, questions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -152,11 +153,11 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!TagsWrapper.TryGetTags(_context, questionId, out tags))
+      if (!TagsRepository.TryGetTags(_context, questionId, out tags))
         tags = new List<TagDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(),minAge.WhenBorned(), sex, city, out firstPhotos))
+      if (!ResultsRepository.TryGetPhotos(_context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(),minAge.WhenBorned(), sex, city, out firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!ResultsWrapper.TryGetPhotos(_context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
+      if (!ResultsRepository.TryGetPhotos(_context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
         secondPhotos = new List<PhotoDb>();
     }
   }

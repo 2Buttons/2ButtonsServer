@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
-using TwoButtonsDatabase.WrapperFunctions;
+using TwoButtonsDatabase.Repositories;
 using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 
@@ -29,7 +29,7 @@ namespace TwoButtonsServer.Controllers
         {
             if (comment == null)
                 return BadRequest($"Input parameter  is null");
-            if (!CommentsWrapper.TryAddComment(_context, comment.UserId, comment.QuestionId, comment.CommentText, comment.PreviousCommnetId, out var commentId))
+            if (!CommentsRepository.TryAddComment(_context, comment.UserId, comment.QuestionId, comment.CommentText, comment.PreviousCommnetId, out var commentId))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
             return Ok(commentId);
             
@@ -40,7 +40,7 @@ namespace TwoButtonsServer.Controllers
         {
             if (commentFeedback == null)
                 return BadRequest($"Input parameter {nameof(commentFeedback)} is null");
-            if (CommentsWrapper.TryUpdateCommentFeedback(_context, commentFeedback.UserId, commentFeedback.CommentId, commentFeedback.FeedbackType))
+            if (CommentsRepository.TryUpdateCommentFeedback(_context, commentFeedback.UserId, commentFeedback.CommentId, commentFeedback.FeedbackType))
                 return Ok();
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
@@ -50,7 +50,7 @@ namespace TwoButtonsServer.Controllers
         {
             if (comments == null)
                 return BadRequest($"Input parameter {nameof(comments)} is null");
-            if (CommentsWrapper.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.Amount, out var comment))
+            if (CommentsRepository.TryGetComments(_context, comments.UserId, comments.QuestionId, comments.Amount, out var comment))
                 return Ok(comment);
             return BadRequest("Something goes wrong. We will fix it!... maybe)))");
         }
