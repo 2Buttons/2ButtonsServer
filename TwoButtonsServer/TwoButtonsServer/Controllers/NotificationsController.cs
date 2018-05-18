@@ -33,7 +33,7 @@ namespace TwoButtonsServer.Controllers
             if (userId == null)
                 return BadRequest($"Input parameter  is null");
 
-            if (!_uowMain.n.TryGetNotifications(userId.UserId, out var notifications))
+            if (!_uowMain.Notifications.TryGetNotifications(userId.UserId, out var notifications))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
            
             return Ok(notifications.MapNotificationDbToViewModel());
