@@ -31,7 +31,7 @@ namespace TwoButtonsServer.Controllers
 
 
     [HttpPost("getAskedQuestions")]
-    public IActionResult TryGetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public IActionResult GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
@@ -52,8 +52,33 @@ namespace TwoButtonsServer.Controllers
     }
 
 
+    [HttpPost("getRecommendedQustions")]
+    public IActionResult GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
+    {
+      if (userQuestions == null)
+        return BadRequest($"Input parameter  is null");
+
+      if (!UserQuestionsWrapper.TryGetRecommendedQuestions(_context, userQuestions.UserId, userQuestions.UserId,
+        userQuestions.PageParams.Offset,
+        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<RecommendedQuestionDb>(),
+        out var recommendedQuestions))
+        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+
+      var result = new List<RecommendedQuestionViewModel>();
+
+      foreach (var question in recommendedQuestions)
+      {
+        GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
+          out var secondPhotos);
+        result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos));
+      }
+      return Ok(result);
+    }
+
+
+
     [HttpPost("getLikedQuestions")]
-    public IActionResult TryGetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public IActionResult GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
@@ -74,7 +99,7 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("getSavedQuestions")]
-    public IActionResult TryGetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public IActionResult GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");

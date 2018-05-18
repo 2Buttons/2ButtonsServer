@@ -156,6 +156,25 @@ namespace TwoButtonsDatabase.WrapperFunctions
       return false;
     }
 
+    public static bool TryGetRecommendedQuestions(TwoButtonsContext db, int userId, int pageUserId, int offset, int count,
+      Expression<Func<RecommendedQuestionDb, object>> predicate, out IEnumerable<RecommendedQuestionDb> recommendedQuestions)
+    {
+      try
+      {
+        recommendedQuestions = db.RecommendedQuestionsDb
+          .FromSql($"select * from dbo.[getUserRecommendedQuestions]({userId})")
+          .OrderBy(predicate).Skip(offset).Take(count)
+          .ToList();
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      recommendedQuestions = new List<RecommendedQuestionDb>();
+      return false;
+    }
+
     public static bool TryGetLikedQuestions(TwoButtonsContext db, int userId, int offset, int count,
       Expression<Func<LikedQuestionDb, object>> predicate, out IEnumerable<LikedQuestionDb> userAnsweredQuestions)
     {

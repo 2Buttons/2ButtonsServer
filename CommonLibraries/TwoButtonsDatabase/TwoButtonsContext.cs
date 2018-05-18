@@ -57,6 +57,7 @@ namespace TwoButtonsDatabase
 
     public virtual DbSet<AskedQuestionDb> AskedQuestionsDb { get; set; }
     public virtual DbSet<SavedQuestionDb> SavedQuestionsDb { get; set; }
+    public virtual DbSet<RecommendedQuestionDb> RecommendedQuestionsDb { get; set; }
     public virtual DbSet<LikedQuestionDb> LikedQuestionsDb { get; set; }
 
     public virtual DbSet<ComplaintDb> ComplaintDb { get; set; }

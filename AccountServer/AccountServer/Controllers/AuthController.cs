@@ -140,7 +140,7 @@ namespace AccountServer.Controllers
           case GrantType.Email:
             if (credentials.Email.IsNullOrEmpty() || credentials.Password.IsNullOrEmpty())
               return BadRequest("Email and (or) password is incorrect");
-            user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Email, credentials.Password);
+            user = await _accountDb.Users.GetUserByEmailAndPasswordAsync(credentials.Email, credentials.Password);
             break;
         }
 

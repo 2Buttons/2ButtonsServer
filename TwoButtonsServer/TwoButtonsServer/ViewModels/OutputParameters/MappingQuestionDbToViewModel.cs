@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CommonLibraries;
 using CommonLibraries.Extensions;
 using TwoButtonsDatabase.Entities;
 using TwoButtonsDatabase.Entities.NewsQuestions;
@@ -29,10 +28,11 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       this NewsAskedQuestionsDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos)
     {
-      var viewModel  = QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+      var viewModel =
+        QuestionDbToViewModel<NewsAskedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
 
       viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
-      viewModel.Priority = dbEntity.AnsweredFollowTo*4;
+      viewModel.Priority = dbEntity.AnsweredFollowTo * 4;
       return viewModel;
     }
 
@@ -49,7 +49,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       viewModel.CommentAddDate = dbEntity.CommentAddDate;
 
       viewModel.AnsweredFollowToAmount = dbEntity.AnsweredFollowTo;
-      viewModel.Priority = dbEntity.Comments* dbEntity.AnsweredFollowTo*2;
+      viewModel.Priority = dbEntity.Comments * dbEntity.AnsweredFollowTo * 2;
 
       return viewModel;
     }
@@ -153,6 +153,19 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
+    public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(
+      this RecommendedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      IEnumerable<PhotoDb> dbSecondPhotos)
+    {
+      var viewModel =
+        QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+      viewModel.ToUserId = dbEntity.ToUserId;
+      viewModel.ToUserLogin = dbEntity.ToUserLogin;
+      viewModel.RecommendDate = dbEntity.RecommendDate;
+
+      return viewModel;
+    }
+
     public static LikedQuestionsViewModel MapToLikedQuestionsViewModel(
       this LikedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos)
@@ -201,8 +214,8 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
         ShowsAmount = dbEntity.Shows,
         LikesAmount = dbEntity.Likes,
         DislikesAmount = dbEntity.Dislikes,
-        YourFeedbackType =  dbEntity.YourFeedback,
-        YourAnswerType =  dbEntity.YourAnswer,
+        YourFeedbackType = dbEntity.YourFeedback,
+        YourAnswerType = dbEntity.YourAnswer,
         IsInFavorites = dbEntity.InFavorites,
         IsSaved = dbEntity.IsSaved,
         CommentsAmount = dbEntity.Comments,
@@ -252,7 +265,7 @@ namespace TwoButtonsServer.ViewModels.OutputParameters
           Text = c.Comment,
           LikesAmount = c.Likes,
           DislikesAmount = c.Dislikes,
-          YourFeedbackType =  c.YourFeedback,
+          YourFeedbackType = c.YourFeedback,
           PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
           AddDate = c.CommentAddDate
         })
