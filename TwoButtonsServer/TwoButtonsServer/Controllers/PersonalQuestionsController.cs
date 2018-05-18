@@ -23,11 +23,11 @@ namespace TwoButtonsServer.Controllers
   [Route("accountQuestions")]
   public class PersonalQuestionsController : Controller //To get user's posts
   {
-    private readonly TwoButtonsUnitOfWork _uowMain;
+    private readonly TwoButtonsUnitOfWork _mainDb;
 
-    public PersonalQuestionsController(TwoButtonsUnitOfWork uowMain)
+    public PersonalQuestionsController(TwoButtonsUnitOfWork mainDb)
     {
-      _uowMain = uowMain;
+      _mainDb = mainDb;
     }
 
 
@@ -37,7 +37,7 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.UserQuestions.TryGetAskedQuestions(userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Offset,
+      if (!_mainDb.UserQuestions.TryGetAskedQuestions(userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Offset,
           userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<AskedQuestionDb>(), out var userAskedQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -59,7 +59,7 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.UserQuestions.TryGetRecommendedQuestions(userQuestions.UserId, userQuestions.UserId,
+      if (!_mainDb.UserQuestions.TryGetRecommendedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset,
         userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<RecommendedQuestionDb>(),
         out var recommendedQuestions))
@@ -84,7 +84,7 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.UserQuestions.TryGetLikedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
+      if (!_mainDb.UserQuestions.TryGetLikedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
           userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<LikedQuestionDb>(), out var userAnsweredQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -105,7 +105,7 @@ namespace TwoButtonsServer.Controllers
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.UserQuestions.TryGetSavedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
+      if (!_mainDb.UserQuestions.TryGetSavedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
           userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<SavedQuestionDb>(), out var userFavoriteQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -128,7 +128,7 @@ namespace TwoButtonsServer.Controllers
         return BadRequest($"Input parameter  is null");
       var dateTime = questions.DeltaUnixTime == 0? DateTime.MinValue : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      if (!_uowMain.UserQuestions.TryGeTopQuestions(questions.UserId, questions.IsOnlyNew, questions.PageParams.Offset,
+      if (!_mainDb.UserQuestions.TryGeTopQuestions(questions.UserId, questions.IsOnlyNew, questions.PageParams.Offset,
         questions.PageParams.Count, dateTime, questions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
@@ -153,11 +153,11 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!_uowMain.Tags.TryGetTags(questionId, out tags))
+      if (!_mainDb.Tags.TryGetTags(questionId, out tags))
         tags = new List<TagDb>();
-      if (!_uowMain.Questions.TryGetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),minAge.WhenBorned(), sex, city, out firstPhotos))
+      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),minAge.WhenBorned(), sex, city, out firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!_uowMain.Questions.TryGetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
+      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
         secondPhotos = new List<PhotoDb>();
     }
   }

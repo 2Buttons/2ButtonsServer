@@ -1,38 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using AccountServer.Auth;
 using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.Models.Facebook;
 using AccountServer.Models.Vk;
-using AccountServer.SocialNets;
-using AccountServer.ViewModels;
-using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.InputParameters.Auth;
-using AccountServer.ViewModels.OutputParameters;
 using CommonLibraries;
-using CommonLibraries.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TwoButtonsAccountDatabase;
 using TwoButtonsAccountDatabase.DTO;
 using TwoButtonsAccountDatabase.Entities;
-using TwoButtonsAccountDatabase.Repostirories;
 using TwoButtonsDatabase;
-using TwoButtonsDatabase.WrapperFunctions;
 
 namespace AccountServer.Controllers
 {
@@ -41,33 +27,38 @@ namespace AccountServer.Controllers
   [Route("external")]
   public class ExternalAuthController : Controller
   {
+    private static readonly HttpClient Client = new HttpClient();
+
+    private readonly AccountUnitOfWork _accountDb;
+    //repository to handler the sqlite database
+
+    private readonly TwoButtonsUnitOfWork _mainDb;
+    private readonly FacebookAuthSettings _fbAuthSettings;
+
+    private readonly IJwtFactory _jwtFactory;
+
     //some config in the appsettings.json
     private readonly JwtIssuerOptions _jwtOptions;
 
-    private readonly IJwtFactory _jwtFactory;
-    //repository to handler the sqlite database
-
-    private readonly TwoButtonsContext _dbMain;
-    private readonly AccountUnitOfWork _accountDb;
-    private readonly FacebookAuthSettings _fbAuthSettings;
     private readonly VkAuthSettings _vkAuthSettings;
-    private static readonly HttpClient Client = new HttpClient();
 
-    public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor, IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,TwoButtonsContext buttonsContext, AccountUnitOfWork accountDb)
+    public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
+      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,
+      TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;
       _vkAuthSettings = vkAuthSettingsAccessor.Value;
       _jwtFactory = jwtFactory;
       _jwtOptions = jwtOptions.Value;
       _accountDb = accountDb;
-      _dbMain = buttonsContext;
+      _mainDb = mainDb;
     }
 
     //https://habr.com/post/270273/ - lets encrypt
 
 
     [HttpPost("vkLogin")]
-    public async Task<IActionResult> VkLogin([FromBody]VkAuthCodeViewModel vkAuth)
+    public async Task<IActionResult> VkLogin([FromBody] VkAuthCodeViewModel vkAuth)
     {
       if (vkAuth == null)
         return BadRequest("Input parameters is null.");
@@ -76,13 +67,16 @@ namespace AccountServer.Controllers
       if (string.IsNullOrEmpty(vkAuth.Code))
         return BadRequest("AccessToken is null or empty.");
 
-      var appAccessTokenResponse = await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=http://localhost:6256/vk-auth-code.html&code={vkAuth.Code}");
+      var appAccessTokenResponse =
+        await Client.GetStringAsync(
+          $"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=http://localhost:6256/vk-auth-code.html&code={vkAuth.Code}");
       var appAccessToken = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
 
       var user = await _accountDb.Users.GetUserByExternalUserIdAsync(appAccessToken.UserId, SocialNetType.Vk);
       if (user != null)
       {
-        if (string.IsNullOrEmpty(appAccessToken.Email) && user.Email != appAccessToken.Email && (string.IsNullOrEmpty(user.Email) || !user.EmailConfirmed))
+        if (string.IsNullOrEmpty(appAccessToken.Email) && user.Email != appAccessToken.Email &&
+            (string.IsNullOrEmpty(user.Email) || !user.EmailConfirmed))
         {
           user.Email = appAccessToken.Email;
           user.EmailConfirmed = true;
@@ -98,13 +92,12 @@ namespace AccountServer.Controllers
         return BadRequest("We can not create you.");
 
       return await AccessToken(newUser);
-
     }
 
     private async Task<UserDto> CreateUserAccountFromVk(int externalUserId, string externalToken, string email)
     {
-
-      var userInfoResponse = await Client.GetStringAsync($"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
+      var userInfoResponse = await Client.GetStringAsync(
+        $"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
       var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response.FirstOrDefault();
       var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Русский);
 
@@ -122,18 +115,18 @@ namespace AccountServer.Controllers
       var bdate = Convert.ToDateTime(userInfo.Birthday);
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
-      AccountWrapper.TryAddUser(_dbMain, userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate, userInfo.Sex,
-        (await cityName) ?? userInfo.City.Title, "", links.Item1, links.Item2);
+      _mainDb.Accounts.TryAddUser(userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate,
+        userInfo.Sex,
+        await cityName ?? userInfo.City.Title, "", links.Item1, links.Item2);
 
 
       return userDb.ToUserDto();
-
     }
 
     private async Task<(string, string)> UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)
     {
-      var jsonSmall = JsonConvert.SerializeObject(new { userId=userId, size = 0, url = smallPhotoUrl });
-      var jsonFull = JsonConvert.SerializeObject(new { userId=userId, size = 1, url = fullPhotoUrl });
+      var jsonSmall = JsonConvert.SerializeObject(new {userId, size = 0, url = smallPhotoUrl});
+      var jsonFull = JsonConvert.SerializeObject(new {userId, size = 1, url = fullPhotoUrl});
       var s = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonSmall);
       var f = UploadPhotoViaLink("http://localhost:6257/images/uploadUserAvatarViaLink", jsonFull);
 
@@ -142,24 +135,27 @@ namespace AccountServer.Controllers
     }
 
 
-
     [HttpPost("fbLogin")]
-    public async Task<IActionResult> Facebook([FromBody]FacebookAuthViewModel model)
+    public async Task<IActionResult> Facebook([FromBody] FacebookAuthViewModel model)
     {
       // 1.generate an app access token
-      var appAccessTokenResponse = await Client.GetStringAsync($"https://graph.facebook.com/oauth/access_token?client_id={_fbAuthSettings.AppId}&client_secret={_fbAuthSettings.AppSecret}&grant_type=client_credentials");
+      var appAccessTokenResponse =
+        await Client.GetStringAsync(
+          $"https://graph.facebook.com/oauth/access_token?client_id={_fbAuthSettings.AppId}&client_secret={_fbAuthSettings.AppSecret}&grant_type=client_credentials");
       var appAccessToken = JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
       // 2. validate the user access token
-      var userAccessTokenValidationResponse = await Client.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={model.AccessToken}&access_token={appAccessToken.AccessToken}");
-      var userAccessTokenValidation = JsonConvert.DeserializeObject<FacebookUserAccessTokenValidation>(userAccessTokenValidationResponse);
+      var userAccessTokenValidationResponse =
+        await Client.GetStringAsync(
+          $"https://graph.facebook.com/debug_token?input_token={model.AccessToken}&access_token={appAccessToken.AccessToken}");
+      var userAccessTokenValidation =
+        JsonConvert.DeserializeObject<FacebookUserAccessTokenValidation>(userAccessTokenValidationResponse);
 
       if (!userAccessTokenValidation.Data.IsValid)
-      {
         return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid facebook token.", ModelState));
-      }
 
       // 3. we've got a valid token so we can request user data from fb
-      var userInfoResponse = await Client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name,gender,locale,birthday,picture&access_token={model.AccessToken}");
+      var userInfoResponse = await Client.GetStringAsync(
+        $"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name,gender,locale,birthday,picture&access_token={model.AccessToken}");
       var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
 
       // 4. ready to create the local user account (if necessary) and jwt
@@ -200,7 +196,6 @@ namespace AccountServer.Controllers
 
     private async Task<IActionResult> AccessToken(UserDto user)
     {
-
       if (await _accountDb.Tokens.CountTokensForUserAsync(user.UserId) > 10)
       {
         await _accountDb.Tokens.RemoveTokensByUserIdAsync(user.UserId);
@@ -224,7 +219,6 @@ namespace AccountServer.Controllers
       return Ok(result);
     }
 
-    
 
     private static async Task<string> UploadPhotoViaLink(string url, string requestJson)
     {
@@ -247,14 +241,16 @@ namespace AccountServer.Controllers
     public async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
     {
       string data;
-      WebRequest request = WebRequest.CreateHttp($"https://api.vk.com/method/database.getCitiesById?city_ids={cityId}&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+      WebRequest request =
+        WebRequest.CreateHttp(
+          $"https://api.vk.com/method/database.getCitiesById?city_ids={cityId}&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       request.Headers.Add("Cookie", $"remixlang={language}");
-      WebResponse response = await request.GetResponseAsync();
-      using (Stream stream = response.GetResponseStream())
+      var response = await request.GetResponseAsync();
+      using (var stream = response.GetResponseStream())
       {
-        using (StreamReader reader = new StreamReader(stream))
+        using (var reader = new StreamReader(stream))
         {
-          data =reader.ReadToEnd();
+          data = reader.ReadToEnd();
         }
       }
       response.Close();
@@ -262,4 +258,3 @@ namespace AccountServer.Controllers
     }
   }
 }
-

@@ -19,10 +19,10 @@ namespace TwoButtonsServer.Controllers
   public class FollowersController : Controller //Represent user's followers or people who user are follow to
   {
 
-    private readonly TwoButtonsUnitOfWork _uowMain;
-    public FollowersController(TwoButtonsUnitOfWork uowMain)
+    private readonly TwoButtonsUnitOfWork _mainDb;
+    public FollowersController(TwoButtonsUnitOfWork mainDb)
     {
-      _uowMain = uowMain;
+      _mainDb = mainDb;
     }
 
     [HttpPost("getFollowers")]
@@ -30,7 +30,7 @@ namespace TwoButtonsServer.Controllers
     {
       if (vm?.PageParams == null)
         return BadRequest($"Input parameter {nameof(vm)} is null");
-      if (_uowMain.Followers.TryGetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin, out var followers))
+      if (_mainDb.Followers.TryGetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin, out var followers))
         return Ok(followers.MapToUserContactsViewModel());
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -41,7 +41,7 @@ namespace TwoButtonsServer.Controllers
       if (vm == null)
         return BadRequest($"Input parameter {nameof(vm)} is null");
 
-      if (_uowMain.Followers.TryGetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin, out var follower))
+      if (_mainDb.Followers.TryGetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin, out var follower))
         return Ok(follower.MapToUserContactsViewModel());
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -52,7 +52,7 @@ namespace TwoButtonsServer.Controllers
       if (vm == null)
         return BadRequest($"Input parameter is null");
 
-      if (_uowMain.Followers.TryAddFollow(vm.FollowerId, vm.FollowToId))
+      if (_mainDb.Followers.TryAddFollow(vm.FollowerId, vm.FollowToId))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -63,7 +63,7 @@ namespace TwoButtonsServer.Controllers
       if (vm == null)
         return BadRequest($"Input parameter is null");
 
-      if (_uowMain.Followers.TryDeleteFollow(vm.FollowerId, vm.FollowToId))
+      if (_mainDb.Followers.TryDeleteFollow(vm.FollowerId, vm.FollowToId))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }

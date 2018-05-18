@@ -18,11 +18,11 @@ namespace TwoButtonsServer.Controllers
   //[Route("api/[controller]")]
   public class QuestionsController : Controller //Controller for a Question
   {
-    private readonly TwoButtonsUnitOfWork _uowMain;
+    private readonly TwoButtonsUnitOfWork _mainDb;
 
-    public QuestionsController(TwoButtonsUnitOfWork uowMain)
+    public QuestionsController(TwoButtonsUnitOfWork mainDb)
     {
-      _uowMain = uowMain;
+      _mainDb = mainDb;
     }
 
     [HttpPost("getQuestion")]
@@ -31,7 +31,7 @@ namespace TwoButtonsServer.Controllers
       if (inputQuestion == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.Questions.TryGetQuestion(inputQuestion.UserId, inputQuestion.QuestionId, out var question))
+      if (!_mainDb.Questions.TryGetQuestion(inputQuestion.UserId, inputQuestion.QuestionId, out var question))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
 
@@ -42,15 +42,15 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!_uowMain.Tags.TryGetTags(question.QuestionId, out var tags))
+      if (!_mainDb.Tags.TryGetTags(question.QuestionId, out var tags))
         tags = new List<TagDb>();
-      if (!_uowMain.Questions.TryGetPhotos(question.UserId, question.QuestionId, 1, photosAmount, maxAge.WhenBorned(),
+      if (!_mainDb.Questions.TryGetPhotos(question.UserId, question.QuestionId, 1, photosAmount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city, out var firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!_uowMain.Questions.TryGetPhotos(question.UserId, question.QuestionId, 2, photosAmount, maxAge.WhenBorned(),
+      if (!_mainDb.Questions.TryGetPhotos(question.UserId, question.QuestionId, 2, photosAmount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city, out var secondPhotos))
         secondPhotos = new List<PhotoDb>();
-      if (!_uowMain.Comments.TryGetComments(question.UserId, question.QuestionId, commentsAmount, out var comments))
+      if (!_mainDb.Comments.TryGetComments(question.UserId, question.QuestionId, commentsAmount, out var comments))
         comments = new List<CommentDb>();
 
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
@@ -64,7 +64,7 @@ namespace TwoButtonsServer.Controllers
       if (question == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.Questions.TryAddQuestion(question.UserId, question.Condition, question.BackgroundImageLink,
+      if (!_mainDb.Questions.TryAddQuestion(question.UserId, question.Condition, question.BackgroundImageLink,
         question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType, question.FirstOption,
         question.SecondOption, out var questionId))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -74,7 +74,7 @@ namespace TwoButtonsServer.Controllers
       for (var i = 0; i < question.Tags.Count; i++)
       {
         var tag = question.Tags[i];
-        if (!_uowMain.Tags.TryAddTag(questionId, tag, i))
+        if (!_mainDb.Tags.TryAddTag(questionId, tag, i))
           badAddedTags.Add(tag);
       }
       if (badAddedTags.Count != 0)
@@ -96,7 +96,7 @@ namespace TwoButtonsServer.Controllers
       if (questionId == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.Questions.TryDeleteQuestion(questionId.QuestionId, out var isChanged))
+      if (!_mainDb.Questions.TryDeleteQuestion(questionId.QuestionId, out var isChanged))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(isChanged);
@@ -106,7 +106,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateQuestionFeedback")]
     public IActionResult UpdateFeedback([FromBody] UpdateQuestionFeedbackViewModel feedback)
     {
-      if (_uowMain.Questions.TryUpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType,
+      if (_mainDb.Questions.TryUpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType,
         out var isChanged))
         return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -116,7 +116,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateSaved")]
     public IActionResult UpdateSaved([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
-      if (_uowMain.Questions.TryUpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites,
+      if (_mainDb.Questions.TryUpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites,
         out var isChanged))
         return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -125,7 +125,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateFavorites")]
     public IActionResult UpdateFavorites([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
-      if (_uowMain.Questions.TryUpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites,
+      if (_mainDb.Questions.TryUpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites,
         out var isChanged))
         return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -134,7 +134,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("updateAnswer")]
     public IActionResult UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
     {
-      if (_uowMain.Questions.TryUpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType, out var isChanged))
+      if (_mainDb.Questions.TryUpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType, out var isChanged))
         return Ok(isChanged);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -145,7 +145,7 @@ namespace TwoButtonsServer.Controllers
       if (complaint == null)
         return BadRequest($"Input parameter  is null");
 
-      if (_uowMain.Complaints.TryAddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplaintId))
+      if (_mainDb.Complaints.TryAddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplaintId))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -156,7 +156,7 @@ namespace TwoButtonsServer.Controllers
       if (recommendedQuestion == null)
         return BadRequest($"Input parameter  is null");
 
-      if (_uowMain.UserQuestions.TryAddRecommendedQuestion(recommendedQuestion.UserToId, recommendedQuestion.UserFromId,
+      if (_mainDb.UserQuestions.TryAddRecommendedQuestion(recommendedQuestion.UserToId, recommendedQuestion.UserFromId,
         recommendedQuestion.QuestionId))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
@@ -166,7 +166,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("getComplaints")]
     public IActionResult GetComplaints()
     {
-      if (_uowMain.Complaints.TryGetComplaints(out IEnumerable<ComplaintDb> complaints))
+      if (_mainDb.Complaints.TryGetComplaints(out IEnumerable<ComplaintDb> complaints))
         return Ok(complaints);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -175,7 +175,7 @@ namespace TwoButtonsServer.Controllers
     [HttpPost("getComplaintsAuth")]
     public IActionResult GetComplaintsAuth()
     {
-      if (_uowMain.Complaints.TryGetComplaints(out IEnumerable<ComplaintDb> complaints))
+      if (_mainDb.Complaints.TryGetComplaints(out IEnumerable<ComplaintDb> complaints))
         return Ok(complaints);
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -186,7 +186,7 @@ namespace TwoButtonsServer.Controllers
       if (voters == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_uowMain.Questions.TryGetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
+      if (!_mainDb.Questions.TryGetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
         voters.PageParams.Count, voters.AnswerType, DateTime.UtcNow.AddYears(-voters.MaxAge),
         DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin, out var answeredList))
         return BadRequest("Something goes wrong. We will fix it!... maybe)))");

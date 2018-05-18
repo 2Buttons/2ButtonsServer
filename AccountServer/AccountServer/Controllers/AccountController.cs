@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AccountServer.Models;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
@@ -11,11 +10,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsAccountDatabase;
 using TwoButtonsAccountDatabase.DTO;
-using TwoButtonsAccountDatabase.Entities;
-using TwoButtonsAccountDatabase.Repostirories;
 using TwoButtonsDatabase;
-using TwoButtonsDatabase.WrapperFunctions;
-
 
 namespace AccountServer.Controllers
 {
@@ -24,12 +19,12 @@ namespace AccountServer.Controllers
   // [Route("/account")]
   public class AccountController : Controller
   {
-    private readonly TwoButtonsContext _twoButtonsContext;
     private readonly AccountUnitOfWork _accountDb;
+    private readonly TwoButtonsUnitOfWork _mainDb;
 
-    public AccountController(TwoButtonsContext context, AccountUnitOfWork accountDb)
+    public AccountController(TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
-      _twoButtonsContext = context;
+      _mainDb = mainDb;
       _accountDb = accountDb;
     }
 
@@ -42,11 +37,11 @@ namespace AccountServer.Controllers
 
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
-      if (!AccountWrapper.TryGetUserInfo(_twoButtonsContext, userId, userPage.UserPageId, out var userInfo))
+      if (!_mainDb.Accounts.TryGetUserInfo(userId, userPage.UserPageId, out var userInfo))
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-      if (!AccountWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
+      if (!_mainDb.Accounts.TryGetUserStatistics(userPage.UserPageId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
-      var userContacts =  _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
+      var userContacts = _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
       result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
@@ -65,9 +60,9 @@ namespace AccountServer.Controllers
       if (userPage == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!AccountWrapper.TryGetUserInfo(_twoButtonsContext, userPage.UserId, userPage.UserPageId, out var userInfo))
+      if (!_mainDb.Accounts.TryGetUserInfo(userPage.UserId, userPage.UserPageId, out var userInfo))
         return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-      if (!AccountWrapper.TryGetUserStatistics(_twoButtonsContext, userPage.UserPageId, out var userStatistics))
+      if (!_mainDb.Accounts.TryGetUserStatistics(userPage.UserPageId, out var userStatistics))
         return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
@@ -83,21 +78,30 @@ namespace AccountServer.Controllers
     }
 
     [HttpPost("isUserIdValid")]
-    public async Task<IActionResult> IsUserIdValid([FromBody]UserIdValidationViewModel user)
+    public async Task<IActionResult> IsUserIdValid([FromBody] UserIdValidationViewModel user)
     {
       var isValid = await _accountDb.Users.IsUserIdExistAsync(user.UserId);
-      return Ok(new { IsValid = !isValid});
+      return Ok(new {IsValid = !isValid});
     }
 
     private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
     {
       var result = new List<UserContactsViewModel>();
 
-      if (userContacts.VkId != 0) result.Add(new UserContactsViewModel{SocialNetType = SocialNetType.Vk, AccountUrl = "https://vk.com/id" + userContacts.VkId.ToString()});
-      if (userContacts.FacebookId != 0) result.Add(new UserContactsViewModel { SocialNetType = SocialNetType.Facebook, AccountUrl = "https://www.facebook.com/profile.php?id="+userContacts.FacebookId.ToString() });
+      if (userContacts.VkId != 0)
+        result.Add(new UserContactsViewModel
+        {
+          SocialNetType = SocialNetType.Vk,
+          AccountUrl = "https://vk.com/id" + userContacts.VkId
+        });
+      if (userContacts.FacebookId != 0)
+        result.Add(new UserContactsViewModel
+        {
+          SocialNetType = SocialNetType.Facebook,
+          AccountUrl = "https://www.facebook.com/profile.php?id=" + userContacts.FacebookId
+        });
 
       return result;
     }
-
   }
 }

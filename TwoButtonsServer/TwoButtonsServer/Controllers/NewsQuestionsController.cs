@@ -18,11 +18,11 @@ namespace TwoButtonsServer.Controllers
   [Route("news")]
   public class NewsQuestionsController : Controller //Don't receive deleted
   {
-    private readonly TwoButtonsUnitOfWork _uowMain;
+    private readonly TwoButtonsUnitOfWork _mainDb;
 
-    public NewsQuestionsController(TwoButtonsUnitOfWork uowMain)
+    public NewsQuestionsController(TwoButtonsUnitOfWork mainDb)
     {
-      _uowMain = uowMain;
+      _mainDb = mainDb;
     }
 
     [HttpPost]
@@ -94,7 +94,7 @@ namespace TwoButtonsServer.Controllers
     private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_uowMain.News.TryGetNewsAskedQuestions(userId, questionsPage, questionsAmount, out var userAskedQuestions))
+      if (!_mainDb.News.TryGetNewsAskedQuestions(userId, questionsPage, questionsAmount, out var userAskedQuestions))
         return new List<NewsAskedQuestionViewModel>();
 
       var result = new List<NewsAskedQuestionViewModel>();
@@ -112,12 +112,11 @@ namespace TwoButtonsServer.Controllers
     private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_uowMain.News.TryGetNewsAnsweredQuestions(userId, questionsPage, questionsAmount,
+      if (!_mainDb.News.TryGetNewsAnsweredQuestions(userId, questionsPage, questionsAmount,
         out var userAnsweredQuestions))
         return new List<NewsAnsweredQuestionViewModel>();
 
       var result = new List<NewsAnsweredQuestionViewModel>();
-      var index = 0;
       Parallel.ForEach(userAnsweredQuestions, question =>
       {
         GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
@@ -131,12 +130,11 @@ namespace TwoButtonsServer.Controllers
     private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_uowMain.News.TryGetNewsFavoriteQuestions(userId, questionsPage, questionsAmount,
+      if (!_mainDb.News.TryGetNewsFavoriteQuestions(userId, questionsPage, questionsAmount,
         out var userFavoriteQuestions))
         return new List<NewsFavoriteQuestionViewModel>();
 
       var result = new List<NewsFavoriteQuestionViewModel>();
-      var index = 0;
       Parallel.ForEach(userFavoriteQuestions, question =>
       {
         GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
@@ -150,7 +148,7 @@ namespace TwoButtonsServer.Controllers
     private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_uowMain.News.TryGetNewsCommentedQuestions(userId, questionsPage, questionsAmount,
+      if (!_mainDb.News.TryGetNewsCommentedQuestions(userId, questionsPage, questionsAmount,
         out var userCommentedQuestions))
         return new List<NewsCommentedQuestionViewModel>();
 
@@ -168,7 +166,7 @@ namespace TwoButtonsServer.Controllers
     private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_uowMain.News.TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount,
+      if (!_mainDb.News.TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount,
         out var newsRecommendedQuestions))
         return new List<NewsRecommendedQuestionViewModel>();
 
@@ -191,12 +189,12 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!_uowMain.Tags.TryGetTags(questionId, out tags))
+      if (!_mainDb.Tags.TryGetTags(questionId, out tags))
         tags = new List<TagDb>();
-      if (!_uowMain.Questions.TryGetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city, out firstPhotos))
         firstPhotos = new List<PhotoDb>();
-      if (!_uowMain.Questions.TryGetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city, out secondPhotos))
         secondPhotos = new List<PhotoDb>();
     }

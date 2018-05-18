@@ -21,10 +21,10 @@ namespace TwoButtonsServer.Controllers
     //[Route("api/[controller]")]
     public class NotificationsController : Controller //To get user's posts
     {
-        private readonly TwoButtonsUnitOfWork _uowMain;
-        public NotificationsController(TwoButtonsUnitOfWork uowMain)
+        private readonly TwoButtonsUnitOfWork _mainDb;
+        public NotificationsController(TwoButtonsUnitOfWork mainDb)
         {
-          _uowMain = uowMain;
+          _mainDb = mainDb;
         }
 
         [HttpPost("notifications")]
@@ -33,7 +33,7 @@ namespace TwoButtonsServer.Controllers
             if (userId == null)
                 return BadRequest($"Input parameter  is null");
 
-            if (!_uowMain.Notifications.TryGetNotifications(userId.UserId, out var notifications))
+            if (!_mainDb.Notifications.TryGetNotifications(userId.UserId, out var notifications))
                 return BadRequest("Something goes wrong. We will fix it!... maybe)))");
            
             return Ok(notifications.MapNotificationDbToViewModel());

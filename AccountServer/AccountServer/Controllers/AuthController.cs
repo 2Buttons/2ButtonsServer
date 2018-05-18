@@ -13,13 +13,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using TwoButtonsAccountDatabase;
 using TwoButtonsAccountDatabase.DTO;
 using TwoButtonsAccountDatabase.Entities;
-using TwoButtonsAccountDatabase.Repostirories;
 using TwoButtonsDatabase;
-using TwoButtonsDatabase.WrapperFunctions;
 
 namespace AccountServer.Controllers
 {
@@ -37,15 +34,16 @@ namespace AccountServer.Controllers
     //some config in the appsettings.json
     private readonly JwtIssuerOptions _jwtOptions;
 
-    private readonly TwoButtonsContext _twoButtonsContext;
+    private readonly TwoButtonsUnitOfWork _mainDb;
+
 
     public AuthController(IJwtFactory jwtFactory,
-      IOptions<JwtIssuerOptions> jwtOptions, TwoButtonsContext twoButtonsContext, AccountUnitOfWork accountDb)
+      IOptions<JwtIssuerOptions> jwtOptions, TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
       _jwtOptions = jwtOptions.Value;
       _accountDb = accountDb;
       _jwtFactory = jwtFactory;
-      _twoButtonsContext = twoButtonsContext;
+      _mainDb = mainDb;
     }
 
     [HttpGet("register")]
@@ -82,7 +80,7 @@ namespace AccountServer.Controllers
       if (!isAdded || userDb.UserId == 0)
         return BadRequest($"We are not able to add you. Please, tell us about it.");
 
-      if (!AccountWrapper.TryAddUser(_twoButtonsContext, userDb.UserId, user.Login, user.BirthDate, user.SexType,
+      if (!_mainDb.Accounts.TryAddUser(userDb.UserId, user.Login, user.BirthDate, user.SexType,
         user.City, user.Description, user.FullAvatarLink, user.SmallAvatarLink))
       {
         await _accountDb.Users.RemoveUserAsync(userDb.UserId);
@@ -124,7 +122,7 @@ namespace AccountServer.Controllers
 
     private async Task<IActionResult> AccessToken(LoginViewModel credentials)
     {
-      var user = new UserDto { UserId = 0 };
+      var user = new UserDto {UserId = 0};
       var role = RoleType.Guest;
 
       if (credentials.GrantType != GrantType.Guest)
@@ -173,7 +171,7 @@ namespace AccountServer.Controllers
     }
 
     [HttpPost("refreshToken")]
-    public async Task<IActionResult> RefreshToken([FromBody]RefreshViewModel refresh)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshViewModel refresh)
     {
       if (refresh == null || refresh.RefreshToken.IsNullOrEmpty())
         return BadRequest("Input parameters or is null");
@@ -222,7 +220,7 @@ namespace AccountServer.Controllers
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-      if ((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
+      if ((RoleType) int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
           RoleType.Guest)
         return BadRequest($"You are guest.");
 
@@ -248,7 +246,7 @@ namespace AccountServer.Controllers
     [HttpPost("fullLogout")]
     public async Task<IActionResult> FullLogOut()
     {
-      if ((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
+      if ((RoleType) int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
           RoleType.Guest)
         return BadRequest($"You are guest and not able to log out from all devices");
 
