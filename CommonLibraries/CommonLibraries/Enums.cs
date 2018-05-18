@@ -10,6 +10,7 @@
   {
     Guest = 0,
     Password = 1,
+    Email = 2
   }
 
 

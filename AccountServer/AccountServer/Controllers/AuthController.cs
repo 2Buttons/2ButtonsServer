@@ -75,7 +75,7 @@ namespace AccountServer.Controllers
         Email = user.Email,
         PhoneNumber = user.Phone,
         RoleType = role,
-        PasswordHash = user.Password.GetHashString().GetHashString()
+        PasswordHash = user.Password.GetHashString()
       };
       var isAdded = await _accountDb.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0)
@@ -114,6 +114,7 @@ namespace AccountServer.Controllers
       {
         case GrantType.Guest:
         case GrantType.Password:
+        case GrantType.Email:
           return await AccessToken(credentials);
         default:
           return BadRequest("Sorry, we can not find such grant type.");
@@ -122,15 +123,27 @@ namespace AccountServer.Controllers
 
     private async Task<IActionResult> AccessToken(LoginViewModel credentials)
     {
-      var user = new UserDto {UserId = 0};
+      var user = new UserDto { UserId = 0 };
       var role = RoleType.Guest;
 
-      if (credentials.GrantType == GrantType.Password)
+      if (credentials.GrantType != GrantType.Guest)
       {
-        if (credentials.Phone.IsNullOrEmpty() || credentials.Password.IsNullOrEmpty())
-          return BadRequest("Phone and (or) password is incorrect");
-        var passwordHash = credentials.Password.GetHashString();
-        user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, passwordHash);
+        switch (credentials.GrantType)
+        {
+          case GrantType.Guest:
+            break;
+          case GrantType.Password:
+            if (credentials.Phone.IsNullOrEmpty() || credentials.Password.IsNullOrEmpty())
+              return BadRequest("Phone and (or) password is incorrect");
+            user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
+            break;
+          case GrantType.Email:
+            if (credentials.Email.IsNullOrEmpty() || credentials.Password.IsNullOrEmpty())
+              return BadRequest("Email and (or) password is incorrect");
+            user = await _accountDb.Users.GetUserByPhoneAndPasswordAsync(credentials.Email, credentials.Password);
+            break;
+        }
+
         if (user == null)
           return BadRequest("Please, register or login via Social Network");
         role = await _accountDb.Users.GetUserRoleAsync(user.UserId);
@@ -184,7 +197,7 @@ namespace AccountServer.Controllers
       if (DateTime.UtcNow > oldTokenFromDb.ValidTo)
         return BadRequest("The refresh token is invalid. Please, login again.");
 
-      var role = userId == 0 ?  RoleType.Guest : await _accountDb.Users.GetUserRoleAsync(userId);
+      var role = userId == 0 ? RoleType.Guest : await _accountDb.Users.GetUserRoleAsync(userId);
 
       var result = await Tokens.GenerateJwtAsync(_jwtFactory, userId, role, _jwtOptions);
 
@@ -208,7 +221,7 @@ namespace AccountServer.Controllers
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-      if ((RoleType) int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
+      if ((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
           RoleType.Guest)
         return BadRequest($"You are guest.");
 
@@ -234,7 +247,7 @@ namespace AccountServer.Controllers
     [HttpPost("fullLogout")]
     public async Task<IActionResult> FullLogOut()
     {
-      if ((RoleType) int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
+      if ((RoleType)int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
           RoleType.Guest)
         return BadRequest($"You are guest and not able to log out from all devices");
 
