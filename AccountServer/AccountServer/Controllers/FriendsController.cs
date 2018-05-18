@@ -23,7 +23,7 @@ namespace AccountServer.Controllers
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   // [Route("/account")]
-  [Route("api/[controller]")]
+  //[Route("api/[controller]")]
   public class FriendsController : Controller
   {
     private static readonly HttpClient Client = new HttpClient();

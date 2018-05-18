@@ -28,6 +28,7 @@ namespace MediaServer
     {
       var connection = Configuration.GetConnectionString("TwoButtonsDatabase");
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(connection));
+      services.AddTransient<TwoButtonsUnitOfWork>();
 
       services.AddOptions();
       services.Configure<MediaData>(Configuration.GetSection("MediaData"));

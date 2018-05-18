@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
-using TwoButtonsDatabase.WrapperFunctions;
 
 namespace MediaServer.Controllers
 {
@@ -17,12 +16,12 @@ namespace MediaServer.Controllers
   [Route("images")]
   public class MediaController : Controller
   {
-    private readonly TwoButtonsContext _context;
+    private readonly TwoButtonsUnitOfWork _mainDb;
     private readonly IFileManager _fileManager;
 
-    public MediaController(TwoButtonsContext context, IHostingEnvironment appEnvironment, IFileManager fileManager)
+    public MediaController(TwoButtonsUnitOfWork mainDb, IHostingEnvironment appEnvironment, IFileManager fileManager)
     {
-      _context = context;
+      _mainDb = mainDb;
       _fileManager = fileManager;
     }
 
@@ -115,12 +114,12 @@ namespace MediaServer.Controllers
       {
         case AvatarSizeType.UserSmallAvatarPhoto:
 
-          if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
+          if (_mainDb.Accounts.TryUpdateUserSmallAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
         case AvatarSizeType.UserFullAvatarPhoto:
-          if (AccountWrapper.TryUpdateUserFullAvatar(_context, avatar.UserId, avatarLink))
+          if (_mainDb.Accounts.TryUpdateUserFullAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
         default:
@@ -143,7 +142,7 @@ namespace MediaServer.Controllers
       new WebClient().DownloadFileAsync(new Uri(background.Url), filePath);
 
       var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-      if (QuestionWrapper.TryUpdateQuestionBackgroundLink(_context, background.QuestionId, backgroundLink))
+      if (_mainDb.Questions.TryUpdateQuestionBackgroundLink(background.QuestionId, backgroundLink))
         return Ok(backgroundLink);
       return BadRequest("Link is not saved in the database, but link in file system:" + backgroundLink);
     }
@@ -171,12 +170,12 @@ namespace MediaServer.Controllers
         case AvatarSizeType.UserSmallAvatarPhoto:
 
 
-          if (AccountWrapper.TryUpdateUserSmallAvatar(_context, avatar.UserId, avatarLink))
+          if (_mainDb.Accounts.TryUpdateUserSmallAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
         case AvatarSizeType.UserFullAvatarPhoto:
-          if (AccountWrapper.TryUpdateUserFullAvatar(_context, avatar.UserId, avatarLink))
+          if (_mainDb.Accounts.TryUpdateUserFullAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
         default:
@@ -202,7 +201,7 @@ namespace MediaServer.Controllers
       }
 
       var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-      if (QuestionWrapper.TryUpdateQuestionBackgroundLink(_context, background.QuestionId, backgroundLink))
+      if (_mainDb.Questions.TryUpdateQuestionBackgroundLink(background.QuestionId, backgroundLink))
         return Ok(backgroundLink);
       return BadRequest("Link is not saved in the database, but link in file system:" + backgroundLink);
     }
