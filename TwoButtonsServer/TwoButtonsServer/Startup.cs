@@ -38,6 +38,7 @@ namespace TwoButtonsServer
                   .AllowAnyMethod());
       });
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsDatabase")));
+      services.AddTransient<TwoButtonsUnitOfWork>();
 
       services.AddOptions();
       services.Configure<AuthenticationOptions>(Configuration.GetSection("AuthenticationOptions"));
