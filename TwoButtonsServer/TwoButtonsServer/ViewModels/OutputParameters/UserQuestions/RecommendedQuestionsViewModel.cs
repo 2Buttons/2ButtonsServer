@@ -6,6 +6,6 @@ namespace TwoButtonsServer.ViewModels.OutputParameters.UserQuestions
   {
     public int ToUserId { get; set; }
     public string ToUserLogin { get; set; }
-    public DateTime RecommendDate { get; set; }fdsfdsfs
+    public DateTime RecommendDate { get; set; }
   }
 }
