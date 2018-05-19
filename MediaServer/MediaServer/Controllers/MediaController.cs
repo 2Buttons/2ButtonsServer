@@ -95,7 +95,7 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("uploadUserAvatarViaLink")]
-    public IActionResult UploadUserAvatarViaLink([FromBody] UploadAvatarViaLinkViewModel avatar)
+    public async Task<IActionResult> UploadUserAvatarViaLink([FromBody] UploadAvatarViaLinkViewModel avatar)
     {
       // проверить есть ли такой пользователь если нет то возвратить ошибку, если есть, то отправить запрос к бд, чтобы добавла ссылку на фото и возвратить ссылку на страницу
       if (avatar == null)
@@ -114,12 +114,12 @@ namespace MediaServer.Controllers
       {
         case AvatarSizeType.UserSmallAvatarPhoto:
 
-          if (_mainDb.Accounts.TryUpdateUserSmallAvatar(avatar.UserId, avatarLink))
+          if (await _mainDb.Accounts.UpdateUserSmallAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
         case AvatarSizeType.UserFullAvatarPhoto:
-          if (_mainDb.Accounts.TryUpdateUserFullAvatar(avatar.UserId, avatarLink))
+          if (await _mainDb.Accounts.UpdateUserFullAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
         default:
@@ -128,7 +128,7 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("uploadQuestionBackgroundViaLink")]
-    public  IActionResult UploadQuestionBackgroundViaLink([FromBody]UploadQuestionBackgroundViaLinkViewModel background)
+    public async Task<IActionResult> UploadQuestionBackgroundViaLink([FromBody]UploadQuestionBackgroundViaLinkViewModel background)
     {
       if (background == null)
         return BadRequest("Input parameter is null");
@@ -142,7 +142,7 @@ namespace MediaServer.Controllers
       new WebClient().DownloadFileAsync(new Uri(background.Url), filePath);
 
       var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-      if (_mainDb.Questions.TryUpdateQuestionBackgroundLink(background.QuestionId, backgroundLink))
+      if (await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, backgroundLink))
         return Ok(backgroundLink);
       return BadRequest("Link is not saved in the database, but link in file system:" + backgroundLink);
     }
@@ -170,12 +170,12 @@ namespace MediaServer.Controllers
         case AvatarSizeType.UserSmallAvatarPhoto:
 
 
-          if (_mainDb.Accounts.TryUpdateUserSmallAvatar(avatar.UserId, avatarLink))
+          if (await _mainDb.Accounts.UpdateUserSmallAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
 
         case AvatarSizeType.UserFullAvatarPhoto:
-          if (_mainDb.Accounts.TryUpdateUserFullAvatar(avatar.UserId, avatarLink))
+          if (await _mainDb.Accounts.UpdateUserFullAvatar(avatar.UserId, avatarLink))
             return Ok(_fileManager.GetWebPath(imageType, uniqueName));
           return BadRequest("Link is not saved in the database, but link in file system:" + avatarLink);
         default:
@@ -201,7 +201,7 @@ namespace MediaServer.Controllers
       }
 
       var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-      if (_mainDb.Questions.TryUpdateQuestionBackgroundLink(background.QuestionId, backgroundLink))
+      if (await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, backgroundLink))
         return Ok(backgroundLink);
       return BadRequest("Link is not saved in the database, but link in file system:" + backgroundLink);
     }
