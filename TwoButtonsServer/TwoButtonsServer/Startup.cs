@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommonLibraries;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -41,38 +42,28 @@ namespace TwoButtonsServer
       services.AddTransient<TwoButtonsUnitOfWork>();
 
       services.AddOptions();
-      services.Configure<AuthenticationOptions>(Configuration.GetSection("AuthenticationOptions"));
-      var authenticationOptions = Configuration.GetSection("AuthenticationOptions");
-      var symmetricKeyAsBase64 = authenticationOptions["SecretKey"];
-      var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
-      var signingKey = new SymmetricSecurityKey(keyByteArray);
+      var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
+      var secretKey = jwtAppSettingOptions["SecretKey"];
+      var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
+      var audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
 
+      services.Configure<JwtSettings>(options =>
+      {
+        options.Issuer = issuer;
+        options.Audience = audience;
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
+      });
 
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-          options.RequireHttpsMetadata = false;
-          options.TokenValidationParameters = new TokenValidationParameters
-          {
-            // укзывает, будет ли валидироваться издатель при валидации токена
-            ValidateIssuer = true,
-            // строка, представляющая издателя
-            ValidIssuer = authenticationOptions["Issuer"],
-
-            // будет ли валидироваться потребитель токена
-            ValidateAudience = true,
-            // установка потребителя токена
-            ValidAudience = authenticationOptions["Audience"],
-            // будет ли валидироваться время существования
-            ValidateLifetime = true,
-
-            // установка ключа безопасности
-            IssuerSigningKey = signingKey,
-            // валидация ключа безопасности
-            ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.Zero
-          };
-        });
+      services.AddAuthentication(options =>
+      {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      }).AddJwtBearer(configureOptions =>
+      {
+        configureOptions.ClaimsIssuer = issuer;
+        configureOptions.RequireHttpsMetadata = false;
+        configureOptions.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+      });
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

@@ -9,6 +9,7 @@ using AccountServer.Helpers;
 using AccountServer.Models;
 using AccountServer.Models.Facebook;
 using AccountServer.Models.Vk;
+using AccountServer.Services;
 using AccountServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using Microsoft.AspNetCore.Cors;
@@ -35,21 +36,16 @@ namespace AccountServer.Controllers
     private readonly TwoButtonsUnitOfWork _mainDb;
     private readonly FacebookAuthSettings _fbAuthSettings;
 
-    private readonly IJwtFactory _jwtFactory;
-
-    //some config in the appsettings.json
-    private readonly JwtSettings _jwtOptions;
+    private readonly IJwtService _jwtService;
 
     private readonly VkAuthSettings _vkAuthSettings;
 
     public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
-      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtSettings> jwtOptions,
-      TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
+      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtService jwtService, TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;
       _vkAuthSettings = vkAuthSettingsAccessor.Value;
-      _jwtFactory = jwtFactory;
-      _jwtOptions = jwtOptions.Value;
+      _jwtService = jwtService;
       _accountDb = accountDb;
       _mainDb = mainDb;
     }
@@ -204,7 +200,7 @@ namespace AccountServer.Controllers
       }
 
 
-      var result = await Tokens.GenerateJwtAsync(_jwtFactory, user.UserId, user.RoleType, _jwtOptions);
+      var result = await _jwtService.GenerateJwtAsync(user.UserId, user.RoleType);
 
       var token = new TokenDb
       {

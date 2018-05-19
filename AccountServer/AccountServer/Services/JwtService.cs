@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
+using AccountServer.Helpers;
+using AccountServer.Models;
+using AccountServer.ViewModels.OutputParameters;
+using CommonLibraries;
+using CommonLibraries.Extensions;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+namespace AccountServer.Services
+{
+  public class JwtService : IJwtService
+  {
+    private readonly JwtSettings _jwtSettings;
+
+    /// <summary>
+    /// The signing key to use when generating tokens.
+    /// </summary>
+    private SigningCredentials SigningCredentials { get; set; }
+
+    public JwtService(IOptions<JwtSettings> jwtOptions)
+    {
+      _jwtSettings = jwtOptions.Value;
+      ThrowIfInvalidOptions(_jwtSettings);
+    }
+
+
+    public async Task<TokenViewModel> GenerateJwtAsync(int userId, RoleType role)
+    {
+      var response = new TokenViewModel
+      {
+        UserId = userId,
+        RoleType = role,
+        AccessToken = await GenerateEncodedAccessTokenAsync(userId, role),
+        ExpiresIn = _jwtSettings.ExpirationAccessToken.ToUnixEpochDate(),
+        RefreshToken = await GenerateEncodedRefreshTokenAsync(userId, role)
+      };
+
+      return response;
+    }
+
+    private async Task<string> GenerateEncodedAccessTokenAsync(int userId, RoleType role)
+    {
+      var claimsIdentity = await GenerateClaimsIdentity(userId, role);
+
+      // Create the JWT security token and encode it.
+      var jwt = new JwtSecurityToken(
+        issuer: _jwtSettings.Issuer,
+        audience: _jwtSettings.Audience,
+        claims: claimsIdentity.Claims,
+        notBefore: _jwtSettings.NotBefore,
+        expires: _jwtSettings.ExpirationAccessToken,
+        signingCredentials: SigningCredentials);
+
+      var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+      return encodedJwt;
+    }
+
+
+    private async Task<string> GenerateEncodedRefreshTokenAsync(int userId, RoleType role)
+    {
+      var claimsIdentity = await GenerateClaimsIdentity(userId, role);
+
+      // Create the JWT security token and encode it.
+      var jwt = new JwtSecurityToken(
+        issuer: _jwtSettings.Issuer,
+        audience: _jwtSettings.Audience,
+        claims: claimsIdentity.Claims,
+        notBefore: _jwtSettings.NotBefore,
+        expires: _jwtSettings.ExpirationRefreshToken,
+        signingCredentials: SigningCredentials);
+
+      var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+      return encodedJwt;
+    }
+    public async Task<ClaimsIdentity> GenerateClaimsIdentity(int userId, RoleType role)
+    {
+      var claims = new List<Claim>
+      {
+        new Claim(JwtRegisteredClaimNames.Jti, await _jwtSettings.JtiGenerator()),
+        new Claim(JwtRegisteredClaimNames.Iat, _jwtSettings.IssuedAt.ToUnixEpochDate().ToString(), ClaimValueTypes.Integer64),
+        new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString(), ClaimValueTypes.Integer,  _jwtSettings.Issuer),
+        new Claim(ClaimsIdentity.DefaultRoleClaimType, role.ToString(),ClaimValueTypes.String, _jwtSettings.Issuer)
+      };
+      return new ClaimsIdentity(claims, "AccessToken", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+    }
+    private static void ThrowIfInvalidOptions(JwtSettings options)
+    {
+      if (options == null) throw new ArgumentNullException(nameof(options));
+
+      if (options.ValidForAccessToken <= TimeSpan.Zero)
+      {
+        throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(JwtSettings.ValidForAccessToken));
+      }
+
+      if (options.ValidForRefreshToken <= TimeSpan.Zero)
+      {
+        throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(JwtSettings.ValidForRefreshToken));
+      }
+
+      if (options.SigningCredentials == null)
+      {
+        throw new ArgumentNullException(nameof(JwtSettings.SigningCredentials));
+      }
+
+      if (options.JtiGenerator == null)
+      {
+        throw new ArgumentNullException(nameof(JwtSettings.JtiGenerator));
+      }
+    }
+  }
+}

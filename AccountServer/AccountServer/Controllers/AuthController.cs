@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountServer.Auth;
 using AccountServer.Models;
+using AccountServer.Services;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
@@ -29,20 +30,16 @@ namespace AccountServer.Controllers
 
     private readonly AccountUnitOfWork _accountDb;
 
-    private readonly IJwtFactory _jwtFactory;
-
     //some config in the appsettings.json
-    private readonly JwtSettings _jwtOptions;
+    private readonly IJwtService _jwtService;
 
     private readonly TwoButtonsUnitOfWork _mainDb;
 
 
-    public AuthController(IJwtFactory jwtFactory,
-      IOptions<JwtSettings> jwtOptions, TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
+    public AuthController(IJwtService jwtService, TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
-      _jwtOptions = jwtOptions.Value;
       _accountDb = accountDb;
-      _jwtFactory = jwtFactory;
+      _jwtService = jwtService;
       _mainDb = mainDb;
     }
 
@@ -88,7 +85,7 @@ namespace AccountServer.Controllers
       }
 
 
-      var result = await Tokens.GenerateJwtAsync(_jwtFactory, userDb.UserId, role, _jwtOptions);
+      var result = await _jwtService.GenerateJwtAsync( userDb.UserId, role);
 
       var token = new TokenDb
       {
@@ -155,7 +152,7 @@ namespace AccountServer.Controllers
         }
       }
 
-      var result = await Tokens.GenerateJwtAsync(_jwtFactory, user.UserId, role, _jwtOptions);
+      var result = await _jwtService.GenerateJwtAsync(user.UserId, role);
 
       var token = new TokenDb
       {
@@ -198,7 +195,7 @@ namespace AccountServer.Controllers
 
       var role = userId == 0 ? RoleType.Guest : await _accountDb.Users.GetUserRoleAsync(userId);
 
-      var result = await Tokens.GenerateJwtAsync(_jwtFactory, userId, role, _jwtOptions);
+      var result = await _jwtService.GenerateJwtAsync(userId, role);
 
       var token = new TokenDb
       {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Text;
 using AccountServer.Auth;
@@ -6,7 +7,9 @@ using AccountServer.Extensions;
 using AccountServer.Models;
 using AccountServer.Models.Facebook;
 using AccountServer.Models.Vk;
+using AccountServer.Services;
 using AccountServer.ViewModels.InputParameters.Auth;
+using CommonLibraries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -44,68 +47,41 @@ namespace AccountServer
       services.AddCors(options =>
       {
         options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
-                  .AllowAnyMethod());
+          .AllowAnyMethod());
       });
 
       services.AddOptions();
-
-      services.AddSingleton<IJwtFactory, JwtFactory>();
-      services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
       services.Configure<VkAuthSettings>(Configuration.GetSection(nameof(VkAuthSettings)));
 
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
-      var symmetricKeyAsBase64 = jwtAppSettingOptions["SecretKey"];
-      var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
-      var signingKey = new SymmetricSecurityKey(keyByteArray);
+      var secretKey = jwtAppSettingOptions["SecretKey"];
+      var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
+      var audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
 
-      services.Configure<JwtSettings>(options=>
+      services.Configure<JwtSettings>(options =>
       {
-        options.Issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
-        options.Audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
-        options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+        options.Issuer = issuer;
+        options.Audience = audience;
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
       });
 
-      //   services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
-
+      services.AddSingleton<IJwtService, JwtService>();
+      services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
       services.AddTransient<AccountUnitOfWork>(); // Attention!! TODO maybe scoped
       services.AddTransient<TwoButtonsUnitOfWork>();
 
-      var tokenValidationParameters = new TokenValidationParameters
+      services.AddAuthentication(options =>
       {
-        // укзывает, будет ли валидироваться издатель при валидации токена
-        ValidateIssuer = true,
-        // строка, представляющая издателя
-        ValidIssuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)],
-
-        // будет ли валидироваться потребитель токена
-        ValidateAudience = true,
-        // установка потребителя токена
-        ValidAudience = jwtAppSettingOptions[nameof(JwtSettings.Audience)],
-        
-
-        // установка ключа безопасности
-        IssuerSigningKey = signingKey,
-        // валидация ключа безопасности
-        ValidateIssuerSigningKey = true,
-
-        // будет ли валидироваться время существования
-        ValidateLifetime = true,
-       // RequireExpirationTime = false,
-        ClockSkew = TimeSpan.Zero
-      };
-
-      services.AddAuthentication(options=>
-        {
-          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(configureOptions =>
-        {
-          configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
-          configureOptions.RequireHttpsMetadata = false;
-          configureOptions.TokenValidationParameters = tokenValidationParameters;
-        });
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      }).AddJwtBearer(configureOptions =>
+      {
+        configureOptions.ClaimsIssuer = issuer;
+        configureOptions.RequireHttpsMetadata = false;
+        configureOptions.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+      });
 
       services.AddMvc();
     }
@@ -142,7 +118,7 @@ namespace AccountServer
             });
         });
 
-     // app.UseStatusCodePages();
+      // app.UseStatusCodePages();
 
       app.UseDefaultFiles();
       app.UseStaticFiles(new StaticFileOptions()

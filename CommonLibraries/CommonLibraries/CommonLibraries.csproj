@@ -8,4 +8,10 @@
     <None Remove="Enums.cs~RFd5bb6b7.TMP" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.identitymodel.tokens\5.1.4\lib\netstandard1.4\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
