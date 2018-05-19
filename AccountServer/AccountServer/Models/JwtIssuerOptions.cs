@@ -9,7 +9,7 @@ namespace AccountServer.Models
   public class JwtSettings
   {
 
-    public TokenValidationParameters
+    //public TokenValidationParameters
 
     /// <summary>
     /// 4.1.1.  "iss" (Issuer) Claim - The "iss" (issuer) claim identifies the principal that issued the JWT.

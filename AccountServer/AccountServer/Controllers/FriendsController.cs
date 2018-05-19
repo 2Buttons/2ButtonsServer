@@ -64,19 +64,17 @@ namespace AccountServer.Controllers
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
       var dkIds = _accountDb.Users.GetUserIdFromVkId(vkFriendIds);
-      if (!_mainDb.RecommendedPeople.TryGetRecommendedFromUsersId(dkIds.Select(x => x.UserId).ToList(),
-        out var socialFriends))
-        return BadRequest("Something goes wrong with social friends.");
+      var socialFriends =
+        await _mainDb.RecommendedPeople.GetRecommendedFromUsersId(dkIds.Select(x => x.UserId).ToList());
+       // return BadRequest("Something goes wrong with social friends.");
 
       var partOffset = user.PageParams.Offset / 3;
       var partCount = user.PageParams.Count / 3;
 
-      if (!_mainDb.RecommendedPeople.TryGetRecommendedFromFollowers(user.UserId, partOffset, partCount,
-        out var followers))
-        return BadRequest("Something goes wrong with followers.");
-      if (!_mainDb.RecommendedPeople.TryGetRecommendedFromFollows(user.UserId, partOffset, partCount,
-        out var sameFollows))
-        return BadRequest("Something goes wrong with follows as you ))) .");
+      var followers = await _mainDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
+       // return BadRequest("Something goes wrong with followers.");
+      var sameFollows = await _mainDb.RecommendedPeople.GetRecommendedFromFollows(user.UserId, partOffset, partCount);
+        //return BadRequest("Something goes wrong with follows as you ))) .");
 
       Parallel.ForEach(followers, x => { x.CommonFollowsTo = (int) (x.CommonFollowsTo * 1.5); });
 

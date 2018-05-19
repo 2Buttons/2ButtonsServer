@@ -80,7 +80,7 @@ namespace AccountServer.Controllers
       if (!isAdded || userDb.UserId == 0)
         return BadRequest($"We are not able to add you. Please, tell us about it.");
 
-      if (!_mainDb.Accounts.TryAddUser(userDb.UserId, user.Login, user.BirthDate, user.SexType,
+      if (! await _mainDb.Accounts.AddUser(userDb.UserId, user.Login, user.BirthDate, user.SexType,
         user.City, user.Description, user.FullAvatarLink, user.SmallAvatarLink))
       {
         await _accountDb.Users.RemoveUserAsync(userDb.UserId);

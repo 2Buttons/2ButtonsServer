@@ -115,7 +115,7 @@ namespace AccountServer.Controllers
       var bdate = Convert.ToDateTime(userInfo.Birthday);
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
-      _mainDb.Accounts.TryAddUser(userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate,
+      await _mainDb.Accounts.AddUser(userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate,
         userInfo.Sex,
         await cityName ?? userInfo.City.Title, "", links.Item1, links.Item2);
 

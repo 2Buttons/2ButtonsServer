@@ -37,10 +37,10 @@ namespace AccountServer.Controllers
 
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
-      if (!_mainDb.Accounts.TryGetUserInfo(userId, userPage.UserPageId, out var userInfo))
-        return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-      if (!_mainDb.Accounts.TryGetUserStatistics(userPage.UserPageId, out var userStatistics))
-        return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+      var userInfo = await _mainDb.Accounts.GetUserInfo(userId, userPage.UserPageId);
+       // return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+      var userStatistics = await _mainDb.Accounts.GetUserStatistics(userPage.UserPageId);
+       // return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
@@ -60,10 +60,10 @@ namespace AccountServer.Controllers
       if (userPage == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.Accounts.TryGetUserInfo(userPage.UserId, userPage.UserPageId, out var userInfo))
-        return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
-      if (!_mainDb.Accounts.TryGetUserStatistics(userPage.UserPageId, out var userStatistics))
-        return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+      var userInfo = await _mainDb.Accounts.GetUserInfo(userPage.UserId, userPage.UserPageId);
+      // return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+      var userStatistics = await _mainDb.Accounts.GetUserStatistics(userPage.UserPageId);
+      // return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _accountDb.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
