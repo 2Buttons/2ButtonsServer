@@ -4,10 +4,11 @@ using CommonLibraries;
 
 namespace TwoButtonsDatabase.Entities.Account
 {
-  public partial class UserInfoDb
+  public class UserInfoDb
   {
     [Key]
     public int UserId { get; set; }
+
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType Sex { get; set; }

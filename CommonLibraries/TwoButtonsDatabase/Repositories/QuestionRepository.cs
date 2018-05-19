@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
@@ -20,25 +21,23 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public  bool TryGetQuestion( int userId, int questionId, out QuestionDb question)
+    public async Task<QuestionDb> GetQuestion(int userId, int questionId)
     {
       try
       {
-        question = _db.QuestionDb
-                     .FromSql($"select * from dbo.getQuestion({userId}, {questionId})").FirstOrDefault() ??
+        return await _db.QuestionDb.AsNoTracking()
+                     .FromSql($"select * from dbo.getQuestion({userId}, {questionId})").FirstOrDefaultAsync() ??
                    new QuestionDb();
-        return true;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      question = new QuestionDb();
-      return false;
+      return  new QuestionDb();
     }
 
-    public  bool TryAddQuestion( int userId, string condition, string backgroundImageLink,
-      int anonymity, int audience, QuestionType questionType, string firstOption, string secondOption, out int questionId)
+    public async Task<int> AddQuestion(int userId, string condition, string backgroundImageLink,
+      int anonymity, int audience, QuestionType questionType, string firstOption, string secondOption)
     {
       var questionAddDate = DateTime.UtcNow;
 
@@ -50,106 +49,102 @@ namespace TwoButtonsDatabase.Repositories
 
       try
       {
-       var rows =  _db.Database.ExecuteSqlCommand(
-          $"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
-        questionId = (int) questionIdDb.Value;
-        return rows >0;
+       await _db.Database.ExecuteSqlCommandAsync(
+           $"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audience}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
+        return (int)questionIdDb.Value;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      questionId = -1;
-      return false;
+      return -1;
     }
 
-    public  bool TryDeleteQuestion( int questionId,out bool isChanged)
+    public async Task<bool> DeleteQuestion(int questionId)
     {
       try
       {
 
-        isChanged =  _db.Database.ExecuteSqlCommand($"deleteQuestion {questionId}") > 0;
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"deleteQuestion {questionId}") > 0;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      isChanged = false;
       return false;
     }
 
-    public  bool TryUpdateQuestionFeedback( int userId, int questionId, FeedbackType feedback, out bool isChanged)
+    public async Task<bool> UpdateQuestionFeedback(int userId, int questionId, FeedbackType feedback)
     {
       try
       {
-        isChanged=  _db.Database.ExecuteSqlCommand($"updateQuestionFeedback {userId}, {questionId}, {feedback}") > 0;
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionFeedback {userId}, {questionId}, {feedback}") > 0;
+
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      isChanged = false;
+
       return false;
     }
 
-    public  bool TryUpdateSaved( int userId, int questionId, bool isInFavorites, out bool isChanged)
+    public async Task<bool> UpdateSaved(int userId, int questionId, bool isInFavorites)
     {
       var added = DateTime.Now;
 
       try
       {
-        isChanged =  _db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}") > 0;
-        return true;
+      return await _db.Database.ExecuteSqlCommandAsync($"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}") > 0;
+
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      isChanged = false;
+
       return false;
     }
 
-    public  bool TryUpdateFavorites( int userId, int questionId, bool isInFavorites, out bool isChanged)
+    public async Task<bool> UpdateFavorites(int userId, int questionId, bool isInFavorites)
     {
       var added = DateTime.Now;
 
       try
       {
-        isChanged =  _db.Database.ExecuteSqlCommand($"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}") >0;
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}") > 0;
+
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      isChanged = false;
+
       return false;
     }
 
-    public  bool TryUpdateAnswer( int userId, int questionId, AnswerType answerType, out bool isChanged)
+    public async Task<bool> UpdateAnswer(int userId, int questionId, AnswerType answerType)
     {
       var answered = DateTime.Now;
 
       try
       {
-        isChanged =  _db.Database.ExecuteSqlCommand($"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
-        return true;
+         return await _db.Database.ExecuteSqlCommandAsync($"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
+
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      isChanged = false;
+
       return false;
     }
 
-    public  bool TryUpdateQuestionBackgroundLink( int questionId, string backgroundImageLink)
+    public async Task<bool> UpdateQuestionBackgroundLink(int questionId, string backgroundImageLink)
     {
       try
       {
-        return _db.Database.ExecuteSqlCommand($"updateQuestionBackground {questionId}, {backgroundImageLink}") > 0;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionBackground {questionId}, {backgroundImageLink}") > 0;
       }
       catch (Exception e)
       {
@@ -158,44 +153,40 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public bool TryGetPhotos(int userId, int questionId, int answer, int count,
-      DateTime bornAfter, DateTime bornBefore, int sex, string city, out IEnumerable<PhotoDb> photos)
+    public async Task<List<PhotoDb>> GetPhotos(int userId, int questionId, int answer, int count,
+      DateTime bornAfter, DateTime bornBefore, int sex, string city)
     {
       try
       {
-        photos = _db.PhotoDb
+        return await _db.PhotoDb.AsNoTracking()
           .FromSql(
             $"select * from dbo.getPhotos({userId}, {questionId}, {answer}, {count}, {bornAfter}, {bornBefore},  {sex}, {city})")
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      photos = new List<PhotoDb>();
-      return false;
+      return new List<PhotoDb>();
     }
 
-    public bool TryGetVoters(int userId, int questionId, int offset, int count, AnswerType answerType,
-      DateTime bornAfter, DateTime bornBefore, SexType sexType, string searchedLogin,
-      out IEnumerable<AnsweredListDb> answeredList)
+    public async Task<List<AnsweredListDb>> GetVoters(int userId, int questionId, int offset, int count, AnswerType answerType,
+      DateTime bornAfter, DateTime bornBefore, SexType sexType, string searchedLogin)
     {
       try
       {
-        answeredList = _db.AnsweredListDb
+        return await _db.AnsweredListDb.AsNoTracking()
           .FromSql(
             $"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {bornAfter}, {bornBefore}, {sexType}, {searchedLogin})")
           .Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
+        return new List<AnsweredListDb>();
       }
-      answeredList = new List<AnsweredListDb>();
-      return false;
+
     }
   }
 }

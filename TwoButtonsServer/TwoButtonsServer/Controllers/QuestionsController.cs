@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.Moderators;
 using TwoButtonsServer.ViewModels.InputParameters;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
 using TwoButtonsServer.ViewModels.OutputParameters;
@@ -26,55 +26,64 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("getQuestion")]
-    public IActionResult GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
+    public async Task<IActionResult> GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
     {
       if (inputQuestion == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.Questions.TryGetQuestion(inputQuestion.UserId, inputQuestion.QuestionId, out var question))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var question = await _mainDb.Questions.GetQuestion(inputQuestion.UserId, inputQuestion.QuestionId);
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
 
-      var commentsAmount = 10000;
-      var photosAmount = 100;
-      var minAge = 0;
-      var maxAge = 100;
-      var sex = 0;
-      var city = string.Empty;
-
-      if (!_mainDb.Tags.TryGetTags(question.QuestionId, out var tags))
-        tags = new List<TagDb>();
-      if (!_mainDb.Questions.TryGetPhotos(question.UserId, question.QuestionId, 1, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city, out var firstPhotos))
-        firstPhotos = new List<PhotoDb>();
-      if (!_mainDb.Questions.TryGetPhotos(question.UserId, question.QuestionId, 2, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city, out var secondPhotos))
-        secondPhotos = new List<PhotoDb>();
-      if (!_mainDb.Comments.TryGetComments(question.UserId, question.QuestionId, commentsAmount, out var comments))
-        comments = new List<CommentDb>();
+      GetTagsAndPhotos(inputQuestion.UserId, inputQuestion.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
 
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
 
       return Ok(result);
     }
 
+    private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
+      out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
+    {
+      var photosAmount = 100;
+      var commentsAmount = 500;
+      var minAge = 0;
+      var maxAge = 100;
+      var sex = 0;
+      var city = string.Empty;
+
+      var tagsTask = _mainDb.Tags.GetTags(questionId);
+      var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+      var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+      var commentsTask = _mainDb.Comments.GetComments(userId, questionId, commentsAmount);
+
+      Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask, commentsTask);
+      tags = tagsTask.Result;
+      firstPhotos = firstPhotosTask.Result;
+      secondPhotos = secondPhotosTask.Result;
+      comments = commentsTask.Result;
+    }
+
     [HttpPost("addQuestion")]
-    public IActionResult AddQuestion([FromBody] AddQuestionViewModel question)
+    public async Task<IActionResult> AddQuestion([FromBody] AddQuestionViewModel question)
     {
       if (question == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.Questions.TryAddQuestion(question.UserId, question.Condition, question.BackgroundImageLink,
+      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition,
+        question.BackgroundImageLink,
         question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType, question.FirstOption,
-        question.SecondOption, out var questionId))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        question.SecondOption);
+      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var badAddedTags = new List<string>();
 
       for (var i = 0; i < question.Tags.Count; i++)
       {
         var tag = question.Tags[i];
-        if (!_mainDb.Tags.TryAddTag(questionId, tag, i))
+        if (await _mainDb.Tags.AddTag(questionId, tag, i))
           badAddedTags.Add(tag);
       }
       if (badAddedTags.Count != 0)
@@ -91,105 +100,106 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("deleteQuestion")]
-    public IActionResult DeleteQuestion([FromBody] QuestionIdViewModel questionId)
+    public async Task<IActionResult> DeleteQuestion([FromBody] QuestionIdViewModel questionId)
     {
       if (questionId == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.Questions.TryDeleteQuestion(questionId.QuestionId, out var isChanged))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var isChanged = await _mainDb.Questions.DeleteQuestion(questionId.QuestionId);
+      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(isChanged);
     }
 
 
     [HttpPost("updateQuestionFeedback")]
-    public IActionResult UpdateFeedback([FromBody] UpdateQuestionFeedbackViewModel feedback)
+    public async Task<IActionResult> UpdateFeedback([FromBody] UpdateQuestionFeedbackViewModel feedback)
     {
-      if (_mainDb.Questions.TryUpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType,
-        out var isChanged))
-        return Ok(isChanged);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var isChanged =
+        await _mainDb.Questions.UpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType);
+      return Ok(isChanged);
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
 
     [HttpPost("updateSaved")]
-    public IActionResult UpdateSaved([FromBody] UpdateQuestionFavoriteViewModel favorite)
+    public async Task<IActionResult> UpdateSaved([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
-      if (_mainDb.Questions.TryUpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites,
-        out var isChanged))
-        return Ok(isChanged);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var isChanged = await _mainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
+      return Ok(isChanged);
+      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("updateFavorites")]
-    public IActionResult UpdateFavorites([FromBody] UpdateQuestionFavoriteViewModel favorite)
+    public async Task<IActionResult> UpdateFavorites([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
-      if (_mainDb.Questions.TryUpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites,
-        out var isChanged))
-        return Ok(isChanged);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var isChanged =
+        await _mainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
+      return Ok(isChanged);
+      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("updateAnswer")]
-    public IActionResult UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
+    public async Task<IActionResult> UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
     {
-      if (_mainDb.Questions.TryUpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType, out var isChanged))
-        return Ok(isChanged);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var isChanged = await _mainDb.Questions.UpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType);
+      return Ok(isChanged);
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("addComplaint")]
-    public IActionResult AddComplaint([FromBody] AddComplaintViewModel complaint)
+    public async Task<IActionResult> AddComplaint([FromBody] AddComplaintViewModel complaint)
     {
       if (complaint == null)
         return BadRequest($"Input parameter  is null");
 
-      if (_mainDb.Complaints.TryAddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplaintId))
-        return Ok();
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplaintId);
+      return Ok();
+      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("addRecommendedQuestion")]
-    public IActionResult AddRecommendedQuestion([FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
+    public async Task<IActionResult> AddRecommendedQuestion(
+      [FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
     {
       if (recommendedQuestion == null)
         return BadRequest($"Input parameter  is null");
 
-      if (_mainDb.UserQuestions.TryAddRecommendedQuestion(recommendedQuestion.UserToId, recommendedQuestion.UserFromId,
-        recommendedQuestion.QuestionId))
-        return Ok();
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var questionId = await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
+        recommendedQuestion.UserFromId,
+        recommendedQuestion.QuestionId);
+      return Ok();
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     // только модератору можно
     [HttpPost("getComplaints")]
-    public IActionResult GetComplaints()
+    public async Task<IActionResult> GetComplaints()
     {
-      if (_mainDb.Complaints.TryGetComplaints(out IEnumerable<ComplaintDb> complaints))
-        return Ok(complaints);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var complaints = await _mainDb.Complaints.GetComplaints();
+      return Ok(complaints);
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [Authorize(Roles = "moderator, admin")]
     [HttpPost("getComplaintsAuth")]
-    public IActionResult GetComplaintsAuth()
+    public async Task<IActionResult> GetComplaintsAuth()
     {
-      if (_mainDb.Complaints.TryGetComplaints(out IEnumerable<ComplaintDb> complaints))
-        return Ok(complaints);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var complaints = await _mainDb.Complaints.GetComplaints();
+      return Ok(complaints);
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("getVoters")]
-    public IActionResult GetVoters([FromBody] GetVoters voters)
+    public async Task<IActionResult> GetVoters([FromBody] GetVoters voters)
     {
       if (voters == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.Questions.TryGetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
+      var answeredList = await _mainDb.Questions.GetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
         voters.PageParams.Count, voters.AnswerType, DateTime.UtcNow.AddYears(-voters.MaxAge),
-        DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin, out var answeredList))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin);
+      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(answeredList.MapAnsweredListDbToViewModel());
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -32,18 +33,19 @@ namespace TwoButtonsServer.Controllers
 
 
     [HttpPost("asked")]
-    public IActionResult GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public async Task<IActionResult> GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.UserQuestions.TryGetAskedQuestions(userQuestions.UserId, userQuestions.UserId, userQuestions.PageParams.Offset,
-          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<AskedQuestionDb>(), out var userAskedQuestions))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var userASkedQuestions = await _mainDb.UserQuestions.GetAskedQuestions(userQuestions.UserId, userQuestions.UserId,
+        userQuestions.PageParams.Offset,
+        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<AskedQuestionDb>());
+       // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<AskedQuestionsViewModel>();
 
-      foreach (var question in userAskedQuestions)
+      foreach (var question in userASkedQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
             out var secondPhotos);
@@ -54,16 +56,16 @@ namespace TwoButtonsServer.Controllers
 
 
     [HttpPost("recommended")]
-    public IActionResult GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public async Task<IActionResult> GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.UserQuestions.TryGetRecommendedQuestions(userQuestions.UserId, userQuestions.UserId,
+      var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId,
+        userQuestions.UserId,
         userQuestions.PageParams.Offset,
-        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<RecommendedQuestionDb>(),
-        out var recommendedQuestions))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
+        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<RecommendedQuestionViewModel>();
 
@@ -79,14 +81,15 @@ namespace TwoButtonsServer.Controllers
 
 
     [HttpPost("liked")]
-    public IActionResult GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public async Task<IActionResult> GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.UserQuestions.TryGetLikedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
-          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<LikedQuestionDb>(), out var userAnsweredQuestions))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var userAnsweredQuestions = await _mainDb.UserQuestions.GetLikedQuestions(userQuestions.UserId,
+        userQuestions.PageParams.Offset,
+        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<LikedQuestionDb>());
+        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<LikedQuestionsViewModel>();
 
@@ -100,14 +103,14 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("saved")]
-    public IActionResult GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
+    public async Task<IActionResult> GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (userQuestions == null)
         return BadRequest($"Input parameter  is null");
 
-      if (!_mainDb.UserQuestions.TryGetSavedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
-          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<SavedQuestionDb>(), out var userFavoriteQuestions))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var userFavoriteQuestions = await _mainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
+          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<SavedQuestionDb>());
+        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<SavedQuestionsViewModel>();
 
@@ -122,15 +125,16 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("top")]
-    public IActionResult GetTopQuestions([FromBody] TopDayQuestions questions)
+    public async Task<IActionResult> GetTopQuestions([FromBody] TopDayQuestions questions)
     {
       if (questions == null)
         return BadRequest($"Input parameter  is null");
       var dateTime = questions.DeltaUnixTime == 0? DateTime.MinValue : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      if (!_mainDb.UserQuestions.TryGeTopQuestions(questions.UserId, questions.IsOnlyNew, questions.PageParams.Offset,
-        questions.PageParams.Count, dateTime, questions.SortType.ToPredicate<TopQuestionDb>(), out var topQuestions))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
+        questions.PageParams.Offset,
+        questions.PageParams.Count, dateTime, questions.SortType.ToPredicate<TopQuestionDb>());
+        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<TopQuestionsViewModel>();
 
@@ -144,7 +148,7 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
+    private  void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
             out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
       var photosAmount = 100;
@@ -153,12 +157,16 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!_mainDb.Tags.TryGetTags(questionId, out tags))
-        tags = new List<TagDb>();
-      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),minAge.WhenBorned(), sex, city, out firstPhotos))
-        firstPhotos = new List<PhotoDb>();
-      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(), minAge.WhenBorned(), sex, city, out secondPhotos))
-        secondPhotos = new List<PhotoDb>();
+      var tagsTask= _mainDb.Tags.GetTags(questionId);
+      var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+      var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+
+      Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
+      tags = tagsTask.Result;
+      firstPhotos = firstPhotosTask.Result;
+      secondPhotos = secondPhotosTask.Result;
     }
   }
 }

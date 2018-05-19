@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities.Account;
@@ -18,7 +18,7 @@ namespace TwoButtonsDatabase.Repositories
     }
 
 
-    public bool TryAddUser(int userId, string login, DateTime birthDate, SexType sex,
+    public async Task<bool> AddUser(int userId, string login, DateTime birthDate, SexType sex,
       string city, string description, string fullAvatarLink, string smallAvatarLink)
     {
       var returnsCode = new SqlParameter
@@ -29,9 +29,7 @@ namespace TwoButtonsDatabase.Repositories
 
       try
       {
-        _db.Database.ExecuteSqlCommand(
-          $"addUser {userId}, {login}, {birthDate}, {sex}, {city},  {description}, {fullAvatarLink}, {smallAvatarLink}, {returnsCode} OUT");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"addUser {userId}, {login}, {birthDate}, {sex}, {city},  {description}, {fullAvatarLink}, {smallAvatarLink}, {returnsCode} OUT") > 0;
       }
       catch (Exception e)
       {
@@ -40,7 +38,7 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    //public  bool TryGetIdentification( string login, string password, out int userId)
+    //public  bool GetIdentification( string login, string password, out int userId)
     //{
     //  try
     //  {
@@ -57,7 +55,7 @@ namespace TwoButtonsDatabase.Repositories
     //  return false;
     //}
 
-    //public  bool TryCheckValidUser( string phone, string login, out int returnsCode)
+    //public  bool CheckValidUser( string phone, string login, out int returnsCode)
     //{
     //  try
     //  {
@@ -74,7 +72,7 @@ namespace TwoButtonsDatabase.Repositories
     //  return false;
     //}
 
-    //public  bool TryIsUserIdValid( int userId, out bool isValid)
+    //public  bool IsUserIdValid( int userId, out bool isValid)
     //{
     //  try
     //  {
@@ -91,7 +89,7 @@ namespace TwoButtonsDatabase.Repositories
     //  return false;
     //}
 
-    //public  bool TryGetUserRole( int userId, out int role)
+    //public  bool GetUserRole( int userId, out int role)
     //{
     //  try
     //  {
@@ -106,12 +104,11 @@ namespace TwoButtonsDatabase.Repositories
     //  return false;
     //}
 
-    public bool TryUpdateUserFullAvatar(int userId, string fullAvatarLink)
+    public async Task<bool> UpdateUserFullAvatar(int userId, string fullAvatarLink)
     {
       try
       {
-        _db.Database.ExecuteSqlCommand($"updateUserFullAvatar {userId}, {fullAvatarLink}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateUserFullAvatar {userId}, {fullAvatarLink}") > 0;
       }
       catch (Exception e)
       {
@@ -120,12 +117,11 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public bool TryUpdateUserSmallAvatar( int userId, string smallAvatar)
+    public async Task<bool> UpdateUserSmallAvatar(int userId, string smallAvatar)
     {
       try
       {
-        _db.Database.ExecuteSqlCommand($"updateUserSmallAvatar {userId}, {smallAvatar}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateUserSmallAvatar {userId}, {smallAvatar}") > 0;
       }
       catch (Exception e)
       {
@@ -134,50 +130,46 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public bool TryGetUserInfo( int userId, int getUserId, out UserInfoDb userInfo)
+    public async Task<UserInfoDb> GetUserInfo(int userId, int userPageId)
     {
       try
       {
-        userInfo = _db.UserInfoDb.FromSql($"select * from dbo.getUserInfo({userId}, {getUserId})").FirstOrDefault() ??
+        var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
+                     .FirstOrDefaultAsync() ??
                    new UserInfoDb();
 
-        if (userId != getUserId)
-          if (userInfo.YouFollowed)
-            TryUpdateVisits(userId, getUserId);
-        return true;
+        if (userId != userPageId)
+          if (user.YouFollowed)
+            UpdateVisits(userId, userPageId);
+        return user;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userInfo = new UserInfoDb();
-      return false;
+      return new UserInfoDb();
     }
 
-    public bool TryGetUserStatistics( int userId, out UserStatisticsDb userStatistics)
+    public async Task<UserStatisticsDb> GetUserStatistics(int userId)
     {
       try
       {
-        userStatistics = _db.UserStatisticsDb
-                           .FromSql($"select * from dbo.getUserStatistics({userId})").FirstOrDefault() ??
-                         new UserStatisticsDb();
-
-        return true;
+        return await _db.UserStatisticsDb
+                 .FromSql($"select * from dbo.getUserStatistics({userId})").FirstOrDefaultAsync() ??
+               new UserStatisticsDb();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userStatistics = new UserStatisticsDb();
-      return false;
+      return new UserStatisticsDb();
     }
 
-    public bool TryUpdateVisits( int userId, int getUserId)
+    public async Task<bool> UpdateVisits(int userId, int getUserId)
     {
       try
       {
-        _db.Database.ExecuteSqlCommand($"updateVisits {userId}, {getUserId}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateVisits {userId}, {getUserId}") > 0;
       }
       catch (Exception e)
       {
@@ -185,44 +177,44 @@ namespace TwoButtonsDatabase.Repositories
       }
       return false;
     }
+    //  //PreparedStatement stComments;
+    //  //PreparedStatement stQuestions;
+    //  //ResultSet rsComments;
 
-    public bool TryGetUserRaiting( int userId, out int rainting)
-    {
-      rainting = -100500;
-      return false;
+    //  //ResultSet rsQuestions;
+    //  return false;
+    //  rainting = -100500;
+    //{
 
-      //ResultSet rsQuestions;
-      //ResultSet rsComments;
-      //PreparedStatement stQuestions;
-      //PreparedStatement stComments;
+    //public async Task<bool> GetUserRaiting( int userId, out int rainting)
 
-      //int questionsRaiting = 0;
-      //int commentsRaiting = 0;
+    //  //int questionsRaiting = 0;
+    //  //int commentsRaiting = 0;
 
-      //try
-      //{
-      //    stQuestions = con.prepareStatement("select dbo.getUserQuestionsRaiting(?)");
-      //    stQuestions.setInt(1, userId);
-      //    rsQuestions = stQuestions.executeQuery();
+    //  //try
+    //  //{
+    //  //    stQuestions = con.prepareStatement("select dbo.getUserQuestionsRaiting(?)");
+    //  //    stQuestions.setInt(1, userId);
+    //  //    rsQuestions = stQuestions.executeQuery();
 
-      //    if (rsQuestions.next())
-      //        questionsRaiting = rsQuestions.getInt(1);
+    //  //    if (rsQuestions.next())
+    //  //        questionsRaiting = rsQuestions.getInt(1);
 
-      //    stComments = con.prepareStatement("select dbo.getUserCommentsRaiting(?)");
-      //    stComments.setInt(1, userId);
-      //    rsComments = stComments.executeQuery();
+    //  //    stComments = con.prepareStatement("select dbo.getUserCommentsRaiting(?)");
+    //  //    stComments.setInt(1, userId);
+    //  //    rsComments = stComments.executeQuery();
 
-      //    if (rsComments.next())
-      //        commentsRaiting = rsComments.getInt(1);
-      //}
-      //catch (SQLException e)
-      //{
-      //    e.printStackTrace();
-      //}
+    //  //    if (rsComments.next())
+    //  //        commentsRaiting = rsComments.getInt(1);
+    //  //}
+    //  //catch (SQLException e)
+    //  //{
+    //  //    e.printStackTrace();
+    //  //}
 
-      //int raiting = questionsRaiting + commentsRaiting;
+    //  //int raiting = questionsRaiting + commentsRaiting;
 
-      //return raiting;
-    }
+    //  //return raiting;
+    //}
   }
 }

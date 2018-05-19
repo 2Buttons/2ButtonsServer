@@ -37,17 +37,19 @@ namespace TwoButtonsServer.Controllers
       var questionsPage = newsViewModel.PageParams.Offset / 5;
       var questionsAmount = newsViewModel.PageParams.Count / 5;
 
-      var askedList = Task.Run(() => GetNewsAskedQuestions(userId, questionsPage, questionsAmount)).GetAwaiter()
-        .GetResult();
-      var answeredList = Task.Run(() => GetNewsAnsweredQuestions(userId, questionsPage, questionsAmount)).GetAwaiter()
-        .GetResult();
-      var favoriteList = Task.Run(() => GetNewsFavoriteQuestions(userId, questionsPage, questionsAmount)).GetAwaiter()
-        .GetResult();
-      var commentedList = Task.Run(() => GetNewsCommentedQuestions(userId, questionsPage, questionsAmount)).GetAwaiter()
-        .GetResult();
-      var recommentedList = Task.Run(() => TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount))
-        .GetAwaiter().GetResult();
+      var askedListTask =  GetNewsAskedQuestionsAsync(userId, questionsPage, questionsAmount);
+      var answeredListTask =  GetNewsAnsweredQuestionsAsync(userId, questionsPage, questionsAmount);
+      var favoriteListTask =  GetNewsFavoriteQuestionsAsync(userId, questionsPage, questionsAmount);
+      var commentedListTask =  GetNewsCommentedQuestions(userId, questionsPage, questionsAmount);
+      var recommentedListTask =  TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount);
 
+      await Task.WhenAll(askedListTask, answeredListTask, favoriteListTask, commentedListTask, recommentedListTask);
+
+      var askedList = askedListTask.Result;
+      var answeredList = answeredListTask.Result;
+      var favoriteList = favoriteListTask.Result;
+      var commentedList = commentedListTask.Result;
+      var recommentedList = recommentedListTask.Result;
 
       var answeredListCount = newsViewModel.PageParams.Count / 100 * 16;
       var favoriteListCount = newsViewModel.PageParams.Count / 100 * 16;
@@ -91,11 +93,11 @@ namespace TwoButtonsServer.Controllers
       return Ok(result);
     }
 
-    private List<NewsAskedQuestionViewModel> GetNewsAskedQuestions(int userId, int questionsPage = 1,
+    private async Task<List<NewsAskedQuestionViewModel>> GetNewsAskedQuestionsAsync(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_mainDb.News.TryGetNewsAskedQuestions(userId, questionsPage, questionsAmount, out var userAskedQuestions))
-        return new List<NewsAskedQuestionViewModel>();
+      var userAskedQuestions = await _mainDb.News.GetNewsAskedQuestions(userId, questionsPage, questionsAmount);
+        //return new List<NewsAskedQuestionViewModel>();
 
       var result = new List<NewsAskedQuestionViewModel>();
 
@@ -109,12 +111,11 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestions(int userId, int questionsPage = 1,
+    private async Task<List<NewsAnsweredQuestionViewModel>> GetNewsAnsweredQuestionsAsync(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_mainDb.News.TryGetNewsAnsweredQuestions(userId, questionsPage, questionsAmount,
-        out var userAnsweredQuestions))
-        return new List<NewsAnsweredQuestionViewModel>();
+     var userAnsweredQuestions = await _mainDb.News.GetNewsAnsweredQuestions(userId, questionsPage, questionsAmount);
+        //return new List<NewsAnsweredQuestionViewModel>();
 
       var result = new List<NewsAnsweredQuestionViewModel>();
       Parallel.ForEach(userAnsweredQuestions, question =>
@@ -127,12 +128,11 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestions(int userId, int questionsPage = 1,
+    private async Task<List<NewsFavoriteQuestionViewModel>> GetNewsFavoriteQuestionsAsync(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_mainDb.News.TryGetNewsFavoriteQuestions(userId, questionsPage, questionsAmount,
-        out var userFavoriteQuestions))
-        return new List<NewsFavoriteQuestionViewModel>();
+      var userFavoriteQuestions  = await _mainDb.News.GetNewsFavoriteQuestions(userId, questionsPage, questionsAmount);
+        //return new List<NewsFavoriteQuestionViewModel>();
 
       var result = new List<NewsFavoriteQuestionViewModel>();
       Parallel.ForEach(userFavoriteQuestions, question =>
@@ -145,12 +145,11 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(int userId, int questionsPage = 1,
+    private async Task<List<NewsCommentedQuestionViewModel>> GetNewsCommentedQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_mainDb.News.TryGetNewsCommentedQuestions(userId, questionsPage, questionsAmount,
-        out var userCommentedQuestions))
-        return new List<NewsCommentedQuestionViewModel>();
+      var userCommentedQuestions = await _mainDb.News.GetNewsCommentedQuestions(userId, questionsPage, questionsAmount);
+        //return new List<NewsCommentedQuestionViewModel>();
 
       var result = new List<NewsCommentedQuestionViewModel>();
       Parallel.ForEach(userCommentedQuestions, question =>
@@ -163,12 +162,11 @@ namespace TwoButtonsServer.Controllers
     }
 
 
-    private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1,
+    private async  Task<List<NewsRecommendedQuestionViewModel>> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1,
       int questionsAmount = 100)
     {
-      if (!_mainDb.News.TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount,
-        out var newsRecommendedQuestions))
-        return new List<NewsRecommendedQuestionViewModel>();
+      var newsRecommendedQuestions =
+        await _mainDb.News.GetNewsRecommendedQuestions(userId, questionsPage, questionsAmount);
 
       var result = new List<NewsRecommendedQuestionViewModel>();
       Parallel.ForEach(newsRecommendedQuestions, question =>
@@ -189,14 +187,16 @@ namespace TwoButtonsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      if (!_mainDb.Tags.TryGetTags(questionId, out tags))
-        tags = new List<TagDb>();
-      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city, out firstPhotos))
-        firstPhotos = new List<PhotoDb>();
-      if (!_mainDb.Questions.TryGetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city, out secondPhotos))
-        secondPhotos = new List<PhotoDb>();
+      var tagsTask = _mainDb.Tags.GetTags(questionId);
+      var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+      var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+
+      Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
+      tags = tagsTask.Result;
+      firstPhotos = firstPhotosTask.Result;
+      secondPhotos = secondPhotosTask.Result;
     }
   }
 }

@@ -6,8 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AccountServer.Models
 {
-  public class JwtIssuerOptions
+  public class JwtSettings
   {
+
+    public TokenValidationParameters
+
     /// <summary>
     /// 4.1.1.  "iss" (Issuer) Claim - The "iss" (issuer) claim identifies the principal that issued the JWT.
     /// </summary>

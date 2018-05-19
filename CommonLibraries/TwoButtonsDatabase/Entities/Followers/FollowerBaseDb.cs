@@ -4,10 +4,11 @@ using CommonLibraries;
 
 namespace TwoButtonsDatabase.Entities.Followers
 {
-  public partial class FollowerBaseDb
+  public class FollowerBaseDb
   {
     [Key]
     public int UserId { get; set; }
+
     public string Login { get; set; }
     public string SmallAvatarLink { get; set; }
     public DateTime BirthDate { get; set; }

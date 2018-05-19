@@ -38,12 +38,12 @@ namespace AccountServer.Controllers
     private readonly IJwtFactory _jwtFactory;
 
     //some config in the appsettings.json
-    private readonly JwtIssuerOptions _jwtOptions;
+    private readonly JwtSettings _jwtOptions;
 
     private readonly VkAuthSettings _vkAuthSettings;
 
     public ExternalAuthController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
-      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,
+      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtSettings> jwtOptions,
       TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;

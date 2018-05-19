@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities.Recommended;
 
@@ -20,26 +21,23 @@ namespace TwoButtonsDatabase.Repositories
     /// <summary>
     ///   возвращает список пользователей, подписанных на тебя.
     /// </summary>
-    /// <param name="db"></param>
     /// <param name="userId"></param>
-    /// <param name="recommendedFromFollows"></param>
+    /// <param name="offset"></param>
+    /// <param name="count"></param>
     /// <returns></returns>
-    public bool TryGetRecommendedFromFollowers(int userId, int offset, int count,
-      out IEnumerable<RecommendedFromFollowersDb> recommendedFromFollowers)
+    public async Task<List<RecommendedFromFollowersDb>> GetRecommendedFromFollowers(int userId, int offset, int count)
     {
       try
       {
-        recommendedFromFollowers = _db.RecommendedFromFollowersDb
+        return await _db.RecommendedFromFollowersDb.AsNoTracking()
           .FromSql($"select * from dbo.[getRecommendedFromFollowers]({userId})")
-          .OrderByDescending(x => x.CommonFollowsTo).Skip(offset).Take(count).ToList();
-        return true;
+          .OrderByDescending(x => x.CommonFollowsTo).Skip(offset).Take(count).ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      recommendedFromFollowers = new List<RecommendedFromFollowersDb>();
-      return false;
+      return new List<RecommendedFromFollowersDb>();
     }
 
     /// <summary>
@@ -49,26 +47,22 @@ namespace TwoButtonsDatabase.Repositories
     /// <param name="userId"></param>
     /// <param name="recommendedFromFollows"></param>
     /// <returns></returns>
-    public bool TryGetRecommendedFromFollows(int userId, int offset, int count,
-      out IEnumerable<RecommendedFromFollowsDb> recommendedFromFollows)
+    public async Task<List<RecommendedFromFollowsDb>> GetRecommendedFromFollows(int userId, int offset, int count)
     {
       try
       {
-        recommendedFromFollows = _db.RecommendedFromFollowsDb
+        return await _db.RecommendedFromFollowsDb.AsNoTracking()
           .FromSql($"select * from dbo.getRecommendedFromFollows({userId})").OrderByDescending(x => x.CommonFollowsTo)
-          .Skip(offset).Take(count).ToList();
-        return true;
+          .Skip(offset).Take(count).ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      recommendedFromFollows = new List<RecommendedFromFollowsDb>();
-      return false;
+      return new List<RecommendedFromFollowsDb>();
     }
 
-    public bool TryGetRecommendedFromUsersId(IEnumerable<int> userIds,
-      out IEnumerable<RecommendedFromUsersIdDb> recommendedStrangers)
+    public async Task<List<RecommendedFromUsersIdDb>> GetRecommendedFromUsersId(IEnumerable<int> userIds)
     {
       try
       {
@@ -83,53 +77,45 @@ namespace TwoButtonsDatabase.Repositories
           Value = dataTable
         };
 
-        recommendedStrangers = _db.RecommendedFromUsersIdsDb
+        return await _db.RecommendedFromUsersIdsDb.AsNoTracking()
           .FromSql($"select * from dbo.getRecommendedFromUsersID(@NetworkIDTable)", networkIdTable)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      recommendedStrangers = new List<RecommendedFromUsersIdDb>();
-      return false;
+     return new List<RecommendedFromUsersIdDb>();
     }
 
-    public bool TryGetRecommendedFromContacts(int userId, string searchedLogin,
-      out IEnumerable<RecommendedFromContactsDb> recommendedFromContacts)
+    public async Task<List<RecommendedFromContactsDb>> GetRecommendedFromContacts(int userId, string searchedLogin)
     {
       try
       {
-        recommendedFromContacts = _db.RecommendedFromContactsDb
-          .FromSql($"select * from dbo.getRecommendedFromContacts({userId}, {searchedLogin})").ToList();
-        return true;
+        return await _db.RecommendedFromContactsDb.AsNoTracking()
+          .FromSql($"select * from dbo.getRecommendedFromContacts({userId}, {searchedLogin})").ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      recommendedFromContacts = new List<RecommendedFromContactsDb>();
-      return false;
+      return new List<RecommendedFromContactsDb>();
     }
 
-    public bool TryGetRecommendedStrangers(int userId, int offset, int count, string searchedLogin,
-      out IEnumerable<RecommendedStrangersDb> recommendedStrangers)
+    public async Task<List<RecommendedStrangersDb>> GetRecommendedStrangers(int userId, int offset, int count, string searchedLogin)
     {
       try
       {
-        recommendedStrangers = _db.RecommendedStrangersDb
+        return await _db.RecommendedStrangersDb.AsNoTracking()
           .FromSql($"select * from dbo.getRecommendedStrangers({userId},   {searchedLogin})")
           .Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      recommendedStrangers = new List<RecommendedStrangersDb>();
-      return false;
+      return  new List<RecommendedStrangersDb>();
     }
   }
 }

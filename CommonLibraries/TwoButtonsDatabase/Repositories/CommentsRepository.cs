@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
@@ -18,8 +19,8 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public bool TryAddComment(int userId, int questionId, string comment,
-      int previousCommentId, out int commentId)
+    public async Task<int> AddComment(int userId, int questionId, string comment,
+      int previousCommentId)
     {
       var commentedTime = DateTime.UtcNow;
 
@@ -32,25 +33,22 @@ namespace TwoButtonsDatabase.Repositories
 
       try
       {
-        _db.Database.ExecuteSqlCommand(
+        await _db.Database.ExecuteSqlCommandAsync(
           $"addComment {userId}, {questionId}, {comment}, {previousCommentId}, {commentedTime}, {ommentedIdDb} OUT");
-        commentId = (int) ommentedIdDb.Value;
-        return true;
+        return (int) ommentedIdDb.Value;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      commentId = -1;
-      return false;
+      return -1;
     }
 
-    public bool TryUpdateCommentFeedback(int userId, int commentId, FeedbackType feedback)
+    public async Task<bool> UpdateCommentFeedback(int userId, int commentId, FeedbackType feedback)
     {
       try
       {
-        _db.Database.ExecuteSqlCommand($"updateCommentFeedback {userId}, {commentId}, {feedback}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateCommentFeedback {userId}, {commentId}, {feedback}") >0;
       }
       catch (Exception e)
       {
@@ -59,21 +57,18 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public bool TryGetComments(int userId, int questionId, int count,
-      out IEnumerable<CommentDb> comments)
+    public async Task<List<CommentDb>> GetComments(int userId, int questionId, int count)
     {
       try
       {
-        comments = _db.CommentDb.FromSql($"select * from dbo.getComments({userId}, {questionId}, {1}, {count})")
-          .ToList();
-        return true;
+        return await _db.CommentDb.AsNoTracking().FromSql($"select * from dbo.getComments({userId}, {questionId}, {1}, {count})")
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      comments = new List<CommentDb>();
-      return false;
+      return new List<CommentDb>();
     }
   }
 }

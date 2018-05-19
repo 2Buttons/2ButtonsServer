@@ -32,13 +32,13 @@ namespace AccountServer.Controllers
     private readonly IJwtFactory _jwtFactory;
 
     //some config in the appsettings.json
-    private readonly JwtIssuerOptions _jwtOptions;
+    private readonly JwtSettings _jwtOptions;
 
     private readonly TwoButtonsUnitOfWork _mainDb;
 
 
     public AuthController(IJwtFactory jwtFactory,
-      IOptions<JwtIssuerOptions> jwtOptions, TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
+      IOptions<JwtSettings> jwtOptions, TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
       _jwtOptions = jwtOptions.Value;
       _accountDb = accountDb;

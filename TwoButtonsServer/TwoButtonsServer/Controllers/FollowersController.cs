@@ -26,44 +26,45 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("getFollowers")]
-    public IActionResult GetFollowers([FromBody]FollowerViewModel vm)
+    public async Task<IActionResult> GetFollowers([FromBody]FollowerViewModel vm)
     {
       if (vm?.PageParams == null)
         return BadRequest($"Input parameter {nameof(vm)} is null");
-      if (_mainDb.Followers.TryGetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin, out var followers))
+      var followers = await _mainDb.Followers.GetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
+        vm.PageParams.Count, vm.SearchedLogin);
         return Ok(followers.MapToUserContactsViewModel());
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+     // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("getFollowTo")]
-    public IActionResult GetFollowTo([FromBody]FollowerViewModel vm)
+    public async Task<IActionResult> GetFollowTo([FromBody]FollowerViewModel vm)
     {
       if (vm == null)
         return BadRequest($"Input parameter {nameof(vm)} is null");
 
-      if (_mainDb.Followers.TryGetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin, out var follower))
+      var follower = await _mainDb.Followers.GetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin);
         return Ok(follower.MapToUserContactsViewModel());
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+     // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("follow")]
-    public IActionResult Follow([FromBody]FollowViewModel vm)
+    public async Task<IActionResult> Follow([FromBody]FollowViewModel vm)
     {
       if (vm == null)
         return BadRequest($"Input parameter is null");
 
-      if (_mainDb.Followers.TryAddFollow(vm.FollowerId, vm.FollowToId))
+      if (await _mainDb.Followers.AddFollow(vm.FollowerId, vm.FollowToId))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("unfollow")]
-    public IActionResult Unfollow([FromBody]FollowViewModel vm)
+    public async Task<IActionResult> Unfollow([FromBody]FollowViewModel vm)
     {
       if (vm == null)
         return BadRequest($"Input parameter is null");
 
-      if (_mainDb.Followers.TryDeleteFollow(vm.FollowerId, vm.FollowToId))
+      if (await _mainDb.Followers.DeleteFollow(vm.FollowerId, vm.FollowToId))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }

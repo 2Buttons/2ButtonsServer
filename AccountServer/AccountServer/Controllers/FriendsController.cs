@@ -34,7 +34,7 @@ namespace AccountServer.Controllers
     private readonly IJwtFactory _jwtFactory;
 
     //some config in the appsettings.json
-    private readonly JwtIssuerOptions _jwtOptions;
+    private readonly JwtSettings _jwtOptions;
     //repository to handler the sqlite database
 
     private readonly TwoButtonsUnitOfWork _mainDb;
@@ -42,7 +42,7 @@ namespace AccountServer.Controllers
     private readonly VkAuthSettings _vkAuthSettings;
 
     public FriendsController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
-      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,
+      IOptions<VkAuthSettings> vkAuthSettingsAccessor, IJwtFactory jwtFactory, IOptions<JwtSettings> jwtOptions,
       TwoButtonsUnitOfWork mainDb, AccountUnitOfWork accountDb)
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TwoButtonsDatabase;
 using TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels;
@@ -18,35 +19,33 @@ namespace TwoButtonsServer.Controllers
     }
 
     [HttpPost("addComment")]
-    public IActionResult AddComment([FromBody] AddCommentViewModel comment)
+    public async Task<IActionResult> AddComment([FromBody] AddCommentViewModel comment)
     {
       if (comment == null)
         return BadRequest($"Input parameter  is null");
-      if (!_mainDb.Comments.TryAddComment(comment.UserId, comment.QuestionId, comment.CommentText,
-        comment.PreviousCommnetId, out var commentId))
-        return BadRequest("Something goes wrong. We will fix it!... maybe)))");
-      return Ok(commentId);
+      var comentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.CommentText,
+        comment.PreviousCommnetId);
+      return Ok(comentId);
     }
 
     [HttpPost("addCommentFeedback")]
-    public IActionResult AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
+    public async Task<IActionResult> AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
     {
       if (commentFeedback == null)
         return BadRequest($"Input parameter {nameof(commentFeedback)} is null");
-      if (_mainDb.Comments.TryUpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
+      if (await _mainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
         commentFeedback.FeedbackType))
         return Ok();
       return BadRequest("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("getComments")]
-    public IActionResult GetComments([FromBody] GetCommentsViewModel comments)
+    public async Task<IActionResult> GetComments([FromBody] GetCommentsViewModel commentsVm)
     {
-      if (comments == null)
-        return BadRequest($"Input parameter {nameof(comments)} is null");
-      if (_mainDb.Comments.TryGetComments(comments.UserId, comments.QuestionId, comments.Amount, out var comment))
-        return Ok(comment);
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      if (commentsVm == null)
+        return BadRequest($"Input parameter {nameof(commentsVm)} is null");
+      var comments = await (_mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.Amount));
+        return Ok(comments);
     }
   }
 }

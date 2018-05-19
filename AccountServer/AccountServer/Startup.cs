@@ -55,33 +55,34 @@ namespace AccountServer
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
       services.Configure<VkAuthSettings>(Configuration.GetSection(nameof(VkAuthSettings)));
 
-      var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
+      var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var symmetricKeyAsBase64 = jwtAppSettingOptions["SecretKey"];
       var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
       var signingKey = new SymmetricSecurityKey(keyByteArray);
 
-      services.Configure<JwtIssuerOptions>(options=>
+      services.Configure<JwtSettings>(options=>
       {
-        options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
-        options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
+        options.Issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
+        options.Audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
         options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
       });
 
       //   services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
 
       services.AddTransient<AccountUnitOfWork>(); // Attention!! TODO maybe scoped
+      services.AddTransient<TwoButtonsUnitOfWork>();
 
       var tokenValidationParameters = new TokenValidationParameters
       {
         // укзывает, будет ли валидироваться издатель при валидации токена
         ValidateIssuer = true,
         // строка, представляющая издателя
-        ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
+        ValidIssuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)],
 
         // будет ли валидироваться потребитель токена
         ValidateAudience = true,
         // установка потребителя токена
-        ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
+        ValidAudience = jwtAppSettingOptions[nameof(JwtSettings.Audience)],
         
 
         // установка ключа безопасности
@@ -101,7 +102,7 @@ namespace AccountServer
           options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(configureOptions =>
         {
-          configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+          configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
           configureOptions.RequireHttpsMetadata = false;
           configureOptions.TokenValidationParameters = tokenValidationParameters;
         });

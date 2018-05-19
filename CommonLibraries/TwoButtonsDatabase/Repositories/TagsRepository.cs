@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 
@@ -15,12 +15,11 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public  bool TryAddTag( int questionId, string tagText, int position)
+    public async Task<bool> AddTag(int questionId, string tagText, int position)
     {
       try
       {
-        _db.Database.ExecuteSqlCommand($"addTag {questionId}, {tagText}, {position}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"addTag {questionId}, {tagText}, {position}") > 0;
       }
       catch (Exception e)
       {
@@ -29,20 +28,17 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public  bool TryGetTags( int questionId, out IEnumerable<TagDb> tags)
+    public async Task<List<TagDb>> GetTags(int questionId)
     {
       try
       {
-        tags = _db.TagDb.FromSql($"select * from dbo.getTags({questionId})").ToList();
-
-        return true;
+        return await _db.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      tags = new List<TagDb>();
-      return false;
+      return new List<TagDb>();
     }
   }
 }

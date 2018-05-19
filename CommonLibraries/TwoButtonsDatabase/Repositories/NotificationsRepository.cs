@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities;
 
@@ -15,30 +16,26 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public bool TryGetNotifications(int userId,
-      out IEnumerable<NotificationDb> notifications)
+    public async Task<List<NotificationDb>> GetNotifications(int userId)
     {
       try
       {
-        notifications = _db.NotificationsDb
-          .FromSql($"select * from dbo.getNotifications({userId})").ToList();
-        return true;
+        return await _db.NotificationsDb.AsNoTracking()
+          .FromSql($"select * from dbo.getNotifications({userId})").ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      notifications = new List<NotificationDb>();
-      return false;
+      return new List<NotificationDb>();
     }
 
-    public bool TryUpdateNotsDate(int userId)
+    public async Task<bool> UpdateNotsDate(int userId)
     {
       try
       {
         var newLastNots = DateTime.UtcNow;
-        _db.Database.ExecuteSqlCommand($"updateNotsDate {userId}, {newLastNots}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"updateNotsDate {userId}, {newLastNots}") >0;
       }
       catch (Exception e)
       {

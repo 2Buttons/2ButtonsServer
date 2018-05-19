@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities.NewsQuestions;
 
@@ -15,100 +16,89 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public bool TryGetNewsAskedQuestions(int userId, int offset, int count,
-      out IEnumerable<NewsAskedQuestionsDb> newsAskedQuestions)
+    public async Task<List<NewsAskedQuestionsDb>> GetNewsAskedQuestions(int userId, int offset, int count)
     {
       try
       {
-        newsAskedQuestions = _db.NewsAskedQuestionsDb
+        return await _db.NewsAskedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getNewsAskedQuestions({userId})")
           .Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      newsAskedQuestions = new List<NewsAskedQuestionsDb>();
-      return false;
+      return new List<NewsAskedQuestionsDb>();
     }
 
-    public bool TryGetNewsAnsweredQuestions(int userId, int offset, int count,
-      out IEnumerable<NewsAnsweredQuestionsDb> newsAnsweredQuestions)
+    public async Task<List<NewsAnsweredQuestionsDb>> GetNewsAnsweredQuestions(int userId, int offset, int count)
     {
       try
       {
-        newsAnsweredQuestions = _db.NewsAnsweredQuestionsDb
+        return await _db.NewsAnsweredQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getNewsAnsweredQuestions({userId})")
           .Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      newsAnsweredQuestions = new List<NewsAnsweredQuestionsDb>();
-      return false;
+      return new List<NewsAnsweredQuestionsDb>();
     }
 
-    public bool TryGetNewsFavoriteQuestions(int userId, int offset, int count,
-      out IEnumerable<NewsFavoriteQuestionsDb> newsFavoriteQuestions)
+    public async Task<List<NewsFavoriteQuestionsDb>>  GetNewsFavoriteQuestions(int userId, int offset, int count)
     {
       try
       {
-        newsFavoriteQuestions = _db.NewsFavoriteQuestionsDb
+        return await _db.NewsFavoriteQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getNewsFavoriteQuestions({userId})")
           .Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      newsFavoriteQuestions = new List<NewsFavoriteQuestionsDb>();
-      return false;
+      return new List<NewsFavoriteQuestionsDb>();
     }
 
-    public bool TryGetNewsCommentedQuestions(int userId, int offset, int count,
-      out IEnumerable<NewsCommentedQuestionsDb> newsCommentedQuestions)
+    public async Task<List<NewsCommentedQuestionsDb>> GetNewsCommentedQuestions(int userId, int offset, int count)
     {
       try
       {
-        newsCommentedQuestions = _db.NewsCommentedQuestionsDb
+        return await _db.NewsCommentedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getNewsCommentedQuestions({userId})")
           .Skip(offset).Take(count)
-          .ToList();
-
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      newsCommentedQuestions = new List<NewsCommentedQuestionsDb>();
-      return false;
+      return  new List<NewsCommentedQuestionsDb>();
     }
 
-    public bool TryGetNewsRecommendedQuestions(int userId, int offset, int count,
-      out IEnumerable<NewsRecommendedQuestionDb> newRecommendedQuestion)
+    public async Task<List<NewsRecommendedQuestionDb>> GetNewsRecommendedQuestions(int userId, int offset, int count)
     {
       try
       {
-        newRecommendedQuestion = _db.NewsRecommendedQuestionDb
+        return await  _db.NewsRecommendedQuestionDb.AsNoTracking()
           .FromSql($"select * from dbo.getNewsRecommendedQuestions({userId})")
           .Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      newRecommendedQuestion = new List<NewsRecommendedQuestionDb>();
-      return false;
+      return  new List<NewsRecommendedQuestionDb>();
+    }
+
+    public bool GetNewsAnsweredQuestions(int userId, int questionsPage, int questionsAmount, out object userAnsweredQuestions)
+    {
+      throw new NotImplementedException();
     }
   }
 }

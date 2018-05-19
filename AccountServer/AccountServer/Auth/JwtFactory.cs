@@ -15,9 +15,9 @@ namespace AccountServer.Auth
 {
   public class JwtFactory : IJwtFactory
   {
-    private readonly JwtIssuerOptions _jwtOptions;
+    private readonly JwtSettings _jwtOptions;
 
-    public JwtFactory(IOptions<JwtIssuerOptions> jwtOptions)
+    public JwtFactory(IOptions<JwtSettings> jwtOptions)
     {
       _jwtOptions = jwtOptions.Value;
       ThrowIfInvalidOptions(_jwtOptions);
@@ -71,28 +71,28 @@ namespace AccountServer.Auth
       };
       return new ClaimsIdentity(claims, "AccessToken", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
     }
-    private static void ThrowIfInvalidOptions(JwtIssuerOptions options)
+    private static void ThrowIfInvalidOptions(JwtSettings options)
     {
       if (options == null) throw new ArgumentNullException(nameof(options));
 
       if (options.ValidForAccessToken <= TimeSpan.Zero)
       {
-        throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(JwtIssuerOptions.ValidForAccessToken));
+        throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(JwtSettings.ValidForAccessToken));
       }
 
       if (options.ValidForRefreshToken <= TimeSpan.Zero)
       {
-        throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(JwtIssuerOptions.ValidForRefreshToken));
+        throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(JwtSettings.ValidForRefreshToken));
       }
 
       if (options.SigningCredentials == null)
       {
-        throw new ArgumentNullException(nameof(JwtIssuerOptions.SigningCredentials));
+        throw new ArgumentNullException(nameof(JwtSettings.SigningCredentials));
       }
 
       if (options.JtiGenerator == null)
       {
-        throw new ArgumentNullException(nameof(JwtIssuerOptions.JtiGenerator));
+        throw new ArgumentNullException(nameof(JwtSettings.JtiGenerator));
       }
     }
   }

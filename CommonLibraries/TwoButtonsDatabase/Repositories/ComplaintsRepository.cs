@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities.Moderators;
 
@@ -15,13 +16,12 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public  bool TryAddComplaint( int userId, int questionId, int complaintId)
+    public async Task<bool> AddComplaint(int userId, int questionId, int complaintId)
     {
       var complaintAddDate = DateTime.UtcNow;
       try
       {
-        _db.Database.ExecuteSqlCommand($"addComplaint {userId}, {questionId}, {complaintId}, {complaintAddDate}");
-        return true;
+        return  await _db.Database.ExecuteSqlCommandAsync($"addComplaint {userId}, {questionId}, {complaintId}, {complaintAddDate}") >0;
       }
       catch (Exception e)
       {
@@ -30,19 +30,17 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public  bool TryGetComplaints( out IEnumerable<ComplaintDb> complaints)
+    public async Task<List<ComplaintDb>> GetComplaints()
     {
       try
       {
-        complaints = _db.ComplaintDb.FromSql($"select * from dbo.getComplaints()").ToList();
-        return true;
+        return await _db.ComplaintDb.AsNoTracking().FromSql($"select * from dbo.getComplaints()").ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      complaints = new List<ComplaintDb>();
-      return false;
+      return new List<ComplaintDb>();
     }
   }
 }

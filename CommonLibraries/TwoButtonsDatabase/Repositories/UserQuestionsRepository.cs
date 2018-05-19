@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TwoButtonsDatabase.Entities.UserQuestions;
 
@@ -16,13 +17,12 @@ namespace TwoButtonsDatabase.Repositories
       _db = db;
     }
 
-    public bool TryAddRecommendedQuestion(int userToId, int pageUserId, int questionId)
+    public async Task<bool> AddRecommendedQuestion(int userToId, int pageUserId, int questionId)
     {
       var recommendedDate = DateTime.UtcNow;
       try
       {
-        _db.Database.ExecuteSqlCommand($"addTag {userToId}, {pageUserId}, {questionId}, {recommendedDate}");
-        return true;
+        return await _db.Database.ExecuteSqlCommandAsync($"addTag {userToId}, {pageUserId}, {questionId}, {recommendedDate}") > 0;
       }
       catch (Exception e)
       {
@@ -31,195 +31,173 @@ namespace TwoButtonsDatabase.Repositories
       return false;
     }
 
-    public bool TryGetUserAskedQuestions(int userId, int pageUserId, int offset, int count,
-      Expression<Func<UserAskedQuestionDb, object>> predicate, out IEnumerable<UserAskedQuestionDb> userAskedQuestions)
+    public async Task<List<UserAskedQuestionDb>> GetUserAskedQuestions(int userId, int pageUserId, int offset, int count,
+      Expression<Func<UserAskedQuestionDb, object>> predicate)
     {
       var isAnonimus = 0;
 
       try
       {
-        userAskedQuestions = _db.UserAskedQuestionsDb
+        return await _db.UserAskedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {isAnonimus})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userAskedQuestions = new List<UserAskedQuestionDb>();
-      return false;
+      return new List<UserAskedQuestionDb>();
     }
 
-    public bool TryGetUserAnsweredQuestions(int userId, int pageUserId, int offset,
-      int count, out IEnumerable<UserAnsweredQuestionDb> userAnsweredQuestions)
+    public async Task<List<UserAnsweredQuestionDb>> GetUserAnsweredQuestions(int userId, int pageUserId, int offset,
+      int count)
     {
       var isAnonimus = userId == pageUserId ? 1 : 0;
 
 
       try
       {
-        userAnsweredQuestions = _db.UserAnsweredQuestionsDb
+        return await _db.UserAnsweredQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {isAnonimus})")
           .OrderBy(x => x.QuestionAddDate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userAnsweredQuestions = new List<UserAnsweredQuestionDb>();
-      return false;
+      return new List<UserAnsweredQuestionDb>();
     }
 
-    public bool TryGetUserFavoriteQuestions(int userId, int pageUserId, int offset,
-      int count, Expression<Func<UserFavoriteQuestionDb, object>> predicate,
-      out IEnumerable<UserFavoriteQuestionDb> userFavoriteQuestions)
+    public async Task<List<UserFavoriteQuestionDb>> GetUserFavoriteQuestions(int userId, int pageUserId, int offset,
+      int count, Expression<Func<UserFavoriteQuestionDb, object>> predicate)
     {
       var isAnonimus = 0;
 
       try
       {
-        userFavoriteQuestions = _db.UserFavoriteQuestionsDb
+        return await _db.UserFavoriteQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserFavoriteQuestions({userId}, {pageUserId}, {isAnonimus})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userFavoriteQuestions = new List<UserFavoriteQuestionDb>();
-      return false;
+      return new List<UserFavoriteQuestionDb>();
     }
 
-    public bool TryGetUserCommentedQuestions(int userId, int pageUserId, int offset,
-      int count, Expression<Func<UserCommentedQuestionDb, object>> predicate,
-      out IEnumerable<UserCommentedQuestionDb> userCommentedQuestions)
+    public async Task<List<UserCommentedQuestionDb>> GetUserCommentedQuestions(int userId, int pageUserId, int offset,
+      int count, Expression<Func<UserCommentedQuestionDb, object>> predicate)
     {
       try
       {
-        userCommentedQuestions = _db.UserCommentedQuestionsDb
+        return await _db.UserCommentedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userCommentedQuestions = new List<UserCommentedQuestionDb>();
-      return false;
+      return  new List<UserCommentedQuestionDb>();
     }
 
-    public bool TryGeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
-      DateTime topAfterDate, Expression<Func<TopQuestionDb, object>> predicate,
-      out IEnumerable<TopQuestionDb> topQuestions)
+    public async Task<List<TopQuestionDb>> GeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
+      DateTime topAfterDate, Expression<Func<TopQuestionDb, object>> predicate)
     {
       try
       {
-        topQuestions = _db.TopQuestionsDb
+        return await  _db.TopQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      topQuestions = new List<TopQuestionDb>();
-      return false;
+      return  new List<TopQuestionDb>();
     }
 
    
     
-    public bool TryGetAskedQuestions(int userId, int pageUserId, int offset, int count,
-      Expression<Func<AskedQuestionDb, object>> predicate, out IEnumerable<AskedQuestionDb> userAskedQuestions)
+    public async Task<List<AskedQuestionDb>> GetAskedQuestions(int userId, int pageUserId, int offset, int count,
+      Expression<Func<AskedQuestionDb, object>> predicate)
     {
       var isAnonimus = 1;
 
 
       try
       {
-        userAskedQuestions = _db.AskedQuestionsDb
+        return await _db.AskedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId},   {isAnonimus})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userAskedQuestions = new List<AskedQuestionDb>();
-      return false;
+      return new List<AskedQuestionDb>();
     }
 
-    public bool TryGetRecommendedQuestions(int userId, int pageUserId, int offset,
+    public async Task<List<RecommendedQuestionDb>> GetRecommendedQuestions(int userId, int pageUserId, int offset,
       int count,
-      Expression<Func<RecommendedQuestionDb, object>> predicate,
-      out IEnumerable<RecommendedQuestionDb> recommendedQuestions)
+      Expression<Func<RecommendedQuestionDb, object>> predicate)
     {
       try
       {
-        recommendedQuestions = _db.RecommendedQuestionsDb
+        return await _db.RecommendedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.[getUserRecommendedQuestions]({userId})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      recommendedQuestions = new List<RecommendedQuestionDb>();
-      return false;
+      return new List<RecommendedQuestionDb>();
     }
 
-    public bool TryGetLikedQuestions(int userId, int offset, int count,
-      Expression<Func<LikedQuestionDb, object>> predicate, out IEnumerable<LikedQuestionDb> userAnsweredQuestions)
+    public async Task<List<LikedQuestionDb>> GetLikedQuestions(int userId, int offset, int count,
+      Expression<Func<LikedQuestionDb, object>> predicate)
     {
       try
       {
-        userAnsweredQuestions = _db.LikedQuestionsDb
+        return await _db.LikedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserLikedQuestions({userId})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userAnsweredQuestions = new List<LikedQuestionDb>();
-      return false;
+      return new List<LikedQuestionDb>();
     }
 
-    public bool TryGetSavedQuestions(int userId, int offset, int count,
-      Expression<Func<SavedQuestionDb, object>> predicate, out IEnumerable<SavedQuestionDb> userFavoriteQuestions)
+    public async Task<List<SavedQuestionDb>> GetSavedQuestions(int userId, int offset, int count,
+      Expression<Func<SavedQuestionDb, object>> predicate)
     {
       var isAnonimus = 1;
 
 
       try
       {
-        userFavoriteQuestions = _db.SavedQuestionsDb
+        return await _db.SavedQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getUserFavoriteQuestions({userId}, {userId}, {isAnonimus})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToList();
-        return true;
+          .ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      userFavoriteQuestions = new List<SavedQuestionDb>();
-      return false;
+      return new List<SavedQuestionDb>();
     }
   }
 }

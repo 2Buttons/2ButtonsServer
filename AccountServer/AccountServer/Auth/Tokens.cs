@@ -9,7 +9,7 @@ namespace AccountServer.Auth
   public class Tokens
   {
     public static async Task<TokenViewModel> GenerateJwtAsync( IJwtFactory jwtFactory, int userId, RoleType role,
-      JwtIssuerOptions jwtOptions)
+      JwtSettings jwtOptions)
     {
       var response = new TokenViewModel
       {
