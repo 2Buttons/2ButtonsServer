@@ -1,14 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Text;
-using AccountServer.Auth;
+﻿using System.Net;
 using AccountServer.Extensions;
-using AccountServer.Models;
 using AccountServer.Models.Facebook;
 using AccountServer.Models.Vk;
 using AccountServer.Services;
-using AccountServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,33 +10,32 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using TwoButtonsAccountDatabase;
-using TwoButtonsAccountDatabase.Repostirories;
 using TwoButtonsDatabase;
 
 namespace AccountServer
 {
   public class Startup
   {
+    public IConfiguration Configuration { get; }
+     
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; }
-
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+      services.AddDbContext<TwoButtonsContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.AddDbContext<TwoButtonsAccountContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddCors(options =>
       {
@@ -60,11 +53,14 @@ namespace AccountServer
       var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
       var audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
 
+      var key = JwtSettings.CreateSecurityKey(secretKey);
+
       services.Configure<JwtSettings>(options =>
       {
         options.Issuer = issuer;
         options.Audience = audience;
-        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
+        options.SigningCredentials = new SigningCredentials(key,
+          SecurityAlgorithms.HmacSha256);
       });
 
       services.AddSingleton<IJwtService, JwtService>();
@@ -80,7 +76,8 @@ namespace AccountServer
       {
         configureOptions.ClaimsIssuer = issuer;
         configureOptions.RequireHttpsMetadata = false;
-        configureOptions.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+        configureOptions.TokenValidationParameters =
+          JwtSettings.CreateTokenValidationParameters(issuer, audience, key);
       });
 
       services.AddMvc();
@@ -106,7 +103,7 @@ namespace AccountServer
           builder.Run(
             async context =>
             {
-              context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+              context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
               context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
 
               var error = context.Features.Get<IExceptionHandlerFeature>();
@@ -121,12 +118,9 @@ namespace AccountServer
       // app.UseStatusCodePages();
 
       app.UseDefaultFiles();
-      app.UseStaticFiles(new StaticFileOptions()
+      app.UseStaticFiles(new StaticFileOptions
       {
-        OnPrepareResponse = ctx =>
-        {
-          ctx.Context.Response.Headers.Add("Cache-Control", "no-store");
-        }
+        OnPrepareResponse = ctx => { ctx.Context.Response.Headers.Add("Cache-Control", "no-store"); }
       });
 
       app.UseForwardedHeaders(new ForwardedHeadersOptions

@@ -1,8 +1,8 @@
 ﻿using CommonLibraries;
 
-namespace AccountServer.ViewModels.OutputParameters
+namespace AccountServer.Models
 {
-  public class TokenViewModel
+  public class Token
   {
     public int UserId { get; set; }
     public RoleType RoleType { get; set; }

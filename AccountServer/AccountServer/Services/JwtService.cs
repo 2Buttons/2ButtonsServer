@@ -19,12 +19,6 @@ namespace AccountServer.Services
   public class JwtService : IJwtService
   {
     private readonly JwtSettings _jwtSettings;
-
-    /// <summary>
-    /// The signing key to use when generating tokens.
-    /// </summary>
-    private SigningCredentials SigningCredentials { get; set; }
-
     public JwtService(IOptions<JwtSettings> jwtOptions)
     {
       _jwtSettings = jwtOptions.Value;
@@ -32,9 +26,9 @@ namespace AccountServer.Services
     }
 
 
-    public async Task<TokenViewModel> GenerateJwtAsync(int userId, RoleType role)
+    public async Task<Token> GenerateJwtAsync(int userId, RoleType role)
     {
-      var response = new TokenViewModel
+      var response = new Token
       {
         UserId = userId,
         RoleType = role,
@@ -57,7 +51,7 @@ namespace AccountServer.Services
         claims: claimsIdentity.Claims,
         notBefore: _jwtSettings.NotBefore,
         expires: _jwtSettings.ExpirationAccessToken,
-        signingCredentials: SigningCredentials);
+        signingCredentials: _jwtSettings.SigningCredentials);
 
       var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
@@ -76,7 +70,7 @@ namespace AccountServer.Services
         claims: claimsIdentity.Claims,
         notBefore: _jwtSettings.NotBefore,
         expires: _jwtSettings.ExpirationRefreshToken,
-        signingCredentials: SigningCredentials);
+        signingCredentials: _jwtSettings.SigningCredentials);
 
       var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
