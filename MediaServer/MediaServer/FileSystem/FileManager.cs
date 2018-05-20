@@ -33,7 +33,7 @@ namespace MediaServer.FileSystem
       if (result.Count(x => x == '/') >= 3)
         return false;
       var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.RootFolderRelativePath,
-        MediaOptions.RootFolderName, Path.GetFullPath(url));
+        MediaOptions.RootFolderName, result.Split('/')[1], result.Split('/')[2]);
       return File.Exists(path);
     }
 
