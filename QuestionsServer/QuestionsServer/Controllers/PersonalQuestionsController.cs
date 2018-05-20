@@ -17,7 +17,7 @@ namespace QuestionsServer.Controllers
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   //[Route("api/[controller]")]
-  [Route("accountQuestions")]
+  [Route("personal")]
   public class PersonalQuestionsController : Controller //To get user's posts
   {
     private readonly QuestionsUnitOfWork _mainDb;

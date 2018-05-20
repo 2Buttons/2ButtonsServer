@@ -13,7 +13,7 @@ namespace MediaServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  [Route("images")]
+  //[Route("images")]
   public class MediaController : Controller
   {
     private readonly TwoButtonsUnitOfWork _mainDb;

@@ -40,7 +40,7 @@ namespace AuthorizationServer.Controllers
     public async Task<IActionResult> IsUserIdValid([FromBody] UserIdValidationViewModel user)
     {
       var isValid = await _db.Users.IsUserIdExistAsync(user.UserId);
-      return Ok(new { IsValid = !isValid });
+      return Ok(new { IsValid = isValid });
     }
 
     [HttpGet("register")]

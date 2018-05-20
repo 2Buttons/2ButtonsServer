@@ -83,7 +83,7 @@ namespace QuestionsServer.Controllers
       for (var i = 0; i < question.Tags.Count; i++)
       {
         var tag = question.Tags[i];
-        if (await _mainDb.Tags.AddTag(questionId, tag, i))
+        if (!await _mainDb.Tags.AddTag(questionId, tag, i))
           badAddedTags.Add(tag);
       }
       if (badAddedTags.Count != 0)
