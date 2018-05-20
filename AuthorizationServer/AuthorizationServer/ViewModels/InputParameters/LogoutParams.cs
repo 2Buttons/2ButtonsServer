@@ -1,0 +1,4 @@
+﻿namespace AuthorizationServer.ViewModels.InputParameters
+{
+
+}

@@ -1,6 +1,6 @@
 ﻿using CommonLibraries;
 
-namespace AccountServer.ViewModels.OutputParameters.User
+namespace AuthorizationServer.ViewModels.OutputParameters.User
 {
   public class UserContactsViewModel
   {

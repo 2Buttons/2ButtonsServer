@@ -1,7 +1,7 @@
-﻿using AccountServer.ViewModels.OutputParameters.User;
+﻿using AccountData.Main.Entities;
+using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
-using TwoButtonsDatabase.Entities.Account;
 
 namespace AccountServer.ViewModels
 {
@@ -15,7 +15,7 @@ namespace AccountServer.ViewModels
         UserId = dbEntity.UserId,
         Login = dbEntity.Login,
         Age = dbEntity.BirthDate.Age(),
-        SexType = (SexType) dbEntity.Sex,
+        SexType =  dbEntity.Sex,
         Description = dbEntity.Description,
         FullAvatarLink = dbEntity.FullAvatarLink,
         SmallAvatarLink = dbEntity.SmallAvatarLink,
@@ -58,16 +58,5 @@ namespace AccountServer.ViewModels
       };
       return viewModel;
     }
-
-    //public static List<UserContactsViewModel> MapToUserContactsViewModel(
-    //  this IEnumerable<UserContactsDb> userContactsDb)
-    //{
-    //  return userContactsDb.Select(contact => new UserContactsViewModel
-    //    {
-    //      ContactsAccount = contact.Account,
-    //      NetworkType = (SocialNetType) contact.NetworkId
-    //    })
-    //    .ToList();
-    //}
   }
 }

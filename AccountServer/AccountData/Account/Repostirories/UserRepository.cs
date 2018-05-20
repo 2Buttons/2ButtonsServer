@@ -4,13 +4,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using AccountData.Account.DTO;
+using AccountData.Account.Entities;
+using AccountData.Account.Entities.FunctionEntities;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
-using SocialData.Account.DTO;
-using SocialData.Account.Entities;
-using SocialData.Account.Entities.FunctionEntities;
 
-namespace SocialData.Account.Repostirories
+namespace AccountData.Account.Repostirories
 {
   public class UserRepository : IDisposable
   {
@@ -26,32 +26,46 @@ namespace SocialData.Account.Repostirories
       _context.Dispose();
     }
 
-    public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, int externalUserId, SocialNetType socialType,
-      string externalToken)
+
+    public async Task<bool> ChangeUserRoleAsync(int userId, RoleType role)
     {
       var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return false;
-      switch (socialType)
-      {
-        case SocialNetType.Facebook:
-          user.FacebookId = externalUserId;
-          user.FacebookToken = externalToken;
-          break;
-        case SocialNetType.Vk:
-          user.VkId = externalUserId;
-          user.VkToken = externalToken;
-          break;
-        case SocialNetType.Nothing:
-        case SocialNetType.Twiter:
-        case SocialNetType.GooglePlus:
-        case SocialNetType.Telegram:
-        case SocialNetType.Badoo:
-        default:
-          return false;
-      }
 
+      user.RoleType = role;
       _context.Entry(user).State = EntityState.Modified;
       return await _context.SaveChangesAsync() > 0;
+    }
+
+
+    public async Task<bool> ChangeUserEmail(int userId, string email, bool emailConfirmed)
+    {
+      var user = await _context.UsersDb.FindAsync(userId);
+      if (user == null) return false;
+
+      user.Email = email;
+      user.EmailConfirmed = emailConfirmed;
+      _context.Entry(user).State = EntityState.Modified;
+      return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> ChangeUserPasswordAsync(int userId, string oldPasswordHash, string newPasswordHash)
+    {
+      var user = await _context.UsersDb.FindAsync(userId);
+      if (user == null) return false;
+      if (user.PasswordHash != oldPasswordHash) return false;
+
+      user.PasswordHash = newPasswordHash;
+      _context.Entry(user).State = EntityState.Modified;
+      return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<UserDto> GetUserByEmail(string email)
+    {
+      var user =   await _context.UsersDb.AsNoTracking()
+        .FirstOrDefaultAsync(x => x.Email == email);
+      return user?.ToUserDto();
+
     }
 
     public async Task<UserDto> GetUserByUserId(int userId)
@@ -78,6 +92,20 @@ namespace SocialData.Account.Repostirories
       return _context.UserIds.FromSql($"select * from dbo.getUserIdFromVkId(@VkIDTable)", vkIdTable)
         .ToList();
 
+    }
+
+    public async Task<UserDto> GetUserByEmailAndPasswordAsync(string email, string passwordHash)
+    {
+      var user = await _context.UsersDb.AsNoTracking()
+        .FirstOrDefaultAsync(x => x.Email == email && x.PasswordHash == passwordHash);
+      return user?.ToUserDto();
+    }
+
+    public async Task<UserDto> GetUserByPhoneAndPasswordAsync(string phone, string passwordHash)
+    {
+      var user = await _context.UsersDb.AsNoTracking()
+        .FirstOrDefaultAsync(x => x.PhoneNumber == phone && x.PasswordHash == passwordHash);
+      return user?.ToUserDto();
     }
 
     public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialNetType socialType)
@@ -149,5 +177,6 @@ namespace SocialData.Account.Repostirories
         FacebookId = user.FacebookId
       };
     }
+
   }
 }
