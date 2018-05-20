@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountServer", "AccountServer\AccountServer.csproj", "{E3549589-DB17-494C-9022-FAF68DF7B884}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountServer", "AccountServer\AccountServer.csproj", "{E3549589-DB17-494C-9022-FAF68DF7B884}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountData", "AccountData\AccountData.csproj", "{366B495D-6448-490A-A64F-471C10160B9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountData", "AccountData\AccountData.csproj", "{366B495D-6448-490A-A64F-471C10160B9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibraries", "..\CommonLibraries\CommonLibraries\CommonLibraries.csproj", "{03371968-1946-48B0-BF35-6FE811D203D2}"
 EndProject

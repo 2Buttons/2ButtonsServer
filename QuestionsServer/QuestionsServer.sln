@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestionsServer", "TwoButtonsServer\QuestionsServer.csproj", "{97B02328-3552-41F0-B03A-F977AD40F1B5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsConsoleTests", "TwoButtonsConsoleTests\TwoButtonsConsoleTests.csproj", "{93136119-0BFD-4C98-9DCE-85681B2851B6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsDatabase", "..\CommonLibraries\TwoButtonsDatabase\TwoButtonsDatabase.csproj", "{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibraries", "..\CommonLibraries\CommonLibraries\CommonLibraries.csproj", "{D6C08942-9469-4C9E-8151-12559F10A14C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestionsData", "QuestionsData\QuestionsData.csproj", "{CEB42BCA-CB26-4920-ABAD-10FBF534CB77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestionsData", "QuestionsData\QuestionsData.csproj", "{CEB42BCA-CB26-4920-ABAD-10FBF534CB77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestionsServer", "QuestionsServer\QuestionsServer.csproj", "{C23820B8-61B1-46E7-B415-346B27BA5FC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,18 +17,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97B02328-3552-41F0-B03A-F977AD40F1B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93136119-0BFD-4C98-9DCE-85681B2851B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BF2A4C1-CFB5-4641-A8D1-95EC567DCF67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6C08942-9469-4C9E-8151-12559F10A14C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6C08942-9469-4C9E-8151-12559F10A14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6C08942-9469-4C9E-8151-12559F10A14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +29,10 @@ Global
 		{CEB42BCA-CB26-4920-ABAD-10FBF534CB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEB42BCA-CB26-4920-ABAD-10FBF534CB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEB42BCA-CB26-4920-ABAD-10FBF534CB77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C23820B8-61B1-46E7-B415-346B27BA5FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C23820B8-61B1-46E7-B415-346B27BA5FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C23820B8-61B1-46E7-B415-346B27BA5FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C23820B8-61B1-46E7-B415-346B27BA5FC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

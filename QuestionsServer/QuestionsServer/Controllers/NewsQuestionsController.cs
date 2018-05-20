@@ -18,9 +18,9 @@ namespace QuestionsServer.Controllers
   [Route("news")]
   public class NewsQuestionsController : Controller //Don't receive deleted
   {
-    private readonly TwoButtonsUnitOfWork _mainDb;
+    private readonly QuestionsUnitOfWork _mainDb;
 
-    public NewsQuestionsController(TwoButtonsUnitOfWork mainDb)
+    public NewsQuestionsController(QuestionsUnitOfWork mainDb)
     {
       _mainDb = mainDb;
     }

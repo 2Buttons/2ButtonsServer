@@ -20,9 +20,9 @@ namespace QuestionsServer.Controllers
   [Route("accountQuestions")]
   public class PersonalQuestionsController : Controller //To get user's posts
   {
-    private readonly TwoButtonsUnitOfWork _mainDb;
+    private readonly QuestionsUnitOfWork _mainDb;
 
-    public PersonalQuestionsController(TwoButtonsUnitOfWork mainDb)
+    public PersonalQuestionsController(QuestionsUnitOfWork mainDb)
     {
       _mainDb = mainDb;
     }

@@ -11,9 +11,9 @@ namespace QuestionsServer.Controllers
   //[Route("api/[controller]")]
   public class CommentsController : Controller
   {
-    private readonly TwoButtonsUnitOfWork _mainDb;
+    private readonly QuestionsUnitOfWork _mainDb;
 
-    public CommentsController(TwoButtonsUnitOfWork mainDb)
+    public CommentsController(QuestionsUnitOfWork mainDb)
     {
       _mainDb = mainDb;
     }

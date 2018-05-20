@@ -19,9 +19,9 @@ namespace QuestionsServer.Controllers
   [Route("userQuestions")]
   public class UserPageQuestionsController : Controller //To get user's posts
   {
-    private readonly TwoButtonsUnitOfWork _mainDb;
+    private readonly QuestionsUnitOfWork _mainDb;
 
-    public UserPageQuestionsController(TwoButtonsUnitOfWork mainDb)
+    public UserPageQuestionsController(QuestionsUnitOfWork mainDb)
     {
       _mainDb = mainDb;
     }

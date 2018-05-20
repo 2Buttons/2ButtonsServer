@@ -12,10 +12,16 @@ namespace AccountData
     private readonly TwoButtonsContext _dbMain;
 
     private AccountRepository _accountRepository;
+    private NotificationsRepository _notificationsRepository;
     private UserRepository _userRepository;
 
+
     public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_dbAccount));
+
     public AccountRepository Accounts => _accountRepository ?? (_accountRepository = new AccountRepository(_dbMain));
+
+    public NotificationsRepository Notifications => _notificationsRepository ??
+                                                    (_notificationsRepository = new NotificationsRepository(_dbMain));
 
     public AccountDataUnitOfWork(TwoButtonsContext dbMain, TwoButtonsAccountContext dbAccount)
     {
@@ -36,7 +42,6 @@ namespace AccountData
         {
           _dbAccount.Dispose();
           _dbMain.Dispose();
-
         }
         _disposed = true;
       }

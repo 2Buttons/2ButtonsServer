@@ -1,22 +1,25 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AccountData;
+using AccountServer.ViewModels;
+using AccountServer.ViewModels.InputParameters;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using QuestionsData;
-using QuestionsServer.ViewModels.InputParameters;
-using QuestionsServer.ViewModels.OutputParameters;
 
-namespace QuestionsServer.Controllers
+namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   //[Route("api/[controller]")]
   public class NotificationsController : Controller //To get user's posts
   {
-    private readonly TwoButtonsUnitOfWork _mainDb;
+    private readonly AccountDataUnitOfWork _db;
 
-    public NotificationsController(TwoButtonsUnitOfWork mainDb)
+    public NotificationsController(AccountDataUnitOfWork db)
     {
-      _mainDb = mainDb;
+      _db = db;
     }
 
     [HttpPost("notifications")]
@@ -25,7 +28,7 @@ namespace QuestionsServer.Controllers
       if (userId == null)
         return BadRequest($"Input parameter  is null");
 
-      var notifications = await _mainDb.Notifications.GetNotifications(userId.UserId);
+      var notifications = await _db.Notifications.GetNotifications(userId.UserId);
       //  return BadRequest("Something goes wrong. We will fix it!... maybe)))");
 
       return Ok(notifications.MapNotificationDbToViewModel());

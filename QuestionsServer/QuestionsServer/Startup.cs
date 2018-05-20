@@ -30,7 +30,7 @@ namespace QuestionsServer
                   .AllowAnyMethod());
       });
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddTransient<TwoButtonsUnitOfWork>();
+      services.AddTransient<QuestionsUnitOfWork>();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));

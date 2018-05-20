@@ -3,7 +3,7 @@ using QuestionsData.Repositories;
 
 namespace QuestionsData
 {
-  public class TwoButtonsUnitOfWork : IDisposable
+  public class QuestionsUnitOfWork : IDisposable
   {
     private readonly TwoButtonsContext _db;
 
@@ -27,7 +27,7 @@ namespace QuestionsData
     public UserQuestionsRepository UserQuestions => _userQuestionsRepository ??(_userQuestionsRepository = new UserQuestionsRepository(_db));
 
 
-    public TwoButtonsUnitOfWork(TwoButtonsContext db)
+    public QuestionsUnitOfWork(TwoButtonsContext db)
     {
       _db = db;
     }
