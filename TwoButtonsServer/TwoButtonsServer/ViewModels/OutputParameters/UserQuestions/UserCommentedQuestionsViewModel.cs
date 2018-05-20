@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonLibraries;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters.UserQuestions
+namespace QuestionsServer.ViewModels.OutputParameters.UserQuestions
 {
     public class UserCommentedQuestionsViewModel : QuestionBaseViewModel
     {

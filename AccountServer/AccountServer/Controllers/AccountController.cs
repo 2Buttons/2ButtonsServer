@@ -77,12 +77,7 @@ namespace AccountServer.Controllers
       return Ok(result);
     }
 
-    [HttpPost("isUserIdValid")]
-    public async Task<IActionResult> IsUserIdValid([FromBody] UserIdValidationViewModel user)
-    {
-      var isValid = await _accountDb.Users.IsUserIdExistAsync(user.UserId);
-      return Ok(new {IsValid = !isValid});
-    }
+   
 
     private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
     {

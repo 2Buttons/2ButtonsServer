@@ -1,4 +1,4 @@
-﻿namespace TwoButtonsServer.ViewModels
+﻿namespace QuestionsServer.ViewModels
 {
     public class TagViewModel
     {

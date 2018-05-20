@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaServer", "MediaServer\MediaServer.csproj", "{F518BDD7-7E9E-4632-A223-8F9D49432F36}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoButtonsDatabase", "..\CommonLibraries\TwoButtonsDatabase\TwoButtonsDatabase.csproj", "{25458358-D45D-4695-A4A1-C1EFF7C8D174}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibraries", "..\CommonLibraries\CommonLibraries\CommonLibraries.csproj", "{492C4F26-98EE-4912-9237-9209DACFC8FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaDataLayer", "MediaDataLayer\MediaDataLayer.csproj", "{3FD8B547-33E0-4C0F-8963-D250DD29F909}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{F518BDD7-7E9E-4632-A223-8F9D49432F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F518BDD7-7E9E-4632-A223-8F9D49432F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F518BDD7-7E9E-4632-A223-8F9D49432F36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25458358-D45D-4695-A4A1-C1EFF7C8D174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25458358-D45D-4695-A4A1-C1EFF7C8D174}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25458358-D45D-4695-A4A1-C1EFF7C8D174}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25458358-D45D-4695-A4A1-C1EFF7C8D174}.Release|Any CPU.Build.0 = Release|Any CPU
 		{492C4F26-98EE-4912-9237-9209DACFC8FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{492C4F26-98EE-4912-9237-9209DACFC8FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{492C4F26-98EE-4912-9237-9209DACFC8FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{492C4F26-98EE-4912-9237-9209DACFC8FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FD8B547-33E0-4C0F-8963-D250DD29F909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FD8B547-33E0-4C0F-8963-D250DD29F909}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FD8B547-33E0-4C0F-8963-D250DD29F909}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FD8B547-33E0-4C0F-8963-D250DD29F909}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

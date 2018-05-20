@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonLibraries;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters
+namespace QuestionsServer.ViewModels.OutputParameters
 {
     public class NotificationViewModel
     {

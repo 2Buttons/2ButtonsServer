@@ -1,4 +1,4 @@
-﻿namespace TwoButtonsServer.ViewModels.OutputParameters
+﻿namespace QuestionsServer.ViewModels.OutputParameters
 {
     //public partial class TagViewModel
     //{

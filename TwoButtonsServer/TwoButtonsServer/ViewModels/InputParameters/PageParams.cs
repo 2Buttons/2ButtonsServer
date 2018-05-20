@@ -1,4 +1,4 @@
-﻿namespace TwoButtonsServer.ViewModels.InputParameters
+﻿namespace QuestionsServer.ViewModels.InputParameters
 {
   public class PageParams
   {

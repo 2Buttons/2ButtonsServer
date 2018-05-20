@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters.NewsQuestions
+namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
 {
     public class NewsViewModel
     {

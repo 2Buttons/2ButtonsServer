@@ -1,8 +1,6 @@
-﻿using System;
-using System.Globalization;
-using CommonLibraries;
+﻿using CommonLibraries;
 
-namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
+namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 {
   public class UserQuestionsViewModel : UserPageIdViewModel
   {

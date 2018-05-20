@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using TwoButtonsDatabase;
-using TwoButtonsServer.ViewModels.InputParameters;
-using TwoButtonsServer.ViewModels.OutputParameters;
+using QuestionsData;
+using QuestionsServer.ViewModels.InputParameters;
+using QuestionsServer.ViewModels.OutputParameters;
 
-namespace TwoButtonsServer.Controllers
+namespace QuestionsServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MediaServer.ViewModel
+﻿namespace MediaServer.ViewModel
 {
   public enum AvatarSizeType
   {
@@ -16,5 +11,4 @@ namespace MediaServer.ViewModel
     Background = 0,
     CustomBackground = 1
   }
-
 }

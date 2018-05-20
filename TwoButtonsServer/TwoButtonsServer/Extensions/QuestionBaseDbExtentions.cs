@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using CommonLibraries;
-using TwoButtonsDatabase.Entities;
+using QuestionsData.Entities;
 
-namespace TwoButtonsServer.Extensions
+namespace QuestionsServer.Extensions
 {
   public static class QuestionBaseDbExtentions
   {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CommonLibraries;
-using TwoButtonsDatabase.Entities;
+using QuestionsData.Entities;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters
+namespace QuestionsServer.ViewModels.OutputParameters
 {
     public static class MappingNotifications
     {

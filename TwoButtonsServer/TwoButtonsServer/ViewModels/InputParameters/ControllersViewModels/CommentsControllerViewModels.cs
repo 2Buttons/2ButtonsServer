@@ -1,7 +1,6 @@
 ﻿using CommonLibraries;
-using TwoButtonsServer.ViewModels.OutputParameters;
 
-namespace TwoButtonsServer.ViewModels.InputParameters.ControllersViewModels
+namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 {
 
     public class AddCommentViewModel : QuestionIdViewModel

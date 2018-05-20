@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CommonLibraries.Extensions;
-using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.NewsQuestions;
-using TwoButtonsDatabase.Entities.UserQuestions;
-using TwoButtonsServer.ViewModels.OutputParameters.NewsQuestions;
-using TwoButtonsServer.ViewModels.OutputParameters.UserQuestions;
+using QuestionsData.Entities;
+using QuestionsData.Entities.NewsQuestions;
+using QuestionsData.Entities.UserQuestions;
+using QuestionsServer.ViewModels.OutputParameters.NewsQuestions;
+using QuestionsServer.ViewModels.OutputParameters.UserQuestions;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters
+namespace QuestionsServer.ViewModels.OutputParameters
 {
   public static class MappingQuestionDbToViewModel
   {

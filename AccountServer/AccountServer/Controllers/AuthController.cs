@@ -43,6 +43,13 @@ namespace AccountServer.Controllers
       _mainDb = mainDb;
     }
 
+    [HttpPost("isUserIdValid")]
+    public async Task<IActionResult> IsUserIdValid([FromBody] UserIdValidationViewModel user)
+    {
+      var isValid = await _accountDb.Users.IsUserIdExistAsync(user.UserId);
+      return Ok(new { IsValid = !isValid });
+    }
+
     [HttpGet("register")]
     public IActionResult AddUser()
     {

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Mime;
 using CommonLibraries;
+using MediaDataLayer;
 using MediaServer.FileSystem;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -13,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TwoButtonsDatabase;
 
 namespace MediaServer
 {
@@ -29,8 +29,7 @@ namespace MediaServer
 
     public void ConfigureServices(IServiceCollection services)
     {
-      var connection = Configuration.GetConnectionString("TwoButtonsDatabase");
-      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(connection));
+      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
       services.AddTransient<TwoButtonsUnitOfWork>();
 
       services.AddOptions();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using CommonLibraries;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters
+namespace QuestionsServer.ViewModels.OutputParameters
 {
   public class QuestionBaseViewModel
   {

@@ -1,6 +1,6 @@
 ﻿using CommonLibraries;
 
-namespace TwoButtonsServer.ViewModels.OutputParameters
+namespace QuestionsServer.ViewModels.OutputParameters
 {
     public class PhotoViewModel
     {

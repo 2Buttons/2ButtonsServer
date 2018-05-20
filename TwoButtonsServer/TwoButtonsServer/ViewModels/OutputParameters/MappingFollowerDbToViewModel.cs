@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using CommonLibraries;
 using CommonLibraries.Extensions;
-using TwoButtonsDatabase.Entities;
-using TwoButtonsDatabase.Entities.Followers;
+using QuestionsData.Entities.Followers;
 
-
-namespace TwoButtonsServer.ViewModels.OutputParameters
+namespace QuestionsServer.ViewModels.OutputParameters
 {
     public static class MappingFollowerDbToViewModel
     {
