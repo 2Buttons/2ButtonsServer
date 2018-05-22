@@ -215,7 +215,7 @@ namespace AuthorizationServer.Controllers
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout([FromBody]LogoutParams logout)
     {
       if ((RoleType) int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value) ==
           RoleType.Guest)
@@ -225,7 +225,7 @@ namespace AuthorizationServer.Controllers
             out var userId) || userId == -1)
         return BadRequest("We can not find your id.");
 
-      var tokenFromDb = await _db.Tokens.FindTokenByIdAsync(userId);
+      var tokenFromDb = await _db.Tokens.FindTokenByTokenAndUserIdAsync(userId, logout.RefreshToken);
       if (tokenFromDb == null)
       {
         if (userId == 0) return BadRequest("We can not find your refresh token. Please, log in again.");
@@ -234,7 +234,7 @@ namespace AuthorizationServer.Controllers
           "We can not find your refresh token. Please, login again We are forced to save your data. Now you are out of all devices. Please log in again.");
       }
 
-      await _db.Tokens.RemoveTokensByUserIdAsync(userId);
+      await _db.Tokens.RemoveTokenAsync(tokenFromDb);
 
       return Ok("Account is logged out of the system");
     }

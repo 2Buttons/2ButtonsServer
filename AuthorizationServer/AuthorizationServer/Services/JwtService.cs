@@ -77,7 +77,7 @@ namespace AuthorizationServer.Services
         new Claim(JwtRegisteredClaimNames.Jti, await _jwtSettings.JtiGenerator()),
         new Claim(JwtRegisteredClaimNames.Iat, _jwtSettings.IssuedAt.ToUnixEpochDate().ToString(), ClaimValueTypes.Integer64),
         new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString(), ClaimValueTypes.Integer,  _jwtSettings.Issuer),
-        new Claim(ClaimsIdentity.DefaultRoleClaimType, role.ToString(),ClaimValueTypes.String, _jwtSettings.Issuer)
+        new Claim(ClaimsIdentity.DefaultRoleClaimType, ((int)role).ToString(),ClaimValueTypes.String, _jwtSettings.Issuer)
       };
       return new ClaimsIdentity(claims, "AccessToken", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
     }

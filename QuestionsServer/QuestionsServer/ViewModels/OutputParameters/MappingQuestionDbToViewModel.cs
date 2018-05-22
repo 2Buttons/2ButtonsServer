@@ -211,7 +211,6 @@ namespace QuestionsServer.ViewModels.OutputParameters
         UserId = dbEntity.UserId,
         Login = dbEntity.Login,
         SmallAvatarLink = dbEntity.SmallAvatarLink,
-        ShowsAmount = dbEntity.Shows,
         LikesAmount = dbEntity.Likes,
         DislikesAmount = dbEntity.Dislikes,
         YourFeedbackType = dbEntity.YourFeedback,

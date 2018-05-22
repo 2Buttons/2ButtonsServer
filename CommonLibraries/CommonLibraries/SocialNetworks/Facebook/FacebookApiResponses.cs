@@ -2,23 +2,57 @@
 
 namespace CommonLibraries.SocialNetworks.Facebook
 {
-  public class FacebookUserData
+  public class FacebookUserResponse
   {
-    public long Id { get; set; }
+    [JsonProperty("id")]
+    public long ExternalUserId { get; set; }
     public string Email { get; set; }
     public string Name { get; set; }
     [JsonProperty("first_name")]
     public string FirstName { get; set; }
     [JsonProperty("last_name")]
     public string LastName { get; set; }
-    public string Gender { get; set; }
+
+    [JsonProperty("gender")]
+    public string FbSexType { private get; set; }
+
+    public SexType SexType
+    {
+      get
+
+      {
+        switch (FbSexType)
+        {
+          case "male":
+            return SexType.Man;
+          case "female":
+            return SexType.Woman;
+          default:
+            return SexType.Both;
+        }
+      }
+    }
+    [JsonProperty("birthday")]
+    public string Birthday { get; set; }
     public string Locale { get; set; }
-    public FacebookPictureData Picture { get; set; }
+    [JsonProperty("hometown")]
+    public FbCity City { get; set; }
   }
 
-  public class FacebookPictureData
+  public class FbCity
   {
-    public FacebookPicture Data { get; set; }
+    [JsonProperty("id")]
+    public int CityId { get; set; }
+
+    [JsonProperty("name")]
+    public string Title { get; set; }
+  }
+
+
+  public class FacebookPictureResponse
+  {
+    [JsonProperty("data")]
+    public FacebookPicture Response { get; set; }
   }
 
   public class FacebookPicture
@@ -30,7 +64,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
     public string Url { get; set; }
   }
 
-  public class FacebookUserAccessTokenData
+  public class FacebookUserAccessTokenResponse
   {
     [JsonProperty("app_id")]
     public long AppId { get; set; }
@@ -46,7 +80,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
 
   public class FacebookUserAccessTokenValidation
   {
-    public FacebookUserAccessTokenData Data { get; set; }
+    public FacebookUserAccessTokenResponse Data { get; set; }
   }
 
   public class FacebookAppAccessToken
@@ -55,5 +89,11 @@ namespace CommonLibraries.SocialNetworks.Facebook
     public string TokenType { get; set; }
     [JsonProperty("access_token")]
     public string AccessToken { get; set; }
+    [JsonProperty("expires_in")]
+    public string ExpiresIn { get; set; }
+    [JsonProperty("error")]
+    public string Error { get; set; }
+    [JsonProperty("error_description")]
+    public string ErrorDescription { get; set; }
   }
 }

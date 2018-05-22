@@ -30,10 +30,18 @@ namespace MediaServer.FileSystem
       var pattern = @"/+";
       var target = "/";
       var result = new Regex(pattern).Replace(url, target);
-      if (result.Count(x => x == '/') >= 3)
+      var counts = result.Count(x => x == '/');
+      if (counts >= 3 || counts < 2)
         return false;
-      var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.RootFolderRelativePath,
-        MediaOptions.RootFolderName, result.Split('/')[1], result.Split('/')[2]);
+      var paths = new List<string>
+      {
+        AppDomain.CurrentDomain.BaseDirectory,
+        MediaOptions.RootFolderRelativePath,
+        MediaOptions.RootFolderName
+      };
+      paths.AddRange(result.Split('/'));
+     
+      var path = Path.Combine(paths.ToArray());
       return File.Exists(path);
     }
 

@@ -16,7 +16,6 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public int UserId { get; set; }
     public string Login { get; set; }
     public string SmallAvatarLink { get; set; }
-    public int ShowsAmount { get; set; }
     public int LikesAmount { get; set; }
     public int DislikesAmount { get; set; }
     public FeedbackType YourFeedbackType { get; set; }

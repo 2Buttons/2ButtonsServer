@@ -68,7 +68,7 @@ namespace AuthorizationData.Account.Repostirories
 
     public async Task<bool> RemoveTokensByUserIdAsync(int userId)
     {
-      var tokensForRemoving = _context.TokensDb.AsNoTracking().Where(x=>x.UserId == userId);
+      var tokensForRemoving = _context.TokensDb.AsNoTracking().Where(x => x.UserId == userId).ToList();
       var tokensCount = tokensForRemoving.Count();
       _context.TokensDb.RemoveRange(tokensForRemoving);
       return await _context.SaveChangesAsync() >=  tokensCount;

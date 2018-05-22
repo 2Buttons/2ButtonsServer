@@ -18,7 +18,6 @@ namespace QuestionsData.Entities
     public int UserId { get; set; }
     public string Login { get; set; }
     public string SmallAvatarLink { get; set; }
-    public int Shows { get; set; }
     public int Likes { get; set; }
     public int Dislikes { get; set; }
     public FeedbackType YourFeedback { get; set; }

@@ -58,7 +58,7 @@ namespace AuthorizationData.Account.Repostirories
       return false;
     }
 
-    public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, int externalUserId, SocialNetType socialType,
+    public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, long externalUserId, SocialNetType socialType,
       string externalToken)
     {
       var user = await _contextAccount.UsersDb.FindAsync(userId);
@@ -70,7 +70,7 @@ namespace AuthorizationData.Account.Repostirories
           user.FacebookToken = externalToken;
           break;
         case SocialNetType.Vk:
-          user.VkId = externalUserId;
+          user.VkId = (int)externalUserId;
           user.VkToken = externalToken;
           break;
         case SocialNetType.Nothing:
@@ -163,7 +163,7 @@ namespace AuthorizationData.Account.Repostirories
       return user?.ToUserDto();
     }
 
-    public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialNetType socialType)
+    public async Task<UserDto> GetUserByExternalUserIdAsync(long externalUserId, SocialNetType socialType)
     {
       UserDb user;
       switch (socialType)

@@ -14,9 +14,15 @@ namespace AuthorizationServer.ViewModels.InputParameters.Auth
 
   public class VkAuthCodeViewModel
   {
+    [JsonProperty("state")]
+    public string State { get; set; }
+    [JsonProperty("status")]
     public bool Status { get; set; }
+    [JsonProperty("code")]
     public string Code { get; set; }
+    [JsonProperty("error")]
     public string Error { get; set; }
+    [JsonProperty("eror_description")]
     public string ErrorDescription { get; set; }
   }
 
