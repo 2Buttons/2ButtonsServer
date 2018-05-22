@@ -59,9 +59,8 @@ namespace AuthorizationServer.Controllers
       if (string.IsNullOrEmpty(vkAuth.Code))
         return BadRequest("Code is null or empty.");
 
-      var appAccessTokenResponse =
-        await Client.GetStringAsync(
-          $"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=http://localhost:6210/vk-auth-code.html&code={vkAuth.Code}");
+      //var appAccessTokenResponse =await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=http://localhost:6210/vk-auth-code.html&code={vkAuth.Code}");
+      var appAccessTokenResponse =await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=https://2buttons.ru/vk-auth-code.html&code={vkAuth.Code}");
       var appAccessToken = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
 
 
@@ -137,7 +136,7 @@ namespace AuthorizationServer.Controllers
     }
 
 
-    [HttpGet("fbLogin")]
+    [HttpPost("fbLogin")]
     public async Task<IActionResult> Facebook([FromBody] FacebookAuthViewModel fbAuth)
     {
       if (fbAuth == null)
