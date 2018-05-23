@@ -61,23 +61,58 @@ namespace SocialData.Account.Repostirories
 
     }
 
-    public List<UserIdDb> GetUserIdFromVkId(IEnumerable<int> ids)
+    public async Task<List<int>> GetUserIdsFromVkIds(IEnumerable<int> vkIds)
     {
-      var dataTable = new DataTable();
-      dataTable.Columns.Add("id", typeof(int));
-      foreach (var id in ids)
-      {
-        dataTable.Rows.Add(id);
-      }
-      var vkIdTable = new SqlParameter
-      {
-        ParameterName = "@VkIDTable",
-        TypeName="dbo.idTable",
-        Value = dataTable
-      };
-      return _context.UserIds.FromSql($"select * from dbo.getUserIdFromVkId(@VkIDTable)", vkIdTable)
-        .ToList();
+      var result = new List<int>();
 
+      foreach (var vkId in vkIds)
+      {
+        var userDb = await _context.UsersDb.FirstOrDefaultAsync(x => x.VkId == vkId);
+        if (userDb != null)
+          result.Add(userDb.UserId);
+      }
+      return result;
+      //var dataTable = new DataTable();
+      //dataTable.Columns.Add("id", typeof(int));
+      //foreach (var id in ids)
+      //{
+      //  dataTable.Rows.Add(id);
+      //}
+      //var vkIdTable = new SqlParameter
+      //{
+      //  ParameterName = "@VkIdTable",
+      //  TypeName="dbo.idTable",
+      //  Value = dataTable
+      //};
+      //return _context.UserIds.FromSql($"select * from dbo.[getRecommendedFromUsersID](@VkIdTable)", vkIdTable)
+      //  .ToList();
+    }
+
+    public async Task<List<int>> GetUserIdsFromFbIds(IEnumerable<int> fbIds)
+    {
+      var result = new List<int>();
+
+      foreach (var fbId in fbIds)
+      {
+        var userDb = await _context.UsersDb.FirstOrDefaultAsync(x => x.FacebookId == fbId);
+        if (userDb != null)
+          result.Add(userDb.UserId);
+      }
+      return result;
+      //var dataTable = new DataTable();
+      //dataTable.Columns.Add("id", typeof(int));
+      //foreach (var id in ids)
+      //{
+      //  dataTable.Rows.Add(id);
+      //}
+      //var vkIdTable = new SqlParameter
+      //{
+      //  ParameterName = "@FbIdTable",
+      //  TypeName = "dbo.idTable",
+      //  Value = dataTable
+      //};
+      //return _context.UserIds.FromSql($"select * from dbo.[getRecommendedFromUsersID](@FbIdTable)", vkIdTable)
+      //  .ToList();
     }
 
     public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialNetType socialType)

@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using CommonLibraries.Extensions;
+using CommonLibraries.SocialNetworks.Vk;
+using Newtonsoft.Json;
 
 namespace CommonLibraries.SocialNetworks.Facebook
 {
@@ -33,7 +36,11 @@ namespace CommonLibraries.SocialNetworks.Facebook
       }
     }
     [JsonProperty("birthday")]
-    public string Birthday { get; set; }
+    public string FbBirthday { private get; set; }
+
+    public DateTime Birthday => FbBirthday.IsNullOrEmpty() ? DateTime.Now : Convert.ToDateTime(FbBirthday);
+
+
     public string Locale { get; set; }
     [JsonProperty("hometown")]
     public FbCity City { get; set; }
@@ -95,5 +102,25 @@ namespace CommonLibraries.SocialNetworks.Facebook
     public string Error { get; set; }
     [JsonProperty("error_description")]
     public string ErrorDescription { get; set; }
+  }
+
+  public class FbFriendIdsResponse
+  {
+    [JsonProperty("data")]
+    public FbFriendItems<int> Response { get; set; }
+  }
+
+  //public class FbFriendsDataResponse
+  //{
+  //  [JsonProperty("response")]
+  //  public FbFriendItems<FbFriendData> Response { get; set; }
+  //}
+
+  public class FbFriendItems<T>
+  {
+    //[JsonProperty("count")]
+    //public int Count { get; set; }
+    [JsonProperty("uid")]
+    public T[] Items { get; set; }
   }
 }
