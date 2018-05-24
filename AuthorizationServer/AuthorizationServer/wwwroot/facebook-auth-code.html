@@ -11,7 +11,6 @@
     <script>
         // if we don't receive an access token then login failed and/or the user has not connected properly
         var code = getParameterByName("code");
-        var expireIn = getParameterByName("expire_in");
         var userId = getParameterByName("user_id");
         var state = getParameterByName("state");
 
@@ -20,7 +19,6 @@
             message.status = true;
             message.state = state;
             message.code = code;
-            message.expireIn = expireIn;
         }
         else {
             message.status = false;
@@ -43,7 +41,7 @@
             body: json
         };
 
-      fetch("http://localhost:6210/fbLogin", myInit).then(function (response) {
+      fetch("https://api.2buttons.ru/fbLogin", myInit).then(function (response) {
         console.log(response);
 /*что-то сделать при успешном запросе*/
       });

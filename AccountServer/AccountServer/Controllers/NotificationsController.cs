@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AccountData;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
+using CommonLibraries.ApiResponse;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,12 +27,12 @@ namespace AccountServer.Controllers
     public async Task<IActionResult> GetNotifications([FromBody] UserIdViewModel userId)
     {
       if (userId == null)
-        return BadRequest($"Input parameter  is null");
+        return new BadResponseResult($"Input body is null");
 
       var notifications = await _db.Notifications.GetNotifications(userId.UserId);
-      //  return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      //  return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
-      return Ok(notifications.MapNotificationDbToViewModel());
+      return new OkResponseResult(notifications.MapNotificationDbToViewModel());
     }
   }
 }

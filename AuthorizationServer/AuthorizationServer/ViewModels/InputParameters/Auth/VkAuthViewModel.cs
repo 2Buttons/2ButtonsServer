@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace AuthorizationServer.ViewModels.InputParameters.Auth
 {
@@ -14,8 +15,10 @@ namespace AuthorizationServer.ViewModels.InputParameters.Auth
 
   public class VkAuthCodeViewModel
   {
+    [Required]
     [JsonProperty("state")]
     public string State { get; set; }
+    [Required]
     [JsonProperty("status")]
     public bool Status { get; set; }
     [JsonProperty("code")]

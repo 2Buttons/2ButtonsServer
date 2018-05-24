@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CommonLibraries.Extensions
 {
-  public static class RandomExtensions
+  public static class EnumerableExtensions
   {
     // Случайный объект, используемый этим методом.
     private static Random Random;

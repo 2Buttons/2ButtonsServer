@@ -8,6 +8,7 @@ using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Account.Entities.FunctionEntities;
 using AuthorizationData.Main;
+using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,8 +37,7 @@ namespace AuthorizationData.Account.Repostirories
       return await _contextAccount.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> AddUserIntoMainDbAsync(int userId, string login, DateTime birthDate, SexType sex,
-      string city, string description, string fullAvatarLink, string smallAvatarLink)
+    public async Task<bool> AddUserIntoMainDbAsync(UserMainDb user)
     {
       var returnsCode = new SqlParameter
       {
@@ -48,7 +48,7 @@ namespace AuthorizationData.Account.Repostirories
       try
       {
         return await _contextMain.Database.ExecuteSqlCommandAsync(
-                 $"addUser {userId}, {login}, {birthDate}, {sex}, {city},  {description}, {fullAvatarLink}, {smallAvatarLink}, {returnsCode} OUT") >
+                 $"addUser {user.UserId}, {user.Login}, {user.BirthDate}, {user.Sex}, {user.City},  {user.Description}, {user.FullAvatarLink}, {user.SmallAvatarLink}, {returnsCode} OUT") >
                0;
       }
       catch (Exception e)

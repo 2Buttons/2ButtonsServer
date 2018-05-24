@@ -21,11 +21,13 @@ namespace AuthorizationServer.ViewModels.InputParameters
     [Required]
     public SexType SexType { get; set; }
 
-    [Required]
-    public string Phone { get; set; }
+    public string Phone { get; set; } = null;
 
     public string Email { get; set; } = null;
-    public string City { get; set; } = null;
+
+    [Required]
+    public string City { get; set; }
+
     public string Description { get; set; } = null;
     public string FullAvatarLink { get; set; } = null;
     public string SmallAvatarLink { get; set; } = null;

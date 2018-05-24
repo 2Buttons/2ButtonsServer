@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.ApiResponse;
 using CommonLibraries.Extensions;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -16,7 +17,6 @@ using SocialServer.ViewModels.InputParameters;
 using SocialServer.ViewModels.OutputParameters;
 using SocialServer.ViewModels.OutputParameters.User;
 
-
 namespace SocialServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
@@ -27,14 +27,10 @@ namespace SocialServer.Controllers
   {
     private static readonly HttpClient Client = new HttpClient();
 
-    private readonly VkAuthSettings _vkAuthSettings;
-    private readonly FacebookAuthSettings _fbAuthSettings;
-
-
-
     private readonly SocialDataUnitOfWork _socialDb;
 
-
+    private readonly VkAuthSettings _vkAuthSettings;
+    private readonly FacebookAuthSettings _fbAuthSettings;
 
     public FriendsController(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
       IOptions<VkAuthSettings> vkAuthSettingsAccessor, IOptions<JwtSettings> jwtOptions,
@@ -51,11 +47,11 @@ namespace SocialServer.Controllers
 
     {
       if (user == null)
-        return BadRequest("Input parameters is null");
-      if (user.UserId ==0)
-        return BadRequest("You are a guest");
+        return new BadResponseResult("Input parameters is null");
+      if (user.UserId == 0)
+        return new BadResponseResult("You are a guest");
 
-      var vkFriends =  GetFriendsFromVk(user.UserId);
+      var vkFriends = GetFriendsFromVk(user.UserId);
       var fbFriends = GetFriendsFromFb(user.UserId);
 
       await Task.WhenAll(vkFriends, fbFriends);
@@ -63,15 +59,15 @@ namespace SocialServer.Controllers
       var friendsFromNetwroks = vkFriends.Result.Distinct();
       var socialFriends =
         await _socialDb.RecommendedPeople.GetRecommendedFromUsersId(friendsFromNetwroks);
-       // return BadRequest("Something goes wrong with social friends.");
+      // return new BadResponseResult("Something goes wrong with social friends.");
 
       var partOffset = user.PageParams.Offset / 3;
       var partCount = user.PageParams.Count / 3;
 
       var followers = await _socialDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
-       // return BadRequest("Something goes wrong with followers.");
+      // return new BadResponseResult("Something goes wrong with followers.");
       var sameFollows = await _socialDb.RecommendedPeople.GetRecommendedFromFollows(user.UserId, partOffset, partCount);
-        //return BadRequest("Something goes wrong with follows as you ))) .");
+      //return new BadResponseResult("Something goes wrong with follows as you ))) .");
 
       Parallel.ForEach(followers, x => { x.CommonFollowsTo = (int) (x.CommonFollowsTo * 1.5); });
 
@@ -88,7 +84,7 @@ namespace SocialServer.Controllers
       result.Followers = followersOut.Take(followersCount / 2).ToList();
       result.CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList();
 
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     private async Task<List<int>> GetFriendsFromVk(int userId)
@@ -97,19 +93,21 @@ namespace SocialServer.Controllers
       if (vkUserId == 0)
         return new List<int>();
 
-      var vkFriendIdsResponse = await Client.GetStringAsync($"https://api.vk.com/method/friends.get?user_id={vkUserId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+      var vkFriendIdsResponse = await Client.GetStringAsync(
+        $"https://api.vk.com/method/friends.get?user_id={vkUserId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
-      return  await _socialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
+      return await _socialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
     }
 
     private async Task<List<int>> GetFriendsFromFb(int userId)
     {
-      var user = (await _socialDb.Users.GetUserByUserId(userId));
+      var user = await _socialDb.Users.GetUserByUserId(userId);
       if (user.FacebookId == 0)
         return new List<int>();
 
-      var fbFriendIdsResponse = await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{user.FacebookId}/friends&access_token={user.FacebookToken}");
+      var fbFriendIdsResponse = await Client.GetStringAsync(
+        $"https://graph.facebook.com/v3.0/{user.FacebookId}/friends&access_token={user.FacebookToken}");
       var fbFriendIds = JsonConvert.DeserializeObject<FbFriendIdsResponse>(fbFriendIdsResponse).Response.Items;
 
       return await _socialDb.Users.GetUserIdsFromVkIds(fbFriendIds);
@@ -195,7 +193,7 @@ namespace SocialServer.Controllers
         $"https://api.vk.com/method/friends.get?user_id={vkUserId}&count={5000}&fields=photo_100&name_case=nom&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       var vkFriendsData = JsonConvert.DeserializeObject<VkFriendsDataResponse>(vkFriendsDataResponse).Response.Items;
       var result = vkFriendsData.Select(InviteFriendViewModel.ToViewModel).ToList();
-      return Ok(result);
+      return new OkResponseResult(result);
     }
   }
 }

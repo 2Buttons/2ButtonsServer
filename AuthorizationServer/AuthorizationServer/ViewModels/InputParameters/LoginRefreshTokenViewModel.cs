@@ -1,10 +1,10 @@
-﻿namespace AuthorizationServer.ViewModels.InputParameters
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AuthorizationServer.ViewModels.InputParameters
 {
-    public class LoginRefreshTokenViewModel
-    {
-
-      public string RefreshToken { get; set; }
-
-
+  public class LoginRefreshTokenViewModel
+  {
+    [Required]
+    public string RefreshToken { get; set; }
   }
 }

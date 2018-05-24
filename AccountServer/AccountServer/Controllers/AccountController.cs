@@ -9,6 +9,7 @@ using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
+using CommonLibraries.ApiResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -32,14 +33,16 @@ namespace AccountServer.Controllers
     public async Task<IActionResult> GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
     {
       if (userPage == null)
-        return BadRequest($"Input parameter  is null");
+        return new BadResponseResult("Input body is null.");
+      if (!ModelState.IsValid)
+        return new BadResponseResult("Validation error.", ModelState);
 
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
       var userInfo = await _db.Accounts.GetUserInfo(userId, userPage.UserPageId);
-       // return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+       // return new BadResponseResult("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
       var userStatistics = await _db.Accounts.GetUserStatistics(userPage.UserPageId);
-       // return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+       // return new BadResponseResult("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _db.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
@@ -50,19 +53,21 @@ namespace AccountServer.Controllers
 
       result.Social = ConvertContactsDtoToViewModel(await userContacts);
 
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     [HttpPost("getUserInfo")]
     public async Task<IActionResult> GetUserInfo([FromBody] UserPageIdViewModel userPage)
     {
       if (userPage == null)
-        return BadRequest($"Input parameter  is null");
+        return new BadResponseResult($"Input body  is null");
+      if (!ModelState.IsValid)
+        return new BadResponseResult("Validation error.", ModelState);
 
       var userInfo = await _db.Accounts.GetUserInfo(userPage.UserId, userPage.UserPageId);
-      // return BadRequest("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
       var userStatistics = await _db.Accounts.GetUserStatistics(userPage.UserPageId);
-      // return BadRequest("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _db.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
@@ -73,7 +78,7 @@ namespace AccountServer.Controllers
 
       result.Social = ConvertContactsDtoToViewModel(await userContacts);
 
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
    

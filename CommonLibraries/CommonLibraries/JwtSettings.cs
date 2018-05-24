@@ -74,30 +74,31 @@ namespace CommonLibraries
     }
 
     public static TokenValidationParameters CreateTokenValidationParameters(string issuer, string audience, SymmetricSecurityKey symmetricSecurityKey)
-     
+
     {
-      return  new TokenValidationParameters { 
-      // укзывает, будет ли валидироваться издатель при валидации токена
-      ValidateIssuer = true,
-      // строка, представляющая издателя
-      ValidIssuer = issuer,
+      return new TokenValidationParameters
+      {
+        // укзывает, будет ли валидироваться издатель при валидации токена
+        ValidateIssuer = true,
+        // строка, представляющая издателя
+        ValidIssuer = issuer,
 
-      // будет ли валидироваться потребитель токена
-      ValidateAudience = true,
-      // установка потребителя токена
-      ValidAudience = audience,
+        // будет ли валидироваться потребитель токена
+        ValidateAudience = true,
+        // установка потребителя токена
+        ValidAudience = audience,
 
 
-      // установка ключа безопасности
-      IssuerSigningKey = symmetricSecurityKey,
-      // валидация ключа безопасности
-      ValidateIssuerSigningKey = true,
+        // установка ключа безопасности
+        IssuerSigningKey = symmetricSecurityKey,
+        // валидация ключа безопасности
+        ValidateIssuerSigningKey = true,
 
-      // будет ли валидироваться время существования
-      ValidateLifetime = true,
-      // RequireExpirationTime = false,
-      ClockSkew = TimeSpan.Zero
-    };
+        // будет ли валидироваться время существования
+        ValidateLifetime = true,
+        // RequireExpirationTime = false,
+        ClockSkew = TimeSpan.Zero
+      };
+    }
   }
-}
 }

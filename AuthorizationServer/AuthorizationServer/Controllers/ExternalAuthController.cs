@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using AuthorizationData;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
+using AuthorizationServer.Models;
 using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
+using CommonLibraries.ApiResponse;
 using CommonLibraries.Extensions;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -51,13 +53,15 @@ namespace AuthorizationServer.Controllers
     public async Task<IActionResult> VkLogin([FromBody] VkAuthCodeViewModel vkAuth)
     {
       if (vkAuth == null)
-        return BadRequest("Input parameters is null.");
+        return new BadResponseResult("Input body is null.");
+      if (!ModelState.IsValid)
+        return new BadResponseResult("Validation error.", ModelState);
       if (vkAuth.State.IsNullOrEmpty() || vkAuth.State != "123456")
-        return BadRequest("You are hacker!");
+        return new BadResponseResult("You are hacker!");
       if (!vkAuth.Status || !vkAuth.Error.IsNullOrEmpty())
-        return BadRequest(vkAuth.Error + " " + vkAuth.ErrorDescription);
+        return new BadResponseResult(vkAuth.Error + " " + vkAuth.ErrorDescription);
       if (string.IsNullOrEmpty(vkAuth.Code))
-        return BadRequest("Code is null or empty.");
+        return new BadResponseResult("Code is null or empty.");
 
       //var appAccessTokenResponse =await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=http://localhost:6210/vk-auth-code.html&code={vkAuth.Code}");
       var appAccessTokenResponse =await Client.GetStringAsync($"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=https://2buttons.ru/vk-auth-code.html&code={vkAuth.Code}");
@@ -67,9 +71,16 @@ namespace AuthorizationServer.Controllers
       var user = await GetOrCreateUserAccountFromVk(appAccessToken.UserId, appAccessToken.AccessToken,
         appAccessToken.Email);
       if (user == null)
-        return BadRequest("We can not find or create you.");
+        return new BadResponseResult("We can not find or create you.");
 
-      return await AccessToken(user);
+      var accessToken =  await AccessToken(user);
+      
+
+    }
+
+    private bool IsFullAccount(UserDto user)
+    {
+      return user.lo
     }
 
     private async Task<UserDto> GetOrCreateUserAccountFromVk(int externalUserId, string externalToken, string email)
@@ -117,8 +128,7 @@ namespace AuthorizationServer.Controllers
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
       await _db.Users.AddUserIntoMainDbAsync(userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate,
-        userInfo.Sex,
-        await cityName ?? userInfo.City.Title, "", links.Item1, links.Item2);
+        userInfo.Sex, await cityName ?? userInfo.City.Title, "", links.Item1, links.Item2);
 
 
       return userDb.ToUserDto();
@@ -140,13 +150,15 @@ namespace AuthorizationServer.Controllers
     public async Task<IActionResult> Facebook([FromBody] FacebookAuthViewModel fbAuth)
     {
       if (fbAuth == null)
-        return BadRequest("Input parameters is null.");
-      if (fbAuth.State.IsNullOrEmpty() || fbAuth.State != "123456")
-        return BadRequest("You are hacker!");
+        return new BadResponseResult("Input parameters is null.");
+      if (!ModelState.IsValid)
+        return new BadResponseResult("Validation error.", ModelState);
+      if (fbAuth.State != "123456")
+        return new BadResponseResult("You are hacker!");
       if (!fbAuth.Status || !fbAuth.Error.IsNullOrEmpty())
-        return BadRequest(fbAuth.Error + " " + fbAuth.ErrorDescription);
+        return new BadResponseResult(fbAuth.Error + " " + fbAuth.ErrorDescription);
       if (string.IsNullOrEmpty(fbAuth.Code))
-        return BadRequest("Code is null or empty.");
+        return new BadResponseResult("Code is null or empty.");
 
       // 1.generate an app access token
       var appAccessTokenResponse =
@@ -154,11 +166,11 @@ namespace AuthorizationServer.Controllers
           $"https://graph.facebook.com/v3.0/oauth/access_token?client_id={_fbAuthSettings.AppId}&redirect_uri=https://2buttons.ru/facebook-auth-code.html&client_secret={_fbAuthSettings.AppSecret}&code={fbAuth.Code}");
       var appAccessToken = JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
       if (!appAccessToken.Error.IsNullOrEmpty())
-        return BadRequest(fbAuth.Error + " " + fbAuth.ErrorDescription);
+        return new BadResponseResult(fbAuth.Error + " " + fbAuth.ErrorDescription);
 
       var user = await GetOrCreateUserAccountFromFb(appAccessToken.AccessToken);
       if (user == null)
-        return BadRequest("We can not find or create account.");
+        return new BadResponseResult("We can not find or create account.");
 
       return await AccessToken(user);
     }
@@ -221,13 +233,12 @@ namespace AuthorizationServer.Controllers
       return userDb.ToUserDto();
     }
 
-    private async Task<IActionResult> AccessToken(UserDto user)
+    private async Task<Token> AccessToken(UserDto user)
     {
       if (await _db.Tokens.CountTokensForUserAsync(user.UserId) > 10)
       {
         await _db.Tokens.RemoveTokensByUserIdAsync(user.UserId);
-        return BadRequest(
-          "Your login at leat on 10 defferent devices. We are forced to save your data. Now you are out of all devices. Please log in again.");
+        throw new Exception("Your login at leat on 10 defferent devices. We are forced to save your data. Now you are out of all devices. Please log in again.");
       }
 
 
@@ -241,9 +252,9 @@ namespace AuthorizationServer.Controllers
       };
 
       if (!await _db.Tokens.AddTokenAsync(token))
-        return BadRequest("Can not add token to database. You entered just as a guest.");
+        throw new Exception("Can not add token to database. You entered just as a guest.");
 
-      return Ok(result);
+      return result;
     }
 
 

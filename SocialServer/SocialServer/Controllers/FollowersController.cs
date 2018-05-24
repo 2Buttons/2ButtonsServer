@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CommonLibraries.ApiResponse;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SocialData;
@@ -23,44 +24,44 @@ namespace SocialServer.Controllers
     public async Task<IActionResult> GetFollowers([FromBody]FollowerViewModel vm)
     {
       if (vm?.PageParams == null)
-        return BadRequest($"Input parameter {nameof(vm)} is null");
+        return new BadResponseResult($"Input parameter {nameof(vm)} is null");
       var followers = await _socialDb.Followers.GetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
         vm.PageParams.Count, vm.SearchedLogin);
-        return Ok(followers.MapToUserContactsViewModel());
-     // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        return new OkResponseResult(followers.MapToUserContactsViewModel());
+     // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("getFollowTo")]
     public async Task<IActionResult> GetFollowTo([FromBody]FollowerViewModel vm)
     {
       if (vm == null)
-        return BadRequest($"Input parameter {nameof(vm)} is null");
+        return new BadResponseResult($"Input parameter {nameof(vm)} is null");
 
       var follower = await _socialDb.Followers.GetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin);
-        return Ok(follower.MapToUserContactsViewModel());
-     // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        return new OkResponseResult(follower.MapToUserContactsViewModel());
+     // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("follow")]
     public async Task<IActionResult> Follow([FromBody]FollowViewModel vm)
     {
       if (vm == null)
-        return BadRequest($"Input parameter is null");
+        return new BadResponseResult($"Input parameter is null");
 
       if (await _socialDb.Followers.AddFollow(vm.FollowerId, vm.FollowToId))
-        return Ok();
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        return new OkResponseResult();
+      return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("unfollow")]
     public async Task<IActionResult> Unfollow([FromBody]FollowViewModel vm)
     {
       if (vm == null)
-        return BadRequest($"Input parameter is null");
+        return new BadResponseResult($"Input parameter is null");
 
       if (await _socialDb.Followers.DeleteFollow(vm.FollowerId, vm.FollowToId))
-        return Ok();
-      return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        return new OkResponseResult();
+      return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
   }
