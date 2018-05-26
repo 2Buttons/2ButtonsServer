@@ -2,14 +2,12 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountData;
-using AccountData.Account;
 using AccountData.Account.DTO;
-using AccountData.Main;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
-using CommonLibraries.ApiResponse;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +27,30 @@ namespace AccountServer.Controllers
     }
 
     [Authorize]
+    [HttpGet("user/{userPageId:int}")]
+    public async Task<IActionResult> GetUserInfoAuth(int userPageId)
+    {
+      if (userPageId == 0)
+        return new BadResponseResult("The wrong route.");
+
+      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
+
+      var userInfo = await _db.Accounts.GetUserInfo(userId, userPageId);
+      var userStatistics = await _db.Accounts.GetUserStatistics(userPageId);
+      var userContacts = _db.Users.GetUserSocialsAsync(userPageId);
+
+      var result = userInfo.MapToUserInfoViewModel();
+      result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
+
+      if (userId != userPageId)
+        result.UserStatistics.AnsweredQuestions = 0;
+
+      result.Social = ConvertContactsDtoToViewModel(await userContacts);
+
+      return new OkResponseResult(result);
+    }
+
+    [Authorize]
     [HttpPost("getUserInfoAuth")]
     public async Task<IActionResult> GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
     {
@@ -40,9 +62,7 @@ namespace AccountServer.Controllers
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
       var userInfo = await _db.Accounts.GetUserInfo(userId, userPage.UserPageId);
-       // return new BadResponseResult("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
       var userStatistics = await _db.Accounts.GetUserStatistics(userPage.UserPageId);
-       // return new BadResponseResult("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _db.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
@@ -65,9 +85,7 @@ namespace AccountServer.Controllers
         return new BadResponseResult("Validation error.", ModelState);
 
       var userInfo = await _db.Accounts.GetUserInfo(userPage.UserId, userPage.UserPageId);
-      // return new BadResponseResult("Something goes wrong in TryGetUserInfo. We will fix it!... maybe)))");
       var userStatistics = await _db.Accounts.GetUserStatistics(userPage.UserPageId);
-      // return new BadResponseResult("Something goes wrong in TryGetUserStatistics. We will fix it!... maybe)))");
       var userContacts = _db.Users.GetUserSocialsAsync(userPage.UserPageId);
 
       var result = userInfo.MapToUserInfoViewModel();
@@ -81,7 +99,6 @@ namespace AccountServer.Controllers
       return new OkResponseResult(result);
     }
 
-   
 
     private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
     {

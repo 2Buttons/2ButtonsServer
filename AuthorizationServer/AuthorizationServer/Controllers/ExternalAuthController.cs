@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AuthorizationData;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
+using AuthorizationData.Main.Entities;
 using AuthorizationServer.Models;
 using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
@@ -78,7 +79,7 @@ namespace AuthorizationServer.Controllers
 
     }
 
-    private bool IsFullAccount(UserDto user)
+    private bool IsFullAccount(userMain user)
     {
       return user.lo
     }
@@ -127,10 +128,21 @@ namespace AuthorizationServer.Controllers
       var bdate = Convert.ToDateTime(userInfo.Birthday);
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
-      await _db.Users.AddUserIntoMainDbAsync(userDb.UserId, userInfo.FirstName + " " + userInfo.LastName, bdate,
-        userInfo.Sex, await cityName ?? userInfo.City.Title, "", links.Item1, links.Item2);
+      var userMain = new UserMainDb
+      {
+        UserId = userDb.UserId,
+        Login = userInfo.FirstName + " " + userInfo.LastName,
+        BirthDate = bdate,
+        Sex = userInfo.Sex,
+        City = await cityName ?? userInfo.City.Title,
+        Description = "",
+        SmallAvatarLink = links.Item1,
+        FullAvatarLink = links.Item2
+      };
 
+      await _db.Users.AddUserIntoMainDbAsync(userMain);
 
+      
       return userDb.ToUserDto();
     }
 

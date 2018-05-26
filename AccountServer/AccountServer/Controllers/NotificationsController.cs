@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AccountData;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
-using CommonLibraries.ApiResponse;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 

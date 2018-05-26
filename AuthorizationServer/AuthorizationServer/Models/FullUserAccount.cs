@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AuthorizationData.Account.DTO;
+using AuthorizationData.Main.Entities;
 
 namespace AuthorizationServer.Models
 {
-    public class FullUserAccount
-    {
-    }
+  public class FullUserAccount
+  {
+    public UserDto UserAuth { get; set; }
+    public UserMainDb UserMain { get; set; }
+  }
 }
