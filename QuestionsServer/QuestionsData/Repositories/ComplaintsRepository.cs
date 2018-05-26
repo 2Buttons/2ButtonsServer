@@ -7,21 +7,21 @@ using QuestionsData.Entities.Moderators;
 
 namespace QuestionsData.Repositories
 {
-  public class ComplaintsRepository
+  public class ComplainttsRepository
   {
     private readonly TwoButtonsContext _db;
 
-    public ComplaintsRepository(TwoButtonsContext db)
+    public ComplainttsRepository(TwoButtonsContext db)
     {
       _db = db;
     }
 
-    public async Task<bool> AddComplaint(int userId, int questionId, ComplainType complainType)
+    public async Task<bool> AddComplaintt(int userId, int questionId, ComplaintType complaintType)
     {
-      var complaintAddDate = DateTime.UtcNow;
+      var complainttAddDate = DateTime.UtcNow;
       try
       {
-        return  await _db.Database.ExecuteSqlCommandAsync($"addComplaint {userId}, {questionId}, {complainType}, {complaintAddDate}") >0;
+        return  await _db.Database.ExecuteSqlCommandAsync($"addComplaintt {userId}, {questionId}, {complaintType}, {complainttAddDate}") >0;
       }
       catch (Exception e)
       {
@@ -30,17 +30,17 @@ namespace QuestionsData.Repositories
       return false;
     }
 
-    public async Task<List<ComplainDb>> GetComplaints()
+    public async Task<List<ComplaintDb>> GetComplaintts()
     {
       try
       {
-        return await _db.ComplaintDb.AsNoTracking().FromSql($"select * from dbo.getComplaints()").ToListAsync();
+        return await _db.ComplainttDb.AsNoTracking().FromSql($"select * from dbo.getComplaintts()").ToListAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
       }
-      return new List<ComplainDb>();
+      return new List<ComplaintDb>();
     }
   }
 }

@@ -14,40 +14,40 @@ namespace QuestionsServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  //[Route("complains")]
-  public class ComplainsController : Controller
+  //[Route("complaints")]
+  public class ComplaintsController : Controller
   {
     private readonly QuestionsUnitOfWork _mainDb;
 
-    public ComplainsController(QuestionsUnitOfWork mainDb)
+    public ComplaintsController(QuestionsUnitOfWork mainDb)
     {
       _mainDb = mainDb;
     }
 
-    [HttpPost("addComplain")]
-    public async Task<IActionResult> AddComplaint([FromBody] AddComplaintViewModel complaint)
+    [HttpPost("addComplaint")]
+    public async Task<IActionResult> AddComplaintt([FromBody] AddComplainttViewModel complaintt)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplainType))
+      if (await _mainDb.Complaintts.AddComplaintt(complaintt.UserId, complaintt.QuestionId, complaintt.ComplaintType))
         return new ResponseResult((int)HttpStatusCode.Created, (object)"Question was deleted.");
       return new ResponseResult((int)HttpStatusCode.NotModified, "Question was not deleted.");
     }
 
     // только модератору можно
-    [HttpPost("getComplains")]
-    public async Task<IActionResult> GetComplaints()
+    [HttpPost("getComplaints")]
+    public async Task<IActionResult> GetComplaintts()
     {
-      var complaints = await _mainDb.Complaints.GetComplaints();
-      return new OkResponseResult(complaints);
+      var complaintts = await _mainDb.Complaintts.GetComplaintts();
+      return new OkResponseResult(complaintts);
     }
 
     [Authorize(Roles = "moderator, admin")]
-    [HttpPost("getComplainsAuth")]
-    public async Task<IActionResult> GetComplaintsAuth()
+    [HttpPost("getComplaintsAuth")]
+    public async Task<IActionResult> GetComplainttsAuth()
     {
-      var complaints = await _mainDb.Complaints.GetComplaints();
-      return new OkResponseResult(complaints);
+      var complaintts = await _mainDb.Complaintts.GetComplaintts();
+      return new OkResponseResult(complaintts);
     }
   }
 }

@@ -12,7 +12,7 @@ namespace QuestionsData
 
     //for functions and prosedures
     public virtual DbSet<QuestionDb> QuestionDb { get; set; }
-    public virtual DbSet<ComplainDb> ComplaintDb { get; set; }
+    public virtual DbSet<ComplaintDb> ComplainttDb { get; set; }
     public virtual DbSet<TagDb> TagDb { get; set; }
     public virtual DbSet<AnsweredListDb> AnsweredListDb { get; set; }
     public virtual DbSet<CommentDb> CommentDb { get; set; }

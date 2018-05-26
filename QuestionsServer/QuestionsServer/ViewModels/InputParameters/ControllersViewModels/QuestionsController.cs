@@ -43,18 +43,18 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public FeedbackType YourFeedbackType { get; set; }
   }
 
-  public class AddComplaintViewModel : QuestionIdViewModel
+  public class AddComplainttViewModel : QuestionIdViewModel
   {
-    public ComplainType ComplainType { get; set; }
+    public ComplaintType ComplaintType { get; set; }
   }
 
   public class AddRecommendedQuestionViewModel
   {
-    [IdValidationt]
+    [IdValidation]
     public int UserToId { get; set; }
-    [IdValidationt]
+    [IdValidation]
     public int UserFromId { get; set; }
-    [IdValidationt]
+    [IdValidation]
     public int QuestionId { get; set; }
   }
 
