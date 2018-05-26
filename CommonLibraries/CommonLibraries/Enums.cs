@@ -70,7 +70,7 @@
     Second = 2
   }
 
-  public enum Complaintype
+  public enum ComplainType
   {
     NoType = 0,
     Spam = 1,

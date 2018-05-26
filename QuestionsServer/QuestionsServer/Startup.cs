@@ -76,7 +76,7 @@ namespace QuestionsServer
       });
 
       app.UseAuthentication();
-
+      app.UseExceptionHandler();
       app.UseMvc();
     }
 

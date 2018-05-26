@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CommonLibraries.Response
 {
@@ -13,16 +14,21 @@ namespace CommonLibraries.Response
   {
     protected readonly ResponseObject Response;
 
-    public ResponseResult(int status, string message = null, object data = null)
+    public ResponseResult(int status) : this(status, null, null) { }
+    public ResponseResult(int status, string message) : this(status, message, null) { }
+    public ResponseResult(int status, object data) : this(status, null, data) { }
+    public ResponseResult(int status, string message, object data)
     {
       Response = new ResponseObject(status, message ?? GetDafaultMesage(status), data);
     }
 
     public async Task ExecuteResultAsync(ActionContext context)
     {
+      var serializerSettings =
+        new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
       context.HttpContext.Response.ContentType = "application/json";
       context.HttpContext.Response.StatusCode = Response.Status;
-      await context.HttpContext.Response.WriteAsync(JsonConvert.SerializeObject(Response));
+      await context.HttpContext.Response.WriteAsync(JsonConvert.SerializeObject(Response, serializerSettings));
     }
 
     private static string GetDafaultMesage(int statusCode)
@@ -56,7 +62,6 @@ namespace CommonLibraries.Response
     public BadResponseResult() : this(null, null) { }
     public BadResponseResult(string message) : this(message, null) { }
     public BadResponseResult(object data) : this(null, data) { }
-
     public BadResponseResult(ModelStateDictionary modelState) : base(400)
     {
       if (modelState.IsValid) throw new ArgumentException("ModelState must be invalid", nameof(modelState));

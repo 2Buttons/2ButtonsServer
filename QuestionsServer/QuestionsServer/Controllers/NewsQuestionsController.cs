@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
@@ -30,8 +31,7 @@ namespace QuestionsServer.Controllers
     {
       //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
 
-      if (newsViewModel?.PageParams == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var userId = newsViewModel.UserId;
       var questionsPage = newsViewModel.PageParams.Offset / 5;
@@ -90,7 +90,7 @@ namespace QuestionsServer.Controllers
       };
 
 
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     private async Task<List<NewsAskedQuestionViewModel>> GetNewsAskedQuestionsAsync(int userId, int questionsPage = 1,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,18 +29,17 @@ namespace QuestionsServer.Controllers
     [HttpPost("getQuestion")]
     public async Task<IActionResult> GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
     {
-      if (inputQuestion == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var question = await _mainDb.Questions.GetQuestion(inputQuestion.UserId, inputQuestion.QuestionId);
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
-
-      GetTagsAndPhotos(inputQuestion.UserId, inputQuestion.QuestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
+      GetTagsAndPhotos(inputQuestion.UserId, inputQuestion.QuestionId, out var tags, out var firstPhotos,
+        out var secondPhotos, out var comments);
 
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
 
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
@@ -69,107 +69,99 @@ namespace QuestionsServer.Controllers
     [HttpPost("addQuestion")]
     public async Task<IActionResult> AddQuestion([FromBody] AddQuestionViewModel question)
     {
-      if (question == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition,
-        question.BackgroundImageLink,
-        question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType, question.FirstOption,
-        question.SecondOption);
-      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        question.BackgroundImageLink, question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType,
+        question.FirstOption, question.SecondOption);
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var badAddedTags = new List<string>();
 
       for (var i = 0; i < question.Tags.Count; i++)
       {
         var tag = question.Tags[i];
-        if (!await _mainDb.Tags.AddTag(questionId, tag, i))
-          badAddedTags.Add(tag);
+        if (!await _mainDb.Tags.AddTag(questionId, tag, i)) badAddedTags.Add(tag);
       }
       if (badAddedTags.Count != 0)
       {
-        var response =
-          new
-          {
-            Message = "Not All Tags inserted",
-            BadTegs = badAddedTags
-          };
-        return BadRequest(response);
+        var response = new {Message = "Not All Tags inserted", new BadResponseResultTegs = badAddedTags};
+        return new BadResponseResult(response);
       }
-      return Ok(questionId);
+      return new OkResponseResult(questionId);
     }
 
     [HttpPost("deleteQuestion")]
     public async Task<IActionResult> DeleteQuestion([FromBody] QuestionIdViewModel questionId)
     {
-      if (questionId == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var isChanged = await _mainDb.Questions.DeleteQuestion(questionId.QuestionId);
-      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
-      return Ok(isChanged);
+      return new OkResponseResult(isChanged);
     }
-
 
     [HttpPost("updateQuestionFeedback")]
     public async Task<IActionResult> UpdateFeedback([FromBody] UpdateQuestionFeedbackViewModel feedback)
     {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
       var isChanged =
         await _mainDb.Questions.UpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType);
-      return Ok(isChanged);
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return new OkResponseResult(isChanged);
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
-
 
     [HttpPost("updateSaved")]
     public async Task<IActionResult> UpdateSaved([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
       var isChanged = await _mainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
-      return Ok(isChanged);
-      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return new OkResponseResult(isChanged);
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("updateFavorites")]
     public async Task<IActionResult> UpdateFavorites([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
       var isChanged =
         await _mainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
-      return Ok(isChanged);
-      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return new OkResponseResult(isChanged);
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("updateAnswer")]
     public async Task<IActionResult> UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
     {
       var isChanged = await _mainDb.Questions.UpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType);
-      return Ok(isChanged);
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return new OkResponseResult(isChanged);
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("addComplaint")]
     public async Task<IActionResult> AddComplaint([FromBody] AddComplaintViewModel complaint)
     {
-      if (complaint == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplaintId);
-      return Ok();
-      //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplainType);
+      return new OkResponseResult();
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("addRecommendedQuestion")]
     public async Task<IActionResult> AddRecommendedQuestion(
       [FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
     {
-      if (recommendedQuestion == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var questionId = await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
-        recommendedQuestion.UserFromId,
-        recommendedQuestion.QuestionId);
-      return Ok();
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        recommendedQuestion.UserFromId, recommendedQuestion.QuestionId);
+      return new OkResponseResult();
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     // только модератору можно
@@ -177,8 +169,8 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetComplaints()
     {
       var complaints = await _mainDb.Complaints.GetComplaints();
-      return Ok(complaints);
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return new OkResponseResult(complaints);
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [Authorize(Roles = "moderator, admin")]
@@ -186,22 +178,21 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetComplaintsAuth()
     {
       var complaints = await _mainDb.Complaints.GetComplaints();
-      return Ok(complaints);
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      return new OkResponseResult(complaints);
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("getVoters")]
     public async Task<IActionResult> GetVoters([FromBody] GetVoters voters)
     {
-      if (voters == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var answeredList = await _mainDb.Questions.GetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
         voters.PageParams.Count, voters.AnswerType, DateTime.UtcNow.AddYears(-voters.MaxAge),
         DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin);
-      // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
-      return Ok(answeredList.MapAnsweredListDbToViewModel());
+      return new OkResponseResult(answeredList.MapAnsweredListDbToViewModel());
     }
   }
 }

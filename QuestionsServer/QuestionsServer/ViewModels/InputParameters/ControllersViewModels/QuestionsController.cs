@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
+using CommonLibraries.Validation;
 
 namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 {
   public class AddQuestionViewModel : UserIdViewModel
   {
+    [Required]
     public string Condition { get; set; }
     public bool IsAnonymity { get; set; }
     public bool IsAudience { get; set; }
     public QuestionType QuestionType { get; set; }
+    [Required]
     public string FirstOption { get; set; }
+    [Required]
     public string SecondOption { get; set; }
     public string BackgroundImageLink { get; set; } = null;
 
@@ -40,13 +45,16 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 
   public class AddComplaintViewModel : QuestionIdViewModel
   {
-    public int ComplaintId { get; set; }
+    public ComplainType ComplainType { get; set; }
   }
 
   public class AddRecommendedQuestionViewModel
   {
+    [IdValidationt]
     public int UserToId { get; set; }
+    [IdValidationt]
     public int UserFromId { get; set; }
+    [IdValidationt]
     public int QuestionId { get; set; }
   }
 

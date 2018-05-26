@@ -7,20 +7,20 @@ namespace CommonLibraries.Extensions
   public static class EnumerableExtensions
   {
     // Случайный объект, используемый этим методом.
-    private static Random Random;
+    private static Random _random;
 
     // Возвращает случайные значения num_items.
     public static List<T> PickRandom<T>(
-      this IEnumerable<T> values, int num_values)
+      this IEnumerable<T> values, int numValues)
     {
       int length = values.Count();
 
       // Создаем объект Random, если он не существует.
-      if (Random == null) Random = new Random();
+      if (_random == null) _random = new Random();
 
       // Не превышайте длину массива.
-      if (num_values >= length)
-        num_values = length - 1;
+      if (numValues >= length)
+        numValues = length - 1;
 
       // Создаем массив индексов 0 по значениям. Длина - 1.
       var indexes =
@@ -30,10 +30,10 @@ namespace CommonLibraries.Extensions
       var results = new List<T>();
 
       // Рандомизировать первые индексы num_values.
-      for (var i = 0; i < num_values; i++)
+      for (var i = 0; i < numValues; i++)
       {
         // Выберите случайную запись между i и значениями. Длина - 1.
-        var j = Random.Next(i, length);
+        var j = _random.Next(i, length);
 
         // Поменяем значения.
         var temp = indexes[i];

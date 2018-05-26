@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
@@ -31,22 +32,19 @@ namespace QuestionsServer.Controllers
     [HttpPost("asked")]
     public async Task<IActionResult> GetUserAskedQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
-      if (userQuestions?.PageParams == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       //  var u = User;
 
       var userAskedQuestions = await _mainDb.UserQuestions.GetUserAskedQuestions(userQuestions.UserId,
-        userQuestions.UserPageId,
-        userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+        userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserAskedQuestionDb>());
-       // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
       // int o = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
       var result = new List<UserAskedQuestionsViewModel>();
 
-      Parallel.ForEach<UserAskedQuestionDb>(userAskedQuestions, x =>
+      Parallel.ForEach(userAskedQuestions, x =>
       {
-        GetTagsAndPhotos(userQuestions.UserId, x.QuestionId, out var tags, out var firstPhotos,
-          out var secondPhotos);
+        GetTagsAndPhotos(userQuestions.UserId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         result.Add(x.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       });
 
@@ -56,20 +54,18 @@ namespace QuestionsServer.Controllers
       //    out var secondPhotos);
       //  result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       //}
-      return Ok(result);
+      return new OkResponseResult(result);
     }
-
 
     //[HttpPost("getUserAnsweredQuestions")]
     [HttpPost("answered")]
     public async Task<IActionResult> GetUserAnsweredQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
-      if (userQuestions?.PageParams == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var userAnsweredQuestions = await _mainDb.UserQuestions.GetUserAnsweredQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
-       // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<UserAnsweredQuestionsViewModel>();
 
@@ -79,20 +75,19 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     //[HttpPost("getUserFavoriteQuestions")]
     [HttpPost("favorite")]
     public async Task<IActionResult> GetUserFavoriteQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
-      if (userQuestions?.PageParams == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var userFavoriteQuestions = await _mainDb.UserQuestions.GetUserFavoriteQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserFavoriteQuestionDb>());
-       // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<UserFavoriteQuestionsViewModel>();
 
@@ -102,21 +97,19 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
-
 
     //[HttpPost("getUserCommentedQuestions")]
     [HttpPost("commented")]
     public async Task<IActionResult> GetUserCommentedQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
-      if (userQuestions == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var userCommentedQuestions = await _mainDb.UserQuestions.GetUserCommentedQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserCommentedQuestionDb>());
-       // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<UserCommentedQuestionsViewModel>();
 
@@ -126,9 +119,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
-
 
     private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)

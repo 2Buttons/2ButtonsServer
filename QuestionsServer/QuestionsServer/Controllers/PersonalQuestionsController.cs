@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
@@ -27,41 +28,36 @@ namespace QuestionsServer.Controllers
       _mainDb = mainDb;
     }
 
-
     [HttpPost("asked")]
     public async Task<IActionResult> GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
-      if (userQuestions == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var userASkedQuestions = await _mainDb.UserQuestions.GetAskedQuestions(userQuestions.UserId, userQuestions.UserId,
-        userQuestions.PageParams.Offset,
-        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<AskedQuestionDb>());
-       // return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+        userQuestions.SortType.ToPredicate<AskedQuestionDb>());
+      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<AskedQuestionsViewModel>();
 
       foreach (var question in userASkedQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-            out var secondPhotos);
+          out var secondPhotos);
         result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
-
 
     [HttpPost("recommended")]
     public async Task<IActionResult> GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
-      if (userQuestions == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId,
-        userQuestions.UserId,
-        userQuestions.PageParams.Offset,
-        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
-        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+        userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<RecommendedQuestionViewModel>();
 
@@ -71,66 +67,64 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
-
-
 
     [HttpPost("liked")]
     public async Task<IActionResult> GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
-      if (userQuestions == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var userAnsweredQuestions = await _mainDb.UserQuestions.GetLikedQuestions(userQuestions.UserId,
-        userQuestions.PageParams.Offset,
-        userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<LikedQuestionDb>());
-        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+        userQuestions.SortType.ToPredicate<LikedQuestionDb>());
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<LikedQuestionsViewModel>();
 
       foreach (var question in userAnsweredQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-            out var secondPhotos);
+          out var secondPhotos);
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     [HttpPost("saved")]
     public async Task<IActionResult> GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
-      if (userQuestions == null)
-        return BadRequest($"Input parameter  is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var userFavoriteQuestions = await _mainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset,
-          userQuestions.PageParams.Count, userQuestions.SortType.ToPredicate<SavedQuestionDb>());
-        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+      var userFavoriteQuestions = await _mainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId,
+        userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+        userQuestions.SortType.ToPredicate<SavedQuestionDb>());
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<SavedQuestionsViewModel>();
-
 
       foreach (var question in userFavoriteQuestions)
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-            out var secondPhotos);
+          out var secondPhotos);
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
     [HttpPost("top")]
     public async Task<IActionResult> GetTopQuestions([FromBody] TopDayQuestions questions)
     {
-      if (questions == null)
-        return BadRequest($"Input parameter  is null");
-      var dateTime = questions.DeltaUnixTime == 0? DateTime.MinValue : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      var dateTime = questions.DeltaUnixTime == 0
+        ? DateTime.MinValue
+        : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
       var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
-        questions.PageParams.Offset,
-        questions.PageParams.Count, dateTime, questions.SortType.ToPredicate<TopQuestionDb>());
-        //return BadRequest("Something goes wrong. We will fix it!... maybe)))");
+        questions.PageParams.Offset, questions.PageParams.Count, dateTime,
+        questions.SortType.ToPredicate<TopQuestionDb>());
+      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<TopQuestionsViewModel>();
 
@@ -140,12 +134,11 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      return Ok(result);
+      return new OkResponseResult(result);
     }
 
-
-    private  void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
-            out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
+    private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
+      out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
       var photosAmount = 100;
       var minAge = 0;
@@ -153,7 +146,7 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      var tagsTask= _mainDb.Tags.GetTags(questionId);
+      var tagsTask = _mainDb.Tags.GetTags(questionId);
       var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city);
       var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
