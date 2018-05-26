@@ -16,10 +16,6 @@ namespace AuthorizationData.Account.DTO
         PhoneNumberConfirmed = userDb.PhoneNumberConfirmed,
         RoleType = userDb.RoleType,
         TwoFactorEnabled = userDb.TwoFactorEnabled,
-        VkId = userDb.VkId,
-        VkToken = userDb.VkToken,
-        FacebookId = userDb.FacebookId,
-        FacebookToken = userDb.FacebookToken
       };
     }
   }

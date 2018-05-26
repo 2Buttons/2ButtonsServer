@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AuthorizationData.Account;
 using AuthorizationData.Account.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthorizationData.Account.Repostirories
+namespace AuthorizationData.Repostirories
 {
   public class TokenRepository : IDisposable
   {

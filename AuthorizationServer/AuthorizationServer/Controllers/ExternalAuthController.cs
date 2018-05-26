@@ -87,7 +87,7 @@ namespace AuthorizationServer.Controllers
 
     private async Task<UserDto> GetOrCreateUserAccountFromVk(int externalUserId, string externalToken, string email)
     {
-      var user = await _db.Users.GetUserByExternalUserIdAsync(externalUserId, SocialNetType.Facebook);
+      var user = await _db.Users.GetUserByExternalUserIdAsync(externalUserId, SocialType.Facebook);
       if (user != null)
         return user;
 
@@ -96,7 +96,7 @@ namespace AuthorizationServer.Controllers
       {
         user.FacebookId = externalUserId;
         user.FacebookToken = externalToken;
-        await _db.Users.AddOrChangeExternalUserIdAsync(user.UserId, user.FacebookId, SocialNetType.Facebook,
+        await _db.Users.AddOrChangeExternalUserIdAsync(user.UserId, user.FacebookId, SocialType.Facebook,
           user.FacebookToken);
 
         if (!email.IsNullOrEmpty() && (user.Email.IsNullOrEmpty() || !user.EmailConfirmed))
@@ -196,7 +196,7 @@ namespace AuthorizationServer.Controllers
       var userInfo = JsonConvert.DeserializeObject<FacebookUserResponse>(userInfoResponse);
 
 
-      var user = await _db.Users.GetUserByExternalUserIdAsync(userInfo.ExternalUserId, SocialNetType.Facebook);
+      var user = await _db.Users.GetUserByExternalUserIdAsync(userInfo.ExternalUserId, SocialType.Facebook);
       if (user != null)
         return user;
       user = await _db.Users.GetUserByEmail(userInfo.Email);
@@ -204,7 +204,7 @@ namespace AuthorizationServer.Controllers
       {
         user.FacebookId = userInfo.ExternalUserId;
         user.FacebookToken = externalToken;
-        await _db.Users.AddOrChangeExternalUserIdAsync(user.UserId, user.FacebookId, SocialNetType.Facebook,
+        await _db.Users.AddOrChangeExternalUserIdAsync(user.UserId, user.FacebookId, SocialType.Facebook,
           user.FacebookToken);
 
         if (!userInfo.Email.IsNullOrEmpty() && (user.Email.IsNullOrEmpty() || !user.EmailConfirmed))

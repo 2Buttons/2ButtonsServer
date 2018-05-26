@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthorizationData.Account;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Account.Entities.FunctionEntities;
@@ -12,7 +13,7 @@ using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthorizationData.Account.Repostirories
+namespace AuthorizationData.Repostirories
 {
   public class UserRepository : IDisposable
   {
@@ -58,26 +59,26 @@ namespace AuthorizationData.Account.Repostirories
       return false;
     }
 
-    public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, long externalUserId, SocialNetType socialType,
+    public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, long externalUserId, SocialType socialType,
       string externalToken)
     {
       var user = await _contextAccount.UsersDb.FindAsync(userId);
       if (user == null) return false;
       switch (socialType)
       {
-        case SocialNetType.Facebook:
+        case SocialType.Facebook:
           user.FacebookId = externalUserId;
           user.FacebookToken = externalToken;
           break;
-        case SocialNetType.Vk:
+        case SocialType.Vk:
           user.VkId = (int)externalUserId;
           user.VkToken = externalToken;
           break;
-        case SocialNetType.Nothing:
-        case SocialNetType.Twiter:
-        case SocialNetType.GooglePlus:
-        case SocialNetType.Telegram:
-        case SocialNetType.Badoo:
+        case SocialType.Nothing:
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
         default:
           return false;
       }
@@ -163,22 +164,22 @@ namespace AuthorizationData.Account.Repostirories
       return user?.ToUserDto();
     }
 
-    public async Task<UserDto> GetUserByExternalUserIdAsync(long externalUserId, SocialNetType socialType)
+    public async Task<UserDto> GetUserByExternalUserIdAsync(long externalUserId, SocialType socialType)
     {
       UserDb user;
       switch (socialType)
       {
-        case SocialNetType.Facebook:
+        case SocialType.Facebook:
           user = await _contextAccount.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.FacebookId == externalUserId);
           break;
-        case SocialNetType.Vk:
+        case SocialType.Vk:
           user = await _contextAccount.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.VkId == externalUserId);
           break;
-        case SocialNetType.Nothing:
-        case SocialNetType.Twiter:
-        case SocialNetType.GooglePlus:
-        case SocialNetType.Telegram:
-        case SocialNetType.Badoo:
+        case SocialType.Nothing:
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
         default:
           user = null;
           break;
@@ -186,21 +187,21 @@ namespace AuthorizationData.Account.Repostirories
       return user?.ToUserDto();
     }
 
-    public async Task<long> GetExternalUserIdAsync(int userId, SocialNetType socialType)
+    public async Task<long> GetExternalUserIdAsync(int userId, SocialType socialType)
     {
       var user = await _contextAccount.UsersDb.FindAsync(userId);
       if (user == null) return 0;
       switch (socialType)
       {
-        case SocialNetType.Facebook:
+        case SocialType.Facebook:
           return user.FacebookId;
-        case SocialNetType.Vk:
+        case SocialType.Vk:
           return user.VkId;
-        case SocialNetType.Twiter:
-        case SocialNetType.GooglePlus:
-        case SocialNetType.Telegram:
-        case SocialNetType.Badoo:
-        case SocialNetType.Nothing:
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
+        case SocialType.Nothing:
         default:
           return 0;
       }

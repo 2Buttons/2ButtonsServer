@@ -1,7 +1,7 @@
 ﻿using System;
 using AuthorizationData.Account;
-using AuthorizationData.Account.Repostirories;
 using AuthorizationData.Main;
+using AuthorizationData.Repostirories;
 
 namespace AuthorizationData
 {
