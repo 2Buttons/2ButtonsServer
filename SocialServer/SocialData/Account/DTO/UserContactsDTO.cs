@@ -1,8 +1,10 @@
-﻿namespace SocialData.Account.DTO
+﻿using CommonLibraries;
+
+namespace SocialData.Account.DTO
 {
-  public class UserContactsDto
+  public class UserSocialDto
   {
-    public int VkId { get; set; }
-    public long FacebookId { get; set; }
+    public SocialType SocialType { get; set; }
+    public long ExternalId { get; set; }
   }
 }

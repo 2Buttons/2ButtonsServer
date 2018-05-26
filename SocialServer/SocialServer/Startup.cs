@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using SocialData;
 using SocialData.Account;
 using SocialData.Main;
+using SocialServer.Infrastructure;
 
 namespace SocialServer
 {
@@ -40,6 +41,7 @@ namespace SocialServer
       services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddTransient<SocialDataUnitOfWork>();
+      services.AddTransient<IFriendsService, FriendsService>();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));

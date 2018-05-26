@@ -7,6 +7,7 @@ namespace SocialData.Account
   public class TwoButtonsAccountContext : DbContext
   {
     public DbSet<UserDb> UsersDb { get; set; }
+    public DbSet<SocialDb> SocialsDb { get; set; }
 
     // functions
     public DbSet<UserIdDb> UserIds { get; set; }
@@ -27,15 +28,7 @@ namespace SocialData.Account
 
         entity.Property(e => e.Email).HasMaxLength(256);
 
-        entity.Property(e => e.FacebookId).HasDefaultValueSql("((0))");
-
-        entity.Property(e => e.FacebookToken).HasMaxLength(256);
-
         entity.Property(e => e.RoleType).HasDefaultValueSql("((0))");
-
-        entity.Property(e => e.VkId).HasDefaultValueSql("((0))");
-
-        entity.Property(e => e.VkToken).HasMaxLength(256);
       });
     }
   }

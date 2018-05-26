@@ -13,7 +13,6 @@
     Email = 2
   }
 
-
   public enum SexType
   {
     Both = 0,
@@ -29,7 +28,7 @@
     Admin = 3
   }
 
-  public enum SocialNetType
+  public enum SocialType
   {
     Nothing = 0,
     Facebook = 1,
@@ -39,7 +38,6 @@
     Telegram = 5,
     Badoo = 6
   }
-
 
   public enum FeedbackType
   {
