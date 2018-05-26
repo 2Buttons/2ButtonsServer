@@ -109,18 +109,11 @@ namespace QuestionsData.Repositories
     public async Task<List<TopQuestionDb>> GeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
       DateTime topAfterDate, Expression<Func<TopQuestionDb, object>> predicate)
     {
-      try
-      {
+
         return await  _db.TopQuestionsDb.AsNoTracking()
           .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})")
           .OrderBy(predicate).Skip(offset).Take(count)
-          .ToListAsync();
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return  new List<TopQuestionDb>();
+          .ToListAsync() ?? new List<TopQuestionDb>();
     }
 
    

@@ -36,7 +36,6 @@ namespace QuestionsServer.Controllers
       var userASkedQuestions = await _mainDb.UserQuestions.GetAskedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<AskedQuestionDb>());
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<AskedQuestionsViewModel>();
 
@@ -57,7 +56,6 @@ namespace QuestionsServer.Controllers
       var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId,
         userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<RecommendedQuestionViewModel>();
 
@@ -78,7 +76,6 @@ namespace QuestionsServer.Controllers
       var userAnsweredQuestions = await _mainDb.UserQuestions.GetLikedQuestions(userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<LikedQuestionDb>());
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<LikedQuestionsViewModel>();
 
@@ -99,7 +96,6 @@ namespace QuestionsServer.Controllers
       var userFavoriteQuestions = await _mainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<SavedQuestionDb>());
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<SavedQuestionsViewModel>();
 
@@ -124,7 +120,6 @@ namespace QuestionsServer.Controllers
       var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
         questions.PageParams.Offset, questions.PageParams.Count, dateTime,
         questions.SortType.ToPredicate<TopQuestionDb>());
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<TopQuestionsViewModel>();
 

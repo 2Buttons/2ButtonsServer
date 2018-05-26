@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
@@ -32,7 +33,6 @@ namespace QuestionsServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var question = await _mainDb.Questions.GetQuestion(inputQuestion.UserId, inputQuestion.QuestionId);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       GetTagsAndPhotos(inputQuestion.UserId, inputQuestion.QuestionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
@@ -74,7 +74,6 @@ namespace QuestionsServer.Controllers
       var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition,
         question.BackgroundImageLink, question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType,
         question.FirstOption, question.SecondOption);
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var badAddedTags = new List<string>();
 
@@ -85,8 +84,8 @@ namespace QuestionsServer.Controllers
       }
       if (badAddedTags.Count != 0)
       {
-        var response = new {Message = "Not All Tags inserted", new BadResponseResultTegs = badAddedTags};
-        return new BadResponseResult(response);
+
+        return new ResponseResult((int)HttpStatusCode.InternalServerError, "Not all tages were inserted.", badAddedTags);
       }
       return new OkResponseResult(questionId);
     }
@@ -96,10 +95,10 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var isChanged = await _mainDb.Questions.DeleteQuestion(questionId.QuestionId);
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (await _mainDb.Questions.DeleteQuestion(questionId.QuestionId))
+        return new OkResponseResult((object)"Question was deleted.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Question was not deleted.");
 
-      return new OkResponseResult(isChanged);
     }
 
     [HttpPost("updateQuestionFeedback")]
@@ -107,10 +106,9 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var isChanged =
-        await _mainDb.Questions.UpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType);
-      return new OkResponseResult(isChanged);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (await _mainDb.Questions.UpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType))
+        return new OkResponseResult((object)"Question's feedback was updated.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Question's feedback was not updated.");
     }
 
     [HttpPost("updateSaved")]
@@ -118,9 +116,9 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var isChanged = await _mainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
-      return new OkResponseResult(isChanged);
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (await _mainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
+        return new OkResponseResult((object)"Saves question was updated.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Save question was not updated.");
     }
 
     [HttpPost("updateFavorites")]
@@ -128,18 +126,18 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var isChanged =
-        await _mainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
-      return new OkResponseResult(isChanged);
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (await _mainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
+        return new OkResponseResult((object)"Question's favourites was updated.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Question's favourites was not updated.");
     }
 
     [HttpPost("updateAnswer")]
     public async Task<IActionResult> UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
     {
-      var isChanged = await _mainDb.Questions.UpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType);
-      return new OkResponseResult(isChanged);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      if (await _mainDb.Questions.UpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType))
+        return new OkResponseResult((object)"Question's answer was updated.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Question's answer was not updated.");
     }
 
     [HttpPost("addComplaint")]
@@ -147,9 +145,9 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplainType);
-      return new OkResponseResult();
-      //return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplainType))
+        return new ResponseResult((int)HttpStatusCode.Created, (object)"Question was deleted.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Question was not deleted.");
     }
 
     [HttpPost("addRecommendedQuestion")]
@@ -158,10 +156,10 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var questionId = await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
-        recommendedQuestion.UserFromId, recommendedQuestion.QuestionId);
-      return new OkResponseResult();
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+      if (await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
+        recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
+        return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
     }
 
     // только модератору можно
@@ -170,7 +168,6 @@ namespace QuestionsServer.Controllers
     {
       var complaints = await _mainDb.Complaints.GetComplaints();
       return new OkResponseResult(complaints);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [Authorize(Roles = "moderator, admin")]
@@ -179,7 +176,6 @@ namespace QuestionsServer.Controllers
     {
       var complaints = await _mainDb.Complaints.GetComplaints();
       return new OkResponseResult(complaints);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("getVoters")]
@@ -190,7 +186,6 @@ namespace QuestionsServer.Controllers
       var answeredList = await _mainDb.Questions.GetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
         voters.PageParams.Count, voters.AnswerType, DateTime.UtcNow.AddYears(-voters.MaxAge),
         DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       return new OkResponseResult(answeredList.MapAnsweredListDbToViewModel());
     }

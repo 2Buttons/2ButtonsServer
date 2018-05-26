@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
@@ -27,19 +28,15 @@ namespace QuestionsServer.Controllers
       _mainDb = mainDb;
     }
 
-    //  [Authorize(Roles ="Guest,  User")]
-    //[HttpPost("getUserAskedQuestions")]
+    //[Authorize(Roles ="Guest,  User")]
     [HttpPost("asked")]
     public async Task<IActionResult> GetUserAskedQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      //  var u = User;
 
       var userAskedQuestions = await _mainDb.UserQuestions.GetUserAskedQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserAskedQuestionDb>());
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
-      // int o = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
       var result = new List<UserAskedQuestionsViewModel>();
 
       Parallel.ForEach(userAskedQuestions, x =>
@@ -47,17 +44,9 @@ namespace QuestionsServer.Controllers
         GetTagsAndPhotos(userQuestions.UserId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         result.Add(x.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       });
-
-      //foreach (var question in userAskedQuestions)
-      //{
-      //  GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
-      //    out var secondPhotos);
-      //  result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
-      //}
       return new OkResponseResult(result);
     }
 
-    //[HttpPost("getUserAnsweredQuestions")]
     [HttpPost("answered")]
     public async Task<IActionResult> GetUserAnsweredQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
@@ -65,7 +54,6 @@ namespace QuestionsServer.Controllers
 
       var userAnsweredQuestions = await _mainDb.UserQuestions.GetUserAnsweredQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<UserAnsweredQuestionsViewModel>();
 
@@ -78,7 +66,6 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
-    //[HttpPost("getUserFavoriteQuestions")]
     [HttpPost("favorite")]
     public async Task<IActionResult> GetUserFavoriteQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
@@ -87,7 +74,6 @@ namespace QuestionsServer.Controllers
       var userFavoriteQuestions = await _mainDb.UserQuestions.GetUserFavoriteQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserFavoriteQuestionDb>());
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<UserFavoriteQuestionsViewModel>();
 
@@ -100,7 +86,6 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
-    //[HttpPost("getUserCommentedQuestions")]
     [HttpPost("commented")]
     public async Task<IActionResult> GetUserCommentedQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
@@ -109,7 +94,6 @@ namespace QuestionsServer.Controllers
       var userCommentedQuestions = await _mainDb.UserQuestions.GetUserCommentedQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserCommentedQuestionDb>());
-      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
 
       var result = new List<UserCommentedQuestionsViewModel>();
 

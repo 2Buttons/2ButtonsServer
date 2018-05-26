@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.Entities.Moderators;
 
@@ -15,12 +16,12 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<bool> AddComplaint(int userId, int questionId, int complaintId)
+    public async Task<bool> AddComplaint(int userId, int questionId, ComplainType complainType)
     {
       var complaintAddDate = DateTime.UtcNow;
       try
       {
-        return  await _db.Database.ExecuteSqlCommandAsync($"addComplaint {userId}, {questionId}, {complaintId}, {complaintAddDate}") >0;
+        return  await _db.Database.ExecuteSqlCommandAsync($"addComplaint {userId}, {questionId}, {complainType}, {complaintAddDate}") >0;
       }
       catch (Exception e)
       {
@@ -29,7 +30,7 @@ namespace QuestionsData.Repositories
       return false;
     }
 
-    public async Task<List<ComplaintDb>> GetComplaints()
+    public async Task<List<ComplainDb>> GetComplaints()
     {
       try
       {
@@ -39,7 +40,7 @@ namespace QuestionsData.Repositories
       {
         Console.WriteLine(e);
       }
-      return new List<ComplaintDb>();
+      return new List<ComplainDb>();
     }
   }
 }

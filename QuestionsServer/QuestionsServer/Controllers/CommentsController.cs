@@ -26,16 +26,16 @@ namespace QuestionsServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var comentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.CommentText,
         comment.PreviousCommnetId);
-      return new ResponseResult(HttpStatusCode.Created, comentId);
+      return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = comentId });
     }
 
-    [HttpPost("addCommentFeedback")]
+    [HttpPost("updateFeedback")]
     public async Task<IActionResult> AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (await _mainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
-        commentFeedback.FeedbackType)) return new OkResponseResult();
-      return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+        commentFeedback.FeedbackType)) return new OkResponseResult(new { IsFeedbackUpdated = true });
+      return new ResponseResult((int)HttpStatusCode.NotModified, new { IsFeedbackUpdated = false });
     }
 
     [HttpPost("getComments")]

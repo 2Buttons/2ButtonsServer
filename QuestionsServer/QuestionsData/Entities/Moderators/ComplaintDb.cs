@@ -2,11 +2,11 @@
 
 namespace QuestionsData.Entities.Moderators
 {
-    public class ComplaintDb
+    public class ComplainDb
     {
         [Key]
-        public int ComplaintId { get; set; }
+        public int ComplainId { get; set; }
         public int QuestionId { get; set; }
-        public int ComplaintAmount { get; set; }
+        public int ComplainAmount { get; set; }
     }
 }
