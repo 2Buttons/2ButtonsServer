@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
 namespace SocialData.Account.Entities
 {
+  [Table("Socials")]
   public class SocialDb
   {
     [Key]
