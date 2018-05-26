@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AccountData;
 using AccountData.Account;
 using AccountData.Main;
+using AccountServer.Infrastructure.Services;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,6 +42,7 @@ namespace AccountServer
       services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddTransient<AccountDataUnitOfWork>();
+      services.AddTransient<IAccountService, AccountService>();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));

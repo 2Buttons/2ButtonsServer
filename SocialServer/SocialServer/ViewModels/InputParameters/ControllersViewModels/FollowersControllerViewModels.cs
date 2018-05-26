@@ -1,4 +1,6 @@
-﻿namespace SocialServer.ViewModels.InputParameters.ControllersViewModels
+﻿using CommonLibraries.Validation;
+
+namespace SocialServer.ViewModels.InputParameters.ControllersViewModels
 {
   public class FollowerViewModel : UserPageIdViewModel
   {
@@ -8,7 +10,9 @@
 
   public class FollowViewModel
   {
+    [IdValidation]
     public int FollowerId { get; set; }
+    [IdValidation]
     public int FollowToId { get; set; }
   }
 }

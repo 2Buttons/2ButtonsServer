@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using CommonLibraries.ApiResponse;
+﻿using System.Net;
+using System.Threading.Tasks;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SocialData;
@@ -20,11 +21,17 @@ namespace SocialServer.Controllers
       _socialDb = mainDb;
     }
 
+    [HttpGet("server")]
+    public IActionResult ServerName()
+    {
+      return new OkResponseResult("Social Server");
+    }
+
     [HttpPost("getFollowers")]
     public async Task<IActionResult> GetFollowers([FromBody]FollowerViewModel vm)
     {
-      if (vm?.PageParams == null)
-        return new BadResponseResult($"Input parameter {nameof(vm)} is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
       var followers = await _socialDb.Followers.GetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
         vm.PageParams.Count, vm.SearchedLogin);
         return new OkResponseResult(followers.MapToUserContactsViewModel());
@@ -34,8 +41,7 @@ namespace SocialServer.Controllers
     [HttpPost("getFollowTo")]
     public async Task<IActionResult> GetFollowTo([FromBody]FollowerViewModel vm)
     {
-      if (vm == null)
-        return new BadResponseResult($"Input parameter {nameof(vm)} is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var follower = await _socialDb.Followers.GetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset, vm.PageParams.Count, vm.SearchedLogin);
         return new OkResponseResult(follower.MapToUserContactsViewModel());
@@ -45,23 +51,21 @@ namespace SocialServer.Controllers
     [HttpPost("follow")]
     public async Task<IActionResult> Follow([FromBody]FollowViewModel vm)
     {
-      if (vm == null)
-        return new BadResponseResult($"Input parameter is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       if (await _socialDb.Followers.AddFollow(vm.FollowerId, vm.FollowToId))
-        return new OkResponseResult();
-      return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+        return new OkResponseResult("Now you follow", new {IsFollowed = true});
+      return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not connect you to this user.", new { IsFollowed = false });
     }
 
     [HttpPost("unfollow")]
     public async Task<IActionResult> Unfollow([FromBody]FollowViewModel vm)
     {
-      if (vm == null)
-        return new BadResponseResult($"Input parameter is null");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       if (await _socialDb.Followers.DeleteFollow(vm.FollowerId, vm.FollowToId))
-        return new OkResponseResult();
-      return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+        return new OkResponseResult("Now you unfollow", new { IsFollowed = false });
+      return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not disconnect you to this user.", new { IsFollowed = true });
     }
 
   }

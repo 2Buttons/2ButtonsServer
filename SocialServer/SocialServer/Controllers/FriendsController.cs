@@ -3,8 +3,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CommonLibraries;
-using CommonLibraries.ApiResponse;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Cors;
@@ -46,10 +46,7 @@ namespace SocialServer.Controllers
     public async Task<IActionResult> GetRecommendedUsers([FromBody] GetRecommendedUsers user)
 
     {
-      if (user == null)
-        return new BadResponseResult("Input parameters is null");
-      if (user.UserId == 0)
-        return new BadResponseResult("You are a guest");
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var vkFriends = GetFriendsFromVk(user.UserId);
       var fbFriends = GetFriendsFromFb(user.UserId);
@@ -188,6 +185,8 @@ namespace SocialServer.Controllers
     [HttpPost("inviteFriends")]
     public async Task<IActionResult> InviteFriends([FromBody] UserIdViewModel user)
     {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
       var vkUserId = (await _socialDb.Users.GetUserByUserId(user.UserId)).VkId;
       var vkFriendsDataResponse = await Client.GetStringAsync(
         $"https://api.vk.com/method/friends.get?user_id={vkUserId}&count={5000}&fields=photo_100&name_case=nom&access_token={_vkAuthSettings.AppAccess}&v=5.74");

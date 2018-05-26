@@ -2,13 +2,13 @@
 
 namespace CommonLibraries.Validation
 {
-  public class IdValidationtAttribute : ValidationAttribute
+  public class IdValidationAttribute : ValidationAttribute
   {
-    public IdValidationtAttribute() : this("Id")
+    public IdValidationAttribute() : this("Id")
     {
     }
 
-    public IdValidationtAttribute(string name)
+    public IdValidationAttribute(string name)
     {
       ErrorMessage = $"{name} has to be more than 0.";
     }

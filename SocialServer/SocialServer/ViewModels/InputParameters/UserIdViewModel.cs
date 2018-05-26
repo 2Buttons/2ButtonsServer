@@ -1,7 +1,10 @@
-﻿namespace SocialServer.ViewModels.InputParameters
+﻿using CommonLibraries.Validation;
+
+namespace SocialServer.ViewModels.InputParameters
 {
-    public class UserIdViewModel
-    {
-        public int UserId { get; set; }
-    }
+  public class UserIdViewModel
+  {
+    [IdValidation]
+    public int UserId { get; set; }
+  }
 }
