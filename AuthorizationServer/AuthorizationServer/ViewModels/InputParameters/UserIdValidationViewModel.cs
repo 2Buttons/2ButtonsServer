@@ -1,10 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+
+
+
+using CommonLibraries.Validation;
 
 namespace AuthorizationServer.ViewModels.InputParameters
 {
   public class UserIdValidationViewModel
   {
-    [Required]
+
+    [NotDefaultIntAttribute(nameof(UserId))]
     public int UserId { get; set; }
   }
 }

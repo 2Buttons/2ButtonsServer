@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountData;
 using AccountData.Account.DTO;
+using AccountServer.Infrastructure.Services;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
@@ -19,34 +20,28 @@ namespace AccountServer.Controllers
   // [Route("/account")]
   public class AccountController : Controller
   {
-    private readonly AccountDataUnitOfWork _db;
+    private readonly AccountService _account;
 
-    public AccountController(AccountDataUnitOfWork accountDb)
+    public AccountController(AccountService accountService)
     {
-      _db = accountDb;
+      _account = accountService;
+    }
+
+    [HttpGet("server")]
+    public IActionResult ServerName()
+    {
+      return new OkResponseResult((object) "Account");
     }
 
     [Authorize]
     [HttpGet("user/{userPageId:int}")]
-    public async Task<IActionResult> GetUserInfoAuth(int userPageId)
+    public async Task<IActionResult> GetUser(int userPageId)
     {
-      if (userPageId == 0)
-        return new BadResponseResult("The wrong route.");
+      if (!ModelState.IsValid)
+        return new BadResponseResult(ModelState);
 
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-
-      var userInfo = await _db.Accounts.GetUserInfo(userId, userPageId);
-      var userStatistics = await _db.Accounts.GetUserStatistics(userPageId);
-      var userContacts = _db.Users.GetUserSocialsAsync(userPageId);
-
-      var result = userInfo.MapToUserInfoViewModel();
-      result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
-
-      if (userId != userPageId)
-        result.UserStatistics.AnsweredQuestions = 0;
-
-      result.Social = ConvertContactsDtoToViewModel(await userContacts);
-
+      var result = await  _account.GetUserAsync(userId, userPageId);
       return new OkResponseResult(result);
     }
 
@@ -54,24 +49,10 @@ namespace AccountServer.Controllers
     [HttpPost("getUserInfoAuth")]
     public async Task<IActionResult> GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
     {
-      if (userPage == null)
-        return new BadResponseResult("Input body is null.");
       if (!ModelState.IsValid)
-        return new BadResponseResult("Validation error.", ModelState);
-
+        return new BadResponseResult(ModelState);
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-
-      var userInfo = await _db.Accounts.GetUserInfo(userId, userPage.UserPageId);
-      var userStatistics = await _db.Accounts.GetUserStatistics(userPage.UserPageId);
-      var userContacts = _db.Users.GetUserSocialsAsync(userPage.UserPageId);
-
-      var result = userInfo.MapToUserInfoViewModel();
-      result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
-
-      if (userPage.UserId != userPage.UserPageId)
-        result.UserStatistics.AnsweredQuestions = 0;
-
-      result.Social = ConvertContactsDtoToViewModel(await userContacts);
+      var result = await _account.GetUserAsync(userId, userPage.UserPageId);
 
       return new OkResponseResult(result);
     }
@@ -79,45 +60,12 @@ namespace AccountServer.Controllers
     [HttpPost("getUserInfo")]
     public async Task<IActionResult> GetUserInfo([FromBody] UserPageIdViewModel userPage)
     {
-      if (userPage == null)
-        return new BadResponseResult($"Input body  is null");
       if (!ModelState.IsValid)
-        return new BadResponseResult("Validation error.", ModelState);
+        return new BadResponseResult(ModelState);
 
-      var userInfo = await _db.Accounts.GetUserInfo(userPage.UserId, userPage.UserPageId);
-      var userStatistics = await _db.Accounts.GetUserStatistics(userPage.UserPageId);
-      var userContacts = _db.Users.GetUserSocialsAsync(userPage.UserPageId);
-
-      var result = userInfo.MapToUserInfoViewModel();
-      result.UserStatistics = userStatistics.MapToUserStatisticsViewModel();
-
-      if (userPage.UserId != userPage.UserPageId)
-        result.UserStatistics.AnsweredQuestions = 0;
-
-      result.Social = ConvertContactsDtoToViewModel(await userContacts);
+      var result = await _account.GetUserAsync(userPage.UserId, userPage.UserPageId);
 
       return new OkResponseResult(result);
-    }
-
-
-    private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
-    {
-      var result = new List<UserContactsViewModel>();
-
-      if (userContacts.VkId != 0)
-        result.Add(new UserContactsViewModel
-        {
-          SocialNetType = SocialNetType.Vk,
-          AccountUrl = "https://vk.com/id" + userContacts.VkId
-        });
-      if (userContacts.FacebookId != 0)
-        result.Add(new UserContactsViewModel
-        {
-          SocialNetType = SocialNetType.Facebook,
-          AccountUrl = "https://www.facebook.com/profile.php?id=" + userContacts.FacebookId
-        });
-
-      return result;
     }
   }
 }

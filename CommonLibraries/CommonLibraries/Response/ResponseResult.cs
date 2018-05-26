@@ -68,7 +68,7 @@ namespace CommonLibraries.Response
 
     public BadResponseResult(string message, object data) : base(400, message, data)
     {
-      if (message.IsNullOrEmpty() && data == null) Response.Message = "Input parameters is null.";
+      if (message.IsNullOrEmpty() && data == null) Response.Message = "Input body is null.";
     }
   }
 }

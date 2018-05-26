@@ -6,6 +6,7 @@ using AccountData;
 using AccountData.Account;
 using AccountData.Main;
 using CommonLibraries;
+using CommonLibraries.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -76,6 +77,7 @@ namespace AccountServer
         app.UseDeveloperExceptionPage();
       }
 
+      app.UseExceptionHandling();
       app.UseDefaultFiles();
       app.UseStaticFiles();
 

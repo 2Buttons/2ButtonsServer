@@ -23,12 +23,10 @@ namespace AccountServer.Controllers
     [HttpPost("notifications")]
     public async Task<IActionResult> GetNotifications([FromBody] UserIdViewModel userId)
     {
-      if (userId == null)
-        return new BadResponseResult($"Input body is null");
-
+      if(!ModelState.IsValid)
+        return new BadResponseResult(ModelState);
+     
       var notifications = await _db.Notifications.GetNotifications(userId.UserId);
-      //  return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
-
       return new OkResponseResult(notifications.MapNotificationDbToViewModel());
     }
   }

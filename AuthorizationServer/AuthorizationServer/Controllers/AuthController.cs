@@ -11,8 +11,8 @@ using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
-using CommonLibraries.ApiResponse;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -39,9 +39,16 @@ namespace AuthorizationServer.Controllers
       _jwtService = jwtService;
     }
 
+    [HttpGet("server")]
+    public  IActionResult ServerName()
+    {
+      return new OkResponseResult((object)"Authorization Server");
+    }
+
     [HttpPost("isUserIdValid")]
     public async Task<IActionResult> IsUserIdValid([FromBody] UserIdValidationViewModel user)
     {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var isValid = await _db.Users.IsUserIdExistAsync(user.UserId);
       return new OkResponseResult(new { IsValid = isValid });
     }
@@ -55,10 +62,8 @@ namespace AuthorizationServer.Controllers
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationViewModel user)
     {
-      if (user == null)
-        return new BadResponseResult("Inputs body is nul");
       if (!ModelState.IsValid)
-        return new BadResponseResult("Validation errors.", ModelState);
+        return new BadResponseResult(ModelState);
 
       if (user.Phone.IsNullOrEmpty() && user.Email.IsNullOrEmpty())
       {

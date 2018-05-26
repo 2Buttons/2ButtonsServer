@@ -21,7 +21,7 @@ namespace AccountServer
       public static void Main(string[] args)
       {
         var builder = new ConfigurationBuilder()
-          .SetBasePath(Directory.GetCurrentDirectory())
+          .SetBasePath(AppContext.BaseDirectory)
           .AddJsonFile("appsettings.json");
 
         var configuration = builder.Build();

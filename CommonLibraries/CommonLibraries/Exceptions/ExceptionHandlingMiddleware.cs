@@ -31,25 +31,28 @@ namespace CommonLibraries.Exceptions
     {
       try
       {
-        await _next.Invoke(context);
+        await _next(context);
       }
       catch (Exception ex)
       {
        // _logger.LogError(EventIds.GlobalException, ex, ex.Message);
         await HandleExceptionAsync(context, env, loggerFactory, ex);
+        throw;
       }
     }
 
     private static Task HandleExceptionAsync(HttpContext context, IHostingEnvironment env, ILoggerFactory loggerFactory, Exception exception)
     {
-      var response = new ResponseObject();
-      var error = exception.Message + "\n"+exception.StackTrace;
-
-      if (!env.IsDevelopment())
+      var response = new ResponseObject
       {
-        error = "INTERNAL SERVER ERROR";
+        Status = 500
+      };
+
+      if (env.IsDevelopment())
+      {
+        response.Message = exception.Message;
+        response.Data = exception.StackTrace;
       }
-      response.Message = error;
 
       var result = JsonConvert.SerializeObject(response);
       context.Response.ContentType = "application/json";

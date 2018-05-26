@@ -14,6 +14,7 @@ using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.ApiResponse;
 using CommonLibraries.Extensions;
+using CommonLibraries.Response;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Cors;
@@ -151,7 +152,7 @@ namespace AuthorizationServer.Controllers
       var jsonSmall = JsonConvert.SerializeObject(new {userId, size = 0, url = smallPhotoUrl});
       var jsonFull = JsonConvert.SerializeObject(new {userId, size = 1, url = fullPhotoUrl});
       var s = UploadPhotoViaLink("http://localhost:6250/images/uploadUserAvatarViaLink", jsonSmall);
-      var f = UploadPhotoViaLink("http://localhost:6255/images/uploadUserAvatarViaLink", jsonFull);
+      var f = UploadPhotoViaLink("http://localhost:6250/images/uploadUserAvatarViaLink", jsonFull);
 
       await Task.WhenAll(f, s);
       return (f.Result, s.Result);
