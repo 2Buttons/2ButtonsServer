@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.ComponentModel.DataAnnotations;
+using CommonLibraries.Validation;
 
 namespace MediaServer.ViewModel
 {
-    public class UploadQuestionBackgroundViaLinkViewModel
-    {
-      public int QuestionId { get; set; }
-      public string Url { get; set; }
+  public class UploadQuestionBackgroundViaLinkViewModel
+  {
+    [IdValidationt(nameof(QuestionId))]
+    public int QuestionId { get; set; }
+
+    [Required]
+    public string Url { get; set; }
   }
 }

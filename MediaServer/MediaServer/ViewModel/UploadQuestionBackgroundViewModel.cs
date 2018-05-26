@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using CommonLibraries.Validation;
 using Microsoft.AspNetCore.Http;
 
 namespace MediaServer.ViewModel
 {
-    public class UploadQuestionBackgroundViewModel
-    {
-        public int QuestionId { get; set; }
-        public IFormFile File { get; set; }
-    }
+  public class UploadQuestionBackgroundViewModel
+  {
+    [IdValidationt(nameof(QuestionId))]
+    public int QuestionId { get; set; }
+
+    [Required]
+    public IFormFile File { get; set; }
+  }
 }

@@ -2,8 +2,9 @@
 using System.IO;
 using System.Net.Mime;
 using CommonLibraries;
+using CommonLibraries.Exceptions;
 using MediaDataLayer;
-using MediaServer.FileSystem;
+using MediaServer.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -30,7 +32,10 @@ namespace MediaServer
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddTransient<TwoButtonsUnitOfWork>();
+      services.AddTransient<MediaUnitOfWork>();
+
+      services.AddSingleton<IFileService, FileService>();
+      services.AddTransient<IMediaService, MediaService>();
 
       services.AddOptions();
       services.Configure<MediaData>(Configuration.GetSection("MediaData"));
@@ -41,7 +46,6 @@ namespace MediaServer
         options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
                   .AllowAnyMethod());
       });
-      services.AddSingleton<IFileManager, FileManager>();
 
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var secretKey = jwtAppSettingOptions["SecretKey"];
@@ -67,8 +71,10 @@ namespace MediaServer
       });
     }
 
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<MediaData> mediaOptions)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<MediaData> mediaOptions, ILoggerFactory loggerFactory)
     {
+      loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+      loggerFactory.AddDebug();
 
       if (env.IsDevelopment())
         app.UseDeveloperExceptionPage();
@@ -85,6 +91,8 @@ namespace MediaServer
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
       });
 
+
+      app.UseExceptionHandling();
       app.UseMvc();
     }
 

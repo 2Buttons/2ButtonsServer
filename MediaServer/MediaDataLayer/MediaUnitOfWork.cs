@@ -3,7 +3,7 @@ using MediaDataLayer.Repositories;
 
 namespace MediaDataLayer
 {
-  public class TwoButtonsUnitOfWork : IDisposable
+  public class MediaUnitOfWork : IDisposable
   {
     private readonly TwoButtonsContext _db;
 
@@ -11,10 +11,9 @@ namespace MediaDataLayer
     private QuestionRepository _questionRepository;
 
     public AccountRepository Accounts => _accountRepository ?? (_accountRepository = new AccountRepository(_db));
-
     public QuestionRepository Questions => _questionRepository ?? (_questionRepository = new QuestionRepository(_db));
 
-    public TwoButtonsUnitOfWork(TwoButtonsContext db)
+    public MediaUnitOfWork(TwoButtonsContext db)
     {
       _db = db;
     }

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace MediaServer
+namespace MediaServer.Infrastructure
 {
     public static class StringHelper
     {

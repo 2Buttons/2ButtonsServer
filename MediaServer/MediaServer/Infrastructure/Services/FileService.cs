@@ -4,19 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace MediaServer.FileSystem
+namespace MediaServer.Infrastructure.Services
 {
-  public class FileManager : IFileManager
+  public class FileService : IFileService
   {
     private readonly IDictionary<string, string> _folders;
 
     public MediaData MediaOptions { get; }
     public IHostingEnvironment AppEnvironment { get; }
 
-    public FileManager(IHostingEnvironment appEnvironment, IOptions<MediaData> mediaOptions)
+    public FileService(IHostingEnvironment appEnvironment, IOptions<MediaData> mediaOptions)
     {
       MediaOptions = mediaOptions.Value;
       AppEnvironment = appEnvironment;

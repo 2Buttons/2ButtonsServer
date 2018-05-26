@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace MediaServer.FileSystem
+namespace MediaServer.Infrastructure.Services
 {
-  public interface IFileManager
+  public interface IFileService
   {
     bool IsUrlValid(string url);
     bool IsValidImageType(string imageType);

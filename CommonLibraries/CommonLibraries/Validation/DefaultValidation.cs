@@ -2,20 +2,20 @@
 
 namespace CommonLibraries.Validation
 {
-  public class NotDefaultIntAttribute : ValidationAttribute
+  public class IdValidationtAttribute : ValidationAttribute
   {
-    public NotDefaultIntAttribute() : this("Parameter")
+    public IdValidationtAttribute() : this("Id")
     {
     }
 
-    public NotDefaultIntAttribute(string name)
+    public IdValidationtAttribute(string name)
     {
-      ErrorMessage = $"{name} is 0. It is not possible.";
+      ErrorMessage = $"{name} has to be more than 0.";
     }
 
     public override bool IsValid(object value)
     {
-      return value is int && (int) value != 0;
+      return value is int && (int) value > 0;
     }
   }
 }

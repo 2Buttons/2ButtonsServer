@@ -8,7 +8,7 @@ using CommonLibraries;
 
 namespace AccountServer.Infrastructure.Services
 {
-  public class AccountService
+  public class AccountService : IAccountService
   {
     private readonly AccountDataUnitOfWork _db;
 

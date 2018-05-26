@@ -20,9 +20,9 @@ namespace AccountServer.Controllers
   // [Route("/account")]
   public class AccountController : Controller
   {
-    private readonly AccountService _account;
+    private readonly IAccountService _account;
 
-    public AccountController(AccountService accountService)
+    public AccountController(IAccountService accountService)
     {
       _account = accountService;
     }

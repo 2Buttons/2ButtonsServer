@@ -2,7 +2,7 @@
 
 namespace MediaServer.ViewModel
 {
-  public class IsUrlValidViewModel
+  public class UrlViewModel
   {
     [Required]
     public string Url { get; set; }
