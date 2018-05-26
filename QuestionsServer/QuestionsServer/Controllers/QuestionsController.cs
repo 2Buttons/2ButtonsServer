@@ -27,6 +27,12 @@ namespace QuestionsServer.Controllers
       _mainDb = mainDb;
     }
 
+    [HttpGet("server")]
+    public IActionResult ServerName()
+    {
+      return new OkResponseResult("Questions Server");
+    }
+
     [HttpPost("getQuestion")]
     public async Task<IActionResult> GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
     {
@@ -140,16 +146,6 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, "Question's answer was not updated.");
     }
 
-    [HttpPost("addComplaint")]
-    public async Task<IActionResult> AddComplaint([FromBody] AddComplaintViewModel complaint)
-    {
-      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
-      if (await _mainDb.Complaints.AddComplaint(complaint.UserId, complaint.QuestionId, complaint.ComplainType))
-        return new ResponseResult((int)HttpStatusCode.Created, (object)"Question was deleted.");
-      return new ResponseResult((int)HttpStatusCode.NotModified, "Question was not deleted.");
-    }
-
     [HttpPost("addRecommendedQuestion")]
     public async Task<IActionResult> AddRecommendedQuestion(
       [FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
@@ -160,22 +156,6 @@ namespace QuestionsServer.Controllers
         recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
         return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
       return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
-    }
-
-    // только модератору можно
-    [HttpPost("getComplaints")]
-    public async Task<IActionResult> GetComplaints()
-    {
-      var complaints = await _mainDb.Complaints.GetComplaints();
-      return new OkResponseResult(complaints);
-    }
-
-    [Authorize(Roles = "moderator, admin")]
-    [HttpPost("getComplaintsAuth")]
-    public async Task<IActionResult> GetComplaintsAuth()
-    {
-      var complaints = await _mainDb.Complaints.GetComplaints();
-      return new OkResponseResult(complaints);
     }
 
     [HttpPost("getVoters")]
