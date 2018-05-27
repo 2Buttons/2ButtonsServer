@@ -2,16 +2,16 @@
 using CommonLibraries;
 using Newtonsoft.Json;
 
-namespace AccountServer.ViewModels.InputParameters
+namespace AuthorizationServer.ViewModels.InputParameters.Auth
 {
-  public class AddSocialViewModel : UserIdViewModel
+  public class ExternalLoginViewModel
   {
     [Required]
     [JsonProperty("state")]
     public string State { get; set; }
 
     [Required]
-    [JsonProperty("social")]
+    [JsonProperty("state")]
     public SocialType SocialType { get; set; }
 
     [Required]
@@ -24,7 +24,7 @@ namespace AccountServer.ViewModels.InputParameters
     [JsonProperty("error")]
     public string Error { get; set; }
 
-    [JsonProperty("eror_description")]
+    [JsonProperty("erorDescription")]
     public string ErrorDescription { get; set; }
   }
 }

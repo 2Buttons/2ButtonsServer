@@ -9,6 +9,7 @@ using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
+using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 
 namespace AccountServer.Infrastructure.Services
@@ -17,11 +18,13 @@ namespace AccountServer.Infrastructure.Services
   {
     private readonly AccountDataUnitOfWork _db;
     private readonly IVkService _vkService;
+    private readonly IFbService _fbService;
 
-    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService)
+    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService, IFbService fbService)
     {
       _db = accountDb;
       _vkService = vkService;
+      _fbService = fbService;
     }
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
@@ -52,6 +55,7 @@ namespace AccountServer.Infrastructure.Services
       {
 
         case SocialType.Facebook:
+          return await AddFbAsync(userId, code);
         case SocialType.Vk:
           return await AddVkAsync(userId, code);
         case SocialType.Twiter:
@@ -66,32 +70,31 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<bool> AddVkAsync(int userId, string code)
     {
-      var accessToken = await _vkService.GetAccessTokenAsync(code);
-      var userData = await _vkService.GetUserInfoAsync(accessToken.UserId, accessToken.AccessToken, accessToken.Email);
+     
+      var userData = await _vkService.GetUserInfoAsync(code);
       var social = new SocialDb
       {
         InternalId = userId,
         ExternalId = userData.ExternalId,
         SocialType = SocialType.Vk,
         Email = userData.ExternalEmail,
-        ExternalToken = accessToken.AccessToken,
-        ExpiresIn = accessToken.ExpiresIn
+        ExternalToken = userData.ExternalToken,
+        ExpiresIn = userData.ExpiresIn
       };
       return await _db.Users.AddUserSocialAsync(social);
     }
 
     public async Task<bool> AddFbAsync(int userId, string code)
     {
-      var accessToken = await _vkService.GetAccessTokenAsync(code);
-      var userData = await _vkService.GetUserInfoAsync(accessToken.UserId, accessToken.AccessToken, accessToken.Email);
+      var userData = await _fbService.GetUserInfoAsync(code);
       var social = new SocialDb
       {
         InternalId = userId,
         ExternalId = userData.ExternalId,
-        SocialType = SocialType.Vk,
+        SocialType = SocialType.Facebook,
         Email = userData.ExternalEmail,
-        ExternalToken = accessToken.AccessToken,
-        ExpiresIn = accessToken.ExpiresIn
+        ExternalToken = userData.ExternalToken,
+        ExpiresIn = userData.ExpiresIn
       };
       return await _db.Users.AddUserSocialAsync(social);
     }

@@ -67,6 +67,8 @@ namespace AuthorizationServer
       });
 
       services.AddSingleton<IJwtService, JwtService>();
+      services.AddTransient<IVkService, VkService>();
+      services.AddTransient<IFbService, FbService>();
       services.AddSingleton<ICommonAuthService, CommonAuthService>();
       services.AddSingleton<IInternalAuthService, InternalAuthService>();
       services.AddSingleton<IExternalAuthService, ExternalAuthService>();

@@ -27,11 +27,12 @@ namespace AuthorizationServer.Controllers
   //[Route("/auth")]
   public class InternalAuthController : Controller
   {
-    private readonly IInternalAuthService _authService;
-
-    public InternalAuthController( IInternalAuthService authService)
+    private readonly IInternalAuthService _internalAuthService;
+    private readonly ICommonAuthService _commonAuthService;
+    public InternalAuthController(IInternalAuthService internalAuthService, ICommonAuthService commonAuthService)
     {
-      _authService = authService;
+      _internalAuthService = internalAuthService;
+      _commonAuthService = commonAuthService;
     }
 
     [HttpGet("register")]
@@ -52,7 +53,7 @@ namespace AuthorizationServer.Controllers
         return new BadResponseResult(ModelState);
       }
 
-      var result = await _authService.RegisterAsync(user);
+      var result = await _internalAuthService.RegisterAsync(user);
 
       return new ResponseResult((int)HttpStatusCode.Created, "User was created.", result);
     }
@@ -68,7 +69,8 @@ namespace AuthorizationServer.Controllers
         case GrantType.Guest:
         case GrantType.Password:
         case GrantType.Email:
-          var result = await _authService.GetAccessTokenAsync(credentials);
+          var user = await _internalAuthService.GetUserByCredentils(credentials);
+          var result = await _commonAuthService.GetAccessTokenAsync(user);
           return new OkResponseResult(result);
         default:
           ModelState.AddModelError("GrantType", "Sorry, we can not find such grant type.");

@@ -8,6 +8,8 @@ using AccountData.Main;
 using AccountServer.Infrastructure.Services;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
+using CommonLibraries.SocialNetworks.Facebook;
+using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +45,8 @@ namespace AccountServer
 
       services.AddTransient<AccountDataUnitOfWork>();
       services.AddTransient<IAccountService, AccountService>();
+      services.AddTransient<IVkService, VkService>();
+      services.AddTransient<IFbService, FbService>();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AccountData.Account.DTO;
 using AccountData.Account.Entities;
-using AccountData.Account.Entities.FunctionEntities;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 

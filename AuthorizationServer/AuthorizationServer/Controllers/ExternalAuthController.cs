@@ -50,6 +50,28 @@ namespace AuthorizationServer.Controllers
     //https://habr.com/post/270273/ - lets encrypt
 
 
+    [HttpPost("externalLogin")]
+    public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginViewModel auth)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      if (auth.State != "123456")
+      {
+        ModelState.AddModelError("State", "You are hacker! Your state in incorret");
+        return new BadResponseResult(ModelState);
+      }
+      if (!auth.Status || !auth.Error.IsNullOrEmpty())
+      {
+        ModelState.AddModelError("ExternalError", "ExternalError: " + auth.Error + " " + auth.ErrorDescription);
+        return new BadResponseResult(ModelState);
+      }
+      if (string.IsNullOrEmpty(auth.Code))
+      {
+        ModelState.AddModelError("Code", "Code is null or empty.");
+        return new BadResponseResult(ModelState);
+      }
+
+    }
+
     [HttpPost("vkLogin")]
     public async Task<IActionResult> VkLogin([FromBody] VkAuthCodeViewModel vkAuth)
     {
@@ -251,7 +273,6 @@ namespace AuthorizationServer.Controllers
           await _db.Tokens.RemoveTokensByUserIdAsync(user.UserId);
           throw new Exception("Your login at leat on 10 defferent devices. We are forced to save your data. Now you are out of all devices. Please log in again.");
         }
-
 
         var result = await _jwtService.GenerateJwtAsync(user.UserId, user.RoleType);
 

@@ -17,6 +17,8 @@ using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
+using CommonLibraries.SocialNetworks.Facebook;
+using CommonLibraries.SocialNetworks.Vk;
 using Newtonsoft.Json;
 
 namespace AuthorizationServer.Infrastructure.Services
@@ -25,16 +27,25 @@ namespace AuthorizationServer.Infrastructure.Services
   {
     private readonly AuthorizationUnitOfWork _db;
     private readonly IJwtService _jwtService;
+    private readonly IVkService _vkService;
+    private readonly IFbService _fbService;
 
-    public ExternalAuthService(IJwtService jwtService, AuthorizationUnitOfWork db)
+    public ExternalAuthService(IJwtService jwtService, AuthorizationUnitOfWork db, IVkService vkService, IFbService fbService)
     {
       _db = db;
       _jwtService = jwtService;
+      _vkService = vkService;
+      _fbService = fbService;
     }
 
     public void Dispose()
     {
       _db.Dispose();
+    }
+
+    public void ExternalLogin(string code, SocialType socialType)
+    {
+      
     }
 
     private async Task<(string, string)> UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)

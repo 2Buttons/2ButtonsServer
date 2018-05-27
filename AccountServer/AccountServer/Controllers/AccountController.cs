@@ -70,6 +70,7 @@ namespace AccountServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified);
     }
 
+
     [HttpPost("addSocial")]
     public async Task<IActionResult> AddSocial ([FromBody] AddSocialViewModel socialAuth)
     {
@@ -90,7 +91,7 @@ namespace AccountServer.Controllers
         return new BadResponseResult(ModelState);
       }
 
-      if (await _account.UpdateUserInfoAsync(user))
+      if (await _account.AddUserSocialAsync(socialAuth.UserId, socialAuth.Code,socialAuth.SocialType))
         return new OkResponseResult();
       return new ResponseResult((int)HttpStatusCode.NotModified);
     }

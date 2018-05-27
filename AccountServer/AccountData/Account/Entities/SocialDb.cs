@@ -12,7 +12,7 @@ namespace AccountData.Account.Entities
 
     public SocialType SocialType { get; set; }
     public int InternalId { get; set; }
-    public int ExternalId { get; set; }
+    public long ExternalId { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string ExternalToken { get; set; }

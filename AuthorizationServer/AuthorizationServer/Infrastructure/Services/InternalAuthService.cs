@@ -86,56 +86,34 @@ namespace AuthorizationServer.Infrastructure.Services
       return jwtToken;
     }
 
-    public async Task<Token> GetAccessTokenAsync(LoginViewModel credentials)
+    public async Task<UserDto> GetUserByCredentils(LoginViewModel credentials)
     {
-      var user = new UserDto { UserId = 0 };
-      var role = RoleType.Guest;
+      var user = new UserDto { UserId = 0, RoleType = RoleType.Guest };
 
-      if (credentials.GrantType != GrantType.Guest)
+      if (credentials.GrantType == GrantType.Guest) return user;
+
+      switch (credentials.GrantType)
       {
-        switch (credentials.GrantType)
-        {
-          case GrantType.Guest:
-            break;
-          case GrantType.Password:
-            user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
-            if (user == null)
-            {             
-              throw new Exception("Phone and (or) password is incorrect");
-            }
-            break;
-          case GrantType.Email:
-            user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(credentials.Email, credentials.Password);
-            if (user == null)
-            {
-              throw new Exception("Email and (or) password is incorrect");
-            }
-            break;
-        }
-
-        role = await _db.Users.GetUserRoleAsync(user.UserId);
-
-        if (await _db.Tokens.CountTokensForUserAsync(user.UserId) > 10)
-        {
-          await _db.Tokens.RemoveTokensByUserIdAsync(user.UserId);
-          throw new Exception("You logged in at least 10 defferent devices. We are forced to save your data. Now you are logged out of all devices. Please log in again.");
-        }
+        case GrantType.Guest:
+          break;
+        case GrantType.Password:
+          user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
+          if (user == null)
+          {
+            throw new Exception("Phone and (or) password is incorrect");
+          }
+          break;
+        case GrantType.Email:
+          user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(credentials.Email, credentials.Password);
+          if (user == null)
+          {
+            throw new Exception("Email and (or) password is incorrect");
+          }
+          break;
       }
 
-      var result = await _jwtService.GenerateJwtAsync(user.UserId, role);
-
-      var token = new TokenDb
-      {
-        UserId = user.UserId,
-        ExpiresIn = result.ExpiresIn,
-        RefreshToken = result.RefreshToken
-      };
-
-      if (!await _db.Tokens.AddTokenAsync(token))
-        throw new Exception("Can not add token to database. You entered just as a guest.");
-      //var p = new JwtSecurityTokenHandler().ReadJwtToken(result.RefreshToken).ValidTo;
-
-      return result;
+      user.RoleType = await _db.Users.GetUserRoleAsync(user.UserId);
+      return user;
     }
 
     public void Dispose()
