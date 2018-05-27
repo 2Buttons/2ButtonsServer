@@ -45,8 +45,10 @@ namespace AuthorizationServer.Controllers
       }
 
       var userDto = await _externalAuthService.GetUserViaExternalSocialNet(auth.Code, auth.SocialType);
+      var token = await _commonAuthService.GetAccessTokenAsync(userDto);
 
-      var result = await _commonAuthService.GetAccessTokenAsync(userDto);
+      var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
+      var result = new {Token = token, User = userInfo };
       return new OkResponseResult(result);
     }
   }

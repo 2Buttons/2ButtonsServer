@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AuthorizationData.Account.DTO;
+using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.SocialNetworks;
 

@@ -134,6 +134,11 @@ namespace AuthorizationServer.Infrastructure.Services
       //}
     }
 
+    public async Task<UserInfoDb> GetUserInfo(int userId)
+    {
+      return await _db.UsersInfo.GetUserInfoAsync(userId);
+    }
+
     public void Dispose()
     {
       _db.Dispose();
