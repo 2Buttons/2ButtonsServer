@@ -1,39 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthorizationData;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Main.Entities;
-using AuthorizationServer.Models;
-using AuthorizationServer.Services;
-using AuthorizationServer.ViewModels.InputParameters;
-using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.Extensions;
-using CommonLibraries.Response;
+using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Newtonsoft.Json;
 
 namespace AuthorizationServer.Infrastructure.Services
 {
-  public class ExternalAuthService : IDisposable
+  public class ExternalAuthService : IExternalAuthService
   {
     private readonly AuthorizationUnitOfWork _db;
-    private readonly IJwtService _jwtService;
-    private readonly IVkService _vkService;
     private readonly IFbService _fbService;
+    private readonly IVkService _vkService;
 
-    public ExternalAuthService(IJwtService jwtService, AuthorizationUnitOfWork db, IVkService vkService, IFbService fbService)
+    public ExternalAuthService(AuthorizationUnitOfWork db, IVkService vkService, IFbService fbService)
     {
       _db = db;
-      _jwtService = jwtService;
       _vkService = vkService;
       _fbService = fbService;
     }
@@ -43,20 +33,100 @@ namespace AuthorizationServer.Infrastructure.Services
       _db.Dispose();
     }
 
-    public void ExternalLogin(string code, SocialType socialType)
+    public async Task<UserDto> GetUserViaExternalSocialNet(string code, SocialType socialType)
     {
-      NormalizedSocialData
+      NormalizedSocialUserData socialUserData;
+      switch (socialType)
+      {
+        case SocialType.Facebook:
+          socialUserData = await _fbService.GetUserInfoAsync(code);
+          break;
+        case SocialType.Vk:
+          socialUserData = await _vkService.GetUserInfoAsync(code);
+          break;
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
+        case SocialType.Nothing:
+        default: throw new Exception($"We do not support loging in via {socialType}.");
+      }
+
+      var user = await _db.Socials.FindUserByExternalUserIdAsync(socialUserData.ExternalId, socialType);
+      if (user != null) return user;
+      user = await FindUserByExternalEmail(socialUserData.ExternalEmail);
+      if (user != null)
+      {
+        if (await AddUserSocialAsync(user.UserId, socialType, socialUserData)) return user;
+        throw new Exception(
+          $"We can not your information about your {socialType} account in our system. Please, log in via email or phone or change social network to another.");
+      }
+      return await RegisterViaExternalSocial(socialUserData);
     }
 
-    private async Task<(string, string)> UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)
+    private async Task<UserDto> RegisterViaExternalSocial(NormalizedSocialUserData user)
     {
-      var jsonSmall = JsonConvert.SerializeObject(new { userId, size = 0, url = smallPhotoUrl });
-      var jsonFull = JsonConvert.SerializeObject(new { userId, size = 1, url = fullPhotoUrl });
+      const RoleType role = RoleType.User;
+
+      var userDb = new UserDb {Email = user.ExternalEmail, RoleType = role, RegistrationDate = DateTime.UtcNow};
+      var isAdded = await _db.Users.AddUserAsync(userDb);
+      if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
+
+      var avatarsLink = await UploadAvatars(userDb.UserId, user.SmallPhotoUrl, user.FullPhotoUrl);
+
+      var userInfo = new UserInfoDb
+      {
+        UserId = userDb.UserId,
+        Login = user.Login,
+        BirthDate = user.BirthDate,
+        Sex = user.Sex,
+        City = user.City,
+        FullAvatarLink = avatarsLink.smallLink,
+        SmallAvatarLink = avatarsLink.fullLink
+      };
+
+      if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
+      {
+        await _db.Users.RemoveUserAsync(userDb.UserId);
+        throw new Exception("We are not able to add your indformation. Please, tell us about it.");
+      }
+
+      return new UserDto {UserId = userDb.UserId, RoleType = userDb.RoleType};
+    }
+
+    public async Task<bool> AddUserSocialAsync(int internalId, SocialType socialType,
+      NormalizedSocialUserData socialUserData)
+    {
+      var social = new SocialDb
+      {
+        InternalId = internalId,
+        SocialType = socialType,
+        ExternalId = socialUserData.ExternalId,
+        Email = socialUserData.ExternalEmail,
+        ExternalToken = socialUserData.ExternalToken,
+        ExpiresIn = socialUserData.ExpiresIn
+      };
+      return await _db.Socials.AddUserSocialAsync(social);
+    }
+
+    private async Task<UserDto> FindUserByExternalEmail(string externalEmail)
+    {
+      if (externalEmail.IsNullOrEmpty()) return null;
+      var user = await _db.Users.GetUserByInternalEmail(externalEmail);
+      if (user != null) return user;
+      return await _db.Socials.FindUserByExternalEmaildAsync(externalEmail);
+    }
+
+    private async Task<(string smallLink, string fullLink)> UploadAvatars(int userId, string smallPhotoUrl,
+      string fullPhotoUrl)
+    {
+      var jsonSmall = JsonConvert.SerializeObject(new {userId, size = 0, url = smallPhotoUrl});
+      var jsonFull = JsonConvert.SerializeObject(new {userId, size = 1, url = fullPhotoUrl});
       var s = UploadPhotoViaLink("http://localhost:6250/images/uploadUserAvatarViaLink", jsonSmall);
       var f = UploadPhotoViaLink("http://localhost:6250/images/uploadUserAvatarViaLink", jsonFull);
 
       await Task.WhenAll(f, s);
-      return (f.Result, s.Result);
+      return (s.Result, f.Result);
     }
 
     private static async Task<string> UploadPhotoViaLink(string url, string requestJson)

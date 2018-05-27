@@ -3,7 +3,6 @@ using AuthorizationData.Account;
 using AuthorizationData.Account.Repostirories;
 using AuthorizationData.Main;
 using AuthorizationData.Main.Repositories;
-using AuthorizationData.Repostirories;
 
 namespace AuthorizationData
 {

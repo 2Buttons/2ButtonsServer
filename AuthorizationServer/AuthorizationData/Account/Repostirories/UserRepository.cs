@@ -122,12 +122,12 @@ namespace AuthorizationData.Account.Repostirories
       return await _contextAccount.UsersDb.FindAsync(userId) != null;
     }
 
-    public async Task<bool> IsUserExistByInternalPhoneAsync(string phone)
+    public async Task<bool> IsUserExistByPhoneAsync(string phone)
     {
       return await _contextAccount.UsersDb.AsNoTracking().AnyAsync(x => x.PhoneNumber == phone);
     }
 
-    public async Task<bool> IsUserExistByInternalEmailAsync(string email)
+    public async Task<bool> IsUserExistByEmailAsync(string email)
     {
       return await _contextAccount.UsersDb.AsNoTracking().AnyAsync(x => x.Email == email);
     }

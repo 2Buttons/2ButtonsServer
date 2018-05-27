@@ -52,24 +52,30 @@ namespace AuthorizationData.Account.Repostirories
       }).FirstOrDefaultAsync();
     }
 
-    public async Task<long> GetExternalUserIdAsync(int userId, SocialType socialType)
+    public async Task<bool> AddUserSocialAsync(SocialDb social)
     {
-      var user = await _contextAccount.UsersDb.FindAsync(userId);
-      if (user == null) return 0;
-      switch (socialType)
-      {
-        case SocialType.Facebook:
-          return user.FacebookId;
-        case SocialType.Vk:
-          return user.VkId;
-        case SocialType.Twiter:
-        case SocialType.GooglePlus:
-        case SocialType.Telegram:
-        case SocialType.Badoo:
-        case SocialType.Nothing:
-        default:
-          return 0;
-      }
+      _contextAccount.SocialsDb.Add(social);
+      return await _contextAccount.SaveChangesAsync() > 0;
     }
+
+    //public async Task<long> GetExternalUserIdAsync(int userId, SocialType socialType)
+    //{
+    //  var user = await _contextAccount.UsersDb.FindAsync(userId);
+    //  if (user == null) return 0;
+    //  switch (socialType)
+    //  {
+    //    case SocialType.Facebook:
+    //      return user.FacebookId;
+    //    case SocialType.Vk:
+    //      return user.VkId;
+    //    case SocialType.Twiter:
+    //    case SocialType.GooglePlus:
+    //    case SocialType.Telegram:
+    //    case SocialType.Badoo:
+    //    case SocialType.Nothing:
+    //    default:
+    //      return 0;
+    //  }
+    //}
   }
 }

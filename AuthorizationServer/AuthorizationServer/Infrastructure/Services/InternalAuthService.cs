@@ -47,7 +47,8 @@ namespace AuthorizationServer.Infrastructure.Services
         Email = user.Email,
         PhoneNumber = user.Phone,
         RoleType = role,
-        PasswordHash = user.Password.GetHashString()
+        PasswordHash = user.Password.GetHashString(),
+        RegistrationDate = DateTime.UtcNow
       };
       var isAdded = await _db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0)
