@@ -12,7 +12,6 @@ using AuthorizationServer.Models;
 using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
-using CommonLibraries.ApiResponse;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
 using CommonLibraries.SocialNetworks.Facebook;
@@ -129,7 +128,7 @@ namespace AuthorizationServer.Controllers
       var bdate = Convert.ToDateTime(userInfo.Birthday);
 
       var links = await UploadAvatars(userDb.UserId, userInfo.SmallPhoto, userInfo.FullPhoto);
-      var userMain = new UserMainDb
+      var userMain = new UserInfoDb
       {
         UserId = userDb.UserId,
         Login = userInfo.FirstName + " " + userInfo.LastName,

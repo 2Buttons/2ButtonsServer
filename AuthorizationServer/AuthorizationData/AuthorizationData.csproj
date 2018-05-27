@@ -13,4 +13,8 @@
     <ProjectReference Include="..\..\CommonLibraries\CommonLibraries\CommonLibraries.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Main\FunctionEntities\" />
+  </ItemGroup>
+
 </Project>

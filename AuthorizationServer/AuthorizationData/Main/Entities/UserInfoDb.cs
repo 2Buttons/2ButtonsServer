@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
 
 namespace AuthorizationData.Main.Entities
 {
-  public class UserMainDb
+  public class UserInfoDb
   {
+    [Key]
     public int UserId { get; set; }
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }

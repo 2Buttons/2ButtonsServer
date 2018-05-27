@@ -6,7 +6,7 @@ namespace MediaServer.ViewModel
 {
   public class UploadUserAvatarViewModel
   {
-    [IdValidationt(nameof(UserId))]
+    [IdValidation(nameof(UserId))]
     public int UserId { get; set; }
     public AvatarSizeType Size { get; set; }
     [Required]

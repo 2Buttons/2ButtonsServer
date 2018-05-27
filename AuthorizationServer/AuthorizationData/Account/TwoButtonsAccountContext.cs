@@ -1,5 +1,4 @@
 ﻿using AuthorizationData.Account.Entities;
-using AuthorizationData.Account.Entities.FunctionEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthorizationData.Account
@@ -9,9 +8,6 @@ namespace AuthorizationData.Account
     public DbSet<TokenDb> TokensDb { get; set; }
     public DbSet<UserDb> UsersDb { get; set; }
     public DbSet<SocialDb> SocialsDb { get; set; }
-
-    // functions
-    public DbSet<UserIdDb> UserIds { get; set; }
 
 
     public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)

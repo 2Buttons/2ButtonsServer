@@ -6,7 +6,7 @@ namespace AccountServer.ViewModels.InputParameters
   public class UserPageIdViewModel : UserIdViewModel
   {
     [Required]
-    [NotDefaultInt(nameof(UserPageId))]
+    [IdValidation(nameof(UserPageId))]
     public int UserPageId { get; set; }
   }
 }

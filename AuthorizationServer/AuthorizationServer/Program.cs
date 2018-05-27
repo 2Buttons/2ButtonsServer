@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,7 @@ namespace AuthorizationServer
     public static void Main(string[] args)
     {
       var builder = new ConfigurationBuilder()
-          .SetBasePath(Directory.GetCurrentDirectory())
+          .SetBasePath(AppContext.BaseDirectory)
           .AddJsonFile("appsettings.json");
 
       var configuration = builder.Build();

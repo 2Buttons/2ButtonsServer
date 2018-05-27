@@ -108,22 +108,22 @@ namespace AccountData.Account.Repostirories
       return user?.ToUserDto();
     }
 
-    public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialNetType socialType)
+    public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialType socialType)
     {
       UserDb user;
       switch (socialType)
       {
-        case SocialNetType.Facebook:
+        case SocialType.Facebook:
           user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.FacebookId == externalUserId);
           break;
-        case SocialNetType.Vk:
+        case SocialType.Vk:
           user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.VkId == externalUserId);
           break;
-        case SocialNetType.Nothing:
-        case SocialNetType.Twiter:
-        case SocialNetType.GooglePlus:
-        case SocialNetType.Telegram:
-        case SocialNetType.Badoo:
+        case SocialType.Nothing:
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
         default:
           user = null;
           break;
@@ -131,21 +131,21 @@ namespace AccountData.Account.Repostirories
       return user?.ToUserDto();
     }
 
-    public async Task<long> GetExternalUserIdAsync(int userId, SocialNetType socialType)
+    public async Task<long> GetExternalUserIdAsync(int userId, SocialType socialType)
     {
       var user = await _context.UsersDb.FindAsync(userId);
       if (user == null) return 0;
       switch (socialType)
       {
-        case SocialNetType.Facebook:
+        case SocialType.Facebook:
           return user.FacebookId;
-        case SocialNetType.Vk:
+        case SocialType.Vk:
           return user.VkId;
-        case SocialNetType.Twiter:
-        case SocialNetType.GooglePlus:
-        case SocialNetType.Telegram:
-        case SocialNetType.Badoo:
-        case SocialNetType.Nothing:
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
+        case SocialType.Nothing:
         default:
           return 0;
       }

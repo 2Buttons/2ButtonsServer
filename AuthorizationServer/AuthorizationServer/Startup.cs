@@ -5,6 +5,7 @@ using AuthorizationData.Main;
 using AuthorizationServer.Extensions;
 using AuthorizationServer.Services;
 using CommonLibraries;
+using CommonLibraries.Exceptions;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -128,6 +129,7 @@ namespace AuthorizationServer
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
       });
       app.UseAuthentication();
+      app.UseExceptionHandling();
       app.UseMvc();
     }
   }

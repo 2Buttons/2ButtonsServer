@@ -1,6 +1,7 @@
 ﻿using System;
 using AuthorizationData.Account;
 using AuthorizationData.Main;
+using AuthorizationData.Main.Repositories;
 using AuthorizationData.Repostirories;
 
 namespace AuthorizationData
@@ -13,9 +14,11 @@ namespace AuthorizationData
     //private ClientRepository _clientRepository;
     private TokenRepository _tokenRepository;
     private UserRepository _userRepository;
+    private UserInfoRepository _usersInfoRepository;
 
     public TokenRepository Tokens => _tokenRepository ?? (_tokenRepository = new TokenRepository(_dbAccount));
-    public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_dbMain, _dbAccount));
+    public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_dbAccount));
+    public UserInfoRepository UsersInfo => _usersInfoRepository ?? (_usersInfoRepository = new UserInfoRepository(_dbMain));
 
     public AuthorizationUnitOfWork(TwoButtonsContext dbMain, TwoButtonsAccountContext dbAccount)
     {

@@ -5,7 +5,7 @@ namespace MediaServer.ViewModel
 {
   public class UploadQuestionBackgroundViaLinkViewModel
   {
-    [IdValidationt(nameof(QuestionId))]
+    [IdValidation(nameof(QuestionId))]
     public int QuestionId { get; set; }
 
     [Required]

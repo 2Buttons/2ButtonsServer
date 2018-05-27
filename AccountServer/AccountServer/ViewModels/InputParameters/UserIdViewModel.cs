@@ -4,7 +4,7 @@ namespace AccountServer.ViewModels.InputParameters
 {
   public class UserIdViewModel
   {
-    [NotDefaultInt(nameof(UserId))]
+    [IdValidation(nameof(UserId))]
     public int UserId { get; set; }
   }
 }

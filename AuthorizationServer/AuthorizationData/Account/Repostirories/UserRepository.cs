@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AuthorizationData.Account;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
-using AuthorizationData.Account.Entities.FunctionEntities;
 using AuthorizationData.Main;
 using AuthorizationData.Main.Entities;
 using CommonLibraries;
@@ -18,18 +17,15 @@ namespace AuthorizationData.Repostirories
   public class UserRepository : IDisposable
   {
     private readonly TwoButtonsAccountContext _contextAccount;
-    private readonly TwoButtonsContext _contextMain;
 
-    public UserRepository(TwoButtonsContext contextMain, TwoButtonsAccountContext context)
+    public UserRepository(TwoButtonsAccountContext context)
     {
       _contextAccount = context;
-      _contextMain = contextMain;
     }
 
     public void Dispose()
     {
       _contextAccount.Dispose();
-      _contextMain.Dispose();
     }
 
     public async Task<bool> AddUserIntoAccountDbAsync(UserDb user)
@@ -38,7 +34,7 @@ namespace AuthorizationData.Repostirories
       return await _contextAccount.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> AddUserIntoMainDbAsync(UserMainDb user)
+    public async Task<bool> AddUserIntoMainDbAsync(UserInfoDb user)
     {
       var returnsCode = new SqlParameter
       {
@@ -134,22 +130,7 @@ namespace AuthorizationData.Repostirories
       return user?.ToUserDto();
     }
 
-    public List<UserIdDb> GetUserIdFromVkId(IEnumerable<int> ids)
-    {
-      var dataTable = new DataTable();
-      dataTable.Columns.Add("id", typeof(int));
-      foreach (var id in ids)
-        dataTable.Rows.Add(id);
-      var vkIdTable = new SqlParameter
-      {
-        ParameterName = "@VkIDTable",
-        TypeName = "dbo.idTable",
-        Value = dataTable
-      };
-      return _contextAccount.UserIds.FromSql($"select * from dbo.getUserIdFromVkId(@VkIDTable)", vkIdTable)
-        .ToList();
-    }
-
+    
     public async Task<UserDto> GetUserByEmailAndPasswordAsync(string email, string passwordHash)
     {
       var user = await _contextAccount.UsersDb.AsNoTracking()

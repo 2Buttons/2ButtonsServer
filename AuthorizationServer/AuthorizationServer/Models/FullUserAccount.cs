@@ -6,6 +6,6 @@ namespace AuthorizationServer.Models
   public class FullUserAccount
   {
     public UserDto UserAuth { get; set; }
-    public UserMainDb UserMain { get; set; }
+    public UserInfoDb UserMain { get; set; }
   }
 }

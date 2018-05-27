@@ -41,13 +41,13 @@ namespace AccountServer.Infrastructure.Services
       if (userContacts.VkId != 0)
         result.Add(new UserContactsViewModel
         {
-          SocialNetType = SocialNetType.Vk,
+          SocialType = SocialType.Vk,
           AccountUrl = "https://vk.com/id" + userContacts.VkId
         });
       if (userContacts.FacebookId != 0)
         result.Add(new UserContactsViewModel
         {
-          SocialNetType = SocialNetType.Facebook,
+          SocialType = SocialType.Facebook,
           AccountUrl = "https://www.facebook.com/profile.php?id=" + userContacts.FacebookId
         });
 

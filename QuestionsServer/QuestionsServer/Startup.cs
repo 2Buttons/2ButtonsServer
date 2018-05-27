@@ -1,4 +1,5 @@
 ﻿using CommonLibraries;
+using CommonLibraries.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -76,7 +77,7 @@ namespace QuestionsServer
       });
 
       app.UseAuthentication();
-      app.UseExceptionHandler();
+      app.UseExceptionHandling();
       app.UseMvc();
     }
 
