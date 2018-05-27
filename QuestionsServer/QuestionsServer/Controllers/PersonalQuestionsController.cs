@@ -68,6 +68,25 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
+    [HttpPost("chosen")]
+    public async Task<IActionResult> GetChosenQustions([FromBody] PersonalQuestionsViewModel userQuestions)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      var chosenQuestions = await _mainDb.UserQuestions.GetChosenQuestions(userQuestions.UserId,
+        userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
+
+      var result = new List<ChosenQuestionsViewModel>();
+
+      foreach (var question in chosenQuestions)
+      {
+        GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
+          out var secondPhotos);
+        result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos));
+      }
+      return new OkResponseResult(result);
+    }
+
     [HttpPost("liked")]
     public async Task<IActionResult> GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {

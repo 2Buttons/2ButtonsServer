@@ -21,6 +21,7 @@ namespace QuestionsData
     public virtual DbSet<UserAskedQuestionDb> UserAskedQuestionsDb { get; set; }
     public virtual DbSet<UserCommentedQuestionDb> UserCommentedQuestionsDb { get; set; }
     public virtual DbSet<UserFavoriteQuestionDb> UserFavoriteQuestionsDb { get; set; }
+    
 
     public virtual DbSet<NewsAnsweredQuestionsDb> NewsAnsweredQuestionsDb { get; set; }
     public virtual DbSet<NewsAskedQuestionsDb> NewsAskedQuestionsDb { get; set; }
@@ -31,6 +32,7 @@ namespace QuestionsData
     public virtual DbSet<AskedQuestionDb> AskedQuestionsDb { get; set; }
     public virtual DbSet<SavedQuestionDb> SavedQuestionsDb { get; set; }
     public virtual DbSet<RecommendedQuestionDb> RecommendedQuestionsDb { get; set; }
+    public virtual DbSet<ChosenQuestionDb> ChosenQuestionsDb { get; set; }
     public virtual DbSet<LikedQuestionDb> LikedQuestionsDb { get; set; }
     public virtual DbSet<TopQuestionDb> TopQuestionsDb { get; set; }
 

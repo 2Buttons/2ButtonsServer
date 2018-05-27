@@ -9,6 +9,7 @@ using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
+using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 
@@ -29,8 +30,8 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
     {
-      var userInfoTask =  _db.Accounts.GetUserInfoAsync(userId, userPageId);
-      var userStatisticsTask =  _db.Accounts.GetUserStatisticsAsync(userPageId);
+      var userInfoTask = _db.Accounts.GetUserInfoAsync(userId, userPageId);
+      var userStatisticsTask = _db.Accounts.GetUserStatisticsAsync(userPageId);
       var userContactsTask = _db.Users.GetUserSocialsAsync(userPageId);
 
       await Task.WhenAll(userInfoTask, userStatisticsTask, userContactsTask);
@@ -51,13 +52,16 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<bool> AddUserSocialAsync(int userId, string code, SocialType socialType)
     {
+      NormalizedSocialUserData user;
       switch (socialType)
       {
 
         case SocialType.Facebook:
-          return await AddFbAsync(userId, code);
+          user = await _fbService.GetUserInfoAsync(code);
+          break;
         case SocialType.Vk:
-          return await AddVkAsync(userId, code);
+          user = await _fbService.GetUserInfoAsync(code);
+          break;
         case SocialType.Twiter:
         case SocialType.GooglePlus:
         case SocialType.Telegram:
@@ -66,39 +70,17 @@ namespace AccountServer.Infrastructure.Services
         default:
           throw new System.Exception("We do not support this social network.");
       }
-    }
-
-    public async Task<bool> AddVkAsync(int userId, string code)
-    {
-     
-      var userData = await _vkService.GetUserInfoAsync(code);
       var social = new SocialDb
       {
         InternalId = userId,
-        ExternalId = userData.ExternalId,
-        SocialType = SocialType.Vk,
-        Email = userData.ExternalEmail,
-        ExternalToken = userData.ExternalToken,
-        ExpiresIn = userData.ExpiresIn
+        ExternalId = user.ExternalId,
+        SocialType = socialType,
+        Email = user.ExternalEmail,
+        ExternalToken = user.ExternalToken,
+        ExpiresIn = user.ExpiresIn
       };
       return await _db.Users.AddUserSocialAsync(social);
     }
-
-    public async Task<bool> AddFbAsync(int userId, string code)
-    {
-      var userData = await _fbService.GetUserInfoAsync(code);
-      var social = new SocialDb
-      {
-        InternalId = userId,
-        ExternalId = userData.ExternalId,
-        SocialType = SocialType.Facebook,
-        Email = userData.ExternalEmail,
-        ExternalToken = userData.ExternalToken,
-        ExpiresIn = userData.ExpiresIn
-      };
-      return await _db.Users.AddUserSocialAsync(social);
-    }
-
     private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
     {
       var result = new List<UserContactsViewModel>();

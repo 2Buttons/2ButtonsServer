@@ -153,6 +153,15 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
+    public static ChosenQuestionsViewModel MapToChosenQuestionsViewModel(
+      this ChosenQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      IEnumerable<PhotoDb> dbSecondPhotos)
+    {
+      var viewModel =
+        QuestionDbToViewModel<ChosenQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+      return viewModel;
+    }
+
     public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(
       this RecommendedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos)

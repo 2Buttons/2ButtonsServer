@@ -19,28 +19,15 @@ namespace QuestionsData.Repositories
     public async Task<bool> AddComplaintt(int userId, int questionId, ComplaintType complaintType)
     {
       var complainttAddDate = DateTime.UtcNow;
-      try
-      {
-        return  await _db.Database.ExecuteSqlCommandAsync($"addComplaintt {userId}, {questionId}, {complaintType}, {complainttAddDate}") >0;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return false;
+
+      return await _db.Database.ExecuteSqlCommandAsync(
+               $"addComplaintt {userId}, {questionId}, {complaintType}, {complainttAddDate}") > 0;
     }
 
     public async Task<List<ComplaintDb>> GetComplaintts()
     {
-      try
-      {
-        return await _db.ComplainttDb.AsNoTracking().FromSql($"select * from dbo.getComplaintts()").ToListAsync();
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return new List<ComplaintDb>();
+      return await _db.ComplainttDb.AsNoTracking().FromSql($"select * from dbo.getComplaintts()").ToListAsync() ??
+             new List<ComplaintDb>();
     }
   }
 }
