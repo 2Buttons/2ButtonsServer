@@ -11,6 +11,8 @@ namespace SocialData.Account
 
     // functions
     public DbSet<UserIdDb> UserIds { get; set; }
+    public DbSet<ExternalIdDb> ExternalIdsDb { get; set; }
+    
 
 
     public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)

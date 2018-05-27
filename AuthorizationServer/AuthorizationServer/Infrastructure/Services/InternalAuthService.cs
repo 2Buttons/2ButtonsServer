@@ -98,14 +98,14 @@ namespace AuthorizationServer.Infrastructure.Services
           case GrantType.Guest:
             break;
           case GrantType.Password:
-            user = await _db.Users.GetUserByPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
+            user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
             if (user == null)
-            {
+            {             
               throw new Exception("Phone and (or) password is incorrect");
             }
             break;
           case GrantType.Email:
-            user = await _db.Users.GetUserByEmailAndPasswordAsync(credentials.Email, credentials.Password);
+            user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(credentials.Email, credentials.Password);
             if (user == null)
             {
               throw new Exception("Email and (or) password is incorrect");

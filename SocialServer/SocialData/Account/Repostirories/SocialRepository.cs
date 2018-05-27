@@ -31,33 +31,27 @@ namespace SocialData.Account.Repostirories
     {
       var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
       return user?.ToUserDto();
-
     }
 
     public async Task<List<int>> GetUserIdsFromVkIds(IEnumerable<int> vkIds)
     {
-      var result = new List<int>();
-
-      foreach (var vkId in vkIds)
-      {
-        var userDb = await _context.SocialsDb.FirstOrDefaultAsync(x => x.SocialType == SocialType.Vk && x.ExternalId == vkId);
-        if (userDb != null)
-          result.Add(userDb.InternalId);
-      }
-      return result;
+      return await _context.SocialsDb.Where(x => x.SocialType == SocialType.Vk)
+               .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.ExternalId).ToListAsync() ?? new List<int>();
     }
 
     public async Task<List<int>> GetUserIdsFromFbIds(IEnumerable<int> fbIds)
     {
-      var result = new List<int>();
+        return await _context.SocialsDb.Where(x => x.SocialType == SocialType.Facebook)
+          .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.ExternalId).ToListAsync() ?? new List<int>(); 
 
-      foreach (var fbId in fbIds)
+      /*
+        foreach (var fbId in fbIds)
       {
-        var userDb = await _context.SocialsDb.FirstOrDefaultAsync(x => x.SocialType == SocialType.Facebook && x.ExternalId == fbId);
+        var userDb = await _context.SocialsDb.Where(x=>x.SocialType == SocialType.Facebook).Join(_context.ExternalIdsDb, x=>x.ExternalId,(i,e)=> new {Id = i}) .Where(x=>x.ExternalId == fbIds..Intersect(.FirstOrDefaultAsync(x => x.SocialType == SocialType.Facebook && x.ExternalId == fbId);
         if (userDb != null)
           result.Add(userDb.InternalId);
       }
-      return result;
+      */
     }
 
     //public async Task<int> GetUserIdByExternalUserIdAsync(int externalUserId, SocialType socialType)
@@ -88,8 +82,7 @@ namespace SocialData.Account.Repostirories
 
     public async Task<List<UserSocialDto>> GetUserSocialsAsync(int userId)
     {
-      var socials = await _context.SocialsDb.Where(x=>x.InternalId == userId).ToListAsync();
-      return socials?.Select(x => new UserSocialDto {SocialType = x.SocialType, ExternalId = x.ExternalId}).ToList() ?? new List<UserSocialDto>();
+      return await _context.SocialsDb.Where(x=>x.InternalId == userId).Select(x=> new UserSocialDto{ExternalId = x.ExternalId, SocialType = x.SocialType}).ToListAsync() ?? new List<UserSocialDto>();
     }
   }
 }

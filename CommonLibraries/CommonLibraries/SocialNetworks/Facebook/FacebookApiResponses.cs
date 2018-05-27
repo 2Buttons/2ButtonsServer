@@ -8,7 +8,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
   public class FacebookUserResponse
   {
     [JsonProperty("id")]
-    public long ExternalUserId { get; set; }
+    public long ExternalId { get; set; }
     public string Email { get; set; }
     public string Name { get; set; }
     [JsonProperty("first_name")]
@@ -97,7 +97,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
     [JsonProperty("access_token")]
     public string AccessToken { get; set; }
     [JsonProperty("expires_in")]
-    public string ExpiresIn { get; set; }
+    public int ExpiresIn { get; set; }
     [JsonProperty("error")]
     public string Error { get; set; }
     [JsonProperty("error_description")]

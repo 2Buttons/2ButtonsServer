@@ -62,7 +62,7 @@ namespace AccountData.Account.Repostirories
 
     public async Task<UserDto> GetUserByEmail(string email)
     {
-      var user =   await _context.UsersDb.AsNoTracking()
+      var user = await _context.UsersDb.AsNoTracking()
         .FirstOrDefaultAsync(x => x.Email == email);
       return user?.ToUserDto();
 
@@ -70,29 +70,11 @@ namespace AccountData.Account.Repostirories
 
     public async Task<UserDto> GetUserByUserId(int userId)
     {
-      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
+      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
       return user?.ToUserDto();
 
     }
 
-    public List<UserIdDb> GetUserIdFromVkId(IEnumerable<int> ids)
-    {
-      var dataTable = new DataTable();
-      dataTable.Columns.Add("id", typeof(int));
-      foreach (var id in ids)
-      {
-        dataTable.Rows.Add(id);
-      }
-      var vkIdTable = new SqlParameter
-      {
-        ParameterName = "@VkIDTable",
-        TypeName="dbo.idTable",
-        Value = dataTable
-      };
-      return _context.UserIds.FromSql($"select * from dbo.getUserIdFromVkId(@VkIDTable)", vkIdTable)
-        .ToList();
-
-    }
 
     public async Task<UserDto> GetUserByEmailAndPasswordAsync(string email, string passwordHash)
     {
@@ -163,7 +145,13 @@ namespace AccountData.Account.Repostirories
 
     public async Task<bool> IsUserExistByEmailAsync(string email)
     {
-      return await _context.UsersDb.AsNoTracking().AnyAsync(x=>x.Email == email);
+      return await _context.UsersDb.AsNoTracking().AnyAsync(x => x.Email == email);
+    }
+
+    public async Task<bool> AddUserSocialAsync(SocialDb social)
+    {
+      _context.SocialsDb.Add(social);
+      return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<UserContactsDto> GetUserSocialsAsync(int userId)

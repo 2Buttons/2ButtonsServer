@@ -43,7 +43,7 @@ namespace CommonLibraries.SocialNetworks.Vk
   public class VkFriendData
   {
     [JsonProperty("id")]
-    public int UserId { get; set; }
+    public int ExternalId { get; set; }
 
     [JsonProperty("first_name")]
     public string FirstName { get; set; }
@@ -158,10 +158,10 @@ namespace CommonLibraries.SocialNetworks.Vk
     public int ExpiresIn { get; set; }
 
     [JsonProperty("user_id")]
-    public int UserId { get; set; }
+    public int ExternalId { get; set; }
 
     [JsonProperty("email")]
-    public string Email { get; set; }
+    public string ExternalEmail { get; set; }
 
     [JsonProperty("error")]
     public string Error { get; set; }

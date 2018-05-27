@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using CommonLibraries.Extensions;
+using CommonLibraries.SocialNetworks.Vk;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+
+namespace CommonLibraries.SocialNetworks.Facebook
+{
+  public class FbService
+  {
+    private static readonly HttpClient Client = new HttpClient();
+    private readonly FacebookAuthSettings _fbAuthSettings;
+
+    public FbService(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
+    {
+      _fbAuthSettings = fbAuthSettingsAccessor.Value;
+    }
+
+
+    public async Task<NormalizeSocialUserData> GetUserInfoAsync(string code)
+    {
+      var accessToken = await GetAccessTokenAsync(code);
+      return await GetUserVkInfoAsync(accessToken.AccessToken, accessToken.ExpiresIn);
+    }
+
+    public async Task<FacebookAppAccessToken> GetAccessTokenAsync(string fbCode)
+    {
+      var appAccessTokenResponse =
+        await Client.GetStringAsync(
+          $"https://graph.facebook.com/v3.0/oauth/access_token?client_id={_fbAuthSettings.AppId}&redirect_uri=https://2buttons.ru/facebook-auth-code.html&client_secret={_fbAuthSettings.AppSecret}&code={fbAuth.Code}");
+      return JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
+    }
+
+    async Task<NormalizeSocialUserData> GetUserVkInfoAsync(string externalToken, int expiresIn)
+    {
+      var userInfoResponse = await Client.GetStringAsync(
+        $"https://graph.facebook.com/v3.0/me?fields=id,email,first_name,last_name,name,gender,locale,hometown,birthday,picture&access_token={externalToken}");
+      var userInfo = JsonConvert.DeserializeObject<FacebookUserResponse>(userInfoResponse);
+
+      var smallUrlResponse = await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal");
+      var smallUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(smallUrlResponse).Response.Url;
+
+      var largeUrlResponse = await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large");
+      var largeUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(largeUrlResponse).Response.Url;
+
+      var result = new NormalizeSocialUserData
+      {
+        ExternalId = userInfo.ExternalId,
+        ExternalEmail = userInfo.Email,
+        ExternalToken = externalToken,
+        ExpiresIn = expiresIn,
+        Login = userInfo.FirstName + " " + userInfo.LastName,
+        BirthDate = Convert.ToDateTime(userInfo.Birthday),
+        Sex = userInfo.SexType,
+        City = userInfo.City.Title,
+        SmallPhotoUrl = smallUrl,
+        FullPhotoUrl = largeUrl
+      };
+      return result;
+    }
+
+
+
+
+   
+
+    
+  }
+}

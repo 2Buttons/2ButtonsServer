@@ -75,8 +75,8 @@ namespace AuthorizationServer.Controllers
       var appAccessToken = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
 
 
-      var user = await GetOrCreateUserAccountFromVk(appAccessToken.UserId, appAccessToken.AccessToken,
-        appAccessToken.Email);
+      var user = await GetOrCreateUserAccountFromVk(appAccessToken.ExternalId, appAccessToken.AccessToken,
+        appAccessToken.ExternalEmail);
       if (user == null)
         return new BadResponseResult("We can not find or create you.");
 
@@ -149,16 +149,7 @@ namespace AuthorizationServer.Controllers
       return userDb.ToUserDto();
     }
 
-    private async Task<(string, string)> UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)
-    {
-      var jsonSmall = JsonConvert.SerializeObject(new { userId, size = 0, url = smallPhotoUrl });
-      var jsonFull = JsonConvert.SerializeObject(new { userId, size = 1, url = fullPhotoUrl });
-      var s = UploadPhotoViaLink("http://localhost:6250/images/uploadUserAvatarViaLink", jsonSmall);
-      var f = UploadPhotoViaLink("http://localhost:6250/images/uploadUserAvatarViaLink", jsonFull);
-
-      await Task.WhenAll(f, s);
-      return (f.Result, s.Result);
-    }
+   
 
 
     [HttpPost("fbLogin")]
@@ -203,13 +194,13 @@ namespace AuthorizationServer.Controllers
         var userInfo = JsonConvert.DeserializeObject<FacebookUserResponse>(userInfoResponse);
 
 
-        var user = await _db.Users.GetUserByExternalUserIdAsync(userInfo.ExternalUserId, SocialType.Facebook);
+        var user = await _db.Users.GetUserByExternalUserIdAsync(userInfo.ExternalId, SocialType.Facebook);
         if (user != null)
           return user;
         user = await _db.Users.GetUserByEmail(userInfo.Email);
         if (user != null)
         {
-          user.FacebookId = userInfo.ExternalUserId;
+          user.FacebookId = userInfo.ExternalId;
           user.FacebookToken = externalToken;
           await _db.Users.AddOrChangeExternalUserIdAsync(user.UserId, user.FacebookId, SocialType.Facebook,
             user.FacebookToken);
@@ -229,7 +220,7 @@ namespace AuthorizationServer.Controllers
           RoleType = RoleType.User,
           Email = userInfo.Email,
           EmailConfirmed = !string.IsNullOrEmpty(userInfo.Email),
-          FacebookId = userInfo.ExternalUserId,
+          FacebookId = userInfo.ExternalId,
           FacebookToken = externalToken,
           RegistrationDate = DateTime.UtcNow
         };
@@ -238,11 +229,11 @@ namespace AuthorizationServer.Controllers
         var bdate = Convert.ToDateTime(userInfo.Birthday);
 
         var smallUrlResponse = await Client.GetStringAsync(
-          $"https://graph.facebook.com/v3.0/{userInfo.ExternalUserId}/picture?type=normal");
+          $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal");
         var smallUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(smallUrlResponse).Response.Url;
 
         var largeUrlResponse = await Client.GetStringAsync(
-          $"https://graph.facebook.com/v3.0/{userInfo.ExternalUserId}/picture?type=large");
+          $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large");
         var largeUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(largeUrlResponse).Response.Url;
         var links = await UploadAvatars(userDb.UserId, smallUrl, largeUrl);
 
@@ -278,41 +269,8 @@ namespace AuthorizationServer.Controllers
       }
 
 
-      private static async Task<string> UploadPhotoViaLink(string url, string requestJson)
-      {
-        var request = WebRequest.Create(url);
-        request.Method = "POST";
-        request.ContentType = "application/json";
-        using (var requestStream = request.GetRequestStream())
-        using (var writer = new StreamWriter(requestStream))
-        {
-          writer.Write(requestJson);
-        }
-        var webResponse = await request.GetResponseAsync();
-        using (var responseStream = webResponse.GetResponseStream())
-        using (var reader = new StreamReader(responseStream))
-        {
-          return reader.ReadToEnd();
-        }
-      }
+      
 
-      public async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
-      {
-        string data;
-        WebRequest request =
-          WebRequest.CreateHttp(
-            $"https://api.vk.com/method/database.getCitiesById?city_ids={cityId}&access_token={_vkAuthSettings.AppAccess}&v=5.74");
-        request.Headers.Add("Cookie", $"remixlang={language}");
-        var response = await request.GetResponseAsync();
-        using (var stream = response.GetResponseStream())
-        {
-          using (var reader = new StreamReader(stream))
-          {
-            data = reader.ReadToEnd();
-          }
-        }
-        response.Close();
-        return JsonConvert.DeserializeObject<VkCityResponse>(data).Response.FirstOrDefault().Title;
-      }
+     
     }
   }

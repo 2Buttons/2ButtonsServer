@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
-namespace AuthorizationData.Account.Entities
+namespace AccountData.Account.Entities
 {
   [Table("Socials")]
   public class SocialDb

@@ -12,9 +12,5 @@ namespace AuthorizationData.Account.DTO
       public bool PhoneNumberConfirmed { get; set; }
       public RoleType RoleType { get; set; }
       public bool TwoFactorEnabled { get; set; }
-      public int VkId { get; set; }
-      public string VkToken { get; set; }
-      public long FacebookId { get; set; }
-      public string FacebookToken { get; set; }
   }
 }

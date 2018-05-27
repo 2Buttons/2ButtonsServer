@@ -1,5 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using AccountData.DTO;
 using AccountData.Main.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,54 +14,30 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
-
-    public async Task<UserInfoDb> GetUserInfo(int userId, int userPageId)
+    public async Task<UserInfoDb> GetUserInfoAsync(int userId, int userPageId)
     {
-      try
-      {
-        var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
-                     .FirstOrDefaultAsync() ??
-                   new UserInfoDb();
+      var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
+                   .FirstOrDefaultAsync() ?? new UserInfoDb();
 
-        if (userId != userPageId)
-          if (user.YouFollowed)
-            UpdateVisits(userId, userPageId);
-        return user;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return new UserInfoDb();
+      if (userId != userPageId && user.YouFollowed) UpdateVisitsAsync(userId, userPageId);
+      return user;
     }
 
-    public async Task<UserStatisticsDb> GetUserStatistics(int userId)
+    public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      try
-      {
-        return await _db.UserStatisticsDb
-                 .FromSql($"select * from dbo.getUserStatistics({userId})").FirstOrDefaultAsync() ??
-               new UserStatisticsDb();
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return new UserStatisticsDb();
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.Sex}, {user.City},  {user.Description}, {user.FullAvatarLink}, {user.SmallAvatarLink}") > 0;
     }
 
-    public async Task<bool> UpdateVisits(int userId, int getUserId)
+
+    public async Task<UserStatisticsDb> GetUserStatisticsAsync(int userId)
     {
-      try
-      {
-        return await _db.Database.ExecuteSqlCommandAsync($"updateVisits {userId}, {getUserId}") > 0;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return false;
+      return await _db.UserStatisticsDb.FromSql($"select * from dbo.getUserStatistics({userId})")
+               .FirstOrDefaultAsync() ?? new UserStatisticsDb();
     }
 
+    public async Task<bool> UpdateVisitsAsync(int userId, int getUserId)
+    {
+      return await _db.Database.ExecuteSqlCommandAsync($"updateVisits {userId}, {getUserId}") > 0;
+    }
   }
 }

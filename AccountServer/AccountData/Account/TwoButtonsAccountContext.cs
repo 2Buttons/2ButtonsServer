@@ -1,5 +1,4 @@
 ﻿using AccountData.Account.Entities;
-using AccountData.Account.Entities.FunctionEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Account
@@ -7,9 +6,7 @@ namespace AccountData.Account
   public class TwoButtonsAccountContext : DbContext
   {
     public DbSet<UserDb> UsersDb { get; set; }
-
-    // functions
-    public DbSet<UserIdDb> UserIds { get; set; }
+    public DbSet<SocialDb> SocialsDb { get; set; }
 
 
     public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)
