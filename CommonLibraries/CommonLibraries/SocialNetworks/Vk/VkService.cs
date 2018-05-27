@@ -23,7 +23,7 @@ namespace CommonLibraries.SocialNetworks.Vk
       _vkAuthSettings = vkAuthSettingsAccessor.Value;
     }
 
-    public async Task<NormalizeSocialUserData> GetUserInfoAsync(string code)
+    public async Task<NormalizedSocialUserData> GetUserInfoAsync(string code)
     {
       var accessToken = await GetAccessTokenAsync(code);
       return await GetUserVkInfoAsync(accessToken.ExternalId, accessToken.ExternalEmail, accessToken.AccessToken, accessToken.ExpiresIn);
@@ -40,7 +40,7 @@ namespace CommonLibraries.SocialNetworks.Vk
       return result;
     }
 
-    async Task<NormalizeSocialUserData> GetUserVkInfoAsync(int externalUserId, string email, string externalToken, int expiresIn)
+    async Task<NormalizedSocialUserData> GetUserVkInfoAsync(int externalUserId, string email, string externalToken, int expiresIn)
     {
       var userInfoResponse = await Client.GetStringAsync(
         $"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
@@ -49,7 +49,7 @@ namespace CommonLibraries.SocialNetworks.Vk
       var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Русский);
       userInfo.City.Title = await cityName ?? userInfo.City.Title;
 
-      var result = new NormalizeSocialUserData
+      var result = new NormalizedSocialUserData
       {
         ExternalId = userInfo.UserId,
         ExternalEmail = email,

@@ -7,6 +7,6 @@ namespace CommonLibraries.SocialNetworks.Vk
   {
     Task<VkAppAccessToken> GetAccessTokenAsync(string vkCode);
     Task<List<VkFriendData>> GetUserFriendsAsync(long vkId);
-    Task<NormalizeSocialUserData> GetUserInfoAsync(string code);
+    Task<NormalizedSocialUserData> GetUserInfoAsync(string code);
   }
 }

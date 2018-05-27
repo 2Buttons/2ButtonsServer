@@ -45,7 +45,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
     public void ExternalLogin(string code, SocialType socialType)
     {
-      
+      NormalizedSocialData
     }
 
     private async Task<(string, string)> UploadAvatars(int userId, string smallPhotoUrl, string fullPhotoUrl)

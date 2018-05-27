@@ -2,7 +2,7 @@
 
 namespace CommonLibraries.SocialNetworks
 {
-  public class NormalizeSocialUserData
+  public class NormalizedSocialUserData
   {
     public long ExternalId { get; set; }
     public string ExternalEmail { get; set; }

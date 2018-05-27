@@ -264,34 +264,6 @@ namespace AuthorizationServer.Controllers
 
 
         return userDb.ToUserDto();
-      }
-
-      private async Task<Token> AccessToken(UserDto user)
-      {
-        if (await _db.Tokens.CountTokensForUserAsync(user.UserId) > 10)
-        {
-          await _db.Tokens.RemoveTokensByUserIdAsync(user.UserId);
-          throw new Exception("Your login at leat on 10 defferent devices. We are forced to save your data. Now you are out of all devices. Please log in again.");
-        }
-
-        var result = await _jwtService.GenerateJwtAsync(user.UserId, user.RoleType);
-
-        var token = new TokenDb
-        {
-          UserId = user.UserId,
-          ExpiresIn = result.ExpiresIn,
-          RefreshToken = result.RefreshToken
-        };
-
-        if (!await _db.Tokens.AddTokenAsync(token))
-          throw new Exception("Can not add token to database. You entered just as a guest.");
-
-        return result;
-      }
-
-
-      
-
-     
+      } 
     }
   }

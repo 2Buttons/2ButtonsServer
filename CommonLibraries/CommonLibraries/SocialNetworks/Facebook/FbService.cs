@@ -16,7 +16,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
       _fbAuthSettings = fbAuthSettingsAccessor.Value;
     }
 
-    public async Task<NormalizeSocialUserData> GetUserInfoAsync(string code)
+    public async Task<NormalizedSocialUserData> GetUserInfoAsync(string code)
     {
       var accessToken = await GetAccessTokenAsync(code);
       return await GetUserVkInfoAsync(accessToken.AccessToken, accessToken.ExpiresIn);
@@ -30,7 +30,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
       return JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
     }
 
-    private async Task<NormalizeSocialUserData> GetUserVkInfoAsync(string externalToken, int expiresIn)
+    private async Task<NormalizedSocialUserData> GetUserVkInfoAsync(string externalToken, int expiresIn)
     {
       var userInfoResponse = await Client.GetStringAsync(
         $"https://graph.facebook.com/v3.0/me?fields=id,email,first_name,last_name,name,gender,locale,hometown,birthday,picture&access_token={externalToken}");
@@ -44,7 +44,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
         await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large");
       var largeUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(largeUrlResponse).Response.Url;
 
-      var result = new NormalizeSocialUserData
+      var result = new NormalizedSocialUserData
       {
         ExternalId = userInfo.ExternalId,
         ExternalEmail = userInfo.Email,
