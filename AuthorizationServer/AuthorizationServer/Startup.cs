@@ -3,6 +3,7 @@ using AuthorizationData;
 using AuthorizationData.Account;
 using AuthorizationData.Main;
 using AuthorizationServer.Extensions;
+using AuthorizationServer.Infrastructure.Services;
 using AuthorizationServer.Services;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
@@ -66,7 +67,9 @@ namespace AuthorizationServer
       });
 
       services.AddSingleton<IJwtService, JwtService>();
-      services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+      services.AddSingleton<ICommonAuthService, CommonAuthService>();
+      services.AddSingleton<IInternalAuthService, InternalAuthService>();
+      services.AddSingleton<IExternalAuthService, ExternalAuthService>();
       services.AddTransient<AuthorizationUnitOfWork>();
 
       services.AddAuthentication(options =>

@@ -7,7 +7,7 @@ using AuthorizationData.Account;
 using AuthorizationData.Account.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthorizationData.Repostirories
+namespace AuthorizationData.Account.Repostirories
 {
   public class TokenRepository : IDisposable
   {

@@ -12,7 +12,7 @@ using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthorizationData.Repostirories
+namespace AuthorizationData.Account.Repostirories
 {
   public class UserRepository : IDisposable
   {
@@ -28,58 +28,28 @@ namespace AuthorizationData.Repostirories
       _contextAccount.Dispose();
     }
 
-    public async Task<bool> AddUserIntoAccountDbAsync(UserDb user)
+    public async Task<bool> AddUserAsync(UserDb user)
     {
       await _contextAccount.UsersDb.AddAsync(user);
       return await _contextAccount.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> AddUserIntoMainDbAsync(UserInfoDb user)
+    public async Task<bool> AddSocialAsync(SocialDb social)
     {
-      var returnsCode = new SqlParameter
-      {
-        SqlDbType = SqlDbType.Int,
-        Direction = ParameterDirection.Output
-      };
-
-      try
-      {
-        return await _contextMain.Database.ExecuteSqlCommandAsync(
-                 $"addUser {user.UserId}, {user.Login}, {user.BirthDate}, {user.Sex}, {user.City},  {user.Description}, {user.FullAvatarLink}, {user.SmallAvatarLink}, {returnsCode} OUT") >
-               0;
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-      return false;
+      await _contextAccount.SocialsDb.AddAsync(social);
+      return await _contextAccount.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> AddOrChangeExternalUserIdAsync(int userId, long externalUserId, SocialType socialType,
-      string externalToken)
+    public async Task<bool> UpdateSocialAsync(SocialDb social)
     {
-      var user = await _contextAccount.UsersDb.FindAsync(userId);
-      if (user == null) return false;
-      switch (socialType)
-      {
-        case SocialType.Facebook:
-          user.FacebookId = externalUserId;
-          user.FacebookToken = externalToken;
-          break;
-        case SocialType.Vk:
-          user.VkId = (int)externalUserId;
-          user.VkToken = externalToken;
-          break;
-        case SocialType.Nothing:
-        case SocialType.Twiter:
-        case SocialType.GooglePlus:
-        case SocialType.Telegram:
-        case SocialType.Badoo:
-        default:
-          return false;
-      }
+      var socialDb = await _contextAccount.SocialsDb.FirstOrDefaultAsync(x =>x.ExternalId == social.ExternalId && x.SocialType == social.SocialType);
+      if (socialDb == null) return false;
 
-      _contextAccount.Entry(user).State = EntityState.Modified;
+      socialDb.Email = socialDb.Email == social.Email ? socialDb.Email : social.Email;
+      socialDb.PhoneNumber = socialDb.PhoneNumber == social.PhoneNumber ? socialDb.PhoneNumber : social.PhoneNumber;
+      socialDb.ExternalToken = socialDb.ExternalToken == social.ExternalToken ? socialDb.ExternalToken : social.ExternalToken;
+      socialDb.ExpiresIn = socialDb.ExpiresIn == social.ExpiresIn ? socialDb.ExpiresIn : social.ExpiresIn;
+      _contextAccount.Entry(social).State = EntityState.Modified;
       return await _contextAccount.SaveChangesAsync() > 0;
     }
 
@@ -130,7 +100,7 @@ namespace AuthorizationData.Repostirories
       return user?.ToUserDto();
     }
 
-    
+
     public async Task<UserDto> GetUserByEmailAndPasswordAsync(string email, string passwordHash)
     {
       var user = await _contextAccount.UsersDb.AsNoTracking()
@@ -209,19 +179,6 @@ namespace AuthorizationData.Repostirories
       if (user != null)
         return user.RoleType;
       return RoleType.Guest;
-    }
-
-
-    public async Task<UserContactsDto> GetUserSocialsAsync(int userId)
-    {
-      var user = await _contextAccount.UsersDb.FindAsync(userId);
-      if (user == null) return new UserContactsDto();
-
-      return new UserContactsDto
-      {
-        VkId = user.VkId,
-        FacebookId = user.FacebookId
-      };
     }
 
     public async Task<bool> RemoveUserAsync(int userId)
