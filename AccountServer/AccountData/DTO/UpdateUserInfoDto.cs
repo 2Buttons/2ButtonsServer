@@ -19,7 +19,7 @@ namespace AccountData.DTO
     [Required]
     public string City { get; set; }
     public string Description { get; set; }
-    public string FullAvatarLink { get; set; }
+    public string LargeAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
   }
 }

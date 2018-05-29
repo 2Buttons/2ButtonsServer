@@ -11,14 +11,14 @@ namespace AccountData
     private readonly TwoButtonsAccountContext _dbAccount;
     private readonly TwoButtonsContext _dbMain;
 
-    private AccountRepository _accountRepository;
+    private UserInfoRepository _userInfoRepository;
     private NotificationsRepository _notificationsRepository;
     private UserRepository _userRepository;
 
 
     public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_dbAccount));
 
-    public AccountRepository Accounts => _accountRepository ?? (_accountRepository = new AccountRepository(_dbMain));
+    public UserInfoRepository UsersInfo => _userInfoRepository ?? (_userInfoRepository = new UserInfoRepository(_dbMain));
 
     public NotificationsRepository Notifications => _notificationsRepository ??
                                                     (_notificationsRepository = new NotificationsRepository(_dbMain));

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Main.Repositories
 {
-  public class AccountRepository
+  public class UserInfoRepository
   {
     private readonly TwoButtonsContext _db;
 
-    public AccountRepository(TwoButtonsContext db)
+    public UserInfoRepository(TwoButtonsContext db)
     {
       _db = db;
     }
@@ -25,9 +25,18 @@ namespace AccountData.Main.Repositories
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.Sex}, {user.City},  {user.Description}, {user.FullAvatarLink}, {user.SmallAvatarLink}") > 0;
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.Sex}, {user.City},  {user.Description}, {user.LargeAvatarLink}, {user.SmallAvatarLink}") > 0;
     }
 
+    public async Task<bool> UpdateUserLargeAvatar(int userId, string fullAvatarLink)
+    {
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserFullAvatar {userId}, {fullAvatarLink}") > 0;
+    }
+
+    public async Task<bool> UpdateUserSmallAvatar(int userId, string smallAvatar)
+    {
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserSmallAvatar {userId}, {smallAvatar}") > 0;
+    }
 
     public async Task<UserStatisticsDb> GetUserStatisticsAsync(int userId)
     {

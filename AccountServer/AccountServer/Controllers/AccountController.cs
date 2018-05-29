@@ -36,7 +36,7 @@ namespace AccountServer.Controllers
     }
 
     [Authorize]
-    [HttpGet("user/{userPageId:int}")]
+    [HttpPost("{userPageId:int}")]
     public async Task<IActionResult> GetUser(int userPageId)
     {
       if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace AccountServer.Controllers
       return new OkResponseResult(result);
     }
 
-    [HttpPost("updateUser")]
+    [HttpPost("update")]
     public async Task<IActionResult> GetUserInfoAuth([FromBody] UpdateUserInfoDto user)
     {
       if (!ModelState.IsValid)
@@ -94,6 +94,7 @@ namespace AccountServer.Controllers
         return new OkResponseResult();
       return new ResponseResult((int)HttpStatusCode.NotModified);
     }
+
 
     [HttpPost("getUserInfo")]
     public async Task<IActionResult> GetUserInfo([FromBody] UserPageIdViewModel userPage)

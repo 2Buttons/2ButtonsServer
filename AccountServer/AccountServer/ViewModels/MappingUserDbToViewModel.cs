@@ -17,7 +17,7 @@ namespace AccountServer.ViewModels
         Age = dbEntity.BirthDate.Age(),
         SexType =  dbEntity.Sex,
         Description = dbEntity.Description,
-        FullAvatarLink = dbEntity.FullAvatarLink,
+        LargeAvatarLink = dbEntity.LargeAvatarLink,
         SmallAvatarLink = dbEntity.SmallAvatarLink,
         IsYouFollowed = dbEntity.YouFollowed,
         IsHeFollowed = dbEntity.HeFollowed,
