@@ -149,55 +149,5 @@ namespace AuthorizationServer.Infrastructure.Services
       if (user != null) return user;
       return await _db.Socials.FindUserByExternalEmaildAsync(externalEmail);
     }
-
-    private async Task<(string smallLink, string fullLink)> UploadAvatars(int userId, string smallPhotoUrl,
-      string fullPhotoUrl)
-    {
-      var jsonSmall = JsonConvert.SerializeObject(new {size = 0, url = smallPhotoUrl });
-      var jsonFull = JsonConvert.SerializeObject(new {size = 1, url = fullPhotoUrl });
-      var s = await UploadPhoto("http://localhost:6250/upload/avatar/link", jsonSmall);
-      var f = await UploadPhoto("http://localhost:6250/upload/avatar/link", jsonFull);
-
-      //await Task.WhenAll(f, s);
-      //return (s.Result, f.Result);
-      return (s, f);
-    }
-
-    private static async Task<string> GetStandardPhotoUrl(AvatarSizeType avatarSize)
-    {
-      var body = JsonConvert.SerializeObject(new { size = (int)avatarSize });
-      var request = WebRequest.Create("http://localhost:6250/standard/avatar/");
-      request.Method = "POST";
-      request.ContentType = "application/json";
-      using (var requestStream = request.GetRequestStream())
-      using (var writer = new StreamWriter(requestStream))
-      {
-        writer.Write(body);
-      }
-      var webResponse = await request.GetResponseAsync();
-      using (var responseStream = webResponse.GetResponseStream())
-      using (var reader = new StreamReader(responseStream))
-      {
-        return reader.ReadToEnd();
-      }
-    }
-
-    private static async Task<string> UploadPhoto(string url, string requestJson)
-    {
-      var request = WebRequest.Create(url);
-      request.Method = "POST";
-      request.ContentType = "application/json";
-      using (var requestStream = request.GetRequestStream())
-      using (var writer = new StreamWriter(requestStream))
-      {
-        writer.Write(requestJson);
-      }
-      var webResponse = await request.GetResponseAsync();
-      using (var responseStream = webResponse.GetResponseStream())
-      using (var reader = new StreamReader(responseStream))
-      {
-        return reader.ReadToEnd();
-      }
-    }
   }
 }
