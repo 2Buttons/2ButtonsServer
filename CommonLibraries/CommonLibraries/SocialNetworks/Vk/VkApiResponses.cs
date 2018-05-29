@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using CommonLibraries.Extensions;
+using Newtonsoft.Json;
 
 namespace CommonLibraries.SocialNetworks.Vk
 {
@@ -89,7 +91,9 @@ namespace CommonLibraries.SocialNetworks.Vk
     }
 
     [JsonProperty("bdate")]
-    public string Birthday { get; set; }
+    public string VkBirthday { private get; set; }
+
+    public DateTime Birthday => VkBirthday.IsNullOrEmpty() ? DateTime.UtcNow : Convert.ToDateTime(VkBirthday);
 
     [JsonProperty("city")]
     public VkCity City { get; set; }

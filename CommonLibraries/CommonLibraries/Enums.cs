@@ -1,5 +1,17 @@
 ﻿namespace CommonLibraries
 {
+  public enum AvatarSizeType
+  {
+    UserSmallAvatarPhoto = 0,
+    UserFullAvatarPhoto = 1
+  }
+
+  public enum BackgroundType
+  {
+    Background = 0,
+    CustomBackground = 1
+  }
+
   public enum ApplicationType
   {
     JavaScript = 0,

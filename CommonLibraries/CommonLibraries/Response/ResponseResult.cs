@@ -66,9 +66,9 @@ namespace CommonLibraries.Response
     {
       if (modelState.IsValid) throw new ArgumentException("ModelState must be invalid", nameof(modelState));
 
-      var errors = modelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage).ToArray();
+      var errors = modelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage).ToList();
       Response.Message = "Validation errors";
-      Response.Data = errors;
+      Response.Data = new {Errors = errors, Keys = modelState.Keys, Values = modelState.Values};
     }
 
     public BadResponseResult(string message, object data) : base(400, message, data)

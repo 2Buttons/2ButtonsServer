@@ -32,8 +32,8 @@ namespace AuthorizationServer.Infrastructure.Services
 
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
     {
-      var isExistByPhone = _db.Users.IsUserExistByPhoneAsync(user.Phone);
-      var isExistByEmail = _db.Users.IsUserExistByPhoneAsync(user.Email);
+      var isExistByPhone = user.Phone.IsNullOrEmpty() ? Task.FromResult(false) : _db.Users.IsUserExistByPhoneAsync(user.Phone);
+      var isExistByEmail = user.Email.IsNullOrEmpty() ? Task.FromResult(false) : _db.Users.IsUserExistByPhoneAsync(user.Email);
 
       await Task.WhenAll(isExistByPhone, isExistByEmail);
 

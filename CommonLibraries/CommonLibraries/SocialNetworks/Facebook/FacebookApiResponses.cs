@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using CommonLibraries.Extensions;
 using CommonLibraries.SocialNetworks.Vk;
 using Newtonsoft.Json;
@@ -38,7 +39,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
     [JsonProperty("birthday")]
     public string FbBirthday { private get; set; }
 
-    public DateTime Birthday => FbBirthday.IsNullOrEmpty() ? DateTime.Now : Convert.ToDateTime(FbBirthday);
+    public DateTime Birthday => FbBirthday.IsNullOrEmpty() ? DateTime.Now : DateTime.ParseExact(FbBirthday, "MM/dd/yyyy", CultureInfo.InvariantCulture);
 
 
     public string Locale { get; set; }

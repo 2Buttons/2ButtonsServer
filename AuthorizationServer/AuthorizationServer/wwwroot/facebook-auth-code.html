@@ -1,52 +1,54 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Facebook Auth</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="assets/util.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Facebook Auth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="assets/util.js"></script>
 </head>
 <body>
-    <script>
-        // if we don't receive an access token then login failed and/or the user has not connected properly
-        var code = getParameterByName("code");
-        var userId = getParameterByName("user_id");
-        var state = getParameterByName("state");
+  <script>
+    // if we don't receive an access token then login failed and/or the user has not connected properly
+    var code = getParameterByName("code");
+    var userId = getParameterByName("user_id");
+    var state = getParameterByName("state");
 
-        var message = {};
-        if (code) {
-            message.status = true;
-            message.state = state;
-            message.code = code;
-        }
-        else {
-            message.status = false;
-            message.state = state;
-            message.error = getParameterByName("error");
-            message.errorDescription = getParameterByName("error_description");
-        }
-        //console.log(window.location.href);
-        console.log(JSON.stringify(message));
-        //window.postMessage(JSON.stringify(message), "http://localhost:6256/");
+    var message = {};
+    if (code) {
+      message.socialType = 1;
+      message.status = true;
+      message.state = state;
+      message.code = code;
+    }
+    else {
+      message.status = false;
+      message.state = state;
+      message.error = getParameterByName("error");
+      message.errorDescription = getParameterByName("error_description");
+    }
+    //console.log(window.location.href);
+    console.log(JSON.stringify(message));
+    //window.postMessage(JSON.stringify(message), "http://localhost:6256/");
 
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        var json = JSON.stringify(message);
-        
-        var myInit = { method: 'POST',
-            headers: myHeaders,
-            mode: 'cors',
-            cache: 'default',
-            body: json
-        };
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var json = JSON.stringify(message);
 
-      fetch("https://api.2buttons.ru/fbLogin", myInit).then(function (response) {
-        console.log(response);
-/*что-то сделать при успешном запросе*/
-      });
+    var myInit = {
+      method: 'POST',
+      headers: myHeaders,
+      mode: 'cors',
+      cache: 'default',
+      body: json
+    };
+
+    fetch("https://api.2buttons.ru/externalLogin", myInit).then(function (response) {
+      console.log(response);
+      /*что-то сделать при успешном запросе*/
+    });
 
 
-    </script>
+  </script>
 </body>
 </html>

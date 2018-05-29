@@ -3,7 +3,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountData;
-using AccountData.Account.DTO;
 using AccountData.DTO;
 using AccountServer.Infrastructure.Services;
 using AccountServer.ViewModels;
@@ -50,12 +49,12 @@ namespace AccountServer.Controllers
 
     [Authorize]
     [HttpPost("getUserInfoAuth")]
-    public async Task<IActionResult> GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
+    public async Task<IActionResult> GetUserInfoAuth([FromBody] UserIdViewModel userPage)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var result = await _account.GetUserAsync(userId, userPage.UserPageId);
+      var result = await _account.GetUserAsync(userId, userPage.UserId);
 
       return new OkResponseResult(result);
     }

@@ -19,7 +19,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
     public async Task<NormalizedSocialUserData> GetUserInfoAsync(string code)
     {
       var accessToken = await GetAccessTokenAsync(code);
-      return await GetUserVkInfoAsync(accessToken.AccessToken, accessToken.ExpiresIn);
+      return await GetUserFbInfoAsync(accessToken.AccessToken, accessToken.ExpiresIn);
     }
 
     public async Task<FacebookAppAccessToken> GetAccessTokenAsync(string fbCode)
@@ -30,19 +30,19 @@ namespace CommonLibraries.SocialNetworks.Facebook
       return JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
     }
 
-    private async Task<NormalizedSocialUserData> GetUserVkInfoAsync(string externalToken, int expiresIn)
+    private async Task<NormalizedSocialUserData> GetUserFbInfoAsync(string externalToken, int expiresIn)
     {
       var userInfoResponse = await Client.GetStringAsync(
         $"https://graph.facebook.com/v3.0/me?fields=id,email,first_name,last_name,name,gender,locale,hometown,birthday,picture&access_token={externalToken}");
       var userInfo = JsonConvert.DeserializeObject<FacebookUserResponse>(userInfoResponse);
 
-      var smallUrlResponse =
-        await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal");
-      var smallUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(smallUrlResponse).Response.Url;
+      //var smallUrlResponse =
+      //  await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal");
+      //var smallUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(smallUrlResponse).Response.Url;
 
-      var largeUrlResponse =
-        await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large");
-      var largeUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(largeUrlResponse).Response.Url;
+      //var largeUrlResponse =
+      //  await Client.GetStringAsync($"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large");
+      //var largeUrl = JsonConvert.DeserializeObject<FacebookPictureResponse>(largeUrlResponse).Response.Url;
 
       var result = new NormalizedSocialUserData
       {
@@ -51,11 +51,11 @@ namespace CommonLibraries.SocialNetworks.Facebook
         ExternalToken = externalToken,
         ExpiresIn = expiresIn,
         Login = userInfo.FirstName + " " + userInfo.LastName,
-        BirthDate = Convert.ToDateTime(userInfo.Birthday),
+        BirthDate = userInfo.Birthday,
         Sex = userInfo.SexType,
-        City = userInfo.City.Title,
-        SmallPhotoUrl = smallUrl,
-        FullPhotoUrl = largeUrl
+        City = userInfo.City?.Title,
+        SmallPhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal",
+        FullPhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large"
       };
       return result;
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CommonLibraries.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -72,7 +73,9 @@ namespace MediaServer.Infrastructure.Services
 
     public string CreateUniqueName(string imageName)
     {
-      return Guid.NewGuid().ToString().Replace("-", "") + Path.GetExtension(imageName);
+      var ext = Path.GetExtension(imageName);
+      if (ext.IsNullOrEmpty()) ext = ".jpg";
+      return Guid.NewGuid().ToString().Replace("-", "") + ext;
     }
 
     public void InitConfiguration()

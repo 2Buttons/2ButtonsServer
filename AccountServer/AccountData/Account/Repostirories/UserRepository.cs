@@ -4,8 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using AccountData.Account.DTO;
 using AccountData.Account.Entities;
+using AccountData.DTO;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,48 +89,48 @@ namespace AccountData.Account.Repostirories
       return user?.ToUserDto();
     }
 
-    public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialType socialType)
-    {
-      UserDb user;
-      switch (socialType)
-      {
-        case SocialType.Facebook:
-          user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.FacebookId == externalUserId);
-          break;
-        case SocialType.Vk:
-          user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.VkId == externalUserId);
-          break;
-        case SocialType.Nothing:
-        case SocialType.Twiter:
-        case SocialType.GooglePlus:
-        case SocialType.Telegram:
-        case SocialType.Badoo:
-        default:
-          user = null;
-          break;
-      }
-      return user?.ToUserDto();
-    }
+    //public async Task<UserDto> GetUserByExternalUserIdAsync(int externalUserId, SocialType socialType)
+    //{
+    //  UserDb user;
+    //  switch (socialType)
+    //  {
+    //    case SocialType.Facebook:
+    //      user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.FacebookId == externalUserId);
+    //      break;
+    //    case SocialType.Vk:
+    //      user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.VkId == externalUserId);
+    //      break;
+    //    case SocialType.Nothing:
+    //    case SocialType.Twiter:
+    //    case SocialType.GooglePlus:
+    //    case SocialType.Telegram:
+    //    case SocialType.Badoo:
+    //    default:
+    //      user = null;
+    //      break;
+    //  }
+    //  return user?.ToUserDto();
+    //}
 
-    public async Task<long> GetExternalUserIdAsync(int userId, SocialType socialType)
-    {
-      var user = await _context.UsersDb.FindAsync(userId);
-      if (user == null) return 0;
-      switch (socialType)
-      {
-        case SocialType.Facebook:
-          return user.FacebookId;
-        case SocialType.Vk:
-          return user.VkId;
-        case SocialType.Twiter:
-        case SocialType.GooglePlus:
-        case SocialType.Telegram:
-        case SocialType.Badoo:
-        case SocialType.Nothing:
-        default:
-          return 0;
-      }
-    }
+    //public async Task<long> GetExternalUserIdAsync(int userId, SocialType socialType)
+    //{
+    //  var user = await _context.UsersDb.FindAsync(userId);
+    //  if (user == null) return 0;
+    //  switch (socialType)
+    //  {
+    //    case SocialType.Facebook:
+    //      return user.FacebookId;
+    //    case SocialType.Vk:
+    //      return user.VkId;
+    //    case SocialType.Twiter:
+    //    case SocialType.GooglePlus:
+    //    case SocialType.Telegram:
+    //    case SocialType.Badoo:
+    //    case SocialType.Nothing:
+    //    default:
+    //      return 0;
+    //  }
+    //}
 
     public async Task<bool> IsUserIdExistAsync(int userId)
     {
@@ -153,16 +153,9 @@ namespace AccountData.Account.Repostirories
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<UserContactsDto> GetUserSocialsAsync(int userId)
+    public async Task<List<UserSocialDto>> GetUserSocialsAsync(int userId)
     {
-      var user = await _context.UsersDb.FindAsync(userId);
-      if (user == null) return new UserContactsDto();
-
-      return new UserContactsDto
-      {
-        VkId = user.VkId,
-        FacebookId = user.FacebookId
-      };
+      return await _context.SocialsDb.Where(x => x.InternalId == userId).Select(x => new UserSocialDto { ExternalId = x.ExternalId, SocialType = x.SocialType }).ToListAsync() ?? new List<UserSocialDto>();
     }
 
   }

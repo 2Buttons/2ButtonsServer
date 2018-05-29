@@ -1,6 +1,6 @@
 ﻿using AccountData.Account.Entities;
 
-namespace AccountData.Account.DTO
+namespace AccountData.DTO
 {
   public static class ExtenstionMap
   {
@@ -15,11 +15,7 @@ namespace AccountData.Account.DTO
         PhoneNumber = userDb.PhoneNumber,
         PhoneNumberConfirmed = userDb.PhoneNumberConfirmed,
         RoleType = userDb.RoleType,
-        TwoFactorEnabled = userDb.TwoFactorEnabled,
-        VkId = userDb.VkId,
-        VkToken = userDb.VkToken,
-        FacebookId = userDb.FacebookId,
-        FacebookToken = userDb.FacebookToken
+        TwoFactorEnabled = userDb.TwoFactorEnabled
       };
     }
   }

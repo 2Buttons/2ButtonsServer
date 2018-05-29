@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using MediaDataLayer;
+using CommonLibraries;
 using MediaServer.ViewModel;
 using Microsoft.AspNetCore.Http;
 
@@ -11,12 +11,10 @@ namespace MediaServer.Infrastructure.Services
   public class MediaService : IMediaService
   {
     private readonly IFileService _fileManager;
-    private readonly MediaUnitOfWork _mainDb;
 
-    public MediaService(IFileService fileManager, MediaUnitOfWork mainDb1)
+    public MediaService(IFileService fileManager)
     {
       _fileManager = fileManager;
-      _mainDb = mainDb1;
     }
 
     public bool IsUrlValid(string url)
@@ -24,88 +22,61 @@ namespace MediaServer.Infrastructure.Services
       return _fileManager.IsUrlValid(url);
     }
 
-    public async Task<string> UploadAvatar(int userId, string url, AvatarSizeType size)
+    public string GetStandadAvatarUrl(AvatarSizeType size)
+    {
+      return $"/standards/{size}_avatar.jpg";
+    }
+
+    public string GetStandadQuestionBackgroundUrl()
+    {
+      return "/standards/question_background.jpg";
+    }
+
+    public string UploadAvatar(string url, AvatarSizeType size)
     {
       var imageType = size.ToString().GetMd5Hash();
       var uniqueName = _fileManager.CreateUniqueName(url);
-      var avatarLink = _fileManager.GetWebPath(imageType, uniqueName);
       var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
 
-      var isUpdated = false;
-      switch (size)
-      {
-        case AvatarSizeType.UserSmallAvatarPhoto:
-          isUpdated = await _mainDb.Accounts.UpdateUserSmallAvatar(userId, avatarLink);
-          break;
-        case AvatarSizeType.UserFullAvatarPhoto:
-          isUpdated = await _mainDb.Accounts.UpdateUserFullAvatar(userId, avatarLink);
-          break;
-      }
-
-      if (!isUpdated) return string.Empty;
-
-      new WebClient().DownloadFileAsync(new Uri(url), filePath);
-      return avatarLink;
+      new WebClient().DownloadFile(new Uri(url), filePath);
+      return _fileManager.GetWebPath(imageType, uniqueName);
     }
 
-    public async Task<string> UploadAvatar(int userId, IFormFile file, AvatarSizeType size)
+    public async Task<string> UploadAvatar(IFormFile file, AvatarSizeType size)
     {
       var imageType = size.ToString().GetMd5Hash();
       var uniqueName = _fileManager.CreateUniqueName(file.FileName);
-      var avatarLink = _fileManager.GetWebPath(imageType, uniqueName);
       var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
-
-      var isUpdated = false;
-      switch (size)
-      {
-        case AvatarSizeType.UserSmallAvatarPhoto:
-          isUpdated = await _mainDb.Accounts.UpdateUserSmallAvatar(userId, avatarLink);
-          break;
-        case AvatarSizeType.UserFullAvatarPhoto:
-          isUpdated = await _mainDb.Accounts.UpdateUserFullAvatar(userId, avatarLink);
-          break;
-      }
-
-      if (!isUpdated) return string.Empty;
 
       using (var fileStream = new FileStream(filePath, FileMode.Create))
       {
         await file.CopyToAsync(fileStream);
       }
-      return avatarLink;
+      return _fileManager.GetWebPath(imageType, uniqueName);
     }
 
-    public async Task<string> UploadBackground(int questionId, string url)
+    public string UploadBackground(string url)
     {
       var imageType = BackgroundType.Background.ToString().GetMd5Hash();
       var uniqueName = _fileManager.CreateUniqueName(url);
       var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
 
-      var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-      if (await _mainDb.Questions.UpdateQuestionBackgroundLink(questionId, backgroundLink))
-      {
-        new WebClient().DownloadFileAsync(new Uri(url), filePath);
-        return backgroundLink;
-      }
-      return string.Empty;
+      new WebClient().DownloadFile(new Uri(url), filePath);
+      return _fileManager.GetWebPath(imageType, uniqueName);
+
     }
 
-    public async Task<string> UploadBackground(int questionId, IFormFile file)
+    public async Task<string> UploadBackground(IFormFile file)
     {
       var imageType = BackgroundType.Background.ToString().GetMd5Hash();
       var uniqueName = _fileManager.CreateUniqueName(file.FileName);
       var filePath = _fileManager.CreateServerPath(imageType, uniqueName);
 
-      var backgroundLink = _fileManager.GetWebPath(imageType, uniqueName);
-      if (await _mainDb.Questions.UpdateQuestionBackgroundLink(questionId, backgroundLink))
+      using (var fileStream = new FileStream(filePath, FileMode.Create))
       {
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-          await file.CopyToAsync(fileStream);
-        }
-        return backgroundLink;
+        await file.CopyToAsync(fileStream);
       }
-      return string.Empty;
+      return _fileManager.GetWebPath(imageType, uniqueName);
     }
   }
 }

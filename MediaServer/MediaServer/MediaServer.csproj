@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CommonLibraries\CommonLibraries\CommonLibraries.csproj" />
-    <ProjectReference Include="..\MediaDataLayer\MediaDataLayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

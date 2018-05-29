@@ -35,12 +35,6 @@ namespace AuthorizationServer.Controllers
       _commonAuthService = commonAuthService;
     }
 
-    [HttpGet("register")]
-    public IActionResult RegisterUser()
-    {
-      return new BadResponseResult("Please, use POST request.");
-    }
-
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationViewModel user)
     {

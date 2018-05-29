@@ -30,7 +30,7 @@ namespace AuthorizationServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (auth.State != "123456")
       {
-        ModelState.AddModelError("State", "You are hacker! Your state in incorret");
+        ModelState.AddModelError("State", "You are hacker! Your state is incorret.");
         return new BadResponseResult(ModelState);
       }
       if (!auth.Status || !auth.Error.IsNullOrEmpty())

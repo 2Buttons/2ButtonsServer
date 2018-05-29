@@ -56,9 +56,9 @@ namespace CommonLibraries.SocialNetworks.Vk
         ExternalToken = externalToken,
         ExpiresIn = expiresIn,
         Login = userInfo.FirstName + " " + userInfo.LastName,
-        BirthDate = Convert.ToDateTime(userInfo.Birthday),
+        BirthDate = userInfo.Birthday,
         Sex = userInfo.Sex,
-        City = await cityName ?? userInfo.City.Title,
+        City = await cityName ?? userInfo.City?.Title,
         SmallPhotoUrl = userInfo.SmallPhoto,
         FullPhotoUrl = userInfo.FullPhoto
       };

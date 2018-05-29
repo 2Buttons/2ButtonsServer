@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AccountData;
-using AccountData.Account.DTO;
 using AccountData.Account.Entities;
 using AccountData.DTO;
 using AccountData.Main.Entities;
@@ -81,23 +80,39 @@ namespace AccountServer.Infrastructure.Services
       };
       return await _db.Users.AddUserSocialAsync(social);
     }
-    private List<UserContactsViewModel> ConvertContactsDtoToViewModel(UserContactsDto userContacts)
+    private List<UserContactsViewModel> ConvertContactsDtoToViewModel(List<UserSocialDto> userContacts)
     {
       var result = new List<UserContactsViewModel>();
-
-      if (userContacts.VkId != 0)
-        result.Add(new UserContactsViewModel
+      foreach (var user in userContacts)
+      {
+        switch (user.SocialType)
         {
-          SocialType = SocialType.Vk,
-          AccountUrl = "https://vk.com/id" + userContacts.VkId
-        });
-      if (userContacts.FacebookId != 0)
-        result.Add(new UserContactsViewModel
-        {
-          SocialType = SocialType.Facebook,
-          AccountUrl = "https://www.facebook.com/profile.php?id=" + userContacts.FacebookId
-        });
-
+          case SocialType.Nothing:
+            break;
+          case SocialType.Facebook:
+            result.Add(new UserContactsViewModel
+            {
+              SocialType = SocialType.Facebook,
+              AccountUrl = "https://www.facebook.com/profile.php?id=" + user.ExternalId
+            });
+            break;
+          case SocialType.Vk:
+            result.Add(new UserContactsViewModel
+            {
+              SocialType = SocialType.Vk,
+              AccountUrl = "https://vk.com/id" + user.ExternalId
+            });
+            break;
+          case SocialType.Twiter:
+            break;
+          case SocialType.GooglePlus:
+            break;
+          case SocialType.Telegram:
+            break;
+          case SocialType.Badoo:
+            break;
+        }
+      }
       return result;
     }
   }
