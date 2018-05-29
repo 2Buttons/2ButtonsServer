@@ -35,7 +35,7 @@ namespace MediaServer.Infrastructure.Services
         return false;
       var paths = new List<string>
       {
-        AppDomain.CurrentDomain.BaseDirectory,
+        AppContext.BaseDirectory,
         MediaOptions.RootFolderRelativePath,
         MediaOptions.RootFolderName
       };
@@ -85,9 +85,9 @@ namespace MediaServer.Infrastructure.Services
       {
         "Background",
         "CustomBackground",
-        "UserFullAvatarPhoto",
-        "UserSmallAvatarPhoto",
-        "DefaultMediaFolder",
+        "LargeAvatar",
+        "SmallAvatar",
+        "DefaultFolder",
       };
 
       foreach (var folder in folders)
@@ -112,7 +112,7 @@ namespace MediaServer.Infrastructure.Services
 
     private string GetAbsoluteRootPath()
     {
-      return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaOptions.RootFolderRelativePath + MediaOptions.RootFolderName, "");
+      return Path.Combine(AppContext.BaseDirectory, MediaOptions.RootFolderRelativePath + MediaOptions.RootFolderName, "");
     }
 
     private string GetAbsoluteMediaFolderPath(string folderName)

@@ -12,7 +12,7 @@ namespace CommonLibraries.SocialNetworks
     public DateTime BirthDate { get; set; }
     public SexType Sex { get; set; }
     public string City { get; set; }
-    public string FullPhotoUrl { get; set; }
+    public string LargePhotoUrl { get; set; }
     public string SmallPhotoUrl { get; set; }
   }
 }

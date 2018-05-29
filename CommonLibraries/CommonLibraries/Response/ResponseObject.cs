@@ -22,4 +22,25 @@ namespace CommonLibraries.Response
       Data = data;
     }
   }
+
+  public class ResponseObject<T>
+  {
+    [JsonProperty("status")]
+    public int Status { get; set; }
+    [JsonProperty("message")]
+    public string Message { get; set; }
+    [JsonProperty("data")]
+    public T Data { get; set; }
+
+    public ResponseObject()
+    {
+    }
+
+    public ResponseObject(int status, string message, T data)
+    {
+      Status = status;
+      Message = message;
+      Data = data;
+    }
+  }
 }

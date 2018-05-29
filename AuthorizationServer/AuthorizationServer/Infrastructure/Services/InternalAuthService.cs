@@ -63,8 +63,8 @@ namespace AuthorizationServer.Infrastructure.Services
         Sex = user.SexType,
         City = user.City,
         Description = user.Description,
-        FullAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.UserFullAvatarPhoto),
-        SmallAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.UserSmallAvatarPhoto)
+        LargeAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar),
+        SmallAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar)
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))

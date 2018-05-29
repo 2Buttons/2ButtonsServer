@@ -55,7 +55,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
         Sex = userInfo.SexType,
         City = userInfo.City?.Title,
         SmallPhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal",
-        FullPhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large"
+        LargePhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large"
       };
       return result;
     }

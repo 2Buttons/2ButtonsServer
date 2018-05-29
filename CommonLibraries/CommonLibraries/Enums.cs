@@ -1,9 +1,16 @@
-﻿namespace CommonLibraries
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace CommonLibraries
 {
   public enum AvatarSizeType
   {
-    UserSmallAvatarPhoto = 0,
-    UserFullAvatarPhoto = 1
+    //[Display(Name = "small")]
+    //[Description("small")]
+    SmallAvatar = 0,
+    //[Display(Name = "large")]
+    //[Description("large")]
+    LargeAvatar = 1
   }
 
   public enum BackgroundType

@@ -102,7 +102,7 @@ namespace CommonLibraries.SocialNetworks.Vk
     public string SmallPhoto { get; set; }
 
     [JsonProperty("photo_max_orig")]
-    public string FullPhoto { get; set; }
+    public string LargePhoto { get; set; }
   }
 
   public class VkCity

@@ -10,7 +10,7 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
     public int Age { get; set; }
     public SexType SexType { get; set; }
     public string Description { get; set; }
-    public string FullAvatarLink { get; set; }
+    public string LargeAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
     public bool IsYouFollowed { get; set; }
     public bool IsHeFollowed { get; set; }

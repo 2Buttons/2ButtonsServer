@@ -21,7 +21,11 @@ namespace CommonLibraries.Helpers
     private const string UploadedBackgroundUrl = "http://localhost:6250/upload/background/file";
     private const string StandardBackgroundUrl = "http://localhost:6250/standard/background/";
 
-    public static string StandardAvatar (AvatarSizeType size)=> $"/standards/{size}_avatar.jpg";
+    public static string StandardAvatar(AvatarSizeType sizeType)
+    {
+      var size = sizeType.ToString().Contains("S") ? "small" : "large";
+      return $"/standards/{size}_avatar.jpg";
+    } 
     public static string StandardBackground(AvatarSizeType size) => "/standards/question_background.jpg";
 
     public static async Task<string> GetStandardAvatarUrl(AvatarSizeType avatarSize)
@@ -38,7 +42,7 @@ namespace CommonLibraries.Helpers
 
     public static async Task<string> UploadAvatarUrl(AvatarSizeType avatarSize, string imageUrl)
     {
-      var body = JsonConvert.SerializeObject(new { size = 0, url = imageUrl });
+      var body = JsonConvert.SerializeObject(new { size = (int)avatarSize, url = imageUrl });
       return await MediaServerConnection(UploadedAvaterUrl, body);
     }
 
@@ -73,7 +77,8 @@ namespace CommonLibraries.Helpers
       using (var responseStream = webResponse.GetResponseStream())
       using (var reader = new StreamReader(responseStream))
       {
-        return reader.ReadToEnd();
+        var result  = reader.ReadToEnd();
+        return MediaResponseToUrl(result);
       }
     }
 
@@ -97,14 +102,19 @@ namespace CommonLibraries.Helpers
 
         HttpResponseMessage response = await client.PostAsync(url, content);
         if (response.StatusCode != HttpStatusCode.OK) return string.Empty;
-        var data = JsonConvert.DeserializeObject<ResponseObject>(await response.Content.ReadAsStringAsync()).Data;
-
-        return data is UrlReponse reponse ? reponse.Url : string.Empty;
+        var result = await response.Content.ReadAsStringAsync();
+        return MediaResponseToUrl(result);
       }
 
     }
+
+    private static string MediaResponseToUrl(string response)
+    {
+      return JsonConvert.DeserializeObject<ResponseObject<UrlReponse>>(response).Data.Url ?? string.Empty;
+    }
     private class UrlReponse
     {
+      [JsonProperty("url")]
       public string Url { get; set; }
     }
   }

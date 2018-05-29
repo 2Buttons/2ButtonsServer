@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
 namespace AuthorizationData.Main.Entities
@@ -13,7 +14,8 @@ namespace AuthorizationData.Main.Entities
     public SexType Sex { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-    public string FullAvatarLink { get; set; }
+    [Column("FullAvatarLink")]
+    public string LargeAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
   }
 }

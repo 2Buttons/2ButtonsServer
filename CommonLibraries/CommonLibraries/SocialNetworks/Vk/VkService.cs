@@ -60,7 +60,7 @@ namespace CommonLibraries.SocialNetworks.Vk
         Sex = userInfo.Sex,
         City = await cityName ?? userInfo.City?.Title,
         SmallPhotoUrl = userInfo.SmallPhoto,
-        FullPhotoUrl = userInfo.FullPhoto
+        LargePhotoUrl = userInfo.LargePhoto
       };
       return result;
     }

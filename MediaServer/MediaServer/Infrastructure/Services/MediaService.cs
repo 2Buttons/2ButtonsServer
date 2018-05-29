@@ -22,8 +22,9 @@ namespace MediaServer.Infrastructure.Services
       return _fileManager.IsUrlValid(url);
     }
 
-    public string GetStandadAvatarUrl(AvatarSizeType size)
+    public string GetStandadAvatarUrl(AvatarSizeType sizeType)
     {
+      var size = sizeType.ToString().Contains("S") ? "small" : "large";
       return $"/standards/{size}_avatar.jpg";
     }
 
