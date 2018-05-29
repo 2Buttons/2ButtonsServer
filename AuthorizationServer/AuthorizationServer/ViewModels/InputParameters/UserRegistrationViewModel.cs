@@ -29,7 +29,5 @@ namespace AuthorizationServer.ViewModels.InputParameters
     public string City { get; set; }
 
     public string Description { get; set; } = null;
-    public string FullAvatarLink { get; set; } = null;
-    public string SmallAvatarLink { get; set; } = null;
   }
 }

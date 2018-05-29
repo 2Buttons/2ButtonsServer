@@ -8,6 +8,7 @@ using AuthorizationData.Account.Entities;
 using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonLibraries.Helpers;
 using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -70,11 +71,11 @@ namespace AuthorizationServer.Infrastructure.Services
       var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId);
       if (userInfo.SmallAvatarLink.Contains("stand") && !socialUserData.SmallPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.SmallAvatarLink = await GetStandardPhotoUrl(AvatarSizeType.UserSmallAvatarPhoto);
+        userInfo.SmallAvatarLink = await MediaServerHelper.GetStandardAvatarUrl(AvatarSizeType.UserSmallAvatarPhoto);
       }
       if (userInfo.FullAvatarLink.Contains("stand") && !socialUserData.FullPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.FullAvatarLink = await GetStandardPhotoUrl(AvatarSizeType.UserFullAvatarPhoto);
+        userInfo.FullAvatarLink = await MediaServerHelper.GetStandardAvatarUrl(AvatarSizeType.UserFullAvatarPhoto);
       }
 
       await _db.UsersInfo.UpdateUserInfoAsync(userInfo);
@@ -89,15 +90,8 @@ namespace AuthorizationServer.Infrastructure.Services
       var isAdded = await _db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
-      var links = (smallLink : string.Empty, fullLink: string.Empty);
-      try
-      {
-        links = await UploadAvatars(userDb.UserId, user.SmallPhotoUrl, user.FullPhotoUrl);
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
+      var fullLink = !user.FullPhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.UserFullAvatarPhoto, user.FullPhotoUrl) : await MediaServerHelper.GetStandardAvatarUrl(AvatarSizeType.UserFullAvatarPhoto);
+      var smallLink = !user.SmallPhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.UserSmallAvatarPhoto, user.SmallPhotoUrl) : await MediaServerHelper.GetStandardAvatarUrl(AvatarSizeType.UserSmallAvatarPhoto);
 
       var userInfo = new UserInfoDb
       {
@@ -106,8 +100,8 @@ namespace AuthorizationServer.Infrastructure.Services
         BirthDate = user.BirthDate,
         Sex = user.Sex,
         City = user.City,
-        FullAvatarLink = links.fullLink == string.Empty ? null : links.fullLink,
-        SmallAvatarLink = links.smallLink == string.Empty ? null : links.smallLink
+        FullAvatarLink = fullLink,
+        SmallAvatarLink = smallLink
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))

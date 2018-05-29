@@ -15,6 +15,7 @@ using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 
 namespace AuthorizationServer.Infrastructure.Services
@@ -62,8 +63,8 @@ namespace AuthorizationServer.Infrastructure.Services
         Sex = user.SexType,
         City = user.City,
         Description = user.Description,
-        FullAvatarLink = user.FullAvatarLink,
-        SmallAvatarLink = user.SmallAvatarLink
+        FullAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.UserFullAvatarPhoto),
+        SmallAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.UserSmallAvatarPhoto)
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))

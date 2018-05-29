@@ -13,13 +13,16 @@ namespace CommonLibraries.Helpers
   public class MediaServerHelper
   {
 
-    public const string UploadedAvaterUrl = "http://localhost:6250/upload/avatar/link";
-    public const string UploadedAvaterFile = "http://localhost:6250/upload/avatar/file";
-    public const string StandardAvatarUrl = "http://localhost:6250/standard/avatar/";
+    private const string UploadedAvaterUrl = "http://localhost:6250/upload/avatar/link";
+    private const string UploadedAvaterFile = "http://localhost:6250/upload/avatar/file";
+    private const string StandardAvatarUrl = "http://localhost:6250/standard/avatar/";
 
-    public const string UploadedBackgroundFile = "http://localhost:6250/upload/background/link";
-    public const string UploadedBackgroundUrl = "http://localhost:6250/upload/background/file";
-    public const string StandardBackgroundUrl = "http://localhost:6250/standard/background/";
+    private const string UploadedBackgroundFile = "http://localhost:6250/upload/background/link";
+    private const string UploadedBackgroundUrl = "http://localhost:6250/upload/background/file";
+    private const string StandardBackgroundUrl = "http://localhost:6250/standard/background/";
+
+    public static string StandardAvatar (AvatarSizeType size)=> $"/standards/{size}_avatar.jpg";
+    public static string StandardBackground(AvatarSizeType size) => "/standards/question_background.jpg";
 
     public static async Task<string> GetStandardAvatarUrl(AvatarSizeType avatarSize)
     {
@@ -33,9 +36,9 @@ namespace CommonLibraries.Helpers
       return await MediaServerConnection(UploadedAvaterFile, file, requestParams);
     }
 
-    public static async Task<string> UploadAvatarUrl(AvatarSizeType avatarSize, string url)
+    public static async Task<string> UploadAvatarUrl(AvatarSizeType avatarSize, string imageUrl)
     {
-      var body = JsonConvert.SerializeObject(new { size = 0, url = url });
+      var body = JsonConvert.SerializeObject(new { size = 0, url = imageUrl });
       return await MediaServerConnection(UploadedAvaterUrl, body);
     }
 
@@ -45,9 +48,9 @@ namespace CommonLibraries.Helpers
       return await MediaServerConnection(StandardBackgroundUrl, body);
     }
 
-    public static async Task<string> UploadBackgroundUrl(string url)
+    public static async Task<string> UploadBackgroundUrl(string imageUrl)
     {
-      var body = JsonConvert.SerializeObject(new { url });
+      var body = JsonConvert.SerializeObject(new { url = imageUrl });
       return await MediaServerConnection(UploadedBackgroundUrl, body);
     }
 
