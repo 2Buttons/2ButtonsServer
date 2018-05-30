@@ -16,7 +16,7 @@ namespace SocialServer.ViewModels.OutputParameters
       {
         var result = new InviteFriendViewModel()
         {
-          ExternalUserId = vkFriend.UserId,
+          ExternalUserId = vkFriend.ExternalId,
           FirstName = vkFriend.FirstName,
           LastName = vkFriend.LastName,
           SmallPhoto = vkFriend.SmallPhoto

@@ -46,7 +46,7 @@ namespace CommonLibraries.SocialNetworks.Vk
         $"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
       var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response.FirstOrDefault();
 
-      var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Русский);
+      var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Russian);
       userInfo.City.Title = await cityName ?? userInfo.City.Title;
 
       var result = new NormalizedSocialUserData

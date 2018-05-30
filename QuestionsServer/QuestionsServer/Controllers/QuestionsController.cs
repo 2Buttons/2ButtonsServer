@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -33,7 +34,7 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Questions Server");
     }
 
-    [HttpPost("getQuestion")]
+    [HttpPost("get")]
     public async Task<IActionResult> GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -72,13 +73,22 @@ namespace QuestionsServer.Controllers
       comments = commentsTask.Result;
     }
 
-    [HttpPost("addQuestion")]
+    [HttpPost("add")]
     public async Task<IActionResult> AddQuestion([FromBody] AddQuestionViewModel question)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
+      var backgroundLink = MediaServerHelper.StandardBackground();
+      if (!question.BackgroundImageLink.IsNullOrEmpty())
+      {
+        var externalUrl = await MediaServerHelper.UploadBackgroundUrl(question.BackgroundImageLink);
+
+        if (!externalUrl.IsNullOrEmpty()) backgroundLink = externalUrl;
+      }
+
+
       var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition,
-        question.BackgroundImageLink, question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType,
+        backgroundLink, question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType,
         question.FirstOption, question.SecondOption);
 
       var badAddedTags = new List<string>();
@@ -96,7 +106,7 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(questionId);
     }
 
-    [HttpPost("deleteQuestion")]
+    [HttpPost("delete")]
     public async Task<IActionResult> DeleteQuestion([FromBody] QuestionIdViewModel questionId)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -107,7 +117,7 @@ namespace QuestionsServer.Controllers
 
     }
 
-    [HttpPost("updateQuestionFeedback")]
+    [HttpPost("update/feedback")]
     public async Task<IActionResult> UpdateFeedback([FromBody] UpdateQuestionFeedbackViewModel feedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -117,7 +127,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, "Question's feedback was not updated.");
     }
 
-    [HttpPost("updateSaved")]
+    [HttpPost("update/saved")]
     public async Task<IActionResult> UpdateSaved([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -127,7 +137,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, "Save question was not updated.");
     }
 
-    [HttpPost("updateFavorites")]
+    [HttpPost("update/favorites")]
     public async Task<IActionResult> UpdateFavorites([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -137,7 +147,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, "Question's favourites was not updated.");
     }
 
-    [HttpPost("updateAnswer")]
+    [HttpPost("update/answer")]
     public async Task<IActionResult> UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -146,7 +156,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, "Question's answer was not updated.");
     }
 
-    [HttpPost("addRecommendedQuestion")]
+    [HttpPost("add/recommended")]
     public async Task<IActionResult> AddRecommendedQuestion(
       [FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
     {
@@ -158,7 +168,31 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
     }
 
-    [HttpPost("getVoters")]
+    [HttpPost("update/bakground/link")]
+    public async Task<IActionResult> UpdateBakgroundViaLink(
+      [FromBody] UploadQuestionBackgroundViaLinkViewModel background)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      var url = await MediaServerHelper.UploadBackgroundUrl(background.Url);
+      if(!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
+        return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
+      return new OkResponseResult();
+    }
+
+    [HttpPost("update/bakground/file")]
+    public async Task<IActionResult> UpdateBakgroundViaFile(
+      [FromBody] UploadQuestionBackgroundViaFileViewModel background)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      var url = await MediaServerHelper.UploadBackgroundFile(background.File);
+      if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
+        return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
+      return new OkResponseResult();
+    }
+
+
+    [HttpPost("voters")]
     public async Task<IActionResult> GetVoters([FromBody] GetVoters voters)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);

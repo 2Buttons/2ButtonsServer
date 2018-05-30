@@ -11,7 +11,7 @@ namespace SocialServer.ViewModels.InputParameters.ControllersViewModels
   public class FollowViewModel
   {
     [IdValidation]
-    public int FollowerId { get; set; }
+    public int UserId { get; set; }
     [IdValidation]
     public int FollowToId { get; set; }
   }

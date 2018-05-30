@@ -58,10 +58,17 @@ namespace AuthorizationServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
 
+      if ((credentials.GrantType == GrantType.Phone || credentials.GrantType == GrantType.Email) &&
+          credentials.Password.IsNullOrEmpty())
+      {
+        ModelState.AddModelError("Password", "Password is null or empty, but grant type is not guest.");
+        return new BadResponseResult(ModelState);
+      }
+
       switch (credentials.GrantType)
       {
         case GrantType.Guest:
-        case GrantType.Password:
+        case GrantType.Phone:
         case GrantType.Email:
           var user = await _internalAuthService.GetUserByCredentils(credentials);
           var result = await _commonAuthService.GetAccessTokenAsync(user);

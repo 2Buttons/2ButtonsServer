@@ -4,7 +4,7 @@ namespace QuestionsServer.ViewModels.InputParameters
 {
   public class QuestionIdViewModel : UserIdViewModel
   {
-    [IdValidation]
+    [IdValidation(nameof(QuestionId))]
     public int QuestionId { get; set; }
   }
 }

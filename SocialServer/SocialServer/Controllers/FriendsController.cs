@@ -9,7 +9,7 @@ namespace SocialServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  // [Route("/account")]
+  [Route("friends")]
   //[Route("api/[controller]")]
   public class FriendsController : Controller
   {
@@ -20,7 +20,7 @@ namespace SocialServer.Controllers
       _friendsService = friendsService;
     }
 
-    [HttpPost("getRecommendedUsers")]
+    [HttpPost("recommended")]
     public async Task<IActionResult> GetRecommendedUsers([FromBody] GetRecommendedUsers user)
 
     {

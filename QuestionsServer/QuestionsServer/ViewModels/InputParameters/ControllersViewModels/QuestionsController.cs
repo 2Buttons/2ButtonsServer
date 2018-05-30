@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
 using CommonLibraries.Validation;
+using Microsoft.AspNetCore.Http;
 
 namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 {
@@ -30,6 +31,20 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
   {
     public AnswerType AnswerType { get; set; }
   }
+
+
+  public class UploadQuestionBackgroundViaLinkViewModel : QuestionIdViewModel
+  {
+    [Required]
+    public string Url { get; set; }
+  }
+
+  public class UploadQuestionBackgroundViaFileViewModel : QuestionIdViewModel
+  {
+    [Required]
+    public IFormFile File { get; set; }
+  }
+
 
   public class UpdateQuestionFavoriteViewModel : QuestionIdViewModel
   {

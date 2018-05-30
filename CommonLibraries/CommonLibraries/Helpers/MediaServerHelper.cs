@@ -15,18 +15,18 @@ namespace CommonLibraries.Helpers
 
     private const string UploadedAvaterUrl = "http://localhost:6250/upload/avatar/link";
     private const string UploadedAvaterFile = "http://localhost:6250/upload/avatar/file";
-    private const string StandardAvatarUrl = "http://localhost:6250/standard/avatar/";
+    private const string StandardAvatarUrl = "http://localhost:6250/standards/avatar/";
 
     private const string UploadedBackgroundFile = "http://localhost:6250/upload/background/link";
     private const string UploadedBackgroundUrl = "http://localhost:6250/upload/background/file";
-    private const string StandardBackgroundUrl = "http://localhost:6250/standard/background/";
+    private const string StandardBackgroundUrl = "http://localhost:6250/standards/background/";
 
     public static string StandardAvatar(AvatarSizeType sizeType)
     {
       var size = sizeType.ToString().Contains("S") ? "small" : "large";
       return $"/standards/{size}_avatar.jpg";
     } 
-    public static string StandardBackground(AvatarSizeType size) => "/standards/question_background.jpg";
+    public static string StandardBackground() => "/standards/question_background.jpg";
 
     public static async Task<string> GetStandardAvatarUrl(AvatarSizeType avatarSize)
     {

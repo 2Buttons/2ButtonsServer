@@ -1,15 +1,8 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-namespace CommonLibraries
+﻿namespace CommonLibraries
 {
   public enum AvatarSizeType
   {
-    //[Display(Name = "small")]
-    //[Description("small")]
     SmallAvatar = 0,
-    //[Display(Name = "large")]
-    //[Description("large")]
     LargeAvatar = 1
   }
 
@@ -28,7 +21,7 @@ namespace CommonLibraries
   public enum GrantType
   {
     Guest = 0,
-    Password = 1,
+    Phone = 1,
     Email = 2
   }
 
@@ -105,13 +98,13 @@ namespace CommonLibraries
 
   public enum LanguageType
   {
-    Русский = 0,
-    Украинский = 1,
-    Английский = 3,
-    Испанский = 4,
-    Португальский = 12,
-    Немецкий = 6,
-    Французский = 16,
-    Итальянский = 7
+    Russian = 0,
+    Ukrainian = 1,
+    English = 3,
+    Spanish = 4,
+    Portuguese = 12,
+    German = 6,
+    French = 16,
+    Italian = 7
   }
 }

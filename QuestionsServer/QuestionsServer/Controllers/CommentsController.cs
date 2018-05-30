@@ -10,7 +10,7 @@ namespace QuestionsServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  //[Route("comments")]
+  [Route("comments")]
   public class CommentsController : Controller
   {
     private readonly QuestionsUnitOfWork _mainDb;
@@ -20,7 +20,7 @@ namespace QuestionsServer.Controllers
       _mainDb = mainDb;
     }
 
-    [HttpPost("addComment")]
+    [HttpPost("add")]
     public async Task<IActionResult> AddComment([FromBody] AddCommentViewModel comment)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -29,7 +29,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = comentId });
     }
 
-    [HttpPost("updateCommentsFeedback")]
+    [HttpPost("updateFeedback")]
     public async Task<IActionResult> AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -38,7 +38,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.NotModified, new { IsFeedbackUpdated = false });
     }
 
-    [HttpPost("getComments")]
+    [HttpPost]
     public async Task<IActionResult> GetComments([FromBody] GetCommentsViewModel commentsVm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);

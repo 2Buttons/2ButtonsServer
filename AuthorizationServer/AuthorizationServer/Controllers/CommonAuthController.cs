@@ -27,6 +27,9 @@ namespace AuthorizationServer.Controllers
     [HttpGet("server")]
     public IActionResult ServerName()
     {
+      int k = 0;
+      int b = 5 / k;
+
       return new OkResponseResult((object)"Authorization Server");
     }
 

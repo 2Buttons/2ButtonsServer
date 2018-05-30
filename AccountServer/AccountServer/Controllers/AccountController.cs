@@ -48,7 +48,7 @@ namespace AccountServer.Controllers
     }
 
     [Authorize]
-    [HttpPost("getUserInfoAuth")]
+    [HttpPost("getAuth")]
     public async Task<IActionResult> GetUserInfoAuth([FromBody] UserIdViewModel userPage)
     {
       if (!ModelState.IsValid)
@@ -96,7 +96,7 @@ namespace AccountServer.Controllers
     }
 
 
-    [HttpPost("getUserInfo")]
+    [HttpPost("get")]
     public async Task<IActionResult> GetUserInfo([FromBody] UserPageIdViewModel userPage)
     {
       if (!ModelState.IsValid)

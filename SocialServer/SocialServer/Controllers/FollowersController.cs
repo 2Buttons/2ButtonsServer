@@ -11,7 +11,7 @@ namespace SocialServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  //[Route("api/[controller]")]
+  [Route("followers")]
   public class FollowersController : Controller //Represent user's followers or people who user are follow to
   {
 
@@ -27,7 +27,7 @@ namespace SocialServer.Controllers
       return new OkResponseResult("Social Server");
     }
 
-    [HttpPost("getFollowers")]
+    [HttpPost]
     public async Task<IActionResult> GetFollowers([FromBody]FollowerViewModel vm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -38,7 +38,7 @@ namespace SocialServer.Controllers
      // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
-    [HttpPost("getFollowTo")]
+    [HttpPost("to")]
     public async Task<IActionResult> GetFollowTo([FromBody]FollowerViewModel vm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -53,7 +53,7 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await _socialDb.Followers.AddFollow(vm.FollowerId, vm.FollowToId))
+      if (await _socialDb.Followers.AddFollow(vm.UserId, vm.FollowToId))
         return new OkResponseResult("Now you follow", new {IsFollowed = true});
       return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not connect you to this user.", new { IsFollowed = false });
     }
@@ -63,7 +63,7 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await _socialDb.Followers.DeleteFollow(vm.FollowerId, vm.FollowToId))
+      if (await _socialDb.Followers.DeleteFollow(vm.UserId, vm.FollowToId))
         return new OkResponseResult("Now you unfollow", new { IsFollowed = false });
       return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not disconnect you to this user.", new { IsFollowed = true });
     }

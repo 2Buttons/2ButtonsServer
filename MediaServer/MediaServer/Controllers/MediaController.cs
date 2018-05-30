@@ -40,7 +40,7 @@ namespace MediaServer.Controllers
       return new OkResponseResult(new {IsValid = _mediaService.IsUrlValid(url.Url)});
     }
 
-    [HttpPost("standard/avatar")]
+    [HttpPost("standards/avatar")]
     public IActionResult GetStandardAvatar([FromBody]AvatarSizeType size)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -49,7 +49,7 @@ namespace MediaServer.Controllers
       return url.IsNullOrEmpty() ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult(new UrlViewModel { Url = url });
     }
 
-    [HttpPost("standard/background")]
+    [HttpPost("standards/background")]
     public IActionResult GetStandardBackground()
     {
       var url = _mediaService.GetStandadQuestionBackgroundUrl();

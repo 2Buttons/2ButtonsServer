@@ -14,7 +14,7 @@ namespace QuestionsServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  //[Route("complaints")]
+  [Route("complaints")]
   public class ComplaintsController : Controller
   {
     private readonly QuestionsUnitOfWork _mainDb;
@@ -24,7 +24,7 @@ namespace QuestionsServer.Controllers
       _mainDb = mainDb;
     }
 
-    [HttpPost("addComplaint")]
+    [HttpPost("add")]
     public async Task<IActionResult> AddComplaintt([FromBody] AddComplainttViewModel complaintt)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -35,7 +35,7 @@ namespace QuestionsServer.Controllers
     }
 
     // только модератору можно
-    [HttpPost("getComplaints")]
+    [HttpPost]
     public async Task<IActionResult> GetComplaintts()
     {
       var complaintts = await _mainDb.Complaintts.GetComplaintts();
@@ -43,7 +43,7 @@ namespace QuestionsServer.Controllers
     }
 
     [Authorize(Roles = "moderator, admin")]
-    [HttpPost("getComplaintsAuth")]
+    [HttpPost]
     public async Task<IActionResult> GetComplainttsAuth()
     {
       var complaintts = await _mainDb.Complaintts.GetComplaintts();

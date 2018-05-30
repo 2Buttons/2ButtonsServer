@@ -98,7 +98,7 @@ namespace AuthorizationServer.Infrastructure.Services
       {
         case GrantType.Guest:
           break;
-        case GrantType.Password:
+        case GrantType.Phone:
           user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
           if (user == null)
           {
