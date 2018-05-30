@@ -75,8 +75,7 @@ namespace MediaServer
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
 
-      if (env.IsDevelopment())
-        app.UseDeveloperExceptionPage();
+      app.UseExceptionHandling();
 
       app.UseStaticFiles(new StaticFileOptions
       {
@@ -89,11 +88,8 @@ namespace MediaServer
       {
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
       });
-
-
-      app.UseExceptionHandler();
+      app.UseAuthentication();
       app.UseMvc();
     }
-
   }
 }

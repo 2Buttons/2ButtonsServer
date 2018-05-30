@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CommonLibraries;
+﻿using CommonLibraries;
+using CommonLibraries.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SocialData;
 using SocialData.Account;
@@ -22,23 +18,24 @@ namespace SocialServer
 {
   public class Startup
   {
+    public IConfiguration Configuration { get; }
+
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
     }
-
-    public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc();
       services.AddCors(options =>
       {
-        options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
-          .AllowAnyMethod());
+        options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
       });
-      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+      services.AddDbContext<TwoButtonsContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.AddDbContext<TwoButtonsAccountContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddTransient<SocialDataUnitOfWork>();
       services.AddTransient<IFriendsService, FriendsService>();
@@ -53,7 +50,8 @@ namespace SocialServer
       {
         options.Issuer = issuer;
         options.Audience = audience;
-        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey),
+          SecurityAlgorithms.HmacSha256);
       });
 
       services.AddAuthentication(options =>
@@ -64,7 +62,8 @@ namespace SocialServer
       {
         configureOptions.ClaimsIssuer = issuer;
         configureOptions.RequireHttpsMetadata = false;
-        configureOptions.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+        configureOptions.TokenValidationParameters =
+          JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
       });
     }
 
@@ -72,11 +71,7 @@ namespace SocialServer
     {
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
-
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
+      app.UseExceptionHandling();
 
       app.UseDefaultFiles();
       app.UseStaticFiles();
@@ -87,7 +82,6 @@ namespace SocialServer
       });
 
       app.UseAuthentication();
-      app.UseExceptionHandler();
       app.UseMvc();
     }
   }

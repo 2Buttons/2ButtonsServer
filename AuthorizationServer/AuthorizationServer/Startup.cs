@@ -94,6 +94,7 @@ namespace AuthorizationServer
     {
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
+      app.UseExceptionHandling();
 
       if (env.IsDevelopment())
       {
@@ -101,27 +102,6 @@ namespace AuthorizationServer
         app.UseDatabaseErrorPage();
         app.UseBrowserLink();
       }
-
-      // обработка ошибок HTTP
-      app.UseExceptionHandler(
-        builder =>
-        {
-          builder.Run(
-            async context =>
-            {
-              context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-              context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-
-              var error = context.Features.Get<IExceptionHandlerFeature>();
-              if (error != null)
-              {
-                context.Response.AddApplicationError(error.Error.Message);
-                await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
-              }
-            });
-        });
-
-      // app.UseStatusCodePages();
 
       app.UseDefaultFiles();
       app.UseStaticFiles(new StaticFileOptions
@@ -134,7 +114,6 @@ namespace AuthorizationServer
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
       });
       app.UseAuthentication();
-      app.UseExceptionHandling();
       app.UseMvc();
     }
   }

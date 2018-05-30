@@ -19,7 +19,7 @@ namespace CommonLibraries.Response
     public ResponseResult(int status, object data) : this(status, null, data) { }
     public ResponseResult(int status, string message, object data)
     {
-      Response = new ResponseObject(status, message ?? GetDafaultMesage(status), data);
+      Response = new ResponseObject(status, message, data);
     }
 
     public async Task ExecuteResultAsync(ActionContext context)
@@ -29,23 +29,6 @@ namespace CommonLibraries.Response
       context.HttpContext.Response.ContentType = "application/json";
       context.HttpContext.Response.StatusCode = Response.Status;
       await context.HttpContext.Response.WriteAsync(JsonConvert.SerializeObject(Response, serializerSettings));
-    }
-
-    private static string GetDafaultMesage(int statusCode)
-    {
-      switch (statusCode)
-      {
-        case 200: return "OK";
-        case 201: return "CREATED";
-        case 304: return "NOT MODIFIED";
-        case 400: return "BAD REQUEST";
-        case 401: return "UNAUTHORIZED";
-        case 403: return "FORBIDDEN";
-        case 404: return "NOT FOUND";
-        case 409: return "CONFLICT";
-        case 500: return "INTERNAL SERVER ERROR";
-        default: return null;
-      }
     }
   }
 

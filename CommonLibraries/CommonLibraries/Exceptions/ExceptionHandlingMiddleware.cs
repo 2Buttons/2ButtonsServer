@@ -43,10 +43,7 @@ namespace CommonLibraries.Exceptions
 
     private static Task HandleExceptionAsync(HttpContext context, IHostingEnvironment env, ILoggerFactory loggerFactory, Exception exception)
     {
-      var response = new ResponseObject
-      {
-        Status = 500
-      };
+      var response = new ResponseObject(context.Response.StatusCode, null, null);
 
       if (env.IsDevelopment())
       {
@@ -56,7 +53,6 @@ namespace CommonLibraries.Exceptions
 
       var result = JsonConvert.SerializeObject(response);
       context.Response.ContentType = "application/json";
-      context.Response.StatusCode = 500;
       return context.Response.WriteAsync(result);
     }
   }

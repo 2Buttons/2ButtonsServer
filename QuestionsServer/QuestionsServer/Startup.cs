@@ -15,22 +15,22 @@ namespace QuestionsServer
 {
   public class Startup
   {
+    public IConfiguration Configuration { get; }
+
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
     }
-
-    public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc();
       services.AddCors(options =>
       {
-        options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader()
-                  .AllowAnyMethod());
+        options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
       });
-      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.AddDbContext<TwoButtonsContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
       services.AddTransient<QuestionsUnitOfWork>();
 
       services.AddOptions();
@@ -43,7 +43,8 @@ namespace QuestionsServer
       {
         options.Issuer = issuer;
         options.Audience = audience;
-        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey),
+          SecurityAlgorithms.HmacSha256);
       });
 
       services.AddAuthentication(options =>
@@ -54,7 +55,8 @@ namespace QuestionsServer
       {
         configureOptions.ClaimsIssuer = issuer;
         configureOptions.RequireHttpsMetadata = false;
-        configureOptions.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+        configureOptions.TokenValidationParameters =
+          JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
       });
     }
 
@@ -62,11 +64,7 @@ namespace QuestionsServer
     {
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
-
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
+      app.UseExceptionHandling();
 
       app.UseDefaultFiles();
       app.UseStaticFiles();
@@ -77,10 +75,7 @@ namespace QuestionsServer
       });
 
       app.UseAuthentication();
-      app.UseExceptionHandling();
       app.UseMvc();
     }
-
-
   }
 }

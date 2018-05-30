@@ -14,6 +14,7 @@ using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AccountServer.Controllers
 {
@@ -23,15 +24,18 @@ namespace AccountServer.Controllers
   public class AccountController : Controller
   {
     private readonly IAccountService _account;
+    private NotificationsMessageHandler _notificationsMessageHandler;
 
-    public AccountController(IAccountService accountService)
+    public AccountController(IAccountService accountService, NotificationsMessageHandler notificationsMessageHandler)
     {
       _account = accountService;
+      _notificationsMessageHandler = notificationsMessageHandler;
     }
 
     [HttpGet("server")]
     public IActionResult ServerName()
     {
+      _notificationsMessageHandler.SendMessageToAllAsync(JsonConvert.SerializeObject(new ResponseObject(200,"Account","Hi")));
       return new OkResponseResult((object)"Account");
     }
 

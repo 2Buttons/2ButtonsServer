@@ -10,6 +10,7 @@ using CommonLibraries;
 using CommonLibraries.Exceptions;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
+using CommonLibraries.WebSockets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,6 +48,7 @@ namespace AccountServer
       services.AddTransient<IAccountService, AccountService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();
+      services.AddWebSocketManager();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
@@ -73,28 +75,22 @@ namespace AccountServer
       });
     }
 
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
     {
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
 
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-
       app.UseExceptionHandling();
       app.UseDefaultFiles();
       app.UseStaticFiles();
-
+      app.UseWebSockets();
       app.UseForwardedHeaders(new ForwardedHeadersOptions
       {
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
       });
-
       app.UseAuthentication();
-
       app.UseMvc();
+      app.MapWebSocketManager("/notifications", serviceProvider.GetService<NotificationsMessageHandler>());
     }
   }
 }
