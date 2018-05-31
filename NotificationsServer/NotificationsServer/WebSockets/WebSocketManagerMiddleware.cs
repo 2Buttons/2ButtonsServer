@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace CommonLibraries.WebSockets
+namespace NotificationsServer.WebSockets
 {
   public class WebSocketManagerMiddleware
   {
@@ -39,6 +37,8 @@ namespace CommonLibraries.WebSockets
             return;
         }
       });
+
+     // await _next.Invoke(context);
     }
 
     private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)
