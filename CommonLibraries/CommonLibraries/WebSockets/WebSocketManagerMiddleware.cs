@@ -25,6 +25,7 @@ namespace CommonLibraries.WebSockets
       if (!context.WebSockets.IsWebSocketRequest) return;
       var socket = await context.WebSockets.AcceptWebSocketAsync();
       var p = context.Request.Query;
+      var u = context.Request.HttpContext.User;
       await _webSocketHandler.OnConnected(socket);
 
       await Receive(socket, async (result, buffer) =>

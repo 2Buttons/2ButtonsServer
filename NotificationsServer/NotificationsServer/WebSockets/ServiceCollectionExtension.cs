@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace NotificationsServer.WebSockets
+namespace NotificationServer.WebSockets
 {
     public static class ServiceCollectionExtension
     {

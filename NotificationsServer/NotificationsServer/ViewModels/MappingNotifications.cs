@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using NotificationsData.Main.Entities;
-using NotificationsServer.Models;
+using NotificationServer.Models;
 
-namespace NotificationsServer.ViewModels
+namespace NotificationServer.ViewModels
 {
   public static class MappingNotifications
   {

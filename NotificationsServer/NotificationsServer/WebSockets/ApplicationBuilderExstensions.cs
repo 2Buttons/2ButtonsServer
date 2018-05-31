@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace NotificationsServer.WebSockets
+namespace NotificationServer.WebSockets
 {
   public static class ApplicationBuilderExstensions
   {

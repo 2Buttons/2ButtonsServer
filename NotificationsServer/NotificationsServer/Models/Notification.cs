@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CommonLibraries;
 
-namespace NotificationsServer.Models
+namespace NotificationServer.Models
 {
   public class Notification
   {

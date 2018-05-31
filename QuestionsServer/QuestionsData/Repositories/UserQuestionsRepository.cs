@@ -17,12 +17,12 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<bool> AddRecommendedQuestion(int userToId, int pageUserId, int questionId)
+    public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, int questionId)
     {
       var recommendedDate = DateTime.UtcNow;
 
       return await _db.Database.ExecuteSqlCommandAsync(
-               $"addTag {userToId}, {pageUserId}, {questionId}, {recommendedDate}") > 0;
+               $"addTag {userToId}, {userFromId}, {questionId}, {recommendedDate}") > 0;
     }
 
     public async Task<List<UserAskedQuestionDb>> GetUserAskedQuestions(int userId, int pageUserId, int offset,
