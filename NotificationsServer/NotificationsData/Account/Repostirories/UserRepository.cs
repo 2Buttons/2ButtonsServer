@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommonLibraries;
+using Microsoft.EntityFrameworkCore;
 using NotificationsData.Account.Entities;
 using NotificationsData.DTO;
 

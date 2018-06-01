@@ -18,6 +18,7 @@ namespace NotificationServer.ViewModels.Input
     [IdValidation(nameof(QuestionId))]
     public int QuestionId { get; set; }
 
+    [Required]
     public DateTime RecommendedDate { get; set; }
   }
 }

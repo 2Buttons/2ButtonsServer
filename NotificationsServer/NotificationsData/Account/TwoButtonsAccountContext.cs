@@ -1,4 +1,5 @@
-﻿using NotificationsData.Account.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using NotificationsData.Account.Entities;
 
 namespace NotificationsData.Account
 {

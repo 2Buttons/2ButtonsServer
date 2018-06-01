@@ -16,6 +16,7 @@ namespace NotificationServer.ViewModels.Input
     public int QuestionId { get; set; }
 
     public AnswerType AnswerType { get; set; }
+    [Required]
     public DateTime AnsweredDate { get; set; }
   }
 }

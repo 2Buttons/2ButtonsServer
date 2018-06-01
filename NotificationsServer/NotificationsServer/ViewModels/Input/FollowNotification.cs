@@ -14,6 +14,7 @@ namespace NotificationServer.ViewModels.Input
     [IdValidation(nameof(FollowToId))]
     public int FollowToId { get; set; }
 
+    [Required]
     public DateTime FollowedDate { get; set; }
   }
 }

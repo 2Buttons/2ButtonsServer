@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using CommonLibraries;
+using CommonLibraries.Validation;
 
 namespace NotificationsData.DTO
 {

@@ -212,8 +212,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       {
         QuestionId = dbEntity.QuestionId,
         Condition = dbEntity.Condition,
-        FirstOption = dbEntity.FirstOption,
-        SecondOption = dbEntity.SecondOption,
+        Options = new List<string>{dbEntity.FirstOption, dbEntity.SecondOption},
         BackgroundImageLink = dbEntity.BackgroundImageLink,
         QuestionType = dbEntity.QuestionType,
         AddDate = dbEntity.QuestionAddDate,

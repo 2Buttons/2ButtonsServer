@@ -8,8 +8,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
   {
     public int QuestionId { get; set; }
     public string Condition { get; set; }
-    public string FirstOption { get; set; }
-    public string SecondOption { get; set; }
+    public List<string> Options { get; set; }
     public string BackgroundImageLink { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime AddDate { get; set; }
