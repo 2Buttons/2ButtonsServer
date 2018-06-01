@@ -29,7 +29,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = comentId });
     }
 
-    [HttpPost("updateFeedback")]
+    [HttpPost("update/feedback")]
     public async Task<IActionResult> AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);

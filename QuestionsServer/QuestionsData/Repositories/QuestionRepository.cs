@@ -25,6 +25,12 @@ namespace QuestionsData.Repositories
                .FirstOrDefaultAsync() ?? new QuestionDb();
     }
 
+    public async Task<int> GetQuestionByCommentId(int commentId)
+    {
+      return (await _db.QuestionIdDb.AsNoTracking().FromSql($"select * from dbo.getQuestionIDFromCommentID({commentId})")
+               .FirstOrDefaultAsync())?.QuestionId ?? -1;
+    }
+
     public async Task<int> AddQuestion(int userId, string condition, string backgroundImageLink, int anonymity,
       int audience, QuestionType questionType, string firstOption, string secondOption)
     {

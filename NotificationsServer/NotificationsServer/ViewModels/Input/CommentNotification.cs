@@ -5,7 +5,7 @@ using CommonLibraries.Validation;
 
 namespace NotificationServer.ViewModels.Input
 {
-  public class AnswerNotification
+  public class CommentNotification
   {
     [Required]
     [IdValidation(nameof(NotifierId))]
@@ -15,8 +15,11 @@ namespace NotificationServer.ViewModels.Input
     [IdValidation(nameof(QuestionId))]
     public int QuestionId { get; set; }
 
-    public AnswerType AnswerType { get; set; }
     [Required]
-    public DateTime AnsweredDate { get; set; }
+    [IdValidation(nameof(CommentId))]
+    public int CommentId { get; set; }
+
+    [Required]
+    public DateTime CommentedDate { get; set; }
   }
 }

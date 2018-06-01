@@ -35,7 +35,6 @@ namespace AccountServer.Controllers
     [HttpGet("server")]
     public IActionResult ServerName()
     {
-      _notificationsMessageHandler.SendMessageToAllAsync(JsonConvert.SerializeObject(new ResponseObject(200,"Account","Hi")));
       return new OkResponseResult((object)"Account");
     }
 
@@ -53,7 +52,7 @@ namespace AccountServer.Controllers
 
     [Authorize]
     [HttpPost("getAuth")]
-    public async Task<IActionResult> GetUserInfoAuth([FromBody] UserIdViewModel userPage)
+    public async Task<IActionResult> GetUserInfoAuth([FromBody] UserPageIdViewModel userPage)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);

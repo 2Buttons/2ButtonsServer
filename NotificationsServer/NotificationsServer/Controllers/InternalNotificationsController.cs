@@ -36,12 +36,12 @@ namespace NotificationServer.Controllers
       return new OkResponseResult();
     }
 
-    [HttpPost("answer")]
-    public async Task<IActionResult> NotifyAnswer([FromBody] AnswerNotification notification)
+    [HttpPost("comment")]
+    public async Task<IActionResult> NotifyComment([FromBody] CommentNotification notification)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      await _notificationsMessageHandler.PushAnswerNotification(notification);
+      await _notificationsMessageHandler.CommentNotification(notification);
       return new OkResponseResult();
     }
   }

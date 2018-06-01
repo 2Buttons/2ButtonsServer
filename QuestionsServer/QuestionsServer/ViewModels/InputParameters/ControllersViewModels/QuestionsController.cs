@@ -32,6 +32,12 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public AnswerType AnswerType { get; set; }
   }
 
+  public class GetQuestionByCommentId: UserIdViewModel
+  {
+    [Required]
+    [IdValidation(nameof(CommentId))]
+    public int CommentId { get; set; }
+  }
 
   public class UploadQuestionBackgroundViaLinkViewModel : QuestionIdViewModel
   {

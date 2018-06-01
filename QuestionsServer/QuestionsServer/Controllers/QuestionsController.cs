@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
@@ -34,6 +35,23 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Questions Server");
     }
 
+    [Authorize]
+    [HttpPost("{questionId:int}")]
+    public async Task<IActionResult> GetQuestion(int qiestionId)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
+
+      var question = await _mainDb.Questions.GetQuestion(userId, qiestionId);
+
+      GetTagsAndPhotos(userId, qiestionId, out var tags, out var firstPhotos,
+        out var secondPhotos, out var comments);
+
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+
+      return new OkResponseResult(result);
+    }
+
     [HttpPost("get")]
     public async Task<IActionResult> GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
     {
@@ -48,6 +66,25 @@ namespace QuestionsServer.Controllers
 
       return new OkResponseResult(result);
     }
+
+    [HttpPost("getByCommentId")]
+    public async Task<IActionResult> GetQuestion([FromBody] GetQuestionByCommentId getQuestionByCommentId)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      var questionId = await _mainDb.Questions.GetQuestionByCommentId(getQuestionByCommentId.CommentId);
+      if (questionId <= 0) return new ResponseResult((int)HttpStatusCode.NotFound, "We can not find the question with this comment");
+
+      var question = await _mainDb.Questions.GetQuestion(getQuestionByCommentId.UserId, questionId);
+
+      GetTagsAndPhotos(getQuestionByCommentId.UserId, questionId, out var tags, out var firstPhotos,
+        out var secondPhotos, out var comments);
+
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+
+      return new OkResponseResult(result);
+    }
+
 
     private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
@@ -175,7 +212,7 @@ namespace QuestionsServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var url = await MediaServerHelper.UploadBackgroundUrl(background.Url);
-      if(!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
+      if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
         return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult();
     }

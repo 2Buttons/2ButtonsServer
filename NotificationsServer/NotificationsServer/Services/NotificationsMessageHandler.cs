@@ -57,19 +57,22 @@ namespace NotificationServer.Services
       return true;
     }
 
-    public async Task<bool> PushAnswerNotification(AnswerNotification answerNotification)
+    public async Task<bool> CommentNotification(CommentNotification  commentNotification)
     {
-      var info = await _db.UsersInfo.FindUserInfoAsync(answerNotification.NotifierId);
+      var info = await _db.UsersInfo.FindUserInfoAsync(commentNotification.NotifierId);
       if (info == null) return false;
+
+      var sendToId = _db.Notifications.GetUserIdForComment(commentNotification.CommentId);
+
       var notification = new Notification
       {
-        UserId = answerNotification.NotifierId,
-        SendToId = answerNotification.,
+        UserId = commentNotification.NotifierId,
+        SendToId = sendToId,
         Login = info.Login,
         SmallAvatarLink = info.SmallAvatarLink,
         ActionType = CommonLibraries.ActionType.Follow,
-        EmmiterId = answerNotification.QuestionId,
-        ActionDate = answerNotification.AnsweredDate
+        EmmiterId = commentNotification.CommentId,
+        ActionDate = commentNotification.CommentedDate
       };
       PushNotification(notification);
       return true;
