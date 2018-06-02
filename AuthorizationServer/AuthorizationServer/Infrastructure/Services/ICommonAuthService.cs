@@ -8,6 +8,7 @@ namespace AuthorizationServer.Infrastructure.Services
 {
   public interface ICommonAuthService : IDisposable
   {
+    Task<bool> SaveEmail(string email);
     Task<bool> FullLogOutAsync(int userId);
     Task<Token> GetAccessTokenAsync(UserDto user);
     Task<Token> GetRefreshTokenAsync(string refreshToken);

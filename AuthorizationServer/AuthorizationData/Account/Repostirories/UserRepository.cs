@@ -28,6 +28,12 @@ namespace AuthorizationData.Account.Repostirories
       _contextAccount.Dispose();
     }
 
+    public async Task<bool> AddEmail(string email)
+    {
+      _contextAccount.EmailsDb.Add(new EmailDb {Email = email});
+      return await _contextAccount.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> AddUserAsync(UserDb user)
     {
       await _contextAccount.UsersDb.AddAsync(user);

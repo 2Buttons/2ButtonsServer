@@ -30,9 +30,15 @@ namespace AuthorizationServer.Infrastructure.Services
       _jwtService = jwtService;
     }
 
+
+    public async Task<bool> SaveEmail(string email)
+    {
+      return await _db.Users.AddEmail(email);
+    }
+
     public async Task<Token> GetAccessTokenAsync(UserDto user)
     {
-      if ((user.RoleType != RoleType.Guest || user.UserId !=0) && await _db.Tokens.CountTokensForUserAsync(user.UserId) > 10)
+      if ((user.RoleType != RoleType.Guest || user.UserId != 0) && await _db.Tokens.CountTokensForUserAsync(user.UserId) > 10)
       {
         await _db.Tokens.RemoveTokensByUserIdAsync(user.UserId);
         throw new Exception("You logged in at least 10 defferent devices. We are forced to save your data. Now you are logged out of all devices. Please log in again.");

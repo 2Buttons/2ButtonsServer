@@ -24,6 +24,14 @@ namespace AuthorizationServer.Controllers
       _authService = authService;
     }
 
+    [HttpPost("saveEmail")]
+    public async Task<IActionResult> SaveEmail([FromBody]EmailViewModel email)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      await _authService.SaveEmail(email.Email);
+      return new OkResponseResult("We saved.");
+    }
+
     [HttpGet("server")]
     public IActionResult ServerName()
     {
