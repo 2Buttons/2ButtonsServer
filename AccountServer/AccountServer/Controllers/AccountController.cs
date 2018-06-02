@@ -24,12 +24,10 @@ namespace AccountServer.Controllers
   public class AccountController : Controller
   {
     private readonly IAccountService _account;
-    private NotificationsMessageHandler _notificationsMessageHandler;
 
-    public AccountController(IAccountService accountService, NotificationsMessageHandler notificationsMessageHandler)
+    public AccountController(IAccountService accountService)
     {
       _account = accountService;
-      _notificationsMessageHandler = notificationsMessageHandler;
     }
 
     [HttpGet("server")]

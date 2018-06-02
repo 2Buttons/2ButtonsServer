@@ -212,7 +212,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       {
         QuestionId = dbEntity.QuestionId,
         Condition = dbEntity.Condition,
-        Options = new List<string>{dbEntity.FirstOption, dbEntity.SecondOption},
+        Options = new List<Option> { new Option(dbEntity.FirstAnswers, dbEntity.FirstOption), new Option(dbEntity.SecondAnswers, dbEntity.SecondOption) },
         BackgroundImageLink = dbEntity.BackgroundImageLink,
         QuestionType = dbEntity.QuestionType,
         AddDate = dbEntity.QuestionAddDate,
@@ -227,9 +227,6 @@ namespace QuestionsServer.ViewModels.OutputParameters
         IsSaved = dbEntity.IsSaved,
         CommentsAmount = dbEntity.Comments,
 
-        FirstAnswersAmount = dbEntity.FirstAnswers,
-        SecondAnswersAmount = dbEntity.SecondAnswers,
-
         Tags = dbTags.MapTagsDbToTagViewModel(),
         FirstPhotos = dbFirstPhotos.MapPhotosDbToViewModel(),
         SecondPhotos = dbSecondPhotos.MapPhotosDbToViewModel()
@@ -240,42 +237,42 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public static List<TagViewModel> MapTagsDbToTagViewModel(this IEnumerable<TagDb> dbTags)
     {
       return dbTags.Select(tag => new TagViewModel
-        {
-          TagId = tag.TagId,
-          TagText = tag.TagText
-          // Position = tag.Position
-        })
+      {
+        TagId = tag.TagId,
+        TagText = tag.TagText
+        // Position = tag.Position
+      })
         .ToList();
     }
 
     public static List<PhotoViewModel> MapPhotosDbToViewModel(this IEnumerable<PhotoDb> photosDb)
     {
       return photosDb.Select(p => new PhotoViewModel
-        {
-          UserId = p.UserId,
-          Age = p.BirthDate.Age(),
-          Login = p.Login,
-          SexType = p.Sex,
-          SmallAvatarLink = p.SmallAvatarLink
-        })
+      {
+        UserId = p.UserId,
+        Age = p.BirthDate.Age(),
+        Login = p.Login,
+        SexType = p.Sex,
+        SmallAvatarLink = p.SmallAvatarLink
+      })
         .ToList();
     }
 
     public static List<CommentViewModel> MapCommentsDbToViewModel(this IEnumerable<CommentDb> commentsDb)
     {
       return commentsDb.Select(c => new CommentViewModel
-        {
-          CommentId = c.CommentId,
-          UserId = c.UserId,
-          Login = c.Login,
-          SmallAvatarLink = c.SmallAvatarLink,
-          Text = c.Comment,
-          LikesAmount = c.Likes,
-          DislikesAmount = c.Dislikes,
-          YourFeedbackType = c.YourFeedback,
-          PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
-          AddDate = c.CommentAddDate
-        })
+      {
+        CommentId = c.CommentId,
+        UserId = c.UserId,
+        Login = c.Login,
+        SmallAvatarLink = c.SmallAvatarLink,
+        Text = c.Comment,
+        LikesAmount = c.Likes,
+        DislikesAmount = c.Dislikes,
+        YourFeedbackType = c.YourFeedback,
+        PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
+        AddDate = c.CommentAddDate
+      })
         .ToList();
     }
 
@@ -284,15 +281,15 @@ namespace QuestionsServer.ViewModels.OutputParameters
       this IEnumerable<AnsweredListDb> answeredList)
     {
       return answeredList.Select(v => new AnsweredListViewModel
-        {
-          UserId = v.UserId,
-          Login = v.Login,
-          SmallAvatarLink = v.SmallAvatarLink,
-          Age = v.BirthDate.Age(),
-          SexType = v.Sex,
-          IsHeFollowed = v.HeFollowed,
-          IsYouFollowed = v.YouFollowed
-        })
+      {
+        UserId = v.UserId,
+        Login = v.Login,
+        SmallAvatarLink = v.SmallAvatarLink,
+        Age = v.BirthDate.Age(),
+        SexType = v.Sex,
+        IsHeFollowed = v.HeFollowed,
+        IsYouFollowed = v.YouFollowed
+      })
         .ToList();
     }
   }

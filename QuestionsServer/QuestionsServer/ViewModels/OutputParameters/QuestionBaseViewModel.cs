@@ -8,7 +8,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
   {
     public int QuestionId { get; set; }
     public string Condition { get; set; }
-    public List<string> Options { get; set; }
+    public List<Option> Options { get; set; }
     public string BackgroundImageLink { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime AddDate { get; set; }
@@ -23,12 +23,23 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public bool IsSaved { get; set; }
     public int CommentsAmount { get; set; }
 
-    public int FirstAnswersAmount { get; set; }
-    public int SecondAnswersAmount { get; set; }
-
     public List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
 
     public List<PhotoViewModel> FirstPhotos { get; set; } = new List<PhotoViewModel>();
     public List<PhotoViewModel> SecondPhotos { get; set; } = new List<PhotoViewModel>();
+  }
+
+  public class Option
+  {
+    public int Voters { get; set; }
+    public string Text { get; set; }
+
+    public Option() { }
+
+    public Option(int voters, string text)
+    {
+      Voters = voters;
+      Text = text;
+    }
   }
 }

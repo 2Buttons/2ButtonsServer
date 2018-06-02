@@ -22,7 +22,6 @@ namespace NotificationServer.WebSockets
     {
       if (!context.WebSockets.IsWebSocketRequest) return;
       var socket = await context.WebSockets.AcceptWebSocketAsync();
-      var p = context.Request.Query;
       await _webSocketHandler.OnConnected(socket);
 
       await Receive(socket, async (result, buffer) =>
@@ -30,7 +29,7 @@ namespace NotificationServer.WebSockets
         switch (result.MessageType)
         {
           case WebSocketMessageType.Text:
-            await _webSocketHandler.ReceiveAsync(socket, result, buffer);
+           // await _webSocketHandler.ReceiveAsync(socket, result, buffer);
             return;
           case WebSocketMessageType.Close:
             await _webSocketHandler.OnDisconnected(socket);
