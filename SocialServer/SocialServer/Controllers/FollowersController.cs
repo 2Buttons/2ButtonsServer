@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -53,9 +55,11 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await _socialDb.Followers.AddFollow(vm.UserId, vm.FollowToId))
-        return new OkResponseResult("Now you follow", new {IsFollowed = true});
-      return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not connect you to this user.", new { IsFollowed = false });
+      if (!await _socialDb.Followers.AddFollow(vm.UserId, vm.FollowToId))
+        return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not connect you to this user.",
+          new {IsFollowed = false});
+      NotificationServerHelper.SendFollowNotification(vm.UserId, vm.FollowToId, DateTime.UtcNow);
+      return new OkResponseResult("Now you follow", new {IsFollowed = true});
     }
 
     [HttpPost("unfollow")]

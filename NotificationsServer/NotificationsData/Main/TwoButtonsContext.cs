@@ -5,6 +5,8 @@ namespace NotificationsData.Main
 {
   public class TwoButtonsContext : DbContext
   {
+    public virtual DbSet<CommentDb> CommentsDb { get; set; }
+
     public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
     public virtual DbSet<NotificationDb> NotificationsDb { get; set; }
 

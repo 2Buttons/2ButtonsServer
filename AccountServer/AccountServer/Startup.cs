@@ -48,7 +48,7 @@ namespace AccountServer
       services.AddTransient<IAccountService, AccountService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();
-      services.AddWebSocketManager();
+     // services.AddWebSocketManager();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
@@ -90,7 +90,7 @@ namespace AccountServer
       });
       app.UseAuthentication();
       app.UseMvc();
-      app.MapWebSocketManager("/notifications", serviceProvider.GetService<NotificationsMessageHandler>());
+     // app.MapWebSocketManager("/notifications", serviceProvider.GetService<NotificationsMessageHandler>());
     }
   }
 }

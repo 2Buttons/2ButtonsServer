@@ -39,7 +39,7 @@ namespace NotificationServer.Services
       return true;
     }
 
-    public async Task<bool> PushRecommendedQuestionsNotification(RecommendedQuestionNotification  recommendedQuestionNotification)
+    public async Task<bool> PushRecommendedQuestionsNotification(RecommendedQuestionNotification recommendedQuestionNotification)
     {
       var info = await _db.UsersInfo.FindUserInfoAsync(recommendedQuestionNotification.NotifierId);
       if (info == null) return false;
@@ -57,12 +57,12 @@ namespace NotificationServer.Services
       return true;
     }
 
-    public async Task<bool> CommentNotification(CommentNotification  commentNotification)
+    public async Task<bool> CommentNotification(CommentNotification commentNotification)
     {
       var info = await _db.UsersInfo.FindUserInfoAsync(commentNotification.NotifierId);
       if (info == null) return false;
-
-      var sendToId = _db.Notifications.GetUserIdForComment(commentNotification.CommentId);
+      var sendToId = await _db.Notifications.GetUserIdForComment(commentNotification.CommentId);
+      if (sendToId <= 0) return false;
 
       var notification = new Notification
       {

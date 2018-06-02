@@ -9,21 +9,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AccountServer.Controllers
 {
-  //[EnableCors("AllowAllOrigin")]
-  //[Produces("application/json")]
-  [Route("api/")]
+  [EnableCors("AllowAllOrigin")]
+  [Produces("application/json")]
   public class NotificationsController : Controller //To get user's posts
   {
     private readonly AccountDataUnitOfWork _db;
-    private readonly NotificationsMessageHandler _notificationsMessageHandler;
 
-    public NotificationsController(AccountDataUnitOfWork db, NotificationsMessageHandler notificationsMessageHandler)
+    public NotificationsController(AccountDataUnitOfWork db)
     {
       _db = db;
-      _notificationsMessageHandler = notificationsMessageHandler;
     }
 
-    [HttpPost("notifications1")]
+    [HttpPost("notifications")]
     public async Task<IActionResult> GetNotifications([FromBody] UserIdViewModel userId)
     {
       if(!ModelState.IsValid)
@@ -31,12 +28,6 @@ namespace AccountServer.Controllers
      
       var notifications = await _db.Notifications.GetNotifications(userId.UserId);
       return new OkResponseResult(notifications.MapNotificationDbToViewModel());
-    }
-
-    [HttpGet("sendmessage")]
-    public async Task SendMessage([FromQueryAttribute]string message)
-    {
-      await _notificationsMessageHandler.SendMessageToAllAsync(message);
     }
   }
 }

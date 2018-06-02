@@ -199,10 +199,12 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
+      if (!await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
         recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
-        return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
-      return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
+        return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
+      NotificationServerHelper.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
+        recommendedQuestion.UserToId, recommendedQuestion.QuestionId, DateTime.UtcNow);
+      return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
     }
 
     [HttpPost("update/bakground/link")]

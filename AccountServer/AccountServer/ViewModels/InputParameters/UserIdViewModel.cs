@@ -1,10 +1,7 @@
-﻿using CommonLibraries.Validation;
-
-namespace AccountServer.ViewModels.InputParameters
+﻿namespace AccountServer.ViewModels.InputParameters
 {
   public class UserIdViewModel
   {
-    
     public int UserId { get; set; }
   }
 }

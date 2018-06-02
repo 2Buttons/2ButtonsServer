@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +26,12 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> AddComment([FromBody] AddCommentViewModel comment)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      var comentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.CommentText,
+      var commentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.CommentText,
         comment.PreviousCommnetId);
-      return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = comentId });
+      if (commentId < 0)
+        return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");
+      if (comment.PreviousCommnetId > 0) NotificationServerHelper.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
+      return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = commentId });
     }
 
     [HttpPost("update/feedback")]

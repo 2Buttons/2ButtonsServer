@@ -15,6 +15,11 @@ namespace NotificationsData.Main.Repositories
       _db = db;
     }
 
+    public async Task<int> GetUserIdForComment(int commentId)
+    {
+      return (await _db.CommentsDb.FindAsync(commentId))?.UserId ?? -1;
+    }
+
     public async Task<List<NotificationDb>> GetNotifications(int userId)
     {
         return await _db.NotificationsDb.AsNoTracking()
