@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using CommonLibraries;
 using NotificationsData;
 using NotificationServer.Models;
 using NotificationServer.ViewModels.Input;
+using NotificationServer.WebSockets;
 
 namespace NotificationServer.Services
 {
-  public class NotificationsMessageHandler
+  public class NotificationsMessageService : INotificationsMessageService
   {
-
     private readonly NotificationsDataUnitOfWork _db;
-    private readonly ConcurrentQueue<Notification> _notifications = new ConcurrentQueue<Notification>();
+    private readonly WebSocketManager _webSocketManager;
 
-    public NotificationsMessageHandler(NotificationsDataUnitOfWork db)
+    public NotificationsMessageService(NotificationsDataUnitOfWork db, WebSocketManager webSocketManager)
     {
       _db = db;
+      _webSocketManager = webSocketManager;
     }
 
     public async Task<bool> PushFolloweNotification(FollowNotification followNotification)
@@ -28,32 +25,31 @@ namespace NotificationServer.Services
       var notification = new Notification
       {
         UserId = followNotification.NotifierId,
-        SendToId = followNotification.FollowToId,
         Login = info.Login,
         SmallAvatarLink = info.SmallAvatarLink,
-        ActionType = CommonLibraries.ActionType.Follow,
+        ActionType = ActionType.Follow,
         EmmiterId = followNotification.NotifierId,
         ActionDate = followNotification.FollowedDate
       };
-      PushNotification(notification);
+      PushNotification(followNotification.FollowToId, notification);
       return true;
     }
 
-    public async Task<bool> PushRecommendedQuestionsNotification(RecommendedQuestionNotification recommendedQuestionNotification)
+    public async Task<bool> PushRecommendedQuestionsNotification(
+      RecommendedQuestionNotification recommendedQuestionNotification)
     {
       var info = await _db.UsersInfo.FindUserInfoAsync(recommendedQuestionNotification.NotifierId);
       if (info == null) return false;
       var notification = new Notification
       {
         UserId = recommendedQuestionNotification.NotifierId,
-        SendToId = recommendedQuestionNotification.UserToId,
         Login = info.Login,
         SmallAvatarLink = info.SmallAvatarLink,
-        ActionType = CommonLibraries.ActionType.Follow,
+        ActionType = ActionType.Follow,
         EmmiterId = recommendedQuestionNotification.QuestionId,
         ActionDate = recommendedQuestionNotification.RecommendedDate
       };
-      PushNotification(notification);
+      PushNotification(recommendedQuestionNotification.UserToId, notification);
       return true;
     }
 
@@ -67,20 +63,19 @@ namespace NotificationServer.Services
       var notification = new Notification
       {
         UserId = commentNotification.NotifierId,
-        SendToId = sendToId,
         Login = info.Login,
         SmallAvatarLink = info.SmallAvatarLink,
-        ActionType = CommonLibraries.ActionType.Follow,
+        ActionType = ActionType.Follow,
         EmmiterId = commentNotification.CommentId,
         ActionDate = commentNotification.CommentedDate
       };
-      PushNotification(notification);
+      PushNotification(sendToId, notification);
       return true;
     }
 
-    private void PushNotification(Notification notification)
+    private void PushNotification(int sendToId, Notification notification)
     {
-      _notifications.Enqueue(notification);
+      _webSocketManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
     }
   }
 }

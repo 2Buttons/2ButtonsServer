@@ -10,7 +10,7 @@ namespace NotificationServer.WebSockets
         services.AddTransient<WebSocketConnectionManager>();
       foreach (var type in Assembly.GetEntryAssembly().ExportedTypes)
         {
-          if (type.GetTypeInfo().BaseType == typeof(WebSocketHandler))
+          if (type.GetTypeInfo().BaseType == typeof(WebSocketManager))
           {
             services.AddSingleton(type);
           }

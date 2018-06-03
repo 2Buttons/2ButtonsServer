@@ -98,9 +98,9 @@ namespace AuthorizationServer
 
       if (env.IsDevelopment())
       {
-        app.UseDeveloperExceptionPage();
-        app.UseDatabaseErrorPage();
-        app.UseBrowserLink();
+        //app.UseDeveloperExceptionPage();
+        //app.UseDatabaseErrorPage();
+        //app.UseBrowserLink();
       }
 
       app.UseDefaultFiles();

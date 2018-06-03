@@ -1,4 +1,6 @@
-﻿namespace NotificationsData.DTO
+﻿using CommonLibraries;
+
+namespace NotificationsData.DTO
 {
   public class UserSocialDto
   {

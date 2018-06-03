@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,38 +10,47 @@ namespace NotificationServer.WebSockets
 {
   public class WebSocketConnectionManager
   {
-    private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
+    private readonly List<SocketPair> _sockets = new List<SocketPair>();
 
-    public WebSocket GetSocketById(string id)
+    public event Action<int> AddNewConnection;
+
+    public WebSocketConnectionManager() { }
+
+    public virtual async Task OnConnected(int userId, WebSocket socket)
     {
-      return _sockets.FirstOrDefault(x => x.Key == id).Value;
+      var isFirstAdded = _sockets.All(x => x.UserId != userId);
+      _sockets.Add(new SocketPair(userId, socket));
+      if (isFirstAdded) AddNewConnection?.Invoke(userId);
     }
 
-    public ConcurrentDictionary<string, WebSocket> GetAll()
+    public virtual async Task OnDisconnected(WebSocket socket)
     {
-      return _sockets;
+      var socketInList = _sockets.FirstOrDefault(x => x.WebSocket == socket);
+      if (socketInList == null) return;
+      _sockets.Remove(socketInList);
     }
 
-    public string GetId(WebSocket socket)
+    public async Task SendMessageAsync(WebSocket socket, string message)
     {
-      return _sockets.FirstOrDefault(x => x.Value == socket).Key;
+      if (socket.State != WebSocketState.Open) return;
+      var bytes = Encoding.UTF8.GetBytes(message);
+      await socket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true,
+        CancellationToken.None);
     }
 
-    public bool AddSocket(WebSocket socket)
+    public async Task SendMessageAsync(IEnumerable<WebSocket> sockets, string message)
     {
-      return _sockets.TryAdd(CreateConnectionId(), socket);
+      foreach (var socket in sockets) await SendMessageAsync(socket, message);
     }
 
-    public async Task RemoveSocket(string id)
+    public async Task SendNotificationAsync(int userId, string notification)
     {
-      _sockets.TryRemove(id, out WebSocket socket);
-      await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by the WebSocketManager",
-          CancellationToken.None);
+      await SendMessageAsync(_sockets.Where(x => x.UserId == userId).Select(x => x.WebSocket).ToList(), notification);
     }
 
-    private string CreateConnectionId()
+    public async Task SendMessageToAllAsync(string notification)
     {
-      return Guid.NewGuid().ToString();
+      await SendMessageAsync(_sockets.Select(x => x.WebSocket).ToList(), notification);
     }
   }
 }

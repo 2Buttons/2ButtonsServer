@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.WebSockets;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -10,34 +11,45 @@ namespace NotificationServer.WebSockets
   {
 
     private readonly RequestDelegate _next;
-    private WebSocketHandler _webSocketHandler;
+    private readonly WebSocketConnectionManager _webSocketConnectionManager;
 
-    public WebSocketManagerMiddleware(RequestDelegate next, WebSocketHandler webSocketHandler)
+    public WebSocketManagerMiddleware(RequestDelegate next, WebSocketConnectionManager webSocketConnectionManager)
     {
       _next = next;
-      _webSocketHandler = webSocketHandler;
+      _webSocketConnectionManager = webSocketConnectionManager;
     }
 
     public async Task Invoke(HttpContext context)
     {
       if (!context.WebSockets.IsWebSocketRequest) return;
       var socket = await context.WebSockets.AcceptWebSocketAsync();
-      await _webSocketHandler.OnConnected(socket);
+      var id = ExtractUserIdFromContext(context);
+      if (id <= 0) throw new Exception("Guest does not have a permission to get notifications.");
+      await _webSocketConnectionManager.OnConnected(id, socket);
 
       await Receive(socket, async (result, buffer) =>
       {
         switch (result.MessageType)
         {
+          case WebSocketMessageType.Binary:
           case WebSocketMessageType.Text:
-           // await _webSocketHandler.ReceiveAsync(socket, result, buffer);
+            // await _webSocketHandler.ReceiveAsync(socket, result, buffer);
             return;
           case WebSocketMessageType.Close:
-            await _webSocketHandler.OnDisconnected(socket);
+            await _webSocketConnectionManager.OnDisconnected(socket);
             return;
         }
       });
 
-     // await _next.Invoke(context);
+      // await _next.Invoke(context);
+    }
+
+    private int ExtractUserIdFromContext(HttpContext context)
+    {
+  
+      var isUserIdFromAuth = int.TryParse(context.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var userId);
+      if (isUserIdFromAuth) return userId;
+      return -1;
     }
 
     private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)

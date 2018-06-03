@@ -30,9 +30,10 @@ namespace AccountServer.Controllers
       _account = accountService;
     }
 
-    [HttpGet("server")]
-    public IActionResult ServerName()
+    [HttpPost("server/{userId:int}")]
+    public IActionResult ServerName(int userId)
     {
+      var p = HttpContext.Request;
       return new OkResponseResult((object)"Account");
     }
 

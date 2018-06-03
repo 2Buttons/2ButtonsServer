@@ -12,9 +12,9 @@ namespace NotificationServer.Controllers
   [Route("internal")]
   public class InternalNotificationsController : Controller //To get user's posts
   {
-    private readonly NotificationsMessageHandler _notificationsMessageHandler;
+    private readonly INotificationsMessageService _notificationsMessageHandler;
 
-    public InternalNotificationsController(NotificationsMessageHandler notificationsMessageHandler)
+    public InternalNotificationsController(INotificationsMessageService notificationsMessageHandler)
     {
       _notificationsMessageHandler = notificationsMessageHandler;
     }

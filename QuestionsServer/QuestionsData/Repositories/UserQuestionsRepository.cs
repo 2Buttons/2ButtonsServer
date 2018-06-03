@@ -22,7 +22,7 @@ namespace QuestionsData.Repositories
       var recommendedDate = DateTime.UtcNow;
 
       return await _db.Database.ExecuteSqlCommandAsync(
-               $"addTag {userToId}, {userFromId}, {questionId}, {recommendedDate}") > 0;
+               $"addRecommendedQuestion {userToId}, {userFromId}, {questionId}, {recommendedDate}") > 0;
     }
 
     public async Task<List<UserAskedQuestionDb>> GetUserAskedQuestions(int userId, int pageUserId, int offset,
