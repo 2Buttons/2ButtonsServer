@@ -14,6 +14,7 @@ using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
+using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
@@ -102,14 +103,14 @@ namespace AuthorizationServer.Infrastructure.Services
           user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
           if (user == null)
           {
-            throw new Exception("Phone and (or) password is incorrect");
+            throw new NotFoundException("Phone and (or) password is incorrect");
           }
           break;
         case GrantType.Email:
           user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(credentials.Email, credentials.Password);
           if (user == null)
           {
-            throw new Exception("Email and (or) password is incorrect");
+            throw new NotFoundException("Email and (or) password is incorrect");
           }
           break;
       }

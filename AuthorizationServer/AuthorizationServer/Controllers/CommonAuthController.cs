@@ -63,7 +63,7 @@ namespace AuthorizationServer.Controllers
 
       if (!int.TryParse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value ?? "-1",
             out var userId) || userId == -1)
-        return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not find your id.");
+        return new ResponseResult((int)HttpStatusCode.NotFound, "We can not find your id.");
 
       if (await _authService.LogOutAsync(userId, logout.RefreshToken))
         return new OkResponseResult("Account is logged out of the system");
@@ -79,7 +79,7 @@ namespace AuthorizationServer.Controllers
 
       if (!int.TryParse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value ?? "-1",
             out var userId) || userId == -1)
-        return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not find your id.");
+        return new ResponseResult((int)HttpStatusCode.NotFound, "We can not find your id.");
 
       if (await _authService.FullLogOutAsync(userId))
         return new OkResponseResult("You are not in your devices");

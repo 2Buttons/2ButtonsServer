@@ -5,9 +5,9 @@ using CommonLibraries;
 
 namespace AccountData.Main.Entities
 {
-  public class Info
+  public class UserInfoDb
   {
-    [Key]
+  
     public int UserId { get; set; }
 
     public string Login { get; set; }
@@ -16,7 +16,8 @@ namespace AccountData.Main.Entities
     public string City { get; set; }
     public string Description { get; set; }
 
-    public string FullAvatarLink { get; set; }
+    [Column("fullAvatarLink")]
+    public string LargeAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
     public bool YouFollowed { get; set; }
     public bool HeFollowed { get; set; }

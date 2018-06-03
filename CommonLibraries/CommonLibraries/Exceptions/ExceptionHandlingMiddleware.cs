@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Response;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -17,17 +11,17 @@ namespace CommonLibraries.Exceptions
 {
   public class ExceptionHandlingMiddleware
   {
-
     private readonly RequestDelegate _next;
     //private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
     public ExceptionHandlingMiddleware(RequestDelegate next)
     {
       _next = next;
-    //  _logger = logger;
+      //  _logger = logger;
     }
 
-    public async Task Invoke(HttpContext context, IHostingEnvironment env, ILoggerFactory loggerFactory /* other dependencies */)
+    public async Task Invoke(HttpContext context, IHostingEnvironment env,
+      ILoggerFactory loggerFactory /* other dependencies */)
     {
       try
       {
@@ -35,19 +29,26 @@ namespace CommonLibraries.Exceptions
       }
       catch (Exception ex)
       {
-       // _logger.LogError(EventIds.GlobalException, ex, ex.Message);
-        await HandleExceptionAsync(context, env, loggerFactory, ex);
+        // _logger.LogError(EventIds.GlobalException, ex, ex.Message);
+        await HandleExceptionAsync(context, loggerFactory, ex);
         throw;
       }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, IHostingEnvironment env, ILoggerFactory loggerFactory, Exception exception)
+    private static Task HandleExceptionAsync(HttpContext context, ILoggerFactory loggerFactory, Exception exception)
     {
-      var response = new ResponseObject(context.Response.StatusCode, null, null);
-      response.Message = exception.Message;
-      
-        response.Data = exception.StackTrace;
-      
+      switch (exception)
+      {
+        case NotFoundException _:
+          context.Response.StatusCode = 404;
+          break;
+      }
+      var response =
+        new ResponseObject(context.Response.StatusCode, null, null)
+        {
+          Message = exception.Message,
+          Data = exception.StackTrace
+        };
 
       var result = JsonConvert.SerializeObject(response);
       context.Response.ContentType = "application/json";

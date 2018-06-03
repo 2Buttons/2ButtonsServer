@@ -10,6 +10,8 @@ using SocialData.Main.Entities.Recommended;
 
 namespace SocialData.Main.Repositories
 {
+
+  //TODO https://docs.microsoft.com/ru-ru/ef/core/modeling/owned-entities
   public class RecommendedPeopleRepository
   {
     private readonly TwoButtonsContext _db;

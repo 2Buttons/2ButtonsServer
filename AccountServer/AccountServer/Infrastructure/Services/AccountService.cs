@@ -31,7 +31,7 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
     {
-      var userInfoTask = _db.UsersInfo.GetUserInfoAsync(userId, userPageId);
+      var userInfoTask = _db.UsersInfo.FindUserInfoAsync(userId, userPageId);
       var userStatisticsTask = _db.UsersInfo.GetUserStatisticsAsync(userPageId);
       var userContactsTask = _db.Users.GetUserSocialsAsync(userPageId);
 
@@ -87,9 +87,9 @@ namespace AccountServer.Infrastructure.Services
       {
         userInfo.SmallAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
       }
-      if (userInfo.FullAvatarLink.IsNullOrEmpty() || userInfo.FullAvatarLink.Contains("stan") && !user.LargePhotoUrl.IsNullOrEmpty())
+      if (userInfo.LargeAvatarLink.IsNullOrEmpty() || userInfo.LargeAvatarLink.Contains("stan") && !user.LargePhotoUrl.IsNullOrEmpty())
       {
-        userInfo.FullAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
+        userInfo.LargeAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
       }
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
@@ -100,7 +100,7 @@ namespace AccountServer.Infrastructure.Services
         Sex = userInfo.Sex,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargeAvatarLink = userInfo.FullAvatarLink,
+        LargeAvatarLink = userInfo.LargeAvatarLink,
         SmallAvatarLink = userInfo.SmallAvatarLink,
       };
 

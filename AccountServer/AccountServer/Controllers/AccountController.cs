@@ -55,7 +55,7 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var result = await _account.GetUserAsync(userId, userPage.UserId);
+      var result = await _account.GetUserAsync(userId, userPage.UserPageId);
 
       return new OkResponseResult(result);
     }

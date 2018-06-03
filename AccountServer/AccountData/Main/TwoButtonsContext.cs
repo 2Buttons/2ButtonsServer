@@ -5,9 +5,9 @@ namespace AccountData.Main
 {
   public class TwoButtonsContext : DbContext
   {
-    public virtual DbSet<Info> UserInfoDb { get; set; }
-    public virtual DbSet<UserStatisticsDb> UserStatisticsDb { get; set; }
-    public virtual DbSet<NotificationDb> NotificationsDb { get; set; }
+    public virtual DbQuery<UserInfoDb> UserInfoDb { get; set; }
+    public virtual DbQuery<UserStatisticsDb> UserStatisticsDb { get; set; }
+    public virtual DbQuery<NotificationDb> NotificationsDb { get; set; }
 
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)
     {
