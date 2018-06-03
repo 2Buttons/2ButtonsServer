@@ -44,12 +44,10 @@ namespace CommonLibraries.Exceptions
     private static Task HandleExceptionAsync(HttpContext context, IHostingEnvironment env, ILoggerFactory loggerFactory, Exception exception)
     {
       var response = new ResponseObject(context.Response.StatusCode, null, null);
-
-      if (env.IsDevelopment())
-      {
-        response.Message = exception.Message;
+      response.Message = exception.Message;
+      
         response.Data = exception.StackTrace;
-      }
+      
 
       var result = JsonConvert.SerializeObject(response);
       context.Response.ContentType = "application/json";

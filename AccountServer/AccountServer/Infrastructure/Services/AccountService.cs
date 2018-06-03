@@ -87,9 +87,9 @@ namespace AccountServer.Infrastructure.Services
       {
         userInfo.SmallAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
       }
-      if (userInfo.LargeAvatarLink.IsNullOrEmpty() || userInfo.LargeAvatarLink.Contains("stan") && !user.LargePhotoUrl.IsNullOrEmpty())
+      if (userInfo.FullAvatarLink.IsNullOrEmpty() || userInfo.FullAvatarLink.Contains("stan") && !user.LargePhotoUrl.IsNullOrEmpty())
       {
-        userInfo.LargeAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
+        userInfo.FullAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
       }
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
@@ -100,7 +100,7 @@ namespace AccountServer.Infrastructure.Services
         Sex = userInfo.Sex,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargeAvatarLink = userInfo.LargeAvatarLink,
+        LargeAvatarLink = userInfo.FullAvatarLink,
         SmallAvatarLink = userInfo.SmallAvatarLink,
       };
 

@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NotificationsData;
+using NotificationsData.Account;
+using NotificationsData.Main;
 using NotificationServer.Models;
 
 namespace NotificationServer.WebSockets
@@ -17,12 +19,11 @@ namespace NotificationServer.WebSockets
     public event Action<int> SendInitializedNotification;
 
     private IServiceProvider _serviceProvider;
-    public WebSocketManager(WebSocketConnectionManager connectionManager, IServiceProvider serviceProvider)
+    public WebSocketManager()
     {
-      _connectionManager = connectionManager;
-      _connectionManager.AddNewConnection += SendNotificationForNewConnection;
-      _serviceProvider = serviceProvider;
-      SendNotifications();
+     // _connectionManager = connectionManager;
+     // _connectionManager.AddNewConnection += SendNotificationForNewConnection;
+     // SendNotifications();
 
       
     }
@@ -46,10 +47,13 @@ namespace NotificationServer.WebSockets
       //{
       //  if (type.GetTypeInfo().BaseType == typeof(NotificationsDataUnitOfWork))
       //  {
-          var db = _serviceProvider.GetService(typeof(NotificationsDataUnitOfWork));
-          var notifications = await ((NotificationsDataUnitOfWork)db).Notifications.GetNotifications(userId);
-          await _connectionManager.SendNotificationAsync(userId, JsonConvert.SerializeObject(notifications));
-          return;
+
+      //var p = _serviceProvider.GetService(typeof(TwoButtonsAccountContext));
+      //var z = _serviceProvider.GetService(typeof(TwoButtonsContext));
+      //var db = _serviceProvider.GetService(typeof(NotificationsDataUnitOfWork));
+      //    var notifications = await ((NotificationsDataUnitOfWork)db).Notifications.GetNotifications(userId);
+      //    await _connectionManager.SendNotificationAsync(userId, JsonConvert.SerializeObject(notifications));
+      //    return;
       //  }
       //}
 

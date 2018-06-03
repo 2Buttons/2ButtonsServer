@@ -5,7 +5,7 @@ namespace AccountData.Main
 {
   public class TwoButtonsContext : DbContext
   {
-    public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
+    public virtual DbSet<Info> UserInfoDb { get; set; }
     public virtual DbSet<UserStatisticsDb> UserStatisticsDb { get; set; }
     public virtual DbSet<NotificationDb> NotificationsDb { get; set; }
 

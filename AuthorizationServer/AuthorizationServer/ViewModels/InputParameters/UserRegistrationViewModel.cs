@@ -22,7 +22,7 @@ namespace AuthorizationServer.ViewModels.InputParameters
     public SexType SexType { get; set; }
 
     public string Phone { get; set; } = null;
-
+    [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", ErrorMessage = "The Email field is not a valid e-mail address.")]
     public string Email { get; set; } = null;
 
     [Required]

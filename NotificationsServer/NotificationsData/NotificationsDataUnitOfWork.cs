@@ -40,8 +40,8 @@ namespace NotificationsData
       {
         if (disposing)
         {
-          _dbAccount.Dispose();
-          _dbMain.Dispose();
+          _dbAccount?.Dispose();
+          _dbMain?.Dispose();
         }
         _disposed = true;
       }

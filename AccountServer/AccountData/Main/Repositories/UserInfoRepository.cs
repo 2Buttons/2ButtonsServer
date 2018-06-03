@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AccountData.DTO;
 using AccountData.Main.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,11 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
-    public async Task<UserInfoDb> GetUserInfoAsync(int userId, int userPageId)
+    public async Task<Info> GetUserInfoAsync(int userId, int userPageId)
     {
+   
       var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
-                   .FirstOrDefaultAsync() ?? new UserInfoDb();
+                   .FirstOrDefaultAsync() ?? new Info();
 
       if (userId != userPageId && user.YouFollowed) UpdateVisitsAsync(userId, userPageId);
       return user;

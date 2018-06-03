@@ -8,7 +8,7 @@ namespace AccountServer.ViewModels
   public static class MappingUserDbToViewModel
   {
     public static UserInfoViewModel MapToUserInfoViewModel(
-      this UserInfoDb dbEntity)
+      this Info dbEntity)
     {
       var viewModel = new UserInfoViewModel
       {
@@ -17,7 +17,7 @@ namespace AccountServer.ViewModels
         Age = dbEntity.BirthDate.Age(),
         SexType =  dbEntity.Sex,
         Description = dbEntity.Description,
-        LargeAvatarLink = dbEntity.LargeAvatarLink,
+        LargeAvatarLink = dbEntity.FullAvatarLink,
         SmallAvatarLink = dbEntity.SmallAvatarLink,
         IsYouFollowed = dbEntity.YouFollowed,
         IsHeFollowed = dbEntity.HeFollowed,

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NotificationsData.Main.Entities;
 
 namespace NotificationsData.Main.Repositories
 {
-  public class UserInfoRepository
+  public class UserInfoRepository : IDisposable
   {
     private readonly TwoButtonsContext _db;
 
@@ -15,6 +16,11 @@ namespace NotificationsData.Main.Repositories
     public async Task<UserInfoDb> FindUserInfoAsync(int userId)
     {
       return await _db.UserInfoDb.FindAsync(userId);
+    }
+
+    public void Dispose()
+    {
+      _db?.Dispose();
     }
   }
 }

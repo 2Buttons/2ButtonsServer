@@ -33,7 +33,6 @@ namespace AccountServer.Controllers
     [HttpPost("server/{userId:int}")]
     public IActionResult ServerName(int userId)
     {
-      var p = HttpContext.Request;
       return new OkResponseResult((object)"Account");
     }
 

@@ -44,9 +44,9 @@ namespace NotificationServer
       services.AddTransient<INotificationsMessageService, NotificationsMessageService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();
-      services.AddSingleton<WebSocketConnectionManager>();
+      services.AddTransient<WebSocketConnectionManager>();
       services.AddSingleton<WebSocketManager>();
-     // services.AddWebSocketManager();
+      //services.AddWebSocketManager();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
@@ -88,7 +88,7 @@ namespace NotificationServer
       });
       app.UseAuthentication();
       app.UseMvc();
-      serviceProvider.GetService<WebSocketManager>();
+     // serviceProvider.GetService<WebSocketManager>();
       app.MapWebSocketManager("/ws", serviceProvider.GetService<WebSocketConnectionManager>());
     }
   }

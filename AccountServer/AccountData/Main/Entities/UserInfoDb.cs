@@ -5,7 +5,7 @@ using CommonLibraries;
 
 namespace AccountData.Main.Entities
 {
-  public class UserInfoDb
+  public class Info
   {
     [Key]
     public int UserId { get; set; }
@@ -15,8 +15,8 @@ namespace AccountData.Main.Entities
     public SexType Sex { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-    [Column("FullAvatarLink")]
-    public string LargeAvatarLink { get; set; }
+
+    public string FullAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
     public bool YouFollowed { get; set; }
     public bool HeFollowed { get; set; }

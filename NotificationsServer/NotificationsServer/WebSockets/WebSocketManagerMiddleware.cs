@@ -39,14 +39,15 @@ namespace NotificationServer.WebSockets
             await _webSocketConnectionManager.OnDisconnected(socket);
             return;
         }
+
       });
 
-      // await _next.Invoke(context);
+       await _next.Invoke(context);
     }
 
     private int ExtractUserIdFromContext(HttpContext context)
     {
-  
+      return 1;
       var isUserIdFromAuth = int.TryParse(context.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var userId);
       if (isUserIdFromAuth) return userId;
       return -1;
