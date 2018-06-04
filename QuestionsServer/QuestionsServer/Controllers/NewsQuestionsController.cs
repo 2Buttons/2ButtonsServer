@@ -94,87 +94,89 @@ namespace QuestionsServer.Controllers
     }
 
     private async Task<List<NewsAskedQuestionViewModel>> GetNewsAskedQuestionsAsync(int userId, int questionsPage = 1,
-      int questionsAmount = 100)
+      int questionsAmount = 10)
     {
       var userAskedQuestions = await _mainDb.News.GetNewsAskedQuestions(userId, questionsPage, questionsAmount);
         //return new List<NewsAskedQuestionViewModel>();
 
       var result = new List<NewsAskedQuestionViewModel>();
 
-      Parallel.ForEach(userAskedQuestions, x =>
+      foreach (var x in userAskedQuestions)
       {
         GetTagsAndPhotos(userId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = x.MapToNewsAskedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
-      });
+      }
       return result;
     }
 
 
     private async Task<List<NewsAnsweredQuestionViewModel>> GetNewsAnsweredQuestionsAsync(int userId, int questionsPage = 1,
-      int questionsAmount = 100)
+      int questionsAmount = 10)
     {
      var userAnsweredQuestions = await _mainDb.News.GetNewsAnsweredQuestions(userId, questionsPage, questionsAmount);
-        //return new List<NewsAnsweredQuestionViewModel>();
-
+      //return new List<NewsAnsweredQuestionViewModel>();
       var result = new List<NewsAnsweredQuestionViewModel>();
-      Parallel.ForEach(userAnsweredQuestions, question =>
+      foreach (var question in userAnsweredQuestions)
       {
         GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
-      });
+      }
       return result;
     }
 
 
     private async Task<List<NewsFavoriteQuestionViewModel>> GetNewsFavoriteQuestionsAsync(int userId, int questionsPage = 1,
-      int questionsAmount = 100)
+      int questionsAmount = 10)
     {
       var userFavoriteQuestions  = await _mainDb.News.GetNewsFavoriteQuestions(userId, questionsPage, questionsAmount);
         //return new List<NewsFavoriteQuestionViewModel>();
 
       var result = new List<NewsFavoriteQuestionViewModel>();
-      Parallel.ForEach(userFavoriteQuestions, question =>
+
+      foreach (var question in userFavoriteQuestions)
       {
         GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapToNewsFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
-      });
+      }
       return result;
     }
 
 
     private async Task<List<NewsCommentedQuestionViewModel>> GetNewsCommentedQuestions(int userId, int questionsPage = 1,
-      int questionsAmount = 100)
+      int questionsAmount = 10)
     {
       var userCommentedQuestions = await _mainDb.News.GetNewsCommentedQuestions(userId, questionsPage, questionsAmount);
         //return new List<NewsCommentedQuestionViewModel>();
 
       var result = new List<NewsCommentedQuestionViewModel>();
-      Parallel.ForEach(userCommentedQuestions, question =>
+      foreach (var question in userCommentedQuestions)
       {
         GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
-      });
+      }
       return result;
     }
 
 
     private async  Task<List<NewsRecommendedQuestionViewModel>> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1,
-      int questionsAmount = 100)
+      int questionsAmount = 10)
     {
       var newsRecommendedQuestions =
         await _mainDb.News.GetNewsRecommendedQuestions(userId, questionsPage, questionsAmount);
 
       var result = new List<NewsRecommendedQuestionViewModel>();
-      Parallel.ForEach(newsRecommendedQuestions, question =>
+
+      foreach (var question in newsRecommendedQuestions)
       {
         GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
-      });
+      }
+     
       return result;
     }
 
@@ -187,16 +189,22 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      var tagsTask = _mainDb.Tags.GetTags(questionId);
-      var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city);
-      var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city);
+      //var tagsTask = _mainDb.Tags.GetTags(questionId);
+      //var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+      //  minAge.WhenBorned(), sex, city);
+      //var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+      //  minAge.WhenBorned(), sex, city);
+      //Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
+      //tags = tagsTask.Result;
+      //firstPhotos = firstPhotosTask.Result;
+      //secondPhotos = secondPhotosTask.Result;
 
-      Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
-      tags = tagsTask.Result;
-      firstPhotos = firstPhotosTask.Result;
-      secondPhotos = secondPhotosTask.Result;
+
+      tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
+      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
+      secondPhotos =  _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
     }
   }
 }

@@ -115,18 +115,18 @@ namespace AccountServer.Infrastructure.Services
       return true;
     }
 
-    public async Task<bool> UpdateAvatarViaLink(int userId, AvatarSizeType avatarSize, string newAvatarUrl)
+    public async Task<(bool isUpdated, string url)> UpdateAvatarViaLink(int userId, AvatarSizeType avatarSize, string newAvatarUrl)
     {
       var url = await MediaServerHelper.UploadAvatarUrl(avatarSize, newAvatarUrl);
-      if (url.IsNullOrEmpty()) return false;
-      return await _db.UsersInfo.UpdateUserLargeAvatar(userId, url);
+      if (url.IsNullOrEmpty()) return (false, null);
+      return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
     }
 
-    public async Task<bool> UpdateAvatarViaFile(int userId, AvatarSizeType avatarSize, IFormFile file)
+    public async Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarSizeType avatarSize, IFormFile file)
     {
       var url = await MediaServerHelper.UploadAvatarFile(avatarSize, file);
-      if (url.IsNullOrEmpty()) return false;
-      return await _db.UsersInfo.UpdateUserLargeAvatar(userId, url);
+      if (url.IsNullOrEmpty()) return (false, null);
+      return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
     }
 
     public void Dispose()

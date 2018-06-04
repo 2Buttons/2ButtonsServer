@@ -6,7 +6,7 @@ using NotificationsData.Main.Repositories;
 
 namespace NotificationsData
 {
-  public class NotificationsDataUnitOfWork //: IDisposable
+  public class NotificationsDataUnitOfWork : IDisposable
   {
     private readonly TwoButtonsAccountContext _dbAccount;
     private readonly TwoButtonsContext _dbMain;
@@ -30,29 +30,29 @@ namespace NotificationsData
     }
 
 
-    //#region IDisposable
+    #region IDisposable
 
-    //private bool _disposed;
+    private bool _disposed;
 
-    //public virtual void Dispose(bool disposing)
-    //{
-    //  if (!_disposed)
-    //  {
-    //    if (disposing)
-    //    {
-    //      _dbAccount?.Dispose();
-    //      _dbMain?.Dispose();
-    //    }
-    //    _disposed = true;
-    //  }
-    //}
+    public virtual void Dispose(bool disposing)
+    {
+      if (!_disposed)
+      {
+        if (disposing)
+        {
+          _dbAccount?.Dispose();
+          _dbMain?.Dispose();
+        }
+        _disposed = true;
+      }
+    }
 
-    //public void Dispose()
-    //{
-    //  Dispose(true);
-    //  GC.SuppressFinalize(this);
-    //}
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
 
-    //#endregion
+    #endregion
   }
 }

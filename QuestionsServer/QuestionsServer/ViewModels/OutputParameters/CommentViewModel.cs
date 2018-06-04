@@ -12,7 +12,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         public string Text { get; set; }
         public int LikesAmount { get; set; }
         public int DislikesAmount { get; set; }
-        public FeedbackType YourFeedbackType { get; set; }
+        public QuestionFeedbackType YourFeedbackType { get; set; }
         public int PreviousCommentId { get; set; }
         public DateTime AddDate { get; set; }
     }

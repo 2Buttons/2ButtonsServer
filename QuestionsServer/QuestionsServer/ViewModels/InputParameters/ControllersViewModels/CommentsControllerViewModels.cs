@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
+using CommonLibraries.Validation;
 
 namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 {
@@ -8,15 +9,16 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     [Required]
     public string CommentText { get; set; }
 
-    public int PreviousCommnetId { get; set; } = 0;
+    public int? PreviousCommentId { get; set; } = null;
   }
 
   public class AddCommentFeedbackViewModel : UserIdViewModel
   {
     [Required]
+    [IdValidation(nameof(CommentId))]
     public int CommentId { get; set; }
 
-    public FeedbackType FeedbackType { get; set; }
+    public QuestionFeedbackType FeedbackType { get; set; }
   }
 
   public class GetCommentsViewModel : QuestionIdViewModel

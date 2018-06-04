@@ -18,18 +18,18 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<int> AddComment(int userId, int questionId, string comment, int previousCommentId)
+    public async Task<int> AddComment(int userId, int questionId, string comment, int? previousCommentId)
     {
       var commentedTime = DateTime.UtcNow;
 
-      var commentedIdDb = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
+      var commentedId = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
 
-      await _db.Database.ExecuteSqlCommandAsync(
-        $"addComment {userId}, {questionId}, {comment}, {previousCommentId}, {commentedTime}, {commentedIdDb} OUT");
-      return (int) commentedIdDb.Value;
+       _db.Database.ExecuteSqlCommand(
+        $"addComment {userId}, {questionId}, {comment}, {commentedTime}, {previousCommentId}, {commentedId} OUT");
+      return (int) commentedId.Value;
     }
 
-    public async Task<bool> UpdateCommentFeedback(int userId, int commentId, FeedbackType feedback)
+    public async Task<bool> UpdateCommentFeedback(int userId, int commentId, QuestionFeedbackType feedback)
     {
       return await _db.Database.ExecuteSqlCommandAsync($"updateCommentFeedback {userId}, {commentId}, {feedback}") > 0;
     }

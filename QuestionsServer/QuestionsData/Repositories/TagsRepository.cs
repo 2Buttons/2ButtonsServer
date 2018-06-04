@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.Entities;
@@ -21,8 +22,7 @@ namespace QuestionsData.Repositories
 
     public async Task<List<TagDb>> GetTags(int questionId)
     {
-      return await _db.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToListAsync() ??
-             new List<TagDb>();
+      return _db.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
     }
   }
 }

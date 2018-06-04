@@ -8,7 +8,7 @@ namespace QuestionsData
     private readonly TwoButtonsContext _db;
 
     private CommentsRepository _commentsRepository;
-    private ComplainttsRepository _moderatorRepository;
+    private ComplaintsRepository _moderatorRepository;
     private NewsQuestionsRepository _newsRepository;
     private QuestionRepository _questionRepository;
     private TagsRepository _tagsRepository;
@@ -16,7 +16,7 @@ namespace QuestionsData
 
     public CommentsRepository Comments => _commentsRepository ?? (_commentsRepository = new CommentsRepository(_db));
 
-    public ComplainttsRepository Complaintts => _moderatorRepository ??(_moderatorRepository = new ComplainttsRepository(_db));
+    public ComplaintsRepository Complaints => _moderatorRepository ??(_moderatorRepository = new ComplaintsRepository(_db));
 
     public NewsQuestionsRepository News => _newsRepository ?? (_newsRepository = new NewsQuestionsRepository(_db));
 

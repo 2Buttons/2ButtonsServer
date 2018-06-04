@@ -7,26 +7,26 @@ using QuestionsData.Entities.Moderators;
 
 namespace QuestionsData.Repositories
 {
-  public class ComplainttsRepository
+  public class ComplaintsRepository
   {
     private readonly TwoButtonsContext _db;
 
-    public ComplainttsRepository(TwoButtonsContext db)
+    public ComplaintsRepository(TwoButtonsContext db)
     {
       _db = db;
     }
 
-    public async Task<bool> AddComplaintt(int userId, int questionId, ComplaintType complaintType)
+    public async Task<bool> AddComplaint(int userId, int questionId, ComplaintType complaintType)
     {
       var complainttAddDate = DateTime.UtcNow;
 
       return await _db.Database.ExecuteSqlCommandAsync(
-               $"addComplaintt {userId}, {questionId}, {complaintType}, {complainttAddDate}") > 0;
+               $"addComplaint {userId}, {questionId}, {complaintType}, {complainttAddDate}") > 0;
     }
 
-    public async Task<List<ComplaintDb>> GetComplaintts()
+    public async Task<List<ComplaintDb>> GetComplaints()
     {
-      return await _db.ComplainttDb.AsNoTracking().FromSql($"select * from dbo.getComplaintts()").ToListAsync() ??
+      return await _db.ComplaintDb.AsNoTracking().FromSql($"select * from dbo.getComplaints()").ToListAsync() ??
              new List<ComplaintDb>();
     }
   }

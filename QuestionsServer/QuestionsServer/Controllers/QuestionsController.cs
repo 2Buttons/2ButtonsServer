@@ -216,7 +216,7 @@ namespace QuestionsServer.Controllers
       var url = await MediaServerHelper.UploadBackgroundUrl(background.Url);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
         return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
-      return new OkResponseResult();
+      return new OkResponseResult("Background was updated", new {Url = url});
     }
 
     [HttpPost("update/bakground/file")]
@@ -227,7 +227,7 @@ namespace QuestionsServer.Controllers
       var url = await MediaServerHelper.UploadBackgroundFile(background.File);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
         return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
-      return new OkResponseResult();
+      return new OkResponseResult("Background was updated", new { Url = url });
     }
 
 

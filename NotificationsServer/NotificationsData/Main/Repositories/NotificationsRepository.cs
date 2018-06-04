@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NotificationsData.Main.Entities;
@@ -21,12 +20,10 @@ namespace NotificationsData.Main.Repositories
       return (await _context.CommentsDb.FindAsync(commentId))?.UserId ?? -1;
     }
 
-    public List<NotificationDb> GetNotifications(int userId)
+    public async Task<List<NotificationDb>> GetNotifications(int userId)
     {
-      var p = _context.Query<NotificationDb>().FromSql($"select * from dbo.getNotifications({userId})");
-      var t = p;
-        return  _context.Query<NotificationDb>()
-          .FromSql($"select * from dbo.getNotifications({userId})").ToList() ?? new List<NotificationDb>();
+        return await _context.NotificationsDb.AsNoTracking()
+          .FromSql($"select * from dbo.getNotifications({userId})").ToListAsync();
     }
 
     public async Task<bool> UpdateNotsDate(int userId)

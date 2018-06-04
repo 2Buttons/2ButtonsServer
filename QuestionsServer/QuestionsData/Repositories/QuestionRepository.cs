@@ -87,10 +87,10 @@ namespace QuestionsData.Repositories
     public async Task<List<PhotoDb>> GetPhotos(int userId, int questionId, int answer, int count, DateTime bornAfter,
       DateTime bornBefore, int sex, string city)
     {
-      return await _db.PhotoDb.AsNoTracking()
+      return  _db.PhotoDb.AsNoTracking()
                .FromSql(
                  $"select * from dbo.getPhotos({userId}, {questionId}, {answer}, {count}, {bornAfter}, {bornBefore},  {sex}, {city})")
-               .ToListAsync() ?? new List<PhotoDb>();
+               .ToList();
     }
 
     public async Task<List<AnsweredListDb>> GetVoters(int userId, int questionId, int offset, int count,

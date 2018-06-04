@@ -14,7 +14,7 @@ namespace QuestionsData.Entities
         public string Comment { get; set; }
         public int Likes { get; set; }
         public int Dislikes { get; set; }
-        public FeedbackType YourFeedback { get; set; }
+        public QuestionFeedbackType YourFeedback { get; set; }
         public int? PreviousCommentId { get; set; }
         public DateTime CommentAddDate { get; set; }
     }

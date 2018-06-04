@@ -20,7 +20,7 @@ namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  [Route("/avatar")]
+  [Route("avatar")]
   public class AvatarController : Controller
   {
     private readonly IAccountService _account;
@@ -30,26 +30,24 @@ namespace AccountServer.Controllers
       _account = accountService;
     }
 
-    [HttpGet("update/file")]
-    public async Task<IActionResult> UpdateAvatarViaLink(UpdateAvatarFileViewModel avatar)
+    [HttpPost("update/file")]
+    public async Task<IActionResult> UpdateAvatarViaLink([FromBody]UpdateAvatarFileViewModel avatar)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      if (!await _account.UpdateAvatarViaFile(avatar.UserId, avatar.Size, avatar.File))
-        return new ResponseResult((int)HttpStatusCode.NotModified);
-      return new OkResponseResult();
+      var (isUpdated, url) = await _account.UpdateAvatarViaFile(avatar.UserId, avatar.Size, avatar.File);
+      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
     }
 
-    [HttpGet("update/link")]
-    public async Task<IActionResult> UpdateAvatarViaFile(UpdateAvatarUrlViewModel avatar)
+    [HttpPost("update/link")]
+    public async Task<IActionResult> UpdateAvatarViaFile([FromBody]UpdateAvatarUrlViewModel avatar)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      if (!await _account.UpdateAvatarViaLink(avatar.UserId, avatar.Size, avatar.Url))
-        return new ResponseResult((int)HttpStatusCode.NotModified);
-      return new OkResponseResult();
+      var (isUpdated, url) = await _account.UpdateAvatarViaLink(avatar.UserId, avatar.Size, avatar.Url);
+      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
     }
 
   }

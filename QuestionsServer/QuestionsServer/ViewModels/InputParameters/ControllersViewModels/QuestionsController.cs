@@ -64,7 +64,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public FeedbackType YourFeedbackType { get; set; }
   }
 
-  public class AddComplainttViewModel : QuestionIdViewModel
+  public class AddComplaintViewModel : QuestionIdViewModel
   {
     public ComplaintType ComplaintType { get; set; }
   }
