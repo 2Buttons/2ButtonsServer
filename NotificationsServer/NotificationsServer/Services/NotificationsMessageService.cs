@@ -10,12 +10,12 @@ namespace NotificationServer.Services
   public class NotificationsMessageService : INotificationsMessageService
   {
     private readonly NotificationsDataUnitOfWork _db;
-    private readonly WebSocketManager _webSocketManager;
+   // private readonly WebSocketManager _webSocketManager;
 
-    public NotificationsMessageService(NotificationsDataUnitOfWork db, WebSocketManager webSocketManager)
+    public NotificationsMessageService(NotificationsDataUnitOfWork db)
     {
       _db = db;
-      _webSocketManager = webSocketManager;
+     // _webSocketManager = webSocketManager;
     }
 
     public async Task<bool> PushFolloweNotification(FollowNotification followNotification)
@@ -75,7 +75,7 @@ namespace NotificationServer.Services
 
     private void PushNotification(int sendToId, Notification notification)
     {
-      _webSocketManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
+     // _webSocketManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
     }
   }
 }

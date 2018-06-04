@@ -11,21 +11,21 @@ namespace NotificationServer.WebSockets
   {
 
     private readonly RequestDelegate _next;
-    private readonly WebSocketConnectionManager _webSocketConnectionManager;
 
-    public WebSocketManagerMiddleware(RequestDelegate next, WebSocketConnectionManager webSocketConnectionManager)
+
+    public WebSocketManagerMiddleware(RequestDelegate next)
     {
       _next = next;
-      _webSocketConnectionManager = webSocketConnectionManager;
+
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task Invoke(HttpContext context, WebSocketConnectionManager webSocketConnectionManager)
     {
       if (!context.WebSockets.IsWebSocketRequest) return;
       var socket = await context.WebSockets.AcceptWebSocketAsync();
       var id = ExtractUserIdFromContext(context);
       if (id <= 0) throw new Exception("Guest does not have a permission to get notifications.");
-      await _webSocketConnectionManager.OnConnected(id, socket);
+      await webSocketConnectionManager.OnConnected(id, socket);
 
       await Receive(socket, async (result, buffer) =>
       {
@@ -36,7 +36,7 @@ namespace NotificationServer.WebSockets
             // await _webSocketHandler.ReceiveAsync(socket, result, buffer);
             return;
           case WebSocketMessageType.Close:
-            await _webSocketConnectionManager.OnDisconnected(socket);
+            await webSocketConnectionManager.OnDisconnected(socket);
             return;
         }
 

@@ -33,7 +33,7 @@ namespace NotificationServer.WebSockets
       // _sockets.Add(new SocketPair(userId, socket));
       string message = "Hello";
      
-        notifications = await _db.Notifications.GetNotifications(userId);
+        notifications =  _db.Notifications.GetNotifications(userId);
         var t = notifications;
         message = JsonConvert.SerializeObject(t);
   
@@ -81,8 +81,8 @@ namespace NotificationServer.WebSockets
       //  {
 
      
-      var notifications = await _db.Notifications.GetNotifications(userId);
-      await SendNotificationAsync(userId, JsonConvert.SerializeObject(notifications));
+     // var notifications = await _db.Notifications.GetNotifications(userId);
+    //  await SendNotificationAsync(userId, JsonConvert.SerializeObject(notifications));
       return;
       //  }
       //}

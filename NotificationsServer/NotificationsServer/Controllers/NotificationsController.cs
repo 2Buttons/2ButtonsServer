@@ -23,8 +23,8 @@ namespace NotificationServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var notifications = await _db.Notifications.GetNotifications(userId.UserId);
-      return new OkResponseResult(notifications.MapNotificationDbToViewModel());
+     // var notifications = await _db.Notifications.GetNotifications(userId.UserId);
+      return new OkResponseResult();
     }
   }
 }

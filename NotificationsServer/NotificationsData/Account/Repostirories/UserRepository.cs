@@ -9,7 +9,7 @@ using NotificationsData.DTO;
 
 namespace NotificationsData.Account.Repostirories
 {
-  public class UserRepository : IDisposable
+  public class UserRepository 
   {
     private readonly TwoButtonsAccountContext _context;
 
@@ -18,11 +18,7 @@ namespace NotificationsData.Account.Repostirories
       _context = context;
     }
 
-    public void Dispose()
-    {
-      _context?.Dispose();
-    }
-
+ 
 
     public async Task<bool> ChangeUserRoleAsync(int userId, RoleType role)
     {

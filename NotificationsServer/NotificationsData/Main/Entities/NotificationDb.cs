@@ -6,7 +6,6 @@ namespace NotificationsData.Main.Entities
 {
     public class NotificationDb
     {
-        [Key]
         public int UserId { get; set; }
         public string Login { get; set; }
         public string SmallAvatarLink { get; set; }

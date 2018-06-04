@@ -41,11 +41,11 @@ namespace NotificationServer
       services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddTransient<NotificationsDataUnitOfWork>();
-      services.AddTransient<INotificationsMessageService, NotificationsMessageService>();
-      services.AddTransient<IVkService, VkService>();
-      services.AddTransient<IFbService, FbService>();
+     // services.AddTransient<INotificationsMessageService, NotificationsMessageService>();
+     // services.AddTransient<IVkService, VkService>();
+     // services.AddTransient<IFbService, FbService>();
       services.AddTransient<WebSocketConnectionManager>();
-      services.AddSingleton<WebSocketManager>();
+     // services.AddSingleton<WebSocketManager>();
       //services.AddWebSocketManager();
 
       services.AddOptions();
@@ -89,7 +89,7 @@ namespace NotificationServer
       app.UseAuthentication();
       app.UseMvc();
      // serviceProvider.GetService<WebSocketManager>();
-      app.MapWebSocketManager("/ws", serviceProvider.GetService<WebSocketConnectionManager>());
+      app.MapWebSocketManager("/ws");
     }
   }
 }
