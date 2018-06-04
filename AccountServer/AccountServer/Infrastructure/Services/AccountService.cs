@@ -81,7 +81,7 @@ namespace AccountServer.Infrastructure.Services
 
       if (!await _db.Users.AddUserSocialAsync(social)) return false;
 
-      var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId, userId);
+      var userInfo = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
 
       if (userInfo.SmallAvatarLink.IsNullOrEmpty() || userInfo.SmallAvatarLink.Contains("stan") && !user.SmallPhotoUrl.IsNullOrEmpty())
       {

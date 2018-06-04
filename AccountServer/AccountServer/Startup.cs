@@ -45,6 +45,7 @@ namespace AccountServer
       services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
 
       services.AddTransient<AccountDataUnitOfWork>();
+      services.AddTransient<IFeedbackService, FeedbackService>();
       services.AddTransient<IAccountService, AccountService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();

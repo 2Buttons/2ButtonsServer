@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace AccountServer.Infrastructure.Services
 {
-  public interface IAccountService : IDisposable
+  public interface IAccountService 
   {
     Task<bool> AddUserSocialAsync(int userId, string code, SocialType socialType);
     Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId);

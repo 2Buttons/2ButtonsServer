@@ -51,11 +51,19 @@
     Badoo = 6
   }
 
-  public enum FeedbackType
+  public enum QuestionFeedbackType
   {
     Dislike = -1,
     Neutral = 0,
     Like = 1
+  }
+
+  public enum FeedbackType
+  {
+    Other = 0,
+    Error = 1,
+    Suggestion = 2,
+    Complaint = 3
   }
 
   public enum ActionType

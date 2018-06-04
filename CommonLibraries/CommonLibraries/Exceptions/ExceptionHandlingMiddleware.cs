@@ -37,6 +37,8 @@ namespace CommonLibraries.Exceptions
 
     private static Task HandleExceptionAsync(HttpContext context, ILoggerFactory loggerFactory, Exception exception)
     {
+      if(context.Response.StatusCode == 200) context.Response.StatusCode = 500;
+
       switch (exception)
       {
         case NotFoundException _:
