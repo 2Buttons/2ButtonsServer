@@ -9,14 +9,11 @@ namespace NotificationServer.WebSockets
 {
   public class WebSocketManagerMiddleware
   {
-
     private readonly RequestDelegate _next;
-
 
     public WebSocketManagerMiddleware(RequestDelegate next)
     {
       _next = next;
-
     }
 
     public async Task Invoke(HttpContext context, WebSocketsController controller)
@@ -39,16 +36,15 @@ namespace NotificationServer.WebSockets
             await controller.OnDisconnected(socket);
             return;
         }
-
       });
 
-       await _next.Invoke(context);
+      await _next.Invoke(context);
     }
 
     private int ExtractUserIdFromContext(HttpContext context)
     {
-      return 1;
-      var isUserIdFromAuth = int.TryParse(context.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var userId);
+      var isUserIdFromAuth =
+        int.TryParse(context.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var userId);
       if (isUserIdFromAuth) return userId;
       return -1;
     }

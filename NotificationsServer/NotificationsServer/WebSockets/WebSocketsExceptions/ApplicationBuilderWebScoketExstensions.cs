@@ -1,5 +1,4 @@
 ﻿using System;
-using CommonLibraries.Exceptions;
 using Microsoft.AspNetCore.Builder;
 
 namespace NotificationServer.WebSockets.WebSocketsExceptions

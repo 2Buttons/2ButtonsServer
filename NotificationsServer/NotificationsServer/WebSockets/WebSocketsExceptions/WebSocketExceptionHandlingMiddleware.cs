@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CommonLibraries.Response;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using NotificationServer.WebSockets.WebSocketsExceptions.ApiExceptions;
 
 namespace NotificationServer.WebSockets.WebSocketsExceptions
 {
@@ -20,8 +17,8 @@ namespace NotificationServer.WebSockets.WebSocketsExceptions
       //  _logger = logger;
     }
 
-    public async Task Invoke(HttpContext context, IHostingEnvironment env,
-      ILoggerFactory loggerFactory, NotificationManager notification)
+    public async Task Invoke(HttpContext context, IHostingEnvironment env, ILoggerFactory loggerFactory,
+      NotificationManager notification)
     {
       try
       {
@@ -30,14 +27,14 @@ namespace NotificationServer.WebSockets.WebSocketsExceptions
       catch (Exception ex)
       {
         // _logger.LogError(EventIds.GlobalException, ex, ex.Message);
-        if (context.WebSockets.IsWebSocketRequest)  HandleExceptionAsync(context, loggerFactory, notification, ex);
+        if (context.WebSockets.IsWebSocketRequest) HandleExceptionAsync(context, loggerFactory, notification, ex);
         throw;
       }
     }
 
-    private static void HandleExceptionAsync(HttpContext context, ILoggerFactory loggerFactory, NotificationManager notificationMananger, Exception exception)
+    private static void HandleExceptionAsync(HttpContext context, ILoggerFactory loggerFactory,
+      NotificationManager notificationMananger, Exception exception)
     {
-
       notificationMananger.CleanUpSockets();
     }
   }
