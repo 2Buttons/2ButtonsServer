@@ -23,5 +23,10 @@ namespace AccountServer.Infrastructure.Services
     {
       return await _db.Feedbacks.GetFeedbacksByUserAsync(userId);
     }
+
+    public async Task<List<FeedbackDb>> GetFeedbacks(int offset, int count)
+    {
+      return await _db.Feedbacks.GetFeedbacks(offset, count);
+    }
   }
 }

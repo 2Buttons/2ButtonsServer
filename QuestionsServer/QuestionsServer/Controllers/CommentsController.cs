@@ -26,11 +26,12 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> AddComment([FromBody] AddCommentViewModel comment)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      if (comment.PreviousCommentId == 0) comment.PreviousCommentId = null;
       var commentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.CommentText,
         comment.PreviousCommentId);
       if (commentId < 0)
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");
-      //if (comment.PreviousCommnetId > 0) NotificationServerHelper.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
+      if (comment.PreviousCommentId > 0) NotificationServerHelper.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = commentId });
     }
 

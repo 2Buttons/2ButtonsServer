@@ -10,12 +10,15 @@ namespace NotificationServer.Services
   public class NotificationsMessageService : INotificationsMessageService
   {
     private readonly NotificationsDataUnitOfWork _db;
+
+    private NotificationManager _notificationManager;
    // private readonly WebSocketManager _webSocketManager;
 
-    public NotificationsMessageService(NotificationsDataUnitOfWork db)
+    public NotificationsMessageService(NotificationsDataUnitOfWork db, NotificationManager notificationManager)
     {
       _db = db;
-     // _webSocketManager = webSocketManager;
+      _notificationManager = notificationManager;
+      // _webSocketManager = webSocketManager;
     }
 
     public async Task<bool> PushFolloweNotification(FollowNotification followNotification)
@@ -31,7 +34,7 @@ namespace NotificationServer.Services
         EmmiterId = followNotification.NotifierId,
         ActionDate = followNotification.FollowedDate
       };
-      PushNotification(followNotification.FollowToId, notification);
+      await PushNotification(followNotification.FollowToId, notification);
       return true;
     }
 
@@ -49,7 +52,7 @@ namespace NotificationServer.Services
         EmmiterId = recommendedQuestionNotification.QuestionId,
         ActionDate = recommendedQuestionNotification.RecommendedDate
       };
-      PushNotification(recommendedQuestionNotification.UserToId, notification);
+      await PushNotification(recommendedQuestionNotification.UserToId, notification);
       return true;
     }
 
@@ -69,13 +72,13 @@ namespace NotificationServer.Services
         EmmiterId = commentNotification.CommentId,
         ActionDate = commentNotification.CommentedDate
       };
-      PushNotification(sendToId, notification);
+      await PushNotification(sendToId, notification);
       return true;
     }
 
-    private void PushNotification(int sendToId, Notification notification)
+    private async Task PushNotification(int sendToId, Notification notification)
     {
-     // _webSocketManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
+      await _notificationManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
     }
   }
 }

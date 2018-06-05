@@ -1,6 +1,4 @@
 ﻿using System;
-using NotificationsData.Account;
-using NotificationsData.Account.Repostirories;
 using NotificationsData.Main;
 using NotificationsData.Main.Repositories;
 
@@ -8,27 +6,21 @@ namespace NotificationsData
 {
   public class NotificationsDataUnitOfWork : IDisposable
   {
-    private readonly TwoButtonsAccountContext _dbAccount;
     private readonly TwoButtonsContext _dbMain;
+    private NotificationsRepository _notificationsRepository;
 
     private UserInfoRepository _userInfoRepository;
-    private NotificationsRepository _notificationsRepository;
-    private UserRepository _userRepository;
 
-
-    public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_dbAccount));
-
-    public UserInfoRepository UsersInfo => _userInfoRepository ?? (_userInfoRepository = new UserInfoRepository(_dbMain));
+    public UserInfoRepository UsersInfo => _userInfoRepository ??
+                                           (_userInfoRepository = new UserInfoRepository(_dbMain));
 
     public NotificationsRepository Notifications => _notificationsRepository ??
                                                     (_notificationsRepository = new NotificationsRepository(_dbMain));
 
-    public NotificationsDataUnitOfWork(TwoButtonsContext dbMain, TwoButtonsAccountContext dbAccount)
+    public NotificationsDataUnitOfWork(TwoButtonsContext dbMain)
     {
       _dbMain = dbMain;
-      _dbAccount = dbAccount;
     }
-
 
     #region IDisposable
 
@@ -40,7 +32,7 @@ namespace NotificationsData
       {
         if (disposing)
         {
-          _dbAccount?.Dispose();
+         
           _dbMain?.Dispose();
         }
         _disposed = true;

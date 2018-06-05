@@ -56,8 +56,13 @@ namespace AccountServer.Controllers
       return new OkResponseResult("We add your feedback.");
     }
 
-
     [HttpPost]
+    public async Task<IActionResult> GetFeedbacks([FromBody] PageParams pageParams)
+    {
+      return new OkResponseResult(await _feedbackService.GetFeedbacks(pageParams.Offset, pageParams.Count));
+    }
+
+    [HttpPost("byUser")]
     public async Task<IActionResult> GetUserFeedbacks([FromBody] UserIdViewModel userPage)
     {
       if (!ModelState.IsValid)

@@ -7,7 +7,7 @@ namespace NotificationsData.Main
   {
     public virtual DbSet<CommentDb> CommentsDb { get; set; }
 
-    public virtual DbQuery<UserInfoDb> UserInfoDb { get; set; }
+    public virtual DbSet<UserInfoDb> UserInfoDb { get; set; }
     public virtual DbQuery<NotificationDb> NotificationsDb { get; set; }
 
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)

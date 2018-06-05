@@ -96,18 +96,13 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      var tagsTask = _mainDb.Tags.GetTags(questionId);
-      var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city);
-      var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city);
-      var commentsTask = _mainDb.Comments.GetComments(userId, questionId, commentsAmount);
 
-      Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask, commentsTask);
-      tags = tagsTask.Result;
-      firstPhotos = firstPhotosTask.Result;
-      secondPhotos = secondPhotosTask.Result;
-      comments = commentsTask.Result;
+      tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
+      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
+      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
+      comments = _mainDb.Comments.GetComments(userId, questionId, commentsAmount).GetAwaiter().GetResult();
     }
 
     [HttpPost("add")]
@@ -202,8 +197,8 @@ namespace QuestionsServer.Controllers
       if (!await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
         recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
         return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
-      //NotificationServerHelper.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
-      //  recommendedQuestion.UserToId, recommendedQuestion.QuestionId, DateTime.UtcNow);
+      NotificationServerHelper.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
+        recommendedQuestion.UserToId, recommendedQuestion.QuestionId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
     }
 

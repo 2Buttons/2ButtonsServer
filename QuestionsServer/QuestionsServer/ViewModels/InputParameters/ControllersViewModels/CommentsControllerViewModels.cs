@@ -17,7 +17,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     [Required]
     [IdValidation(nameof(CommentId))]
     public int CommentId { get; set; }
-
+    [Required]
     public QuestionFeedbackType FeedbackType { get; set; }
   }
 

@@ -6,7 +6,7 @@ namespace QuestionsData.Entities
 {
     public partial class CommentDb
     {
-        [Key]
+      
         public int CommentId { get; set; }
         public int UserId { get; set; }
         public string Login { get; set; }

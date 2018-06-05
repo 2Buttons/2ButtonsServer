@@ -1,8 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NotificationsData.Main.Entities
 {
+
+  [Table("Comment")]
   public class CommentDb
   {
     [Key]

@@ -115,16 +115,23 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      var tagsTask = _mainDb.Tags.GetTags(questionId);
-      var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city);
-      var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city);
+      //var tagsTask = _mainDb.Tags.GetTags(questionId);
+      //var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+      //  minAge.WhenBorned(), sex, city);
+      //var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+      //  minAge.WhenBorned(), sex, city);
 
-      Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
-      tags = tagsTask.Result;
-      firstPhotos = firstPhotosTask.Result;
-      secondPhotos = secondPhotosTask.Result;
+      //Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
+      //tags = tagsTask.Result;
+      //firstPhotos = firstPhotosTask.Result;
+      //secondPhotos = secondPhotosTask.Result;
+
+
+      tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
+      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
+      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
     }
   }
 }

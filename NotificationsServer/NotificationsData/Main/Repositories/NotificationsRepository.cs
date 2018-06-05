@@ -22,16 +22,18 @@ namespace NotificationsData.Main.Repositories
 
     public async Task<List<NotificationDb>> GetNotifications(int userId)
     {
-        return await _context.NotificationsDb.AsNoTracking()
-          .FromSql($"select * from dbo.getNotifications({userId})").ToListAsync();
+      return await _context.NotificationsDb.AsNoTracking()
+        .FromSql($"select * from dbo.getNotifications({userId})").ToListAsync();
     }
 
-    public async Task<bool> UpdateNotsDate(int userId)
+    public async Task<bool> UpdateLastSeen(int userId)
     {
-        var newLastNots = DateTime.UtcNow;
-        return await _context.Database.ExecuteSqlCommandAsync($"updateNotsDate {userId}, {newLastNots}") >0;
+      var user = await _context.UserInfoDb.FirstOrDefaultAsync(x => x.UserId == userId);
+      user.LastNotsSeenDate = DateTime.UtcNow;
+      _context.Update(user);
+      return await _context.SaveChangesAsync() > 0;
     }
 
-   
+
   }
 }

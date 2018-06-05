@@ -6,7 +6,8 @@ namespace AccountServer.Infrastructure.Services
 {
   public interface IFeedbackService
   {
-    Task<List<FeedbackDb>> GetUserFeedbacks(int userId);
     Task<bool> AddFeedback(FeedbackDb feedback);
+    Task<List<FeedbackDb>> GetFeedbacks(int offset, int count);
+    Task<List<FeedbackDb>> GetUserFeedbacks(int userId);
   }
 }

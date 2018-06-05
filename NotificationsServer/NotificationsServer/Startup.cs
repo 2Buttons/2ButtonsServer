@@ -13,10 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NotificationsData;
-using NotificationsData.Account;
 using NotificationsData.Main;
 using NotificationServer.Services;
 using NotificationServer.WebSockets;
+using NotificationServer.WebSockets.WebSocketsExceptions;
 
 namespace NotificationServer
 {
@@ -38,13 +38,16 @@ namespace NotificationServer
           .AllowAnyMethod());
       });
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+    
 
+      services.AddSingleton<NotificationManager>();
       services.AddTransient<NotificationsDataUnitOfWork>();
-     // services.AddTransient<INotificationsMessageService, NotificationsMessageService>();
-     // services.AddTransient<IVkService, VkService>();
-     // services.AddTransient<IFbService, FbService>();
-      services.AddTransient<WebSocketConnectionManager>();
+       services.AddTransient<INotificationsMessageService, NotificationsMessageService>();
+      // services.AddTransient<IVkService, VkService>();
+      // services.AddTransient<IFbService, FbService>();
+
+      services.AddTransient<WebSocketsController>();
+      
      // services.AddSingleton<WebSocketManager>();
       //services.AddWebSocketManager();
 
@@ -79,6 +82,7 @@ namespace NotificationServer
       loggerFactory.AddDebug();
 
       app.UseExceptionHandling();
+      app.UseWebScoketExceptionHandling();
       app.UseDefaultFiles();
       app.UseStaticFiles();
       app.UseWebSockets();

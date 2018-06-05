@@ -26,9 +26,14 @@ namespace AccountData.Main.Repositories
       return await _db.FeedbacksDb.Where(x => x.UserId == userId).ToListAsync();
     }
 
-    public async Task<FeedbackDb> FindFeedbackByIdAsync(int feedbackId)
+    public async Task<FeedbackDb> FindUserFeedbackAsync(int feedbackId)
     {
       return await _db.FeedbacksDb.FindAsync(feedbackId);
+    }
+
+    public async Task<List<FeedbackDb>> GetFeedbacks(int offset, int count)
+    {
+      return await _db.FeedbacksDb.Skip(offset).Take(count).ToListAsync();
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NotificationsData.Main.Entities
@@ -11,5 +12,7 @@ namespace NotificationsData.Main.Entities
 
     public string Login { get; set; }
     public string SmallAvatarLink { get; set; }
+
+    public DateTime? LastNotsSeenDate { get; set; }
   }
 }
