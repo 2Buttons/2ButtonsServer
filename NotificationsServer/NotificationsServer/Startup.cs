@@ -91,6 +91,7 @@ namespace NotificationServer
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
       });
       app.UseAuthentication();
+      app.UseWebSockets();
       app.UseMvc();
      // serviceProvider.GetService<WebSocketManager>();
       app.MapWebSocketManager("/ws");

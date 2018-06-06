@@ -3,6 +3,8 @@ using System.Net.WebSockets;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 
 namespace NotificationServer.WebSockets
@@ -18,7 +20,11 @@ namespace NotificationServer.WebSockets
 
     public async Task Invoke(HttpContext context, WebSocketsController controller)
     {
-      if (!context.WebSockets.IsWebSocketRequest) return;
+      if (!context.WebSockets.IsWebSocketRequest)
+      {
+        await _next.Invoke(context);
+        return;
+      }
       var socket = await context.WebSockets.AcceptWebSocketAsync();
       var id = ExtractUserIdFromContext(context);
       if (id <= 0) throw new Exception("Guest does not have a permission to get notifications.");
@@ -43,8 +49,19 @@ namespace NotificationServer.WebSockets
 
     private int ExtractUserIdFromContext(HttpContext context)
     {
+      AuthenticateResult authenticateResult =
+         context.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme).GetAwaiter().GetResult();//.AuthenticateAsync(OAuthValidationDefaults.AuthenticationScheme);
+      //authenticateResult.Principal.Claims
+      //var claims = context.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
+      //if (string.IsNullOrEmpty(claims)) return -1;
+      //var isUserIdFromAuth =
+      //  int.TryParse(claims, out var userId);
+      //if (isUserIdFromAuth) return userId;
+      //return -1;
+      var claims = context.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);//authenticateResult.Principal.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value;
+      if (claims == null) return -1;
       var isUserIdFromAuth =
-        int.TryParse(context.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var userId);
+        int.TryParse(claims, out var userId);
       if (isUserIdFromAuth) return userId;
       return -1;
     }
