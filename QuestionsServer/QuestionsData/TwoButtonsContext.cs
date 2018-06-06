@@ -10,6 +10,12 @@ namespace QuestionsData
   {
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options) { }
 
+
+    public virtual DbSet<UserEntity> UserEntities { get; set; }
+    public virtual DbSet<CityEntity> CityEntities { get; set; }
+    public virtual DbSet<AnswerEntity> AnswerEntities { get; set; }
+    public virtual DbSet<QuestionEntity> QuestionEntities { get; set; }
+
     //for functions and prosedures
     public virtual DbQuery<QuestionDb> QuestionDb { get; set; }
     public virtual DbQuery<QuestionIdDb> QuestionIdDb { get; set; }

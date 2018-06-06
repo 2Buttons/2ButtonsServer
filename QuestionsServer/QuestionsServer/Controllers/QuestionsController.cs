@@ -42,7 +42,7 @@ namespace QuestionsServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
 
-      var question = await _mainDb.Questions.GetQuestion(userId, qiestionId);
+      var question = await _mainDb.Questions.FindQuestion(userId, qiestionId);
 
       GetTagsAndPhotos(userId, qiestionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
@@ -57,7 +57,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var question = await _mainDb.Questions.GetQuestion(inputQuestion.UserId, inputQuestion.QuestionId);
+      var question = await _mainDb.Questions.FindQuestion(inputQuestion.UserId, inputQuestion.QuestionId);
 
       GetTagsAndPhotos(inputQuestion.UserId, inputQuestion.QuestionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
@@ -65,6 +65,14 @@ namespace QuestionsServer.Controllers
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
 
       return new OkResponseResult(result);
+    }
+
+    [HttpPost("get/statistic")]
+    public async Task<IActionResult> GetQuestionFilteredStatistics([FromBody] GetQuestionFilteredStatistics statistics)
+    {
+      var result = await _mainDb.Questions.GetQuestionFilteredStatistis(statistics.QuestionId, statistics.MinAge,
+        statistics.MaxAge, statistics.Sex, statistics.City);
+      return new OkResponseResult("Statistics", result);
     }
 
     [HttpPost("getByCommentId")]
@@ -75,7 +83,7 @@ namespace QuestionsServer.Controllers
       var questionId = await _mainDb.Questions.GetQuestionByCommentId(getQuestionByCommentId.CommentId);
       if (questionId <= 0) return new ResponseResult((int)HttpStatusCode.NotFound, "We can not find the question with this comment");
 
-      var question = await _mainDb.Questions.GetQuestion(getQuestionByCommentId.UserId, questionId);
+      var question = await _mainDb.Questions.FindQuestion(getQuestionByCommentId.UserId, questionId);
 
       GetTagsAndPhotos(getQuestionByCommentId.UserId, questionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);

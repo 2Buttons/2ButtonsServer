@@ -1,5 +1,25 @@
 ﻿namespace CommonLibraries
 {
+  //public enum UrlMonitoringType // Каждые 100 новые области
+  //{
+  //  QuestionsUserAsked,
+  //  QuestionsUserAnswered,
+  //  QuestionsUserFavorite,
+  //  QuestionsUserCommented,
+  //  QuestionsPersonalAsked,
+  //  QuestionsPersonalRecommended,
+  //  QuestionsPersonalChosen,
+  //  QuestionsPersonalLiked,
+  //  QuestionsPersonalSaved,
+  //  QuestionsPersonalTop,
+  //  QuestionsNews,
+  //  QuestionsUserAsked,
+  //  QuestionsUserAsked,
+  //  QuestionsUserAsked, QuestionsUserAsked,
+
+
+  //}
+
   public enum AvatarSizeType
   {
     SmallAvatar = 0,

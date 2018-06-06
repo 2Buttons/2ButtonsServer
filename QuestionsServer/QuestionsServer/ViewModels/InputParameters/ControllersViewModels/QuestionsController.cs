@@ -22,6 +22,14 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public List<string> Tags { get; set; } = new List<string>();
   }
 
+  public class GetQuestionFilteredStatistics : QuestionIdViewModel
+  {
+    public int MinAge { get; set; } = 0;
+    public int MaxAge { get; set; } = 100;
+    public SexType Sex { get; set; } = SexType.Both;
+    public string City { get; set; } = null;
+  }
+
   public class UpdateQuestionFeedbackViewModel : QuestionIdViewModel
   {
     public FeedbackType FeedbackType { get; set; }
