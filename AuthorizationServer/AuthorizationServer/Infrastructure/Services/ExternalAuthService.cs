@@ -117,7 +117,8 @@ namespace AuthorizationServer.Infrastructure.Services
         throw new Exception("We are not able to add your social information. Please, tell us about it.");
       }
 
-      
+      MonitoringServerHelper.AddUrlMonitoring(userDb.UserId);
+
       return new UserDto { UserId = userDb.UserId, RoleType = userDb.RoleType };
     }
 

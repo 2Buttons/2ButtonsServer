@@ -34,12 +34,10 @@ namespace AuthorizationServer.Infrastructure.Services
 
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
     {
-      var isExistByPhone = user.Phone.IsNullOrEmpty() ? Task.FromResult(false) : _db.Users.IsUserExistByPhoneAsync(user.Phone);
-      var isExistByEmail = user.Email.IsNullOrEmpty() ? Task.FromResult(false) : _db.Users.IsUserExistByPhoneAsync(user.Email);
+      var isExistByPhone = !user.Phone.IsNullOrEmpty() && await _db.Users.IsUserExistByPhoneAsync(user.Phone);
+      var isExistByEmail = !user.Email.IsNullOrEmpty() && await  _db.Users.IsUserExistByEmailAsync(user.Email);
 
-      await Task.WhenAll(isExistByPhone, isExistByEmail);
-
-      if (isExistByEmail.Result || isExistByPhone.Result)
+   if (isExistByEmail || isExistByPhone)
         throw new Exception("You have already registered.");
 
       const RoleType role = RoleType.User;
@@ -73,6 +71,8 @@ namespace AuthorizationServer.Infrastructure.Services
         await _db.Users.RemoveUserAsync(userDb.UserId);
         throw new Exception("We are not able to add your indformation. Please, tell us about it.");
       }
+
+      MonitoringServerHelper.AddUrlMonitoring(userDb.UserId);
 
 
       var jwtToken = await _jwtService.GenerateJwtAsync(userDb.UserId, role);

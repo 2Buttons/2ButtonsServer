@@ -64,15 +64,21 @@ namespace QuestionsServer.Controllers
         out var secondPhotos, out var comments);
 
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
-
+      MonitoringServerHelper.UpdateUrlMonitoring(inputQuestion.UserId,
+        CommonLibraries.UrlMonitoringType.OpensQuestionPage);
       return new OkResponseResult(result);
     }
 
     [HttpPost("get/statistic")]
     public async Task<IActionResult> GetQuestionFilteredStatistics([FromBody] GetQuestionFilteredStatistics statistics)
     {
+      //TODO eбрать
+      if (statistics.UserId <= 0) return new BadResponseResult("UserId has to be more than 0");
+
       var result = await _mainDb.Questions.GetQuestionStatistic(statistics.QuestionId, statistics.MinAge,
         statistics.MaxAge, statistics.Sex, statistics.City);
+      MonitoringServerHelper.UpdateUrlMonitoring(statistics.UserId,
+        CommonLibraries.UrlMonitoringType.FiltersQuestions);
       return new OkResponseResult("Question Statistic", result);
     }
 

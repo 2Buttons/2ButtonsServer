@@ -7,13 +7,21 @@ namespace CommonLibraries.Helpers
 {
   public class MonitoringServerHelper
   {
-    private const string MonitoringServerUrl = "http://localhost:6570/internal/follow";
+    private const string AddMonitoringServerUrl = "http://localhost:6570/monitoring/add";
+    private const string UpdateMonitoringServerUrl = "http://localhost:6570/monitoring/update";
 
-    public static async Task SendMonitoringInfo(int userId, UserMonitoringType monitoringType)
+    public static async Task AddUrlMonitoring(int userId)
     {
-      var body = JsonConvert.SerializeObject(new {userId, monitoringType});
+      var body = JsonConvert.SerializeObject(new {userId});
 
-      await MonitoringServerConnection(MonitoringServerUrl, body);
+      await MonitoringServerConnection(AddMonitoringServerUrl, body);
+    }
+
+    public static async Task UpdateUrlMonitoring(int userId, UrlMonitoringType monitoringType)
+    {
+      var body = JsonConvert.SerializeObject(new { userId, UrlMonitoringType = monitoringType });
+
+      await MonitoringServerConnection(UpdateMonitoringServerUrl, body);
     }
 
     private static async Task<object> MonitoringServerConnection(string url, string body)

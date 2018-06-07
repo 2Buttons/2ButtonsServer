@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace TwoButtonsDatabase
+namespace MonitoringData
 {
     public class DatabaseLoggerProvider : ILoggerProvider
     {

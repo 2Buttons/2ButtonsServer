@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -45,6 +46,9 @@ namespace QuestionsServer.Controllers
         GetTagsAndPhotos(userQuestions.UserId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         result.Add(x.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       });
+
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsUserAsked);
       return new OkResponseResult(result);
     }
 
@@ -64,6 +68,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsUserAnswered);
       return new OkResponseResult(result);
     }
 
@@ -84,6 +90,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsUserFavorite);
       return new OkResponseResult(result);
     }
 
@@ -104,6 +112,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsUserCommented);
       return new OkResponseResult(result);
     }
 

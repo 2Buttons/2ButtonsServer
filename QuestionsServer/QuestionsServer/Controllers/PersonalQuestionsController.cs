@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,9 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalAsked);
       return new OkResponseResult(result);
     }
 
@@ -66,6 +70,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalRecommended);
       return new OkResponseResult(result);
     }
 
@@ -85,6 +91,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalChosen);
       return new OkResponseResult(result);
     }
 
@@ -105,6 +113,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalLiked);
       return new OkResponseResult(result);
     }
 
@@ -125,6 +135,8 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalSaved);
       return new OkResponseResult(result);
     }
 
@@ -149,6 +161,19 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
+
+
+
+      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalDayTop);
+      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalWeekTop);
+      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalMonthTop);
+      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
+        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
+
+
       return new OkResponseResult(result);
     }
 

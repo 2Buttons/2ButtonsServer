@@ -12,4 +12,9 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\CommonLibraries\CommonLibraries\CommonLibraries.csproj" />
+    <ProjectReference Include="..\MonitoringData\MonitoringData.csproj" />
+  </ItemGroup>
+
 </Project>

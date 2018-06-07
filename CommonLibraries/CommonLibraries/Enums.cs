@@ -1,6 +1,6 @@
 ﻿namespace CommonLibraries
 {
-  public enum UserMonitoringType // Каждые 10 новые области
+  public enum UrlMonitoringType // Каждые 10 новые области
   {
     GetsQuestionsUserAsked,
     GetsQuestionsUserAnswered,
