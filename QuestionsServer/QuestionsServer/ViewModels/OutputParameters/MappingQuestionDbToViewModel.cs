@@ -121,7 +121,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       viewModel.DislikesAmount = dbEntity.CommentDislikes;
       viewModel.YourCommentFeedbackType = dbEntity.YourFeedback;
       viewModel.PreviousCommentId = dbEntity.PreviousCommentId.GetValueOrDefault(0);
-      viewModel.AddDate = dbEntity.CommentAddDate;
+      viewModel.CommentAddDate = dbEntity.CommentAddDate;
       return viewModel;
     }
 
@@ -216,7 +216,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Options = new List<Option> { new Option(dbEntity.FirstAnswers, dbEntity.FirstOption), new Option(dbEntity.SecondAnswers, dbEntity.SecondOption) },
         BackgroundImageLink = dbEntity.BackgroundImageLink,
         QuestionType = dbEntity.QuestionType,
-        AddDate = dbEntity.QuestionAddDate,
+        QuestionAddDate = dbEntity.QuestionAddDate,
         UserId = dbEntity.UserId,
         Login = dbEntity.Login,
         SmallAvatarLink = dbEntity.SmallAvatarLink,

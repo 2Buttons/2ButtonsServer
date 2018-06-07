@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
-using QuestionsData.Entities;
 using QuestionsData.Queries;
 using QuestionsData.Queries.UserQuestions;
 using QuestionsServer.Extensions;
@@ -48,8 +48,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
 
-      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalAsked);
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
       return new OkResponseResult(result);
     }
 
@@ -71,17 +70,17 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
       MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalRecommended);
+        UrlMonitoringType.GetsQuestionsPersonalRecommended);
       return new OkResponseResult(result);
     }
 
-    [HttpPost("chosen")]
+    [HttpPost("selected")]
     public async Task<IActionResult> GetChosenQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var chosenQuestions = await _mainDb.UserQuestions.GetChosenQuestions(userQuestions.UserId,
-        userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
+      var chosenQuestions = await _mainDb.UserQuestions.GetChosenQuestions(userQuestions.UserId, userQuestions.UserId,
+        userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
 
       var result = new List<ChosenQuestionsViewModel>();
 
@@ -91,8 +90,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalChosen);
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
       return new OkResponseResult(result);
     }
 
@@ -113,8 +111,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalLiked);
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
       return new OkResponseResult(result);
     }
 
@@ -135,8 +132,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalSaved);
+      MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
       return new OkResponseResult(result);
     }
 
@@ -162,17 +158,26 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
 
+      const int unixDay = 24 * 60 * 60;
+      const int unixWeek = 7 * 24 * 60 * 60;
+      const int unixMonth = 30 * 24 * 60 * 60;
 
-
-      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalDayTop);
-      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalWeekTop);
-      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalMonthTop);
-      if (questions.DeltaUnixTime == 0) MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
-        CommonLibraries.UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
-
+      switch (questions.DeltaUnixTime)
+      {
+        case unixDay:
+          MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
+          break;
+        case unixWeek:
+          MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
+          break;
+        case unixMonth:
+          MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
+          break;
+        default:
+          MonitoringServerHelper.UpdateUrlMonitoring(questions.UserId,
+            UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
+          break;
+      }
 
       return new OkResponseResult(result);
     }

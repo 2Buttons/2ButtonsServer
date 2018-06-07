@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using CommonLibraries;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
@@ -49,6 +50,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.Amount);
+      MonitoringServerHelper.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
       return new OkResponseResult(comments);
     }
   }

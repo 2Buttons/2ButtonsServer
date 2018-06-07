@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -90,7 +92,7 @@ namespace QuestionsServer.Controllers
         NewsRecommendedQuestions = recommentedListresultList
       };
 
-
+      MonitoringServerHelper.UpdateUrlMonitoring(newsViewModel.UserId, UrlMonitoringType.GetsQuestionsNews);
       return new OkResponseResult(result);
     }
 

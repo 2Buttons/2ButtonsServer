@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.Helpers;
 using NotificationsData;
 using NotificationServer.Models;
 using NotificationServer.ViewModels.Input;
@@ -79,6 +80,7 @@ namespace NotificationServer.Services
     private async Task PushNotification(int sendToId, Notification notification)
     {
       await _notificationManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
+      MonitoringServerHelper.UpdateUrlMonitoring(sendToId, UrlMonitoringType.GetsNotifications);
     }
   }
 }

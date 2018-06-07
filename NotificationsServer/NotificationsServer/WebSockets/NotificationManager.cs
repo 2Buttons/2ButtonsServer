@@ -6,6 +6,8 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CommonLibraries;
+using CommonLibraries.Helpers;
 using Newtonsoft.Json;
 using NotificationServer.Models;
 
@@ -68,6 +70,7 @@ namespace NotificationServer.WebSockets
       var bytes = Encoding.UTF8.GetBytes(message);
       await socket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true,
         CancellationToken.None);
+
     }
 
     public async Task SendNotificationAsync(int userId, string notification)

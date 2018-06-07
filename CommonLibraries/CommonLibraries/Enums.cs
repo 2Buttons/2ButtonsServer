@@ -20,16 +20,15 @@
 
     GetsQuestionsNews,
 
+    OpensQuestionPage,
+    FiltersQuestions,
+
+    GetsComments,
+
     OpensPersonalPage,
     OpensUserPage,
 
-    GetsNotifications,
-
-    FiltersQuestions,
-
-    OpensQuestionPage,
-
-    GetsComments
+    GetsNotifications
   }
 
   public enum AvatarSizeType

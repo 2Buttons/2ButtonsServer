@@ -43,6 +43,8 @@ namespace AccountServer.Infrastructure.Services
       if (userId != userPageId) user.UserStatistics.AnsweredQuestions = 0;
 
       user.Social = ConvertContactsDtoToViewModel(userContactsTask.Result);
+      MonitoringServerHelper.UpdateUrlMonitoring(userId,
+        userId != userPageId ? UrlMonitoringType.OpensUserPage : UrlMonitoringType.OpensPersonalPage);
       return user;
     }
 
