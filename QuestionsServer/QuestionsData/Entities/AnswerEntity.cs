@@ -17,6 +17,7 @@ namespace QuestionsData.Entities
     public AnswerType AnswerType { get; set; }
 
     public int Liked { get; set; }
+    [Column("anwserDate")]
     public DateTime AnswerDate { get; set; }
 
     [Column("deleted")]

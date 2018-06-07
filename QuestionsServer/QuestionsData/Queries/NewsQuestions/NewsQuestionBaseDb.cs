@@ -1,4 +1,4 @@
-﻿namespace QuestionsData.Entities.NewsQuestions
+﻿namespace QuestionsData.Queries.NewsQuestions
 {
   public class NewsQuestionBaseDb : QuestionBaseDb
   {

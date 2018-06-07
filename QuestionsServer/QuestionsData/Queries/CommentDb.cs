@@ -1,8 +1,7 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
 
-namespace QuestionsData.Entities
+namespace QuestionsData.Queries
 {
     public partial class CommentDb
     {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.Entities;
+using QuestionsData.Queries;
 
 namespace QuestionsData.Repositories
 {

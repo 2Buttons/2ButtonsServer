@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
-using QuestionsData.Entities.Moderators;
+using QuestionsData.Queries.Moderators;
 
 namespace QuestionsData.Repositories
 {

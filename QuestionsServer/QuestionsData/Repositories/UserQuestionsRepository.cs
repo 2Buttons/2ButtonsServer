@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using QuestionsData.Entities.UserQuestions;
+using QuestionsData.Queries.UserQuestions;
 
 namespace QuestionsData.Repositories
 {

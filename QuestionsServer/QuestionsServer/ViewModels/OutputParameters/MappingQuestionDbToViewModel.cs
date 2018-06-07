@@ -2,8 +2,9 @@
 using System.Linq;
 using CommonLibraries.Extensions;
 using QuestionsData.Entities;
-using QuestionsData.Entities.NewsQuestions;
-using QuestionsData.Entities.UserQuestions;
+using QuestionsData.Queries;
+using QuestionsData.Queries.NewsQuestions;
+using QuestionsData.Queries.UserQuestions;
 using QuestionsServer.ViewModels.OutputParameters.NewsQuestions;
 using QuestionsServer.ViewModels.OutputParameters.UserQuestions;
 

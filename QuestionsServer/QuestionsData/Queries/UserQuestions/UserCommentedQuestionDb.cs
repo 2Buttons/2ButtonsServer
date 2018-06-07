@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QuestionsData.Entities.UserQuestions
+namespace QuestionsData.Queries.UserQuestions
 {
     public partial class UserCommentedQuestionDb : QuestionBaseDb
     {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
 using QuestionsData.Entities;
+using QuestionsData.Queries;
 using QuestionsServer.ViewModels.InputParameters.ControllersViewModels;
 using QuestionsServer.ViewModels.OutputParameters;
 using QuestionsServer.ViewModels.OutputParameters.NewsQuestions;

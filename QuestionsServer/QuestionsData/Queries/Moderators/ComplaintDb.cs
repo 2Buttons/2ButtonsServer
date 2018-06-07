@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuestionsData.Entities.Moderators
+namespace QuestionsData.Queries.Moderators
 {
     public class ComplaintDb
     {

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
 using QuestionsData.Entities;
+using QuestionsData.Queries;
 using QuestionsServer.ViewModels.InputParameters;
 using QuestionsServer.ViewModels.InputParameters.ControllersViewModels;
 using QuestionsServer.ViewModels.OutputParameters;
@@ -70,9 +71,17 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/statistic")]
     public async Task<IActionResult> GetQuestionFilteredStatistics([FromBody] GetQuestionFilteredStatistics statistics)
     {
-      var result = await _mainDb.Questions.GetQuestionFilteredStatistis(statistics.QuestionId, statistics.MinAge,
+      var result = await _mainDb.Questions.GetQuestionStatistic(statistics.QuestionId, statistics.MinAge,
         statistics.MaxAge, statistics.Sex, statistics.City);
-      return new OkResponseResult("Statistics", result);
+      return new OkResponseResult("Question Statistic", result);
+    }
+
+    [HttpPost("get/statistic/users")]
+    public async Task<IActionResult> GetQuestionFilteredStatisticsUsers([FromBody] GetQuestionFilteredStatistics statistics)
+    {
+      var result = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.QuestionId, statistics.MinAge,
+        statistics.MaxAge, statistics.Sex, statistics.City);
+      return new OkResponseResult("Question Statistic -> Users", result);
     }
 
     [HttpPost("getByCommentId")]
@@ -128,7 +137,7 @@ namespace QuestionsServer.Controllers
 
 
       var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition,
-        backgroundLink, question.IsAnonymity ? 1 : 0, question.IsAudience ? 1 : 0, question.QuestionType,
+        backgroundLink, question.IsAnonymity ? 1 : 0, question.AudienceType, question.QuestionType,
         question.FirstOption, question.SecondOption);
 
       var badAddedTags = new List<string>();

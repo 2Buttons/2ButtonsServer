@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuestionsData.Entities
+namespace QuestionsData.Queries
 {
     public partial class NewQuestionsPostsDb
     {

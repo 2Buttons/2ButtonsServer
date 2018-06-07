@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.Entities;
+using QuestionsData.Queries;
 
 namespace QuestionsData.Repositories
 {

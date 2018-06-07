@@ -1,4 +1,4 @@
-﻿namespace QuestionsData.Entities.UserQuestions
+﻿namespace QuestionsData.Queries.UserQuestions
 {
   public class SavedQuestionDb : QuestionBaseDb
   {

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using QuestionsData.Entities.NewsQuestions;
+using QuestionsData.Queries.NewsQuestions;
 
 namespace QuestionsData.Repositories
 {

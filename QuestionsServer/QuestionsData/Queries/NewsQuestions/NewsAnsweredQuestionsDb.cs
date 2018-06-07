@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QuestionsData.Entities.NewsQuestions
+namespace QuestionsData.Queries.NewsQuestions
 {
     public partial class NewsAnsweredQuestionsDb : NewsQuestionBaseDb
   {

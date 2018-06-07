@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using CommonLibraries;
 using QuestionsData.Entities;
+using QuestionsData.Queries;
 
 namespace QuestionsServer.Extensions
 {

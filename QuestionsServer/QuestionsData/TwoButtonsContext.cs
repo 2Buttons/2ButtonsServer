@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuestionsData.Entities;
-using QuestionsData.Entities.Moderators;
-using QuestionsData.Entities.NewsQuestions;
-using QuestionsData.Entities.UserQuestions;
+using QuestionsData.Queries;
+using QuestionsData.Queries.Moderators;
+using QuestionsData.Queries.NewsQuestions;
+using QuestionsData.Queries.UserQuestions;
 
 namespace QuestionsData
 {

@@ -1,24 +1,36 @@
 ﻿namespace CommonLibraries
 {
-  //public enum UrlMonitoringType // Каждые 100 новые области
-  //{
-  //  QuestionsUserAsked,
-  //  QuestionsUserAnswered,
-  //  QuestionsUserFavorite,
-  //  QuestionsUserCommented,
-  //  QuestionsPersonalAsked,
-  //  QuestionsPersonalRecommended,
-  //  QuestionsPersonalChosen,
-  //  QuestionsPersonalLiked,
-  //  QuestionsPersonalSaved,
-  //  QuestionsPersonalTop,
-  //  QuestionsNews,
-  //  QuestionsUserAsked,
-  //  QuestionsUserAsked,
-  //  QuestionsUserAsked, QuestionsUserAsked,
+  public enum UserMonitoringType // Каждые 10 новые области
+  {
+    GetsQuestionsUserAsked,
+    GetsQuestionsUserAnswered,
+    GetsQuestionsUserFavorite,
+    GetsQuestionsUserCommented,
 
+    GetsQuestionsPersonalAsked,
+    GetsQuestionsPersonalRecommended,
+    GetsQuestionsPersonalChosen,
+    GetsQuestionsPersonalLiked,
+    GetsQuestionsPersonalSaved,
 
-  //}
+    GetsQuestionsPersonalDayTop,
+    GetsQuestionsPersonalWeekTop,
+    GetsQuestionsPersonalMonthTop,
+    GetsQuestionsPersonalAllTimeTop,
+
+    GetsQuestionsNews,
+
+    OpensPersonalPage,
+    OpensUserPage,
+
+    GetsNotifications,
+
+    FiltersQuestions,
+
+    OpensQuestionPage,
+
+    GetsComments
+  }
 
   public enum AvatarSizeType
   {
@@ -134,5 +146,11 @@
     German = 6,
     French = 16,
     Italian = 7
+  }
+
+  public enum AudienceType
+  {
+    All = 0,
+    Followers = 1,
   }
 }

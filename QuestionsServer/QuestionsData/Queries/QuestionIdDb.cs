@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuestionsData.Entities
+namespace QuestionsData.Queries
 {
   public class QuestionIdDb
   {
