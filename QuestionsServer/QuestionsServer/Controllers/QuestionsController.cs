@@ -90,6 +90,21 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Question Statistic -> Users", result);
     }
 
+    [HttpPost("get/backgrounds/standard")]
+    public async Task<IActionResult> GetStandardQuestionBackgrounds([FromBody] GetQuestionFilteredStatistics statistics)
+    {
+      List<string> result = new List<string>() { MediaServerHelper.StandardBackground() }; 
+      return new OkResponseResult("Standard backgrounds", result);
+    }
+
+    [HttpPost("get/backgrounds/custom")]
+    public async Task<IActionResult> GetCustomQuestionBackgrounds([FromBody] UserIdViewModel user)
+    {
+      var result = await _mainDb.Questions.GetCustomQuestionBackgrounds(user.UserId);
+      return new OkResponseResult("Custom backgrounds", result);
+    }
+
+
     [HttpPost("getByCommentId")]
     public async Task<IActionResult> GetQuestion([FromBody] GetQuestionByCommentId getQuestionByCommentId)
     {

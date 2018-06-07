@@ -32,7 +32,8 @@ namespace QuestionsServer.Controllers
     [HttpPost]
     public async Task<IActionResult> GetNews([FromBody] GetNewsViewModel newsViewModel)
     {
-      //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
+
+  //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
 
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 

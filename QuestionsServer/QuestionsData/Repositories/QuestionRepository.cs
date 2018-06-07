@@ -81,7 +81,13 @@ namespace QuestionsData.Repositories
       return new QuestionStatisticDto { Voters = votersList };
     }
 
-    public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(int questionId, int minAge, int maxAge,
+    public async Task<List<string>> GetCustomQuestionBackgrounds(int userId)
+    {
+      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.BackgroundImageLink).ToListAsync();
+    }
+    
+
+      public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(int questionId, int minAge, int maxAge,
       SexType sexType, string city)
     {
 

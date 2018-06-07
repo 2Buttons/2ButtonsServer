@@ -61,7 +61,7 @@ namespace MediaServer.Controllers
     public IActionResult UploadUserAvatarViaLink([FromBody] UploadAvatarViaLinkViewModel avatar)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      //if (avatar.Url.Contains("media.2buttons.ru")) return new OkResponseResult(new UrlViewModel {Url = avatar.Url});
       var url = _mediaService.UploadAvatar(avatar.Url, avatar.Size);
       return url.IsNullOrEmpty() ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult(new UrlViewModel { Url = url});
     }

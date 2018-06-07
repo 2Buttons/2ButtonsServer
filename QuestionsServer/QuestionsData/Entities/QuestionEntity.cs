@@ -10,7 +10,7 @@ namespace QuestionsData.Entities
     [Key]
     public int QuestionId { get; set; }
 
-    public int USerId { get; set; }
+    public int UserId { get; set; }
     public string Condition { get; set; }
 
     [Column("anonymity")]
