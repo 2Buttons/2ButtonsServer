@@ -67,7 +67,7 @@ namespace SocialServer.Infrastructure
 
       var result = new RecommendedUsers();
 
-      result.SocialNetFrineds = MakeSocialNetFriends(socialFriends, friendsCount);
+      result.SocialFriends = MakeSocialNetFriends(socialFriends, friendsCount);
 
       result.Followers = followersOut.Take(followersCount / 2).ToList();
       result.CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList();

@@ -41,11 +41,12 @@ namespace QuestionsServer.Controllers
         userQuestions.SortType.ToPredicate<UserAskedQuestionDb>());
       var result = new List<UserAskedQuestionsViewModel>();
 
-      Parallel.ForEach(userAskedQuestions, x =>
+      foreach (var question in userAskedQuestions)
       {
-        GetTagsAndPhotos(userQuestions.UserId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
-        result.Add(x.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
-      });
+        GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
+          out var secondPhotos);
+        result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
+      }
 
       MonitoringServerHelper.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAsked);

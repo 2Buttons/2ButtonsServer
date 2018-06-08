@@ -7,8 +7,8 @@ namespace CommonLibraries.Helpers
 {
   public class MonitoringServerHelper
   {
-    private const string AddMonitoringServerUrl = "http://localhost:6570/monitoring/add";
-    private const string UpdateMonitoringServerUrl = "http://localhost:6570/monitoring/update";
+    private const string AddMonitoringServerUrl = "http://localhost:6670/monitoring/add";
+    private const string UpdateMonitoringServerUrl = "http://localhost:6670/monitoring/update";
 
     public static async Task AddUrlMonitoring(int userId)
     {
