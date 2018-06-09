@@ -61,7 +61,8 @@ namespace MediaServer.Controllers
     public IActionResult UploadUserAvatarViaLink([FromBody] UploadAvatarViaLinkViewModel avatar)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      //if (avatar.Url.Contains("media.2buttons.ru")) return new OkResponseResult(new UrlViewModel {Url = avatar.Url});
+      if (_mediaService.IsAlreadyDownloadedUrl(avatar.Url))
+        return new OkResponseResult(new UrlViewModel { Url = avatar.Url });
       var url = _mediaService.UploadAvatar(avatar.Url, avatar.Size);
       return url.IsNullOrEmpty() ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult(new UrlViewModel { Url = url});
     }
@@ -70,6 +71,9 @@ namespace MediaServer.Controllers
     public IActionResult UploadQuestionBackgroundViaLink([FromBody]UploadQuestionBackgroundViaLinkViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      if (_mediaService.IsAlreadyDownloadedUrl(background.Url))
+        return new OkResponseResult(new UrlViewModel {Url = background.Url });
 
       var url = _mediaService.UploadBackground(background.Url);
       return url.IsNullOrEmpty() ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult(new UrlViewModel { Url = url });

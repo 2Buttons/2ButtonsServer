@@ -79,5 +79,11 @@ namespace MediaServer.Infrastructure.Services
       }
       return _fileManager.GetWebPath(imageType, uniqueName);
     }
+
+    public bool IsAlreadyDownloadedUrl(string url)
+    {
+      var uri = new Uri(url);
+      return uri.Host.Contains("media.2buttons.ru") && IsUrlValid(uri.AbsolutePath);
+    }
   }
 }
