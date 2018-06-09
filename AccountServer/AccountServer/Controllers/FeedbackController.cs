@@ -21,7 +21,7 @@ namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  [Route("/feedbacks")]
+  [Route("account/feedbacks")]
   public class FeedbackController : Controller
   {
     private readonly IFeedbackService _feedbackService;
@@ -38,7 +38,7 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
 
-      FeedbackDb feedbackDb = new FeedbackDb {UserId = feedback.UserId, Type = feedback.Type, Text = feedback.Text};
+      FeedbackEntity feedbackDb = new FeedbackEntity {UserId = feedback.UserId, Type = feedback.Type, Text = feedback.Text};
       if (!await _feedbackService.AddFeedback(feedbackDb))
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add your feedback.");
       return new OkResponseResult("We add your feedback.");
@@ -50,7 +50,7 @@ namespace AccountServer.Controllers
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
-      FeedbackDb feedbackDb = new FeedbackDb { UserId = feedback.UserId, Type = feedback.Type, Text = feedback.Text };
+      FeedbackEntity feedbackDb = new FeedbackEntity { UserId = feedback.UserId, Type = feedback.Type, Text = feedback.Text };
       if (!await _feedbackService.AddFeedback(feedbackDb))
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not add your feedback.");
       return new OkResponseResult("We add your feedback.");

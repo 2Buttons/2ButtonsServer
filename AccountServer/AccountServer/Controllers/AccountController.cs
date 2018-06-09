@@ -20,7 +20,7 @@ namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  // [Route("/account")]
+  [Route("account")]
   public class AccountController : Controller
   {
     private readonly IAccountService _account;

@@ -9,7 +9,8 @@ namespace AccountData.Main
     public virtual DbQuery<UserStatisticsDb> UserStatisticsDb { get; set; }
     public virtual DbQuery<NotificationDb> NotificationsDb { get; set; }
 
-    public virtual DbSet<FeedbackDb> FeedbacksDb { get; set; }
+    public virtual DbSet<FeedbackEntity> FeedbackEntities { get; set; }
+    public virtual DbSet<CityEntity> CityEntities { get; set; }
 
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)
     {

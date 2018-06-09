@@ -47,6 +47,7 @@ namespace AccountServer
       services.AddTransient<AccountDataUnitOfWork>();
       services.AddTransient<IFeedbackService, FeedbackService>();
       services.AddTransient<IAccountService, AccountService>();
+      services.AddTransient<ICityService, CityService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();
      // services.AddWebSocketManager();

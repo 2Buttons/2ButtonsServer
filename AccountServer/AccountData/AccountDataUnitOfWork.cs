@@ -10,18 +10,22 @@ namespace AccountData
   {
     private readonly TwoButtonsAccountContext _dbAccount;
     private readonly TwoButtonsContext _dbMain;
+    private CityRepository _cityRepository;
 
     private FeedbackRepository _feedbackRepository;
-    private UserInfoRepository _userInfoRepository;
     private NotificationsRepository _notificationsRepository;
+    private UserInfoRepository _userInfoRepository;
     private UserRepository _userRepository;
 
+    public FeedbackRepository Feedbacks => _feedbackRepository ??
+                                           (_feedbackRepository = new FeedbackRepository(_dbMain));
 
-    public FeedbackRepository Feedbacks => _feedbackRepository ?? (_feedbackRepository = new FeedbackRepository(_dbMain));
+    public CityRepository Cities => _cityRepository ?? (_cityRepository = new CityRepository(_dbMain));
 
     public UserRepository Users => _userRepository ?? (_userRepository = new UserRepository(_dbAccount));
 
-    public UserInfoRepository UsersInfo => _userInfoRepository ?? (_userInfoRepository = new UserInfoRepository(_dbMain));
+    public UserInfoRepository UsersInfo => _userInfoRepository ??
+                                           (_userInfoRepository = new UserInfoRepository(_dbMain));
 
     public NotificationsRepository Notifications => _notificationsRepository ??
                                                     (_notificationsRepository = new NotificationsRepository(_dbMain));
@@ -31,7 +35,6 @@ namespace AccountData
       _dbMain = dbMain;
       _dbAccount = dbAccount;
     }
-
 
     #region IDisposable
 

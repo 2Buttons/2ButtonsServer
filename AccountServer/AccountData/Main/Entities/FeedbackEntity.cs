@@ -5,7 +5,7 @@ using CommonLibraries;
 namespace AccountData.Main.Entities
 {
   [Table("Feedbacks")]
-  public class FeedbackDb
+  public class FeedbackEntity
   {
     [Key]
     public int FeedbackId { get; set; }

@@ -20,7 +20,7 @@ namespace AccountServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  [Route("avatar")]
+  [Route("account/avatar")]
   public class AvatarController : Controller
   {
     private readonly IAccountService _account;

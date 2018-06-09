@@ -14,17 +14,17 @@ namespace AccountServer.Infrastructure.Services
       _db = accountDb;
     }
 
-    public async Task<bool> AddFeedback(FeedbackDb feedback)
+    public async Task<bool> AddFeedback(FeedbackEntity feedback)
     {
       return await _db.Feedbacks.AddFeedbackAsync(feedback);
     }
 
-    public async Task<List<FeedbackDb>> GetUserFeedbacks(int userId)
+    public async Task<List<FeedbackEntity>> GetUserFeedbacks(int userId)
     {
       return await _db.Feedbacks.GetFeedbacksByUserAsync(userId);
     }
 
-    public async Task<List<FeedbackDb>> GetFeedbacks(int offset, int count)
+    public async Task<List<FeedbackEntity>> GetFeedbacks(int offset, int count)
     {
       return await _db.Feedbacks.GetFeedbacks(offset, count);
     }

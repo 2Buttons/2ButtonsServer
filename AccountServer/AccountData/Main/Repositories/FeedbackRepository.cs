@@ -15,25 +15,25 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
-    public async Task<bool> AddFeedbackAsync(FeedbackDb feedback)
+    public async Task<bool> AddFeedbackAsync(FeedbackEntity feedback)
     {
-      _db.FeedbacksDb.Add(feedback);
+      _db.FeedbackEntities.Add(feedback);
       return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<FeedbackDb>> GetFeedbacksByUserAsync(int userId)
+    public async Task<List<FeedbackEntity>> GetFeedbacksByUserAsync(int userId)
     {
-      return await _db.FeedbacksDb.Where(x => x.UserId == userId).ToListAsync();
+      return await _db.FeedbackEntities.Where(x => x.UserId == userId).ToListAsync();
     }
 
-    public async Task<FeedbackDb> FindUserFeedbackAsync(int feedbackId)
+    public async Task<FeedbackEntity> FindUserFeedbackAsync(int feedbackId)
     {
-      return await _db.FeedbacksDb.FindAsync(feedbackId);
+      return await _db.FeedbackEntities.FindAsync(feedbackId);
     }
 
-    public async Task<List<FeedbackDb>> GetFeedbacks(int offset, int count)
+    public async Task<List<FeedbackEntity>> GetFeedbacks(int offset, int count)
     {
-      return await _db.FeedbacksDb.Skip(offset).Take(count).ToListAsync();
+      return await _db.FeedbackEntities.Skip(offset).Take(count).ToListAsync();
     }
   }
 }

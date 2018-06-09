@@ -20,7 +20,7 @@ namespace AccountServer.Controllers
       _db = db;
     }
 
-    [HttpPost("notifications")]
+    [HttpPost("account/notifications")]
     public async Task<IActionResult> GetNotifications([FromBody] UserIdViewModel userId)
     {
       if(!ModelState.IsValid)
