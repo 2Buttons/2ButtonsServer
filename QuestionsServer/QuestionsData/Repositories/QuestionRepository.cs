@@ -82,17 +82,19 @@ namespace QuestionsData.Repositories
 
       var voters = await _db.AnswerEntities.Where(x => x.QuestionId == questionId)
         .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a))
-        .Where(predicate).Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s})
-        .Skip(offset).Take(count).ToListAsync();
+        .Where(predicate).Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowEntities.Any(x=>x.UserdId== userId && x.FollowToId == f.Item1.UserId), isHeFollowed  = _db.FollowEntities.Any(x => x.UserdId == f.Item1.UserId && x.FollowToId == userId) })
+        .OrderByDescending(x=>x.f.Item2.AnswerDate).Skip(offset).Take(count).ToListAsync();
 
-      var firstUsers = new List<PhotoDb>();
-      var secondUsers = new List<PhotoDb>();
+      var firstUsers = new List<VoterDto>();
+      var secondUsers = new List<VoterDto>();
       foreach (var voter in voters)
       {
-        var user = new PhotoDb
+        var user = new VoterDto
         {
           UserId = voter.f.Item1.UserId,
-          BirthDate = voter.f.Item1.BirthDate,
+          Age = voter.f.Item1.BirthDate.Age(),
+          IsHeFollowed = voter.isHeFollowed,
+          IsYouFollowed =voter.isYouFollowed,
           City = voter.s.Name,
           Login = voter.f.Item1.Login,
           Sex = voter.f.Item1.SexType,
@@ -111,7 +113,7 @@ namespace QuestionsData.Repositories
         }
       }
 
-      return new QiestionStatisticUsersDto {Voters = new List<List<PhotoDb>> {firstUsers, secondUsers}};
+      return new QiestionStatisticUsersDto {Voters = new List<List<VoterDto>> {firstUsers, secondUsers}};
     }
 
     public async Task<int> GetQuestionByCommentId(int commentId)

@@ -7,59 +7,6 @@ namespace QuestionsData.Repositories
 {
   public class NewsQuestionsRepository
   {
-    private readonly DbContextOptions<TwoButtonsContext> _dbOptions;
-
-    public NewsQuestionsRepository(DbContextOptions<TwoButtonsContext> dbOptions)
-    {
-      _dbOptions = dbOptions;
-    }
-
-    //public List<NewsAskedQuestionsDb> GetNewsAskedQuestions(int userId, int offset, int count)
-    //{
-    //  using (var context = new TwoButtonsContext(_dbOptions))
-    //  {
-    //    return context.NewsAskedQuestionsDb.AsNoTracking().FromSql($"select * from dbo.getNewsAskedQuestions({userId})")
-    //      .Skip(offset).Take(count).ToList();
-    //  }
-
-    //}
-
-    //public List<NewsAnsweredQuestionsDb> GetNewsAnsweredQuestions(int userId, int offset, int count)
-    //{
-    //  using (var context = new TwoButtonsContext(_dbOptions))
-    //  {
-    //    return context.NewsAnsweredQuestionsDb.AsNoTracking()
-    //           .FromSql($"select * from dbo.getNewsAnsweredQuestions({userId})").Select(x => x).OrderByDescending(x => x.AnswerDate).Skip(offset).Take(count)
-    //           .ToList();
-    //  }
-    //}
-
-    //public List<NewsFavoriteQuestionsDb> GetNewsFavoriteQuestions(int userId, int offset, int count)
-    //{
-    //  using (var context = new TwoButtonsContext(_dbOptions))
-    //  {
-    //    return context.NewsFavoriteQuestionsDb.AsNoTracking()
-    //      .FromSql($"select * from dbo.getNewsFavoriteQuestions({userId})").Skip(offset).Take(count).ToList();
-    //  }
-    //}
-
-    //public List<NewsCommentedQuestionsDb> GetNewsCommentedQuestions(int userId, int offset, int count)
-    //{
-    //  using (var context = new TwoButtonsContext(_dbOptions))
-    //  {
-    //    return context.NewsCommentedQuestionsDb.AsNoTracking()
-    //      .FromSql($"select * from dbo.getNewsCommentedQuestions({userId})").Skip(offset).Take(count).ToList();
-    //  }
-    //}
-
-    //public List<NewsRecommendedQuestionDb> GetNewsRecommendedQuestions(int userId, int offset, int count)
-    //{
-    //  using (var context = new TwoButtonsContext(_dbOptions))
-    //  {
-    //    return context.NewsRecommendedQuestionDb.AsNoTracking()
-    //      .FromSql($"select * from dbo.getNewsRecommendedQuestions({userId})").Skip(offset).Take(count).ToList();
-    //  }
-    //}
 
     public List<NewsAskedQuestionDto> GetNewsAskedQuestions(TwoButtonsContext context, int userId, int offset,
       int count)

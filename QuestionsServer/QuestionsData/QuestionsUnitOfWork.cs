@@ -7,7 +7,6 @@ namespace QuestionsData
   public class QuestionsUnitOfWork : IDisposable
   {
     private readonly TwoButtonsContext _db;
-    private readonly DbContextOptions<TwoButtonsContext> _dbOptions;
 
     private CommentsRepository _commentsRepository;
     private ComplaintsRepository _moderatorRepository;
@@ -20,7 +19,7 @@ namespace QuestionsData
 
     public ComplaintsRepository Complaints => _moderatorRepository ??(_moderatorRepository = new ComplaintsRepository(_db));
 
-    public NewsQuestionsRepository News => _newsRepository ?? (_newsRepository = new NewsQuestionsRepository(_dbOptions));
+    public NewsQuestionsRepository News => _newsRepository ?? (_newsRepository = new NewsQuestionsRepository());
 
     public QuestionRepository Questions => _questionRepository ?? (_questionRepository = new QuestionRepository(_db));
 
@@ -32,7 +31,6 @@ namespace QuestionsData
     public QuestionsUnitOfWork(TwoButtonsContext db, DbContextOptions<TwoButtonsContext> dbOptions)
     {
       _db = db;
-      _dbOptions = dbOptions;
     }
 
 
