@@ -14,7 +14,7 @@ namespace QuestionsServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  [Route("complaints")]
+  [Route("questions/complaints")]
   public class ComplaintsController : Controller
   {
     private readonly QuestionsUnitOfWork _mainDb;

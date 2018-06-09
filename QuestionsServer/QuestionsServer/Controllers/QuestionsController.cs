@@ -20,7 +20,7 @@ namespace QuestionsServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  //[Route("api/[controller]")]
+  [Route("questions")]
   public class QuestionsController : Controller //Controller for a Question
   {
     private readonly QuestionsUnitOfWork _mainDb;
@@ -275,5 +275,7 @@ namespace QuestionsServer.Controllers
 
       return new OkResponseResult(answeredList.MapAnsweredListDbToViewModel());
     }
+
+    
   }
 }

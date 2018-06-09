@@ -16,7 +16,7 @@ namespace MediaServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  //[Route("images")]
+  [Route("media")]
   public class MediaController : Controller
   {
     private readonly IMediaService _mediaService;

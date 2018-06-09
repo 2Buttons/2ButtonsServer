@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CommonLibraries.Response;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using NotificationsData;
 using NotificationServer.Services;
@@ -7,9 +8,9 @@ using NotificationServer.ViewModels.Input;
 
 namespace NotificationServer.Controllers
 {
-  //[EnableCors("AllowAllOrigin")]
-  //[Produces("application/json")]
-  [Route("internal")]
+  [EnableCors("AllowAllOrigin")]
+  [Produces("application/json")]
+  [Route("notifications/internal")]
   public class InternalNotificationsController : Controller //To get user's posts
   {
     private readonly INotificationsMessageService _notificationsMessageHandler;

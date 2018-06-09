@@ -10,7 +10,7 @@ namespace AuthorizationServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  // [Route("external")]
+  [Route("auth")]
   public class ExternalAuthController : Controller
   {
     private readonly ICommonAuthService _commonAuthService;

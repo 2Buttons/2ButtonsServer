@@ -13,7 +13,7 @@ namespace QuestionsServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  [Route("comments")]
+  [Route("questions/comments")]
   public class CommentsController : Controller
   {
     private readonly QuestionsUnitOfWork _mainDb;

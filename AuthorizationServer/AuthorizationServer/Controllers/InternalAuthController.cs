@@ -24,7 +24,7 @@ namespace AuthorizationServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  //[Route("/auth")]
+  [Route("auth")]
   public class InternalAuthController : Controller
   {
     private readonly IInternalAuthService _internalAuthService;

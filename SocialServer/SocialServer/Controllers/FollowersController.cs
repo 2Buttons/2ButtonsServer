@@ -13,7 +13,7 @@ namespace SocialServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  [Route("followers")]
+  [Route("social/followers")]
   public class FollowersController : Controller //Represent user's followers or people who user are follow to
   {
 

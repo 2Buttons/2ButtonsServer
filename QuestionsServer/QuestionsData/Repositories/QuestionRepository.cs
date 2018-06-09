@@ -62,7 +62,7 @@ namespace QuestionsData.Repositories
 
     public async Task<List<string>> GetCustomQuestionBackgrounds(int userId)
     {
-      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.BackgroundImageLink).ToListAsync();
+      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.BackgroundImageLink).Distinct().ToListAsync();
     }
 
     public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(int userId, int questionId, int minAge, int maxAge,
@@ -201,6 +201,20 @@ namespace QuestionsData.Repositories
                .FromSql(
                  $"select * from dbo.getAnsweredList({userId}, {questionId},   {answerType}, {bornAfter}, {bornBefore}, {sexType}, {searchedLogin})")
                .Skip(offset).Take(count).ToListAsync() ?? new List<AnsweredListDb>();
+    }
+
+    public async Task<QuestionDb> SearchSimilarQuestion(int questionId)
+    {
+      var questionPattern = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
+      if (questionPattern == null) return null;
+      return null;
+      //var searchedWords = questionPattern.Condition.Trim().ToLower().Split(' ').Select();
+      //_db.QuestionEntities.Where(x=>x.Condition.ToLower().)
+
+      // ;.AsNoTracking().FromSql($"select * from dbo.getQuestion({userId}, {questionId})")
+      //  .FirstOrDefaultAsync();
+      //if (result == null) throw new NotFoundException("We do not have this question");
+      //return result;
     }
   }
 }

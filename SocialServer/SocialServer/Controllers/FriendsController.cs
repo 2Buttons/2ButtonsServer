@@ -9,7 +9,7 @@ namespace SocialServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
-  [Route("friends")]
+  [Route("social/friends")]
   //[Route("api/[controller]")]
   public class FriendsController : Controller
   {
