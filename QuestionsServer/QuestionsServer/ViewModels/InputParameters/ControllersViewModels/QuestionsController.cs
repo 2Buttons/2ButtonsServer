@@ -28,6 +28,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public int MaxAge { get; set; } = 100;
     public SexType Sex { get; set; } = SexType.Both;
     public string City { get; set; } = null;
+    public PageParams PageParams { get; set; } = new PageParams();
   }
 
   public class UpdateQuestionFeedbackViewModel : QuestionIdViewModel

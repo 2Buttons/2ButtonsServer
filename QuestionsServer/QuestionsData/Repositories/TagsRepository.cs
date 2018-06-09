@@ -25,5 +25,10 @@ namespace QuestionsData.Repositories
     {
       return _db.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
     }
+
+    public List<TagDb> GetTags(TwoButtonsContext context, int questionId)
+    {
+      return context.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
+    }
   }
 }

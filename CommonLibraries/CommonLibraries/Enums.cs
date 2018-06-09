@@ -31,6 +31,15 @@
     GetsNotifications
   }
 
+  public enum NewsType
+  {
+    Answered,
+    Asked,
+    Commented,
+    Favorite,
+    Recommended
+  }
+
   public enum AvatarSizeType
   {
     SmallAvatar = 0,

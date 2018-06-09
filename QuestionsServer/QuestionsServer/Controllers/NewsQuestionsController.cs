@@ -1,18 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuestionsData;
 using QuestionsData.Entities;
 using QuestionsData.Queries;
+using QuestionsServer.Infrastructure;
 using QuestionsServer.ViewModels.InputParameters.ControllersViewModels;
 using QuestionsServer.ViewModels.OutputParameters;
 using QuestionsServer.ViewModels.OutputParameters.NewsQuestions;
+
 
 namespace QuestionsServer.Controllers
 {
@@ -23,66 +28,137 @@ namespace QuestionsServer.Controllers
   public class NewsQuestionsController : Controller //Don't receive deleted
   {
     private readonly QuestionsUnitOfWork _mainDb;
+    private readonly DbContextOptions<TwoButtonsContext> _dbOptions;
 
-    public NewsQuestionsController(QuestionsUnitOfWork mainDb)
+    public NewsQuestionsController(QuestionsUnitOfWork mainDb, DbContextOptions<TwoButtonsContext> dbOptions)
     {
       _mainDb = mainDb;
+      _dbOptions = dbOptions;
     }
 
+
     [HttpPost]
-    public async Task<IActionResult> GetNews([FromBody] GetNewsViewModel newsViewModel)
+    public async Task<IActionResult> GetNews([FromBody] GetNewsViewModel newsVm)
     {
 
-  //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
+      //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
 
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var userId = newsViewModel.UserId;
-      var questionsPage = newsViewModel.PageParams.Offset / 5;
-      var questionsAmount = newsViewModel.PageParams.Count / 5;
+      var userId = newsVm.UserId;
+      var questionsOffset = newsVm.PageParams.Offset;
+      var questionsCount = newsVm.PageParams.Count;
 
-      var askedListTask =  GetNewsAskedQuestionsAsync(userId, questionsPage, questionsAmount);
-      var answeredListTask =  GetNewsAnsweredQuestionsAsync(userId, questionsPage, questionsAmount);
-      var favoriteListTask =  GetNewsFavoriteQuestionsAsync(userId, questionsPage, questionsAmount);
-      var commentedListTask =  GetNewsCommentedQuestions(userId, questionsPage, questionsAmount);
-      var recommentedListTask =  TryGetNewsRecommendedQuestions(userId, questionsPage, questionsAmount);
+      List<NewsAskedQuestionViewModel> askedList = new List<NewsAskedQuestionViewModel>();
+      List<NewsAnsweredQuestionViewModel> answeredList = new List<NewsAnsweredQuestionViewModel>();
+      List<NewsFavoriteQuestionViewModel> favoriteList = new List<NewsFavoriteQuestionViewModel>();
+      List<NewsCommentedQuestionViewModel> commentedList = new List<NewsCommentedQuestionViewModel>();
+      List<NewsRecommendedQuestionViewModel> recommentedList = new List<NewsRecommendedQuestionViewModel>();
 
-      await Task.WhenAll(askedListTask, answeredListTask, favoriteListTask, commentedListTask, recommentedListTask);
+      Parallel.Invoke(
+        () =>
+        {
+          using (var context = new TwoButtonsContext(_dbOptions))
+            askedList = GetNewsAskedQuestionsAsync(context, userId, questionsOffset, questionsCount);
+        },
+        () =>
+        {
+          using (var context = new TwoButtonsContext(_dbOptions))
+            answeredList = GetNewsAnsweredQuestionsAsync(context, userId, questionsOffset, questionsCount);
+        },
+        () =>
+        {
+          using (var context = new TwoButtonsContext(_dbOptions))
+            favoriteList = GetNewsFavoriteQuestionsAsync(context, userId, questionsOffset, questionsCount);
+        },
+        () =>
+        {
+          using (var context = new TwoButtonsContext(_dbOptions))
+            commentedList = GetNewsCommentedQuestions(context, userId, questionsOffset, questionsCount);
+        },
+        () =>
+        {
+          using (var context = new TwoButtonsContext(_dbOptions))
+            recommentedList = TryGetNewsRecommendedQuestions(context, userId, questionsOffset, questionsCount);
+        });
 
-      var askedList = askedListTask.Result;
-      var answeredList = answeredListTask.Result;
-      var favoriteList = favoriteListTask.Result;
-      var commentedList = commentedListTask.Result;
-      var recommentedList = recommentedListTask.Result;
 
-      var answeredListCount = newsViewModel.PageParams.Count / 100 * 16;
-      var favoriteListCount = newsViewModel.PageParams.Count / 100 * 16;
-      var commentedListCount = newsViewModel.PageParams.Count / 100 * 19;
-      var recommentedListCount = newsViewModel.PageParams.Count / 100 * 18;
-      var askedListCount = newsViewModel.PageParams.Count - answeredListCount - favoriteListCount -
-                           commentedListCount - recommentedListCount;
+      var newsList = new List<NewsQuestionBaseViewModel>(askedList.Count + answeredList.Count + commentedList.Count +
+                                                         favoriteList.Count + recommentedList.Count);
+
+      newsList.AddRange(askedList);
+      newsList.AddRange(answeredList);
+      newsList.AddRange(commentedList);
+      newsList.AddRange(favoriteList);
+      newsList.AddRange(recommentedList);
+
+      var mainList = newsList.OrderBy(x => x.UserId).ToList();
+
+      var removeList = new List<NewsQuestionBaseViewModel>();
+      var compare = new NewsQuestionBaseCompare();
+      for (var i = 0; i < mainList.Count-1; i++)
+      {
+        if (compare.GetHashCode(mainList[i]) == compare.GetHashCode(mainList[i + 1]) ||
+            compare.Equals(mainList[i], mainList[i + 1]))
+        {
+          removeList.Add(mainList[i].Priority > mainList[i + 1].Priority ? mainList[i + 1] : mainList[i]);
+        }
+      }
+
+      var resultList = mainList.Except(removeList).OrderByDescending(x => x.Priority).ToList();
+
+    
+      var answeredListCount = 0;
+      var favoriteListCount = 0;
+      var commentedListCount = 0;
+      var recommentedListCount = 0;
+      var askedListCount = 0;
+
+      var length = questionsCount > resultList.Count ? resultList.Count : questionsCount;
+
+      for (int i = 0; i < length; i++)
+      {
+        resultList[i].Position = i + questionsOffset;
+        switch (resultList[i].Type)
+        {
+          case NewsType.Answered:
+            answeredListCount++;
+            break;
+          case NewsType.Asked:
+            askedListCount++;
+            break;
+          case NewsType.Commented:
+            commentedListCount++;
+            break;
+          case NewsType.Favorite:
+            favoriteListCount++;
+            break;
+          case NewsType.Recommended:
+            recommentedListCount++;
+            break;
+        }
+      }
+      //if (answeredListCount == 0 && answeredList.Count > 0) answeredListCount = 1;
+      //if (favoriteListCount == 0 && favoriteList.Count > 0) answeredListCount = 1;
+      //if (commentedListCount == 0 && commentedList.Count > 0) answeredListCount = 1;
+      //if (recommentedListCount == 0 && recommentedList.Count > 0) answeredListCount=1;
+      //if (askedListCount == 0 && askedList.Count > 0) answeredListCount = 1;
+
+      //List<(int count, NewsType type)> counts = new List<(int, NewsType)>()
+      //{
+      //  (answeredListCount,NewsType.Answered),
+      //  (favoriteListCount,NewsType.Favorite),
+      //  (commentedListCount,NewsType.Commented),
+      //  (recommentedListCount,NewsType.Recommended),
+      //  (askedListCount,NewsType.Asked)
+      //};
+    
 
       var answeredListresultList = answeredList.Take(answeredListCount).ToList();
       var favoriteListresultList = favoriteList.Take(favoriteListCount).ToList();
       var commentedListresultList = commentedList.Take(commentedListCount).ToList();
       var recommentedListresultList = recommentedList.Take(recommentedListCount).ToList();
       var askedListresultList = askedList.Take(askedListCount).ToList();
-
-      var mainList = new List<NewsQuestionBaseViewModel>(answeredListCount + favoriteListCount + commentedListCount +
-                                                         recommentedListCount + askedListCount);
-
-      mainList.AddRange(answeredListresultList);
-      mainList.AddRange(favoriteListresultList);
-      mainList.AddRange(commentedListresultList);
-      mainList.AddRange(recommentedListresultList);
-      mainList.AddRange(askedListresultList);
-
-      var resultList = mainList.OrderByDescending(x => x.Priority).ToList();
-
-      for (var i = 0; i < resultList.Count; i++)
-        mainList[i].Position = i;
-
-      // await Task.WhenAll(new Task[] { askedList, answeredList, favoriteList, commentedList, recommentedList});
 
       var result = new NewsViewModel
       {
@@ -93,37 +169,37 @@ namespace QuestionsServer.Controllers
         NewsRecommendedQuestions = recommentedListresultList
       };
 
-      MonitoringServerHelper.UpdateUrlMonitoring(newsViewModel.UserId, UrlMonitoringType.GetsQuestionsNews);
+      MonitoringServerHelper.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
       return new OkResponseResult(result);
     }
 
-    private async Task<List<NewsAskedQuestionViewModel>> GetNewsAskedQuestionsAsync(int userId, int questionsPage = 1,
+    private List<NewsAskedQuestionViewModel> GetNewsAskedQuestionsAsync(TwoButtonsContext context, int userId, int questionsPage = 1,
       int questionsAmount = 10)
     {
-      var userAskedQuestions = await _mainDb.News.GetNewsAskedQuestions(userId, questionsPage, questionsAmount);
-        //return new List<NewsAskedQuestionViewModel>();
+      var userAskedQuestions = _mainDb.News.GetNewsAskedQuestions(context, userId, questionsPage, questionsAmount);
+      //return new List<NewsAskedQuestionViewModel>();
 
       var result = new List<NewsAskedQuestionViewModel>();
 
-      foreach (var x in userAskedQuestions)
+      foreach (var question in userAskedQuestions)
       {
-        GetTagsAndPhotos(userId, x.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
-        var resultQuestion = x.MapToNewsAskedQuestionsViewModel(tags, firstPhotos, secondPhotos);
+        GetTagsAndPhotos(context, userId, question.NewsAskedQuestionDb.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+        var resultQuestion = question.MapToNewsAskedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
       }
       return result;
     }
 
 
-    private async Task<List<NewsAnsweredQuestionViewModel>> GetNewsAnsweredQuestionsAsync(int userId, int questionsPage = 1,
+    private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestionsAsync(TwoButtonsContext context, int userId, int questionsPage = 1,
       int questionsAmount = 10)
     {
-     var userAnsweredQuestions = await _mainDb.News.GetNewsAnsweredQuestions(userId, questionsPage, questionsAmount);
+      var userAnsweredQuestions = _mainDb.News.GetNewsAnsweredQuestions(context, userId, questionsPage, questionsAmount);
       //return new List<NewsAnsweredQuestionViewModel>();
       var result = new List<NewsAnsweredQuestionViewModel>();
       foreach (var question in userAnsweredQuestions)
       {
-        GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+        GetTagsAndPhotos(context, userId, question.NewsAnsweredQuestionDb.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapToNewsAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
       }
@@ -131,17 +207,17 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private async Task<List<NewsFavoriteQuestionViewModel>> GetNewsFavoriteQuestionsAsync(int userId, int questionsPage = 1,
+    private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestionsAsync(TwoButtonsContext context, int userId, int questionsPage = 1,
       int questionsAmount = 10)
     {
-      var userFavoriteQuestions  = await _mainDb.News.GetNewsFavoriteQuestions(userId, questionsPage, questionsAmount);
-        //return new List<NewsFavoriteQuestionViewModel>();
+      var userFavoriteQuestions = _mainDb.News.GetNewsFavoriteQuestions(context, userId, questionsPage, questionsAmount);
+      //return new List<NewsFavoriteQuestionViewModel>();
 
       var result = new List<NewsFavoriteQuestionViewModel>();
 
       foreach (var question in userFavoriteQuestions)
       {
-        GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+        GetTagsAndPhotos(context, userId, question.NewsFavoriteQuestionDb.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapToNewsFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
       }
@@ -149,16 +225,16 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private async Task<List<NewsCommentedQuestionViewModel>> GetNewsCommentedQuestions(int userId, int questionsPage = 1,
+    private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(TwoButtonsContext context, int userId, int questionsPage = 1,
       int questionsAmount = 10)
     {
-      var userCommentedQuestions = await _mainDb.News.GetNewsCommentedQuestions(userId, questionsPage, questionsAmount);
-        //return new List<NewsCommentedQuestionViewModel>();
+      var userCommentedQuestions = _mainDb.News.GetNewsCommentedQuestions(context, userId, questionsPage, questionsAmount);
+      //return new List<NewsCommentedQuestionViewModel>();
 
       var result = new List<NewsCommentedQuestionViewModel>();
       foreach (var question in userCommentedQuestions)
       {
-        GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+        GetTagsAndPhotos(context, userId, question.NewsCommentedQuestionDb.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapToNewsCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
       }
@@ -166,25 +242,26 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private async  Task<List<NewsRecommendedQuestionViewModel>> TryGetNewsRecommendedQuestions(int userId, int questionsPage = 1,
+    private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(TwoButtonsContext context, int userId, int questionsPage = 1,
       int questionsAmount = 10)
     {
       var newsRecommendedQuestions =
-        await _mainDb.News.GetNewsRecommendedQuestions(userId, questionsPage, questionsAmount);
+         _mainDb.News.GetNewsRecommendedQuestions(context, userId, questionsPage, questionsAmount);
 
       var result = new List<NewsRecommendedQuestionViewModel>();
 
       foreach (var question in newsRecommendedQuestions)
       {
-        GetTagsAndPhotos(userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+        GetTagsAndPhotos(context, userId, question.NewsRecommendedQuestionDb.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
       }
-     
+
       return result;
     }
 
-    private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
+
+    private void GetTagsAndPhotos(TwoButtonsContext context, int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
       var photosAmount = 100;
@@ -193,22 +270,12 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      //var tagsTask = _mainDb.Tags.GetTags(questionId);
-      //var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
-      //  minAge.WhenBorned(), sex, city);
-      //var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
-      //  minAge.WhenBorned(), sex, city);
-      //Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
-      //tags = tagsTask.Result;
-      //firstPhotos = firstPhotosTask.Result;
-      //secondPhotos = secondPhotosTask.Result;
-
-
-      tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
-      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      secondPhotos =  _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
-        minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
+      tags = _mainDb.Tags.GetTags(context, questionId);
+      firstPhotos = _mainDb.Questions.GetPhotos(context, userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
+      secondPhotos = _mainDb.Questions.GetPhotos(context, userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+        minAge.WhenBorned(), sex, city);
     }
+
   }
 }

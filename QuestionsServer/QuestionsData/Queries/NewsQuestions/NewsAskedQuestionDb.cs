@@ -1,6 +1,6 @@
 ﻿namespace QuestionsData.Queries.NewsQuestions
 {
-    public class NewsAskedQuestionsDb : NewsQuestionBaseDb
+    public class NewsAskedQuestionDb : NewsQuestionBaseDb
   {
     }
 }

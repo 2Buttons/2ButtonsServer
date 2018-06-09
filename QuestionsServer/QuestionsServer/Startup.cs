@@ -31,6 +31,7 @@ namespace QuestionsServer
       });
       services.AddDbContext<TwoButtonsContext>(
         options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.Configure<ConnectionStrings>(options=>options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
       services.AddTransient<QuestionsUnitOfWork>();
 
       services.AddOptions();

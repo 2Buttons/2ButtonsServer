@@ -85,8 +85,8 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/statistic/users")]
     public async Task<IActionResult> GetQuestionFilteredStatisticsUsers([FromBody] GetQuestionFilteredStatistics statistics)
     {
-      var result = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.QuestionId, statistics.MinAge,
-        statistics.MaxAge, statistics.Sex, statistics.City);
+      var result = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.UserId, statistics.QuestionId, statistics.MinAge,
+        statistics.MaxAge, statistics.Sex, statistics.City, statistics.PageParams.Offset, statistics.PageParams.Count);
       return new OkResponseResult("Question Statistic -> Users", result);
     }
 

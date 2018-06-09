@@ -11,6 +11,7 @@ namespace QuestionsData
   {
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options) { }
 
+    
 
     public virtual DbSet<UserEntity> UserEntities { get; set; }
     public virtual DbSet<CityEntity> CityEntities { get; set; }
@@ -31,11 +32,11 @@ namespace QuestionsData
     public virtual DbQuery<UserFavoriteQuestionDb> UserFavoriteQuestionsDb { get; set; }
     
 
-    public virtual DbQuery<NewsAnsweredQuestionsDb> NewsAnsweredQuestionsDb { get; set; }
-    public virtual DbQuery<NewsAskedQuestionsDb> NewsAskedQuestionsDb { get; set; }
-    public virtual DbQuery<NewsCommentedQuestionsDb> NewsCommentedQuestionsDb { get; set; }
-    public virtual DbQuery<NewsFavoriteQuestionsDb> NewsFavoriteQuestionsDb { get; set; }
-    public virtual DbQuery<NewsRecommendedQuestionDb> NewsRecommendedQuestionDb { get; set; }
+    public virtual DbQuery<NewsAnsweredQuestionDb> NewsAnsweredQuestionsDb { get; set; }
+    public virtual DbQuery<NewsAskedQuestionDb> NewsAskedQuestionsDb { get; set; }
+    public virtual DbQuery<NewsCommentedQuestionDb> NewsCommentedQuestionsDb { get; set; }
+    public virtual DbQuery<NewsFavoriteQuestionDb> NewsFavoriteQuestionsDb { get; set; }
+    public virtual DbQuery<NewsRecommendedQuestionDb> NewsRecommendedQuestionsDb { get; set; }
 
     public virtual DbQuery<AskedQuestionDb> AskedQuestionsDb { get; set; }
     public virtual DbQuery<SavedQuestionDb> SavedQuestionsDb { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using CommonLibraries;
 
@@ -27,6 +28,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
 
     public List<PhotoViewModel> FirstPhotos { get; set; } = new List<PhotoViewModel>();
     public List<PhotoViewModel> SecondPhotos { get; set; } = new List<PhotoViewModel>();
+
+
   }
 
   public class Option
@@ -34,7 +37,9 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public int Voters { get; set; }
     public string Text { get; set; }
 
-    public Option() { }
+    public Option()
+    {
+    }
 
     public Option(int voters, string text)
     {
