@@ -25,14 +25,11 @@ namespace MediaServer
 
       Configuration = builder.Build();
 
-      if (!Command.WithName("host").HasOption("-port", "-p").TryParse(args, out var command))
-      {
-        if (command is HostCommand hostCommand && !hostCommand.Port.IsNullOrEmpty()) Port = hostCommand.Port;
-      }
-      else
-      {
-        Port = Configuration["WebHost:Port"];
-      }
+      Port = Configuration["WebHost:Port"];
+
+      if (Command.WithName("host").HasOption("-port", "-p").TryParse(args, out var command))
+        if (command is HostCommand hostCommand && !hostCommand.Port.IsNullOrEmpty())
+          Port = hostCommand.Port;
       BuildWebHost(args).Run();
     }
 

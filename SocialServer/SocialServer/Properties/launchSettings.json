@@ -18,6 +18,7 @@
     },
     "SocialServer": {
       "commandName": "Project",
+      "commandLineArgs": "host -port:7000",
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {

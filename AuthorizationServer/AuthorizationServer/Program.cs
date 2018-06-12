@@ -7,6 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace AuthorizationServer
 {
@@ -24,14 +26,11 @@ namespace AuthorizationServer
 
       Configuration = builder.Build();
 
-      if (!Command.WithName("host").HasOption("-port", "-p").TryParse(args, out var command))
-      {
-        if (command is HostCommand hostCommand && !hostCommand.Port.IsNullOrEmpty()) Port = hostCommand.Port;
-      }
-      else
-      {
-        Port = Configuration["WebHost:Port"];
-      }
+      Port = Configuration["WebHost:Port"];
+
+      if (Command.WithName("host").HasOption("-port", "-p").TryParse(args, out var command))
+        if (command is HostCommand hostCommand && !hostCommand.Port.IsNullOrEmpty())
+          Port = hostCommand.Port;
       BuildWebHost(args).Run();
     }
 
@@ -51,28 +50,5 @@ namespace AuthorizationServer
                 "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Application} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");
           }).Build();
     }
-  }
-
-  {
-  public static string Scheme { get; private set; }
-  public static string IpAddress { get; private set; }
-  public static string Port { get; private set; }
-  public static string Url => Scheme + IpAddress + ":" + Port;
-
-  public static void Main(string[] args)
-  {
-    var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory).AddJsonFile("appsettings.json");
-
-    var configuration = builder.Build();
-    var webHost = configuration.GetSection("WebHost");
-    Scheme = webHost[nameof(Scheme)];
-    IpAddress = webHost[nameof(IpAddress)];
-    Port = webHost[nameof(Port)];
-
-    BuildWebHost(args).Run();
-  }
-
-  public static IWebHost BuildWebHost(string[] args) => WebHost.CreateDefaultBuilder(args).UseUrls(Url)
-    .UseStartup<Startup>().Build();
   }
 }
