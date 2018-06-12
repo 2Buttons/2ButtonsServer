@@ -12,16 +12,14 @@ namespace CommonLibraries.Exceptions
   public class ExceptionHandlingMiddleware
   {
     private readonly RequestDelegate _next;
-    //private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
     public ExceptionHandlingMiddleware(RequestDelegate next)
     {
       _next = next;
-      //  _logger = logger;
     }
 
     public async Task Invoke(HttpContext context, IHostingEnvironment env,
-      ILoggerFactory loggerFactory /* other dependencies */)
+      ILogger<ExceptionHandlingMiddleware> logger)
     {
       try
       {
@@ -29,13 +27,13 @@ namespace CommonLibraries.Exceptions
       }
       catch (Exception ex)
       {
-        // _logger.LogError(EventIds.GlobalException, ex, ex.Message);
-        await HandleExceptionAsync(context, loggerFactory, ex);
+        logger.LogError(ex,ex.Message,"");
+        await HandleExceptionAsync(context, ex);
         throw;
       }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, ILoggerFactory loggerFactory, Exception exception)
+    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
       if(context.Response.StatusCode == 200) context.Response.StatusCode = 500;
 

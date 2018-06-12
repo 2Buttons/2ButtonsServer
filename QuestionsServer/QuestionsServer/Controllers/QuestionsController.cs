@@ -9,6 +9,7 @@ using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QuestionsData;
 using QuestionsData.Entities;
 using QuestionsData.Queries;
@@ -24,10 +25,12 @@ namespace QuestionsServer.Controllers
   public class QuestionsController : Controller //Controller for a Question
   {
     private readonly QuestionsUnitOfWork _mainDb;
+    private readonly ILogger<QuestionsController> _logger;
 
-    public QuestionsController(QuestionsUnitOfWork mainDb)
+    public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger)
     {
       _mainDb = mainDb;
+      _logger = logger;
     }
 
     [HttpGet("server")]

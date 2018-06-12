@@ -1,5 +1,8 @@
-﻿using CommonLibraries;
+﻿using System;
+using System.IO;
+using CommonLibraries;
 using CommonLibraries.Exceptions;
+using CommonLibraries.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +34,7 @@ namespace QuestionsServer
       });
       services.AddDbContext<TwoButtonsContext>(
         options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.Configure<ConnectionStrings>(options=>options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
+      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
       services.AddTransient<QuestionsUnitOfWork>();
 
       services.AddOptions();
@@ -63,6 +66,7 @@ namespace QuestionsServer
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
+
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
       app.UseExceptionHandling();
