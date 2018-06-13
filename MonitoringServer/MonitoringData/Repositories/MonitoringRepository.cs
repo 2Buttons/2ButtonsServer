@@ -25,6 +25,13 @@ namespace MonitoringData.Repositories
       return await _db.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> AddIfNotExistUserMonitoring(UrlMonitoringDb userMonitoring)
+    {
+      if (await _db.UrlMonitoringsDb.AnyAsync(x => x.UserId == userMonitoring.UserId)) return true;
+      _db.UrlMonitoringsDb.Add(userMonitoring);
+      return await _db.SaveChangesAsync() > 0;
+    }
+
 
     public async Task<bool> UpdateUserMonitoring(int userId, UrlMonitoringType monitoringType)
     {

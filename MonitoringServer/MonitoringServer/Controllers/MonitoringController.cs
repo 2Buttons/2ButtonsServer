@@ -27,16 +27,21 @@ namespace MonitoringServer.Controllers
       var monitoring = new UrlMonitoringDb {UserId = urlMonitoring.UserId};
       var result = await _db.Monitorings.AddUserMonitoring(monitoring);
       return result
-        ? new ResponseResult((int) HttpStatusCode.InternalServerError, "Wa san not add monitoring")
+        ? new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add monitoring")
         : new OkResponseResult(new {IsAdded = result});
     }
 
     [HttpPost("update")]
     public async Task<IActionResult> UpdateMonitoring([FromBody] UpdateUrlMonitoring urlMonitoring)
     {
+      if (urlMonitoring.UserId == 0)
+      {
+        if (!await _db.Monitorings.AddIfNotExistUserMonitoring(new UrlMonitoringDb {UserId = urlMonitoring.UserId}))
+          return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add monitoring");
+      }
       var result = await _db.Monitorings.UpdateUserMonitoring(urlMonitoring.UserId, urlMonitoring.UrlMonitoringType);
       return result
-        ? new ResponseResult((int) HttpStatusCode.InternalServerError, "Wa san not add monitoring")
+        ? new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add monitoring")
         : new OkResponseResult(new {IsAdded = result});
     }
   }
