@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NotificationsData.Main.Entities;
+using NotificationsData.Main.Queries;
 
 namespace NotificationsData.Main.Repositories
 {

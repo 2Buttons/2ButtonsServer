@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 
-namespace NotificationServer.WebSockets.WebSocketsExceptions
+namespace NotificationsServer.WebSockets.WebSocketsExceptions
 {
   public static class ApplicationBuilderWebScoketExstensions
   {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NotificationsData;
 
-namespace NotificationServer.WebSockets
+namespace NotificationsServer.WebSockets
 {
   public class WebSocketsController
   {

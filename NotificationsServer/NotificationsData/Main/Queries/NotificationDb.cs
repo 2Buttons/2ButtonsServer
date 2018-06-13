@@ -1,8 +1,7 @@
-﻿using CommonLibraries;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using CommonLibraries;
 
-namespace NotificationsData.Main.Entities
+namespace NotificationsData.Main.Queries
 {
     public class NotificationDb
     {

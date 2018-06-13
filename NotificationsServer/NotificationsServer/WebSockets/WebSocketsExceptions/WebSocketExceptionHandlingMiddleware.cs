@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace NotificationServer.WebSockets.WebSocketsExceptions
+namespace NotificationsServer.WebSockets.WebSocketsExceptions
 {
   public class WebSocketExceptionHandlingMiddleware
   {

@@ -1,8 +1,6 @@
 ﻿using System;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
-using CommonLibraries.SocialNetworks.Facebook;
-using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,11 +12,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NotificationsData;
 using NotificationsData.Main;
-using NotificationServer.Services;
-using NotificationServer.WebSockets;
-using NotificationServer.WebSockets.WebSocketsExceptions;
+using NotificationsServer.Services;
+using NotificationsServer.WebSockets;
+using NotificationsServer.WebSockets.WebSocketsExceptions;
 
-namespace NotificationServer
+namespace NotificationsServer
 {
   public class Startup
   {

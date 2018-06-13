@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using NotificationServer.ViewModels.Input;
+using NotificationsServer.ViewModels.Input;
 
-namespace NotificationServer.Services
+namespace NotificationsServer.Services
 {
   public interface INotificationsMessageService
   {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 
-namespace NotificationServer
+namespace NotificationsServer
 {
   public class Program
   {

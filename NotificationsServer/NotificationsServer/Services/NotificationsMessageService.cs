@@ -2,11 +2,11 @@
 using CommonLibraries;
 using CommonLibraries.Helpers;
 using NotificationsData;
-using NotificationServer.Models;
-using NotificationServer.ViewModels.Input;
-using NotificationServer.WebSockets;
+using NotificationsServer.Models;
+using NotificationsServer.ViewModels.Input;
+using NotificationsServer.WebSockets;
 
-namespace NotificationServer.Services
+namespace NotificationsServer.Services
 {
   public class NotificationsMessageService : INotificationsMessageService
   {

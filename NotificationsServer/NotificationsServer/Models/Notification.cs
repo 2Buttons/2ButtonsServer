@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonLibraries;
 
-namespace NotificationServer.Models
+namespace NotificationsServer.Models
 {
   public class Notification
   {

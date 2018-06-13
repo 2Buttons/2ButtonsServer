@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NotificationsData.Main.Entities;
-using NotificationServer.Models;
+using NotificationsData.Main.Queries;
+using NotificationsServer.Models;
 
-namespace NotificationServer.ViewModels
+namespace NotificationsServer.ViewModels
 {
   public static class MappingNotifications
   {

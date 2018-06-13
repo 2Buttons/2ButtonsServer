@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NotificationServer.WebSockets.WebSocketsExceptions.ApiExceptions
+namespace NotificationsServer.WebSockets.WebSocketsExceptions.ApiExceptions
 {
   public class NotFoundException : Exception
   {

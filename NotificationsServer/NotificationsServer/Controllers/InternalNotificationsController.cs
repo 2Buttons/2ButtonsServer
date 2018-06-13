@@ -2,11 +2,10 @@
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using NotificationsData;
-using NotificationServer.Services;
-using NotificationServer.ViewModels.Input;
+using NotificationsServer.Services;
+using NotificationsServer.ViewModels.Input;
 
-namespace NotificationServer.Controllers
+namespace NotificationsServer.Controllers
 {
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]

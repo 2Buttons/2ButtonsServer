@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 
-namespace NotificationServer.WebSockets
+namespace NotificationsServer.WebSockets
 {
   public class WebSocketManagerMiddleware
   {

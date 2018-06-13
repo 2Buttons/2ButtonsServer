@@ -6,12 +6,10 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonLibraries;
-using CommonLibraries.Helpers;
 using Newtonsoft.Json;
-using NotificationServer.Models;
+using NotificationsServer.Models;
 
-namespace NotificationServer.WebSockets
+namespace NotificationsServer.WebSockets
 {
   public class NotificationManager
   {

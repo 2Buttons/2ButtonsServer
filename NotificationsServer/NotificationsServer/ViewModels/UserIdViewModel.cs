@@ -1,6 +1,6 @@
 ﻿using CommonLibraries.Validation;
 
-namespace NotificationServer.ViewModels
+namespace NotificationsServer.ViewModels
 {
   public class UserIdViewModel
   {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CommonLibraries.Validation;
 
-namespace NotificationServer.ViewModels.Input
+namespace NotificationsServer.ViewModels.Input
 {
   public class RecommendedQuestionNotification
   {

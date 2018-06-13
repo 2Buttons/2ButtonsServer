@@ -1,6 +1,6 @@
 ﻿using System.Net.WebSockets;
 
-namespace NotificationServer.WebSockets
+namespace NotificationsServer.WebSockets
 {
   public class SocketPair
   {

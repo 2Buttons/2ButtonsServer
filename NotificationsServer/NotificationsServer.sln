@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationServer", "NotificationsServer\NotificationServer.csproj", "{13C5CAD6-B193-4915-AD28-B05BA9BB99C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationsServer", "NotificationsServer\NotificationsServer.csproj", "{13C5CAD6-B193-4915-AD28-B05BA9BB99C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibraries", "..\CommonLibraries\CommonLibraries\CommonLibraries.csproj", "{04218D7C-32AE-40DF-974A-90FCE10AFE33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsData", "NotificationsData\NotificationsData.csproj", "{A551900C-6C3C-4133-B2D8-1D0DB4AE8CA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationsData", "NotificationsData\NotificationsData.csproj", "{A551900C-6C3C-4133-B2D8-1D0DB4AE8CA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
