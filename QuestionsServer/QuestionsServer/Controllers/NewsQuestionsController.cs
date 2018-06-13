@@ -24,7 +24,7 @@ namespace QuestionsServer.Controllers
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   //[Route("api/[controller]")]
-  [Route("news")]
+  [Route("questions")]
   public class NewsQuestionsController : Controller //Don't receive deleted
   {
     private readonly QuestionsUnitOfWork _mainDb;
@@ -37,7 +37,7 @@ namespace QuestionsServer.Controllers
     }
 
 
-    [HttpPost]
+    [HttpPost("news")]
     public async Task<IActionResult> GetNews([FromBody] GetNewsViewModel newsVm)
     {
 
