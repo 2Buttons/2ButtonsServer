@@ -6,7 +6,7 @@ using QuestionsData.Queries;
 
 namespace QuestionsServer.Extensions
 {
-  public static class QuestionBaseDbExtentions
+  public static class SortTypeExtentions
   {
     public static Expression<Func<T, object>> ToPredicate<T>(this SortType type) where T: QuestionBaseDb, new()
     {

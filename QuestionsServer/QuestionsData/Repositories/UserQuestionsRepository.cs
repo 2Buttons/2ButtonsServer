@@ -32,7 +32,7 @@ namespace QuestionsData.Repositories
 
       return await _db.UserAskedQuestionsDb.AsNoTracking()
                .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId}, {isAnonimus})")
-               .OrderBy(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<UserAskedQuestionDb>();
+               .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<UserAskedQuestionDb>();
     }
 
     public async Task<List<UserAnsweredQuestionDb>> GetUserAnsweredQuestions(int userId, int pageUserId, int offset,
@@ -42,7 +42,7 @@ namespace QuestionsData.Repositories
 
       return await _db.UserAnsweredQuestionsDb.AsNoTracking()
                .FromSql($"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {isAnonimus})")
-               .OrderBy(x => x.QuestionAddDate).Skip(offset).Take(count).ToListAsync() ??
+               .OrderByDescending(x => x.QuestionAddDate).Skip(offset).Take(count).ToListAsync() ??
              new List<UserAnsweredQuestionDb>();
     }
 
@@ -53,14 +53,14 @@ namespace QuestionsData.Repositories
 
       return await _db.UserFavoriteQuestionsDb.AsNoTracking()
                .FromSql($"select * from dbo.getUserFavoriteQuestions({userId}, {pageUserId}, {isAnonimus})")
-               .OrderBy(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<UserFavoriteQuestionDb>();
+               .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<UserFavoriteQuestionDb>();
     }
 
     public async Task<List<UserCommentedQuestionDb>> GetUserCommentedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<UserCommentedQuestionDb, object>> predicate)
     {
       return await _db.UserCommentedQuestionsDb.AsNoTracking()
-               .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId})").OrderBy(predicate)
+               .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId})").OrderByDescending(predicate)
                .Skip(offset).Take(count).ToListAsync() ?? new List<UserCommentedQuestionDb>();
     }
 
@@ -79,14 +79,14 @@ namespace QuestionsData.Repositories
 
       return await _db.AskedQuestionsDb.AsNoTracking()
                .FromSql($"select * from dbo.getUserAskedQuestions({userId}, {pageUserId},   {isAnonimus})")
-               .OrderBy(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<AskedQuestionDb>();
+               .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<AskedQuestionDb>();
     }
 
     public async Task<List<RecommendedQuestionDb>> GetRecommendedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<RecommendedQuestionDb, object>> predicate)
     {
       return await _db.RecommendedQuestionsDb.AsNoTracking()
-               .FromSql($"select * from dbo.getUserRecommendedQuestions({userId})").OrderBy(predicate).Skip(offset)
+               .FromSql($"select * from dbo.getUserRecommendedQuestions({userId})").OrderByDescending(predicate).Skip(offset)
                .Take(count).ToListAsync() ?? new List<RecommendedQuestionDb>();
     }
 
@@ -95,7 +95,7 @@ namespace QuestionsData.Repositories
     {
       return await _db.ChosenQuestionsDb.AsNoTracking()
                .FromSql($"select * from dbo.getNotAnsweredQuestions({userId})")
-               .OrderBy(x=>((5 * x.Likes - 3 * x.Dislikes) > 10 ? (5 * x.Likes - 3 * x.Dislikes) : (15+5 * x.Likes - 3 * x.Dislikes)) - (x.FirstAnswers + x.SecondAnswers)).Skip(offset)
+               .OrderByDescending(x=>((5 * x.Likes - 3 * x.Dislikes) > 10 ? (5 * x.Likes - 3 * x.Dislikes) : (15+5 * x.Likes - 3 * x.Dislikes)) - (x.FirstAnswers + x.SecondAnswers)).Skip(offset)
                .Take(count).ToListAsync() ?? new List<ChosenQuestionDb>();
     }
 
@@ -103,7 +103,7 @@ namespace QuestionsData.Repositories
       Expression<Func<LikedQuestionDb, object>> predicate)
     {
       return await _db.LikedQuestionsDb.AsNoTracking().FromSql($"select * from dbo.getUserLikedQuestions({userId})")
-               .OrderBy(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<LikedQuestionDb>();
+               .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<LikedQuestionDb>();
     }
 
     public async Task<List<SavedQuestionDb>> GetSavedQuestions(int userId, int offset, int count,
@@ -113,7 +113,7 @@ namespace QuestionsData.Repositories
 
       return await _db.SavedQuestionsDb.AsNoTracking()
                .FromSql($"select * from dbo.getUserFavoriteQuestions({userId}, {userId}, {isAnonimus})")
-               .OrderBy(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<SavedQuestionDb>();
+               .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync() ?? new List<SavedQuestionDb>();
     }
   }
 }
