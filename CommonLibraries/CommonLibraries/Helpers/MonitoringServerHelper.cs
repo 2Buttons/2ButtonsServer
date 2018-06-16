@@ -10,18 +10,18 @@ namespace CommonLibraries.Helpers
     private const string AddMonitoringServerUrl = "http://localhost:17080/monitoring/add";
     private const string UpdateMonitoringServerUrl = "http://localhost:17080/monitoring/update";
 
-    public static async Task AddUrlMonitoring(int userId)
+    public static Task AddUrlMonitoring(int userId)
     {
       var body = JsonConvert.SerializeObject(new {userId});
 
-      await MonitoringServerConnection(AddMonitoringServerUrl, body);
+      return Task.Factory.StartNew(() => MonitoringServerConnection(AddMonitoringServerUrl, body));
     }
 
-    public static async Task UpdateUrlMonitoring(int userId, UrlMonitoringType monitoringType)
+    public static Task UpdateUrlMonitoring(int userId, UrlMonitoringType monitoringType)
     {
       var body = JsonConvert.SerializeObject(new { userId, UrlMonitoringType = monitoringType });
 
-      await MonitoringServerConnection(UpdateMonitoringServerUrl, body);
+      return Task.Factory.StartNew(()=> MonitoringServerConnection(UpdateMonitoringServerUrl, body));
     }
 
     private static async Task<object> MonitoringServerConnection(string url, string body)

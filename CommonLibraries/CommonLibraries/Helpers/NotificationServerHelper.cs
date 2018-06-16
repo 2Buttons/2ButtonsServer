@@ -13,7 +13,7 @@ namespace CommonLibraries.Helpers
     private const string CommentNotificationUrl = "http://localhost:16080/notifications/internal/comment";
     private const string RecommendQuestionNotificationUrl = "http://localhost:16080/notifications/internal/recommendQuestion";
 
-    public static async Task SendFollowNotification(int notifierId, int followToId, DateTime followedDate)
+    public static Task SendFollowNotification(int notifierId, int followToId, DateTime followedDate)
     {
       var body = JsonConvert.SerializeObject(new
       {
@@ -22,10 +22,10 @@ namespace CommonLibraries.Helpers
         FollowedDate = followedDate
       });
 
-      await NotificationsServerConnection(FollowNotificationUrl, body);
+      return Task.Factory.StartNew(()=>NotificationsServerConnection(FollowNotificationUrl, body));
     }
 
-    public static async Task SendCommentNotification(int notifierId, int questionId, int commentId,
+    public static  Task SendCommentNotification(int notifierId, int questionId, int commentId,
       DateTime commentedDate)
     {
       var body = JsonConvert.SerializeObject(new
@@ -36,10 +36,10 @@ namespace CommonLibraries.Helpers
         CommentedDate = commentedDate
       });
 
-      await NotificationsServerConnection(CommentNotificationUrl, body);
+      return Task.Factory.StartNew(() => NotificationsServerConnection(CommentNotificationUrl, body));
     }
 
-    public static async Task SendRecommendQuestionNotification(int notifierId, int userToId, int questionId,
+    public static Task SendRecommendQuestionNotification(int notifierId, int userToId, int questionId,
       DateTime recommendedDate)
     {
       var body = JsonConvert.SerializeObject(new
@@ -50,7 +50,7 @@ namespace CommonLibraries.Helpers
         RecommendedDate = recommendedDate
       });
 
-      await NotificationsServerConnection(RecommendQuestionNotificationUrl, body);
+      return Task.Factory.StartNew(() => NotificationsServerConnection(RecommendQuestionNotificationUrl, body));
     }
 
     private static async Task<object> NotificationsServerConnection(string url, string body)
