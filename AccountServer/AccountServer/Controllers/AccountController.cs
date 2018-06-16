@@ -30,8 +30,14 @@ namespace AccountServer.Controllers
       _account = accountService;
     }
 
+    [HttpGet("redirect")]
+    public IActionResult Redirect()
+    {
+      return LocalRedirectPermanent("http://localhost:6002/index.html");
+    }
+
     [HttpPost("server/{userId:int}")]
-    public IActionResult ServerName(int userId)
+    public IActionResult ServerName()
     {
       return new OkResponseResult((object)"Account");
     }
@@ -54,7 +60,7 @@ namespace AccountServer.Controllers
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
-      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
+      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value ?? "0");
       var result = await _account.GetUserAsync(userId, userPage.UserPageId);
 
       return new OkResponseResult(result);
@@ -75,7 +81,7 @@ namespace AccountServer.Controllers
     public async Task<IActionResult> AddSocial ([FromBody] AddSocialViewModel socialAuth)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      if (socialAuth.State != "123456")
+      if (socialAuth.State != "S5ocialCode!129_Code")
       {
         ModelState.AddModelError("State", "You are hacker! Your state in incorret");
         return new BadResponseResult(ModelState);
@@ -107,5 +113,6 @@ namespace AccountServer.Controllers
 
       return new OkResponseResult(result);
     }
+
   }
 }

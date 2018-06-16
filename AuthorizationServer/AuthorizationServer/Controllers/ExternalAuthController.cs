@@ -28,7 +28,7 @@ namespace AuthorizationServer.Controllers
     public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginViewModel auth)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      if (auth.State != "123456")
+      if (auth.State != "S5ocialCode!129_Code")
       {
         ModelState.AddModelError("State", "You are hacker! Your state is incorret.");
         return new BadResponseResult(ModelState);

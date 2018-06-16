@@ -12,15 +12,19 @@ namespace AccountServer.Infrastructure.Services
 
       public void SendMessage()
       {
-        SmtpClient client = new SmtpClient("mysmtpserver");
+        SmtpClient client = new SmtpClient("smtp.yandex.ru", 25);
         client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential("username", "password");
+        client.Credentials = new NetworkCredential("misha.tsoi2018@yandex.ru", "misha.tsoi20181234567890");
+
+
+
+
 
         MailMessage mailMessage = new MailMessage();
-        mailMessage.From = new MailAddress("whoever@me.com");
-        mailMessage.To.Add("receiver@me.com");
-        mailMessage.Body = "body";
-        mailMessage.Subject = "subject";
+        mailMessage.From = new MailAddress("misha.tsoi2018@yandex.ru", "Misha Tsoy");
+        mailMessage.To.Add("Yura290610@yandex.ru");
+        mailMessage.Body = "Hello my first email)";
+        mailMessage.Subject = "Просто тема";
         client.Send(mailMessage);
     }
     }

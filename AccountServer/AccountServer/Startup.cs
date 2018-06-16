@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AccountData;
 using AccountData.Account;
 using AccountData.Main;
+using AccountServer.Infrastructure.EmailJwt;
 using AccountServer.Infrastructure.Services;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
@@ -63,6 +64,20 @@ namespace AccountServer
         options.Issuer = issuer;
         options.Audience = audience;
         options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
+      });
+
+      var emailJwtAppSettingOptions = Configuration.GetSection(nameof(EmailJwtSettings));
+      var emailSecretKey = emailJwtAppSettingOptions["SecretKey"];
+      var emailIssuer = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Issuer)];
+      var emailAudience = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Audience)];
+
+      services.Configure<EmailJwtSettings>(options =>
+      {
+        options.Issuer = emailIssuer;
+        options.Audience = emailAudience;
+        options.SymmetricSecurityKey = JwtSettings.CreateSecurityKey(emailSecretKey);
+        options.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(emailSecretKey), SecurityAlgorithms.HmacSha256);
       });
 
       services.AddAuthentication(options =>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AccountData;
 using AccountData.Account.Entities;
 using AccountData.DTO;
+using AccountServer.Infrastructure.EmailJwt;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
@@ -21,12 +22,14 @@ namespace AccountServer.Infrastructure.Services
     private readonly AccountDataUnitOfWork _db;
     private readonly IFbService _fbService;
     private readonly IVkService _vkService;
+    private readonly IEmailJwtService _emailJwt;
 
-    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService, IFbService fbService)
+    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService, IFbService fbService, IEmailJwtService emailJwt)
     {
       _db = accountDb;
       _vkService = vkService;
       _fbService = fbService;
+      _emailJwt = emailJwt;
     }
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
@@ -129,6 +132,13 @@ namespace AccountServer.Infrastructure.Services
       var url = await MediaServerHelper.UploadAvatarFile(avatarSize, file);
       if (url.IsNullOrEmpty()) return (false, null);
       return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
+    }
+
+    public async Task<bool> ConfirmEmail(int uderId, string token)
+    {
+      var decodedToken = _emailJwt.DecodeToken(token);
+      if (decodedToken == null) return false;
+      decodedToken.
     }
 
     public void Dispose()
