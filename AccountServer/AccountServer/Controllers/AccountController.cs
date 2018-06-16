@@ -30,12 +30,6 @@ namespace AccountServer.Controllers
       _account = accountService;
     }
 
-    [HttpGet("redirect")]
-    public IActionResult Redirect()
-    {
-      return LocalRedirectPermanent("http://localhost:6002/index.html");
-    }
-
     [HttpPost("server/{userId:int}")]
     public IActionResult ServerName()
     {
@@ -78,7 +72,7 @@ namespace AccountServer.Controllers
 
 
     [HttpPost("addSocial")]
-    public async Task<IActionResult> AddSocial ([FromBody] AddSocialViewModel socialAuth)
+    public async Task<IActionResult> AddSocial([FromBody] AddSocialViewModel socialAuth)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (socialAuth.State != "S5ocialCode!129_Code")
@@ -97,11 +91,10 @@ namespace AccountServer.Controllers
         return new BadResponseResult(ModelState);
       }
 
-      if (await _account.AddUserSocialAsync(socialAuth.UserId, socialAuth.Code,socialAuth.SocialType))
+      if (await _account.AddUserSocialAsync(socialAuth.UserId, socialAuth.Code, socialAuth.SocialType))
         return new OkResponseResult();
       return new ResponseResult((int)HttpStatusCode.NotModified);
     }
-
 
     [HttpPost("get")]
     public async Task<IActionResult> GetUserInfo([FromBody] UserPageIdViewModel userPage)
@@ -113,6 +106,5 @@ namespace AccountServer.Controllers
 
       return new OkResponseResult(result);
     }
-
   }
 }

@@ -3,8 +3,8 @@ using AuthorizationData;
 using AuthorizationData.Account;
 using AuthorizationData.Main;
 using AuthorizationServer.Extensions;
+using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Infrastructure.Services;
-using AuthorizationServer.Services;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
 using CommonLibraries.SocialNetworks.Facebook;
@@ -64,6 +64,20 @@ namespace AuthorizationServer
         options.Audience = audience;
         options.SigningCredentials = new SigningCredentials(key,
           SecurityAlgorithms.HmacSha256);
+      });
+
+      var emailJwtAppSettingOptions = Configuration.GetSection(nameof(EmailJwtSettings));
+      var emailSecretKey = emailJwtAppSettingOptions["SecretKey"];
+      var emailIssuer = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Issuer)];
+      var emailAudience = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Audience)];
+
+      services.Configure<EmailJwtSettings>(options =>
+      {
+        options.Issuer = emailIssuer;
+        options.Audience = emailAudience;
+        options.SymmetricSecurityKey = JwtSettings.CreateSecurityKey(emailSecretKey);
+        options.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(emailSecretKey), SecurityAlgorithms.HmacSha256);
       });
 
       services.AddSingleton<IJwtService, JwtService>();

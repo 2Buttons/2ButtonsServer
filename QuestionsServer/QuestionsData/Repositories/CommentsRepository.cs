@@ -25,7 +25,7 @@ namespace QuestionsData.Repositories
 
       var commentedId = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
 
-       _db.Database.ExecuteSqlCommand(
+       await _db.Database.ExecuteSqlCommandAsync(
         $"addComment {userId}, {questionId}, {comment}, {commentedTime}, {previousCommentId}, {commentedId} OUT");
       return (int) commentedId.Value;
     }

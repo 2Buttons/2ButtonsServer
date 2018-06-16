@@ -2,7 +2,7 @@
 using AuthorizationServer.Models;
 using CommonLibraries;
 
-namespace AuthorizationServer.Services
+namespace AuthorizationServer.Infrastructure.Jwt
 {
   public interface IJwtService
   {

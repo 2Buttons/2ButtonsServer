@@ -8,7 +8,7 @@ using CommonLibraries;
 using CommonLibraries.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace AuthorizationServer.Services
+namespace AuthorizationServer.Infrastructure.Jwt
 {
   public class JwtService : IJwtService
   {

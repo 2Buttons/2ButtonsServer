@@ -9,7 +9,6 @@ using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Main.Entities;
 using AuthorizationServer.Infrastructure.Services;
-using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
@@ -77,6 +76,17 @@ namespace AuthorizationServer.Controllers
           ModelState.AddModelError("GrantType", "Sorry, we can not find such grant type.");
           return new BadResponseResult(ModelState);
       }
+    }
+
+    [HttpGet("confirm/email")]
+    public async Task<IActionResult> ConfirmEmail(int userId, string token)
+    {
+      if (userId == 0 || token.IsNullOrEmpty())
+        return RedirectPermanent("http://localhost:6001/confirmedFail");
+
+      if (!await _internalAuthService.ConfirmEmail(userId, token))
+        return RedirectPermanent("http://localhost:6001/confirmedFail");
+      return RedirectPermanent("http://localhost:6001/confirmedSuccess");
     }
   }
 }

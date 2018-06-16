@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CommonLibraries;
 
-namespace AccountServer.Infrastructure.EmailJwt
+namespace AuthorizationServer.Infrastructure.EmailJwt
 {
   public interface IEmailJwtService
   {

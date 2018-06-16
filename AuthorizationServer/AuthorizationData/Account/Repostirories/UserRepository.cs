@@ -34,6 +34,15 @@ namespace AuthorizationData.Account.Repostirories
       return await _contextAccount.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> ConfirmEmail(int userId)
+    {
+      var user = await _contextAccount.UsersDb.FindAsync(userId);
+      if (user == null) return false;
+      user.EmailConfirmed = true;
+      _contextAccount.Entry(user).State = EntityState.Modified;
+      return await _contextAccount.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> AddUserAsync(UserDb user)
     {
       await _contextAccount.UsersDb.AddAsync(user);

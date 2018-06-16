@@ -9,8 +9,9 @@ using AuthorizationData;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Main.Entities;
+using AuthorizationServer.Infrastructure.EmailJwt;
+using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Models;
-using AuthorizationServer.Services;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
@@ -25,11 +26,12 @@ namespace AuthorizationServer.Infrastructure.Services
   {
     private readonly AuthorizationUnitOfWork _db;
     private readonly IJwtService _jwtService;
-
-    public InternalAuthService(IJwtService jwtService, AuthorizationUnitOfWork db)
+    private readonly IEmailJwtService _emailJwtService;
+    public InternalAuthService(IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db)
     {
       _db = db;
       _jwtService = jwtService;
+      _emailJwtService = emailJwtService;
     }
 
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
@@ -117,6 +119,20 @@ namespace AuthorizationServer.Infrastructure.Services
 
       user.RoleType = await _db.Users.GetUserRoleAsync(user.UserId);
       return user;
+    }
+
+    public async Task<bool> ConfirmEmail(int userId, string token)
+    {
+      if (!_emailJwtService.IsTokenValid(token)) return false;
+      var decodedToken = _emailJwtService.DecodeCode(token);
+
+      var userTokenId = int.Parse(decodedToken.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value ?? "0");
+      return userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
+    }
+
+    public async Task<string> GetConfirmedEmailToken(int userId, RoleType role)
+    {
+      return await _emailJwtService.GenerateJwtAsync(userId, role);
     }
 
     public void Dispose()

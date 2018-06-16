@@ -14,6 +14,8 @@ using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Security.Claims;
 
 namespace AccountServer.Infrastructure.Services
 {
@@ -22,14 +24,12 @@ namespace AccountServer.Infrastructure.Services
     private readonly AccountDataUnitOfWork _db;
     private readonly IFbService _fbService;
     private readonly IVkService _vkService;
-    private readonly IEmailJwtService _emailJwt;
 
-    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService, IFbService fbService, IEmailJwtService emailJwt)
+    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService, IFbService fbService)
     {
       _db = accountDb;
       _vkService = vkService;
       _fbService = fbService;
-      _emailJwt = emailJwt;
     }
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
@@ -132,13 +132,6 @@ namespace AccountServer.Infrastructure.Services
       var url = await MediaServerHelper.UploadAvatarFile(avatarSize, file);
       if (url.IsNullOrEmpty()) return (false, null);
       return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
-    }
-
-    public async Task<bool> ConfirmEmail(int uderId, string token)
-    {
-      var decodedToken = _emailJwt.DecodeToken(token);
-      if (decodedToken == null) return false;
-      decodedToken.
     }
 
     public void Dispose()
