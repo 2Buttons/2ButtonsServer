@@ -28,21 +28,29 @@ namespace CommonLibraries.EmailManager
        SendMessage(senderOptions, new List<string> {recepient},  subject,  body);
     }
 
-    public void  SendMessage(EmailOptions senderOptions, IEnumerable<string> recipients, string subject, string body)
+    public async void  SendMessage(EmailOptions senderOptions, IEnumerable<string> recipients, string subject, string body)
     {
-      SmtpClient client = new SmtpClient(senderOptions.Server, senderOptions.Port);
-      client.UseDefaultCredentials = false;
-      client.Credentials = new NetworkCredential(senderOptions.SenderEmail, senderOptions.Password);
-      client.EnableSsl = senderOptions.EnablrSsl;
-      
-      MailMessage mailMessage = new MailMessage();
-      mailMessage.From = new MailAddress(senderOptions.SenderEmail, senderOptions.SenderName);
+
+
+      MailMessage mailMessage = new MailMessage
+      {
+        From = new MailAddress(senderOptions.SenderEmail, senderOptions.SenderName),
+        Body = body,
+        Subject = subject,
+        BodyEncoding = Encoding.UTF8,
+        IsBodyHtml = true,
+        Priority = MailPriority.High
+      };
+
       foreach (var recipient in recipients) mailMessage.To.Add(recipient);
-      mailMessage.Body = body;
-      mailMessage.Subject = subject;
-      mailMessage.BodyEncoding = Encoding.UTF8;
-      
-      client.Send(mailMessage);
+
+      using (var client = new SmtpClient(senderOptions.Server, senderOptions.Port)) 
+      {
+        client.UseDefaultCredentials = false;
+        client.Credentials = new NetworkCredential(senderOptions.SenderEmail, senderOptions.Password);
+        client.EnableSsl = senderOptions.EnablrSsl;
+        await client.SendMailAsync(mailMessage);
+      }
     }
   }
 }

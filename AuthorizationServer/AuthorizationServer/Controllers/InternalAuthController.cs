@@ -99,15 +99,15 @@ namespace AuthorizationServer.Controllers
         return new BadResponseResult(ModelState);
       }
 
-      if (_internalAuthService.IsTokenValid(model.Token))
+      if (!_internalAuthService.IsTokenValid(model.Token))
       {
         ModelState.AddModelError("Token", "Token is not valid");
         return new BadResponseResult(ModelState);
       }
 
       if (await _internalAuthService.ResetPassword(model.Token, model.Email, model.Password.GetHashString()))
-        return new OkResponseResult("Password was reseted.");
-      return new ResponseResult((int)HttpStatusCode.NotModified, "Password was not reseted");
+        return new OkResponseResult("Password was reseted.",new {IsReseted = false});
+      return new ResponseResult((int)HttpStatusCode.NotModified, "Password was not reseted", new { IsReseted = true });
 
     }
 

@@ -156,7 +156,7 @@ namespace AuthorizationServer.Infrastructure.Services
       var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
 
       new EmailSender().SednNoReply(email, "Сброс пароля / Reset Password",
-        $"Для сброса пароля пройдите по ссылке: {callbackUrl}");
+        $"Для сброса пароля пройдите по ссылке: <a href='{callbackUrl}'>Reset Password</a> Если ссылка не открывается, перейдите по данной ссылки: {callbackUrl}.");
     }
 
     private async Task SendConfirmedEmail(int userId, RoleType role, string email)
@@ -164,7 +164,7 @@ namespace AuthorizationServer.Infrastructure.Services
       var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
       var callbackUrl = $"http://localhost:6001/auth/confirm/email?userId={userId}&token={emailToken}";
       new EmailSender().SednNoReply(email, "Подтверждение Вашей почты / Confirm your email",
-        $"Подтвердите регистрацию, перейдя по ссылке / Confirm registration by clicking on the link: {callbackUrl}");
+        $"Подтвердите регистрацию, перейдя по ссылке / Confirm registration by clicking on the link: <a href='{callbackUrl}'>Confirm Email</a> Если ссылка не открывается, перейдите по данной ссылки: {callbackUrl}.");
     }
 
     public void Dispose()
