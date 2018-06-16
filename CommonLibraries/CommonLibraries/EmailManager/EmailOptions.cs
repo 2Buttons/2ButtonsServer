@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommonLibraries.EmailManager
 {
-  class EmailOptions
+  public class EmailOptions
   {
 
     /// <summary>

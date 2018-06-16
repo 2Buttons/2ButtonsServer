@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthorizationData;
@@ -15,18 +12,19 @@ using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
+using CommonLibraries.EmailManager;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
-using CommonLibraries.Response;
 
 namespace AuthorizationServer.Infrastructure.Services
 {
   public class InternalAuthService : IInternalAuthService
   {
     private readonly AuthorizationUnitOfWork _db;
-    private readonly IJwtService _jwtService;
     private readonly IEmailJwtService _emailJwtService;
+    private readonly IJwtService _jwtService;
+
     public InternalAuthService(IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db)
     {
       _db = db;
@@ -37,10 +35,9 @@ namespace AuthorizationServer.Infrastructure.Services
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
     {
       var isExistByPhone = !user.Phone.IsNullOrEmpty() && await _db.Users.IsUserExistByPhoneAsync(user.Phone);
-      var isExistByEmail = !user.Email.IsNullOrEmpty() && await  _db.Users.IsUserExistByEmailAsync(user.Email);
+      var isExistByEmail = !user.Email.IsNullOrEmpty() && await _db.Users.IsUserExistByEmailAsync(user.Email);
 
-   if (isExistByEmail || isExistByPhone)
-        throw new Exception("You have already registered.");
+      if (isExistByEmail || isExistByPhone) throw new Exception("You have already registered.");
 
       const RoleType role = RoleType.User;
 
@@ -53,8 +50,7 @@ namespace AuthorizationServer.Infrastructure.Services
         RegistrationDate = DateTime.UtcNow
       };
       var isAdded = await _db.Users.AddUserAsync(userDb);
-      if (!isAdded || userDb.UserId == 0)
-        throw new Exception("We are not able to add you. Please, tell us about it.");
+      if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
       var userInfo = new UserInfoDb
       {
@@ -76,7 +72,6 @@ namespace AuthorizationServer.Infrastructure.Services
 
       MonitoringServerHelper.AddUrlMonitoring(userDb.UserId);
 
-
       var jwtToken = await _jwtService.GenerateJwtAsync(userDb.UserId, role);
 
       var token = new TokenDb
@@ -86,6 +81,8 @@ namespace AuthorizationServer.Infrastructure.Services
         RefreshToken = jwtToken.RefreshToken
       };
 
+      SendConfirmedEmail(userDb.UserId, role, userDb.Email).GetAwaiter();
+
       if (!await _db.Tokens.AddTokenAsync(token))
         throw new Exception("Can not add token to database. You entered just as a guest.");
       return jwtToken;
@@ -93,27 +90,20 @@ namespace AuthorizationServer.Infrastructure.Services
 
     public async Task<UserDto> GetUserByCredentils(LoginViewModel credentials)
     {
-      var user = new UserDto { UserId = 0, RoleType = RoleType.Guest };
+      var user = new UserDto {UserId = 0, RoleType = RoleType.Guest};
 
       if (credentials.GrantType == GrantType.Guest) return user;
 
       switch (credentials.GrantType)
       {
-        case GrantType.Guest:
-          break;
+        case GrantType.Guest: break;
         case GrantType.Phone:
           user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
-          if (user == null)
-          {
-            throw new NotFoundException("Phone and (or) password is incorrect");
-          }
+          if (user == null) throw new NotFoundException("Phone and (or) password is incorrect");
           break;
         case GrantType.Email:
           user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(credentials.Email, credentials.Password);
-          if (user == null)
-          {
-            throw new NotFoundException("Email and (or) password is incorrect");
-          }
+          if (user == null) throw new NotFoundException("Email and (or) password is incorrect");
           break;
       }
 
@@ -121,18 +111,60 @@ namespace AuthorizationServer.Infrastructure.Services
       return user;
     }
 
-    public async Task<bool> ConfirmEmail(int userId, string token)
+    public bool IsTokenValid(string token)
     {
-      if (!_emailJwtService.IsTokenValid(token)) return false;
+      return _emailJwtService.IsTokenValid(token);
+    }
+
+    public async Task<bool> TryConfirmEmail(int userId, string token)
+    {
       var decodedToken = _emailJwtService.DecodeCode(token);
 
-      var userTokenId = int.Parse(decodedToken.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value ?? "0");
+      var userTokenId = int.Parse(decodedToken.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)
+                                    ?.Value ?? "0");
       return userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
     }
 
-    public async Task<string> GetConfirmedEmailToken(int userId, RoleType role)
+    public async Task<bool> ResetPassword(string token, string email, string passwordHash)
     {
-      return await _emailJwtService.GenerateJwtAsync(userId, role);
+      var user = await _db.Users.GetUserByInternalEmail(email);
+      if (user == null || !user.EmailConfirmed)
+        throw new NotFoundException("We can not find this email or email is not confirmed");
+      return await _db.Users.ResetPasswordAsync(email, passwordHash);
+    }
+
+    public async Task<bool> SendConfirmation(int userId)
+    {
+      var user = await _db.Users.GetUserByUserId(userId);
+      if (user == null) return false;
+      await SendConfirmedEmail(user.UserId, user.RoleType, user.Email);
+      return true;
+    }
+
+    public async Task<bool> SendForgotPassword(string email)
+    {
+      var user = await _db.Users.GetUserByInternalEmail(email);
+      if (user == null || !user.EmailConfirmed)
+        throw new NotFoundException("We can not find this email or email is not confirmed");
+      await SendForgotPasswordConfirmation(user.UserId, user.RoleType, user.Email);
+      return true;
+    }
+
+    private async Task SendForgotPasswordConfirmation(int userId, RoleType role, string email)
+    {
+      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+      var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
+
+      new EmailSender().SednNoReply(email, "Сброс пароля / Reset Password",
+        $"Для сброса пароля пройдите по ссылке: {callbackUrl}");
+    }
+
+    private async Task SendConfirmedEmail(int userId, RoleType role, string email)
+    {
+      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+      var callbackUrl = $"http://localhost:6001/auth/confirm/email?userId={userId}&token={emailToken}";
+      new EmailSender().SednNoReply(email, "Подтверждение Вашей почты / Confirm your email",
+        $"Подтвердите регистрацию, перейдя по ссылке / Confirm registration by clicking on the link: {callbackUrl}");
     }
 
     public void Dispose()

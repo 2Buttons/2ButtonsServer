@@ -49,6 +49,16 @@ namespace AuthorizationData.Account.Repostirories
       return await _contextAccount.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> ResetPasswordAsync(string email, string passwordHash)
+    {
+      var user = await _contextAccount.UsersDb.FirstOrDefaultAsync(x=>x.Email == email);
+      if (user == null || !user.EmailConfirmed) return false;
+
+      user.PasswordHash = passwordHash;
+      _contextAccount.Entry(user).State = EntityState.Modified;
+      return await _contextAccount.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> AddSocialAsync(SocialDb social)
     {
       await _contextAccount.SocialsDb.AddAsync(social);

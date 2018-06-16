@@ -68,12 +68,21 @@ namespace AuthorizationServer.Infrastructure.EmailJwt
 
     public bool IsTokenValid(string token)
     {
-      new JwtSecurityTokenHandler().ValidateToken(token, _jwtSettings.TokenValidationParameters,
-        out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken);
-      if (validatedToken == null) return false;
+      //new JwtSecurityTokenHandler().ValidateToken(token, _jwtSettings.TokenValidationParameters,out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken);
+      //if (validatedToken == null) return false;
 
       var code = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims.First(x => x.Type == "Code").Value;
       return !code.IsNullOrEmpty() && code == _jwtSettings.Code;
+    }
+
+    public string EnDecodeCode(int userId)
+    {
+      var claimsIdentity =  GenerateClaimsIdentity(userId, RoleType.User, "").GetAwaiter().GetResult();
+      // Create the JWT security token and encode it.
+      var jwt = new JwtSecurityToken(_jwtSettings.Issuer, _jwtSettings.Audience, claimsIdentity.Claims,
+        _jwtSettings.NotBefore, DateTime.Now.AddDays(5), _jwtSettings.SigningCredentials);
+
+      return  new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
     public JwtSecurityToken DecodeCode(string token)

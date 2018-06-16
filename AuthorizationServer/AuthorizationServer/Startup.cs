@@ -3,6 +3,7 @@ using AuthorizationData;
 using AuthorizationData.Account;
 using AuthorizationData.Main;
 using AuthorizationServer.Extensions;
+using AuthorizationServer.Infrastructure.EmailJwt;
 using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Infrastructure.Services;
 using CommonLibraries;
@@ -70,17 +71,21 @@ namespace AuthorizationServer
       var emailSecretKey = emailJwtAppSettingOptions["SecretKey"];
       var emailIssuer = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Issuer)];
       var emailAudience = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Audience)];
+      var codeAudience = emailJwtAppSettingOptions[nameof(EmailJwtSettings.Code)];
 
       services.Configure<EmailJwtSettings>(options =>
       {
+        var emailKey = JwtSettings.CreateSecurityKey(emailSecretKey);
         options.Issuer = emailIssuer;
         options.Audience = emailAudience;
-        options.SymmetricSecurityKey = JwtSettings.CreateSecurityKey(emailSecretKey);
-        options.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
-        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(emailSecretKey), SecurityAlgorithms.HmacSha256);
+        options.Code = codeAudience;
+        options.SymmetricSecurityKey = emailKey;
+        options.TokenValidationParameters = JwtSettings.CreateTokenValidationParameters(issuer, audience, emailKey);
+        options.SigningCredentials = new SigningCredentials(emailKey, SecurityAlgorithms.HmacSha256);
       });
 
       services.AddSingleton<IJwtService, JwtService>();
+      services.AddSingleton<IEmailJwtService, EmailJwtService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();
       services.AddTransient<ICommonAuthService, CommonAuthService>();

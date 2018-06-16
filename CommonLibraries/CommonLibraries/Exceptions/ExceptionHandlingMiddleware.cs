@@ -29,6 +29,7 @@ namespace CommonLibraries.Exceptions
       {
         logger.LogError(ex,ex.Message,"");
         await HandleExceptionAsync(context, ex);
+        if (env.IsDevelopment()) Console.WriteLine(ex);
         throw;
       }
     }
