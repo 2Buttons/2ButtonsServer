@@ -14,7 +14,9 @@ namespace AuthorizationServer.Infrastructure.Services
     Task<Token> RegisterAsync(UserRegistrationViewModel user);
     Task<bool> ResetPassword(string token, string email, string passwordHash);
     Task<bool> SendConfirmation(int userId);
+    Task<bool> SendCongratilationsThatEmailConfirmed(int userId);
     Task<bool> SendForgotPassword(string email);
+    Task<bool> SendResetPassword(string email);
     Task<bool> TryConfirmEmail(int userId, string token);
   }
 }

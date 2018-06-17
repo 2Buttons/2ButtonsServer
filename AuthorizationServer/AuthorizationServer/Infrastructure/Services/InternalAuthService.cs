@@ -16,6 +16,7 @@ using CommonLibraries.EmailManager;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
+using Microsoft.Extensions.Localization;
 
 namespace AuthorizationServer.Infrastructure.Services
 {
@@ -24,12 +25,14 @@ namespace AuthorizationServer.Infrastructure.Services
     private readonly AuthorizationUnitOfWork _db;
     private readonly IEmailJwtService _emailJwtService;
     private readonly IJwtService _jwtService;
+    private readonly IStringLocalizer<InternalAuthService> _localizer;
 
-    public InternalAuthService(IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db)
+    public InternalAuthService(IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db, IStringLocalizer<InternalAuthService> localizer)
     {
       _db = db;
       _jwtService = jwtService;
       _emailJwtService = emailJwtService;
+      _localizer = localizer;
     }
 
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
@@ -150,21 +153,57 @@ namespace AuthorizationServer.Infrastructure.Services
       return true;
     }
 
+    public async Task<bool> SendCongratilationsThatEmailConfirmed(int userId)
+    {
+      var user = await _db.Users.GetUserByUserId(userId);
+      if (user == null || !user.EmailConfirmed)
+        throw new NotFoundException("We can not find this email or email is not confirmed");
+      await SendCongratilationsThatEmailConfirmed(user.UserId, user.RoleType, user.Email);
+      return true;
+    }
+
+    private async Task SendCongratilationsThatEmailConfirmed(int userId, RoleType role, string email)
+    {
+      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+      var callbackUrl = $"https://2buttons.ru";
+
+      new EmailSender().SednNoReply(email, _localizer["SubjectEmailConfirmed"],
+        _localizer["BodyEmailConfirmed"] + $": <a href='{callbackUrl}'>" + "2 Buttons" + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    }
+
+    public async Task<bool> SendResetPassword(string email)
+    {
+      var user = await _db.Users.GetUserByInternalEmail(email);
+      if (user == null || !user.EmailConfirmed)
+        throw new NotFoundException("We can not find this email or email is not confirmed");
+      await SendResetPasswordConfirmation(user.UserId, user.RoleType, user.Email);
+      return true;
+    }
+
+    private async Task SendResetPasswordConfirmation(int userId, RoleType role, string email)
+    {
+      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+      var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
+
+      new EmailSender().SednNoReply(email, _localizer["SubjectResetPassword"],
+        _localizer["BodyResetPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ResetPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    }
+
     private async Task SendForgotPasswordConfirmation(int userId, RoleType role, string email)
     {
       var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
       var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
 
-      new EmailSender().SednNoReply(email, "Сброс пароля / Reset Password",
-        $"Для сброса пароля пройдите по ссылке: <a href='{callbackUrl}'>Reset Password</a> Если ссылка не открывается, перейдите по данной ссылки: {callbackUrl}.");
+      new EmailSender().SednNoReply(email, _localizer["SubjectForgotPassword"],
+        _localizer["BodyForgotPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ForgotPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
     }
 
     private async Task SendConfirmedEmail(int userId, RoleType role, string email)
     {
       var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
       var callbackUrl = $"http://localhost:6001/auth/confirm/email?userId={userId}&token={emailToken}";
-      new EmailSender().SednNoReply(email, "Подтверждение Вашей почты / Confirm your email",
-        $"Подтвердите регистрацию, перейдя по ссылке / Confirm registration by clicking on the link: <a href='{callbackUrl}'>Confirm Email</a> Если ссылка не открывается, перейдите по данной ссылки: {callbackUrl}.");
+      new EmailSender().SednNoReply(email, _localizer["SubjectConfirmEmail"],
+        _localizer["BodyConfirmEmail"]+$": <a href='{callbackUrl}'>"+_localizer["ConfirmEmailLink"] +"</a> "+_localizer["IfLinkDoesNotWork"] +$": {callbackUrl}.");
     }
 
     public void Dispose()

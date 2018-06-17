@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using AuthorizationData;
 using AuthorizationData.Account;
 using AuthorizationData.Main;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -105,6 +107,8 @@ namespace AuthorizationServer
           JwtSettings.CreateTokenValidationParameters(issuer, audience, key);
       });
 
+      services.AddLocalization(options => options.ResourcesPath = "Resources");
+
       services.AddMvc();
     }
 
@@ -121,6 +125,24 @@ namespace AuthorizationServer
         //app.UseDatabaseErrorPage();
         //app.UseBrowserLink();
       }
+
+      
+      var supportedCultures = new[]
+      {
+        new CultureInfo("en-US"),
+        new CultureInfo("en-GB"),
+        new CultureInfo("en"),
+        new CultureInfo("ru-RU"),
+        new CultureInfo("ru"),
+        new CultureInfo("de-DE"),
+        new CultureInfo("de")
+      };
+      app.UseRequestLocalization(new RequestLocalizationOptions
+      {
+        DefaultRequestCulture = new RequestCulture("ru-RU"),
+        SupportedCultures = supportedCultures,
+        SupportedUICultures = supportedCultures
+      });
 
       app.UseDefaultFiles();
       app.UseStaticFiles(new StaticFileOptions

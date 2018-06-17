@@ -106,7 +106,10 @@ namespace AuthorizationServer.Controllers
       }
 
       if (await _internalAuthService.ResetPassword(model.Token, model.Email, model.Password.GetHashString()))
+      {
+        await _internalAuthService.SendResetPassword(model.Email);
         return new OkResponseResult("Password was reseted.",new {IsReseted = false});
+      }
       return new ResponseResult((int)HttpStatusCode.NotModified, "Password was not reseted", new { IsReseted = true });
 
     }
@@ -123,11 +126,14 @@ namespace AuthorizationServer.Controllers
     public async Task<IActionResult> ConfirmEmail(int userId, string token)
     {
       if (userId == 0 || token.IsNullOrEmpty() || ! _internalAuthService.IsTokenValid(token))
-        return RedirectPermanent("http://localhost:6001/confirmFail.html");
+        return RedirectPermanent("http://localhost:11081/confirmFail.html");
 
       if (!await _internalAuthService.TryConfirmEmail(userId, token))
-        return RedirectPermanent("http://localhost:6001/confirmFail.html");
-      return RedirectPermanent("http://localhost:6001/confirmSuccess.html");
+        return RedirectPermanent("http://localhost:11081/confirmFail.html");
+      {
+        await _internalAuthService.SendCongratilationsThatEmailConfirmed(userId);
+        return RedirectPermanent("http://localhost:11081/confirmSuccess.html");
+      }
     }
   }
 }
