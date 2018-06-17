@@ -96,7 +96,7 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/backgrounds/standard")]
     public async Task<IActionResult> GetStandardQuestionBackgrounds([FromBody] GetQuestionFilteredStatistics statistics)
     {
-      List<string> result = new List<string>() { MediaServerHelper.StandardBackground() }; 
+      List<string> result =  await MediaServerHelper.GetStandardBackgroundsUrl(); 
       return new OkResponseResult("Standard backgrounds", result);
     }
 

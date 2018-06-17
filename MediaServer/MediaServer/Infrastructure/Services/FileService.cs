@@ -62,7 +62,7 @@ namespace MediaServer.Infrastructure.Services
 
     public string CreateServerPath(string imageType, string imageName)
     {
-      return Path.Combine(GetAbsoluteRootPath(),
+      return Path.Combine(GetAbsoluteMediaRootPath(),
           imageType, imageName);
     }
 
@@ -102,7 +102,7 @@ namespace MediaServer.Infrastructure.Services
 
     private void CreateIfNotExistsRootFolder()
     {
-      Directory.CreateDirectory(GetAbsoluteRootPath());
+      Directory.CreateDirectory(GetAbsoluteMediaRootPath());
     }
 
     private void CreateIfNotExistsMediaFolder(string folderName)
@@ -110,14 +110,14 @@ namespace MediaServer.Infrastructure.Services
       Directory.CreateDirectory(GetAbsoluteMediaFolderPath(folderName));
     }
 
-    private string GetAbsoluteRootPath()
+    public string GetAbsoluteMediaRootPath()
     {
       return Path.Combine(AppContext.BaseDirectory, MediaOptions.RootFolderRelativePath + MediaOptions.RootFolderName, "");
     }
 
-    private string GetAbsoluteMediaFolderPath(string folderName)
+    public string GetAbsoluteMediaFolderPath(string folderName)
     {
-      return Path.Combine(GetAbsoluteRootPath(), folderName);
+      return Path.Combine(GetAbsoluteMediaRootPath(), folderName);
     }
   }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries;
-using MediaServer.ViewModel;
 using Microsoft.AspNetCore.Http;
 
 namespace MediaServer.Infrastructure.Services
@@ -28,9 +29,20 @@ namespace MediaServer.Infrastructure.Services
       return $"/standards/{size}_avatar.jpg";
     }
 
-    public string GetStandadQuestionBackgroundUrl()
+    public List<string> GetQuestionStandadBackgroundsUrl()
     {
-      return "/standards/question_background.jpg";
+      var path =_fileManager.GetAbsoluteMediaRootPath();
+      var standardPath = Path.Combine(path, "standards");
+      var files = Directory.GetFiles(standardPath).Where(x=>x.Contains("question_background_")).Select(x=> ChangeStandardPathToWebPath(x));
+      return files.ToList();
+    }
+
+    private string ChangeStandardPathToWebPath(string input)
+    {
+      var indexStandard = input.IndexOf("standards", StringComparison.OrdinalIgnoreCase) - 1;
+      var subStr = input.Substring(indexStandard);
+      var pathParts = subStr.Split('/', '\\');
+      return string.Join('/',pathParts);
     }
 
     public string UploadAvatar(string url, AvatarSizeType size)

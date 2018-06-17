@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.AspNetCore.Http;
 
@@ -7,7 +8,7 @@ namespace MediaServer.Infrastructure.Services
   public interface IMediaService
   {
     string GetStandadAvatarUrl(AvatarSizeType sizeType);
-    string GetStandadQuestionBackgroundUrl();
+    List<string> GetQuestionStandadBackgroundsUrl();
     bool IsAlreadyDownloadedUrl(string url);
     bool IsUrlValid(string url);
     Task<string> UploadAvatar(IFormFile file, AvatarSizeType size);

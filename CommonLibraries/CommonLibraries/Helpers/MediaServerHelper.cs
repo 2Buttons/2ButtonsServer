@@ -13,13 +13,13 @@ namespace CommonLibraries.Helpers
   public class MediaServerHelper
   {
 
-    private const string UploadedAvaterUrl = "http://localhost:15080/media/upload/avatar/link";
-    private const string UploadedAvaterFile = "http://localhost:15080/media/upload/avatar/file";
-    private const string StandardAvatarUrl = "http://localhost:15080/media/standards/avatar/";
+    private const string UploadedAvaterUrl = "http://localhost:15081/media/upload/avatar/link";
+    private const string UploadedAvaterFile = "http://localhost:15081/media/upload/avatar/file";
+    private const string StandardAvatarUrl = "http://localhost:15081/media/standards/avatar/";
 
-    private const string UploadedBackgroundUrl = "http://localhost:15080/media/upload/background/link";
-    private const string UploadedBackgroundFile = "http://localhost:15080/media/upload/background/file";
-    private const string StandardBackgroundUrl = "http://localhost:15080/media/standards/background/";
+    private const string UploadedBackgroundUrl = "http://localhost:15081/media/upload/background/link";
+    private const string UploadedBackgroundFile = "http://localhost:15081/media/upload/background/file";
+    private const string StandardBackgroundUrl = "http://localhost:15081/media/standards/background/";
 
     public static string StandardAvatar(AvatarSizeType sizeType)
     {
@@ -31,39 +31,39 @@ namespace CommonLibraries.Helpers
     public static async Task<string> GetStandardAvatarUrl(AvatarSizeType avatarSize)
     {
       var body = JsonConvert.SerializeObject(new { size = (int)avatarSize });
-      return await MediaServerConnection(StandardAvatarUrl, body);
+      return (await MediaServerConnection(StandardAvatarUrl, body)).Url;
     }
 
     public static async Task<string> UploadAvatarFile(AvatarSizeType avatarSize, IFormFile file)
     {
       var requestParams = new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("size", ((int)avatarSize).ToString()) };
-      return await MediaServerConnection(UploadedAvaterFile, file, requestParams);
+      return (await MediaServerConnection(UploadedAvaterFile, file, requestParams)).Url;
     }
 
     public static async Task<string> UploadAvatarUrl(AvatarSizeType avatarSize, string imageUrl)
     {
       var body = JsonConvert.SerializeObject(new { size = (int)avatarSize, url = imageUrl });
-      return await MediaServerConnection(UploadedAvaterUrl, body);
+      return (await MediaServerConnection(UploadedAvaterUrl, body)).Url;
     }
 
-    public static async Task<string> GetStandardBackgroundUrl()
+    public static async Task<List<string>> GetStandardBackgroundsUrl()
     {
       var body = JsonConvert.SerializeObject(new { });
-      return await MediaServerConnection(StandardBackgroundUrl, body);
+      return (await MediaServerConnection(StandardBackgroundUrl, body)).Urls;
     }
 
     public static async Task<string> UploadBackgroundUrl(string imageUrl)
     {
       var body = JsonConvert.SerializeObject(new { url = imageUrl });
-      return await MediaServerConnection(UploadedBackgroundUrl, body);
+      return (await MediaServerConnection(UploadedBackgroundUrl, body)).Url;
     }
 
     public static async Task<string> UploadBackgroundFile(IFormFile file)
     {
-      return await MediaServerConnection(UploadedBackgroundFile, file, new List<KeyValuePair<string, string>>());
+      return (await MediaServerConnection(UploadedBackgroundFile, file, new List<KeyValuePair<string, string>>())).Url;
     }
 
-    private static async Task<string> MediaServerConnection(string url, string body)
+    private static async Task<UrlReponse> MediaServerConnection(string url, string body)
     {
       var request = WebRequest.Create(url);
       request.Method = "POST";
@@ -82,7 +82,7 @@ namespace CommonLibraries.Helpers
       }
     }
 
-    private static async Task<string> MediaServerConnection(string url, IFormFile file, IEnumerable<KeyValuePair<string, string>> requestParams)
+    private static async Task<UrlReponse> MediaServerConnection(string url, IFormFile file, IEnumerable<KeyValuePair<string, string>> requestParams)
     {
       var client = new HttpClient();
       var content = new MultipartFormDataContent
@@ -101,21 +101,24 @@ namespace CommonLibraries.Helpers
         content.Add(streamContent);
 
         HttpResponseMessage response = await client.PostAsync(url, content);
-        if (response.StatusCode != HttpStatusCode.OK) return string.Empty;
+        if (response.StatusCode != HttpStatusCode.OK) return null;
         var result = await response.Content.ReadAsStringAsync();
         return MediaResponseToUrl(result);
       }
 
     }
 
-    private static string MediaResponseToUrl(string response)
+    private static UrlReponse MediaResponseToUrl(string response)
     {
-      return JsonConvert.DeserializeObject<ResponseObject<UrlReponse>>(response).Data.Url ?? string.Empty;
+      return JsonConvert.DeserializeObject<ResponseObject<UrlReponse>>(response).Data;
     }
     private class UrlReponse
     {
       [JsonProperty("url")]
       public string Url { get; set; }
+
+      [JsonProperty("urls")]
+      public List<string> Urls { get; set; }
     }
   }
 }

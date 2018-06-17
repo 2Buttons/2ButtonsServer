@@ -50,10 +50,10 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("standards/background")]
-    public IActionResult GetStandardBackground()
+    public IActionResult GetStandardBackgrounds()
     {
-      var url = _mediaService.GetStandadQuestionBackgroundUrl();
-      return url.IsNullOrEmpty() ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult(new UrlViewModel { Url = url });
+      var urls = _mediaService.GetQuestionStandadBackgroundsUrl();
+      return urls.Count<1 ? new ResponseResult((int)HttpStatusCode.NotFound) : new OkResponseResult(new { Urls = urls });
     }
 
 
