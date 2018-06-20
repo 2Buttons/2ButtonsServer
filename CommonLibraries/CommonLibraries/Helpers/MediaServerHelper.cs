@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -30,37 +31,97 @@ namespace CommonLibraries.Helpers
 
     public static async Task<string> GetStandardAvatarUrl(AvatarSizeType avatarSize)
     {
-      var body = JsonConvert.SerializeObject(new { size = (int)avatarSize });
-      return (await MediaServerConnection(StandardAvatarUrl, body)).Url;
+      try
+      {
+        var body = JsonConvert.SerializeObject(new { size = (int)avatarSize });
+        return (await MediaServerConnection(StandardAvatarUrl, body)).Url;
+      }
+      catch (Exception ex)
+      {
+        //TODO
+        // убрать такое!!!! логирование нормально провести
+        // ignored
+      }
+      return string.Empty;
     }
 
     public static async Task<string> UploadAvatarFile(AvatarSizeType avatarSize, IFormFile file)
     {
-      var requestParams = new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("size", ((int)avatarSize).ToString()) };
-      return (await MediaServerConnection(UploadedAvaterFile, file, requestParams)).Url;
+      try
+      {
+        var requestParams = new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("size", ((int)avatarSize).ToString()) };
+        return (await MediaServerConnection(UploadedAvaterFile, file, requestParams)).Url;
+      }
+      catch (Exception ex)
+      {
+        //TODO
+        // убрать такое!!!! логирование нормально провести
+        // ignored
+      }
+      return string.Empty;
     }
 
     public static async Task<string> UploadAvatarUrl(AvatarSizeType avatarSize, string imageUrl)
     {
-      var body = JsonConvert.SerializeObject(new { size = (int)avatarSize, url = imageUrl });
-      return (await MediaServerConnection(UploadedAvaterUrl, body)).Url;
+      try
+      {
+        var body = JsonConvert.SerializeObject(new { size = (int)avatarSize, url = imageUrl });
+        return (await MediaServerConnection(UploadedAvaterUrl, body)).Url;
+      }
+      catch (Exception ex)
+      {
+        //TODO
+        // убрать такое!!!! логирование нормально провести
+        // ignored
+      }
+      return string.Empty;
     }
 
     public static async Task<List<string>> GetStandardBackgroundsUrl()
     {
-      var body = JsonConvert.SerializeObject(new { });
-      return (await MediaServerConnection(StandardBackgroundUrl, body)).Urls;
+      try
+      {
+        var body = JsonConvert.SerializeObject(new { });
+        return (await MediaServerConnection(StandardBackgroundUrl, body)).Urls;
+      }
+      catch (Exception ex)
+      {
+        //TODO
+        // убрать такое!!!! логирование нормально провести
+        // ignored
+      }
+      return new List<string>();
     }
 
     public static async Task<string> UploadBackgroundUrl(string imageUrl)
     {
-      var body = JsonConvert.SerializeObject(new { url = imageUrl });
-      return (await MediaServerConnection(UploadedBackgroundUrl, body)).Url;
+      try
+      {
+        var body = JsonConvert.SerializeObject(new { url = imageUrl });
+        return (await MediaServerConnection(UploadedBackgroundUrl, body)).Url;
+      }
+      catch (Exception ex)
+      {
+        //TODO
+        // убрать такое!!!! логирование нормально провести
+        // ignored
+      }
+      return string.Empty;
     }
 
     public static async Task<string> UploadBackgroundFile(IFormFile file)
     {
-      return (await MediaServerConnection(UploadedBackgroundFile, file, new List<KeyValuePair<string, string>>())).Url;
+      try
+      {
+        return (await MediaServerConnection(UploadedBackgroundFile, file, new List<KeyValuePair<string, string>>())).Url;
+      }
+      catch (Exception ex)
+      {
+        //TODO
+        // убрать такое!!!! логирование нормально провести
+        // ignored
+      }
+      return string.Empty;
     }
 
     private static async Task<UrlReponse> MediaServerConnection(string url, string body)
