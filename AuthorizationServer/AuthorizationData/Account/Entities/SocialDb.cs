@@ -16,6 +16,6 @@ namespace AuthorizationData.Account.Entities
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string ExternalToken { get; set; }
-    public int ExpiresIn { get; set; }
+    public long ExpiresIn { get; set; }
   }
 }

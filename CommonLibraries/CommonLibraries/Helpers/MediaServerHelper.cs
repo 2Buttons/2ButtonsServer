@@ -14,13 +14,13 @@ namespace CommonLibraries.Helpers
   public class MediaServerHelper
   {
 
-    private const string UploadedAvaterUrl = "http://localhost:15081/media/upload/avatar/link";
-    private const string UploadedAvaterFile = "http://localhost:15081/media/upload/avatar/file";
-    private const string StandardAvatarUrl = "http://localhost:15081/media/standards/avatar/";
+    private const string UploadedAvaterUrl = "http://localhost:15009/media/upload/avatar/link";
+    private const string UploadedAvaterFile = "http://localhost:15009/media/upload/avatar/file";
+    private const string StandardAvatarUrl = "http://localhost:15009/media/standards/avatar/";
 
-    private const string UploadedBackgroundUrl = "http://localhost:15081/media/upload/background/link";
-    private const string UploadedBackgroundFile = "http://localhost:15081/media/upload/background/file";
-    private const string StandardBackgroundUrl = "http://localhost:15081/media/standards/background/";
+    private const string UploadedBackgroundUrl = "http://localhost:15009/media/upload/background/link";
+    private const string UploadedBackgroundFile = "http://localhost:15009/media/upload/background/file";
+    private const string StandardBackgroundUrl = "http://localhost:15009/media/standards/background/";
 
     public static string StandardAvatar(AvatarSizeType sizeType)
     {

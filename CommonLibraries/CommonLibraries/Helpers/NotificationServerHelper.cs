@@ -9,9 +9,9 @@ namespace CommonLibraries.Helpers
 {
   public class NotificationServerHelper
   {
-    private const string FollowNotificationUrl = "http://localhost:16081/notifications/internal/follow";
-    private const string CommentNotificationUrl = "http://localhost:16081/notifications/internal/comment";
-    private const string RecommendQuestionNotificationUrl = "http://localhost:16081/notifications/internal/recommendQuestion";
+    private const string FollowNotificationUrl = "http://localhost:16009/notifications/internal/follow";
+    private const string CommentNotificationUrl = "http://localhost:16009/notifications/internal/comment";
+    private const string RecommendQuestionNotificationUrl = "http://localhost:16009/notifications/internal/recommendQuestion";
 
     public static Task SendFollowNotification(int notifierId, int followToId, DateTime followedDate)
     {
