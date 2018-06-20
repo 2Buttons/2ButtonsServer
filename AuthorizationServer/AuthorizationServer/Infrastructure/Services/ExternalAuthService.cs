@@ -90,8 +90,23 @@ namespace AuthorizationServer.Infrastructure.Services
       var isAdded = await _db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
-      var fullLink = !user.LargePhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl) :  MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
-      var smallLink = !user.SmallPhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) :  MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
+      var fullLink = MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
+      if (!user.LargePhotoUrl.IsNullOrEmpty())
+      {
+        var url = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl);
+        if (!url.IsNullOrEmpty())
+          fullLink = url;
+      }
+
+      var smallLink = MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
+      if (!user.SmallPhotoUrl.IsNullOrEmpty())
+      {
+        var url = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl);
+        if (!url.IsNullOrEmpty())
+          smallLink = url;
+      }
+     // = !user.LargePhotoUrl.IsNullOrEmpty() ? (await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl)).IsNullOrEmpty() :  MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
+     // var smallLink = !user.SmallPhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) :  MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
 
       var userInfo = new UserInfoDb
       {
