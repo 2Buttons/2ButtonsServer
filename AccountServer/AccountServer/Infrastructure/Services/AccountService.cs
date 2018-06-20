@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AccountData;
 using AccountData.Account.Entities;
 using AccountData.DTO;
-using AccountServer.Infrastructure.EmailJwt;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
