@@ -26,7 +26,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
     {
       var appAccessTokenResponse =
         await Client.GetStringAsync(
-          $"https://graph.facebook.com/v3.0/oauth/access_token?client_id={_fbAuthSettings.AppId}&redirect_uri=https://2buttons.ru/facebook-auth-code.html&client_secret={_fbAuthSettings.AppSecret}&code={fbCode}");
+          $"https://graph.facebook.com/v3.0/oauth/access_token?client_id={_fbAuthSettings.AppId}&redirect_uri={_fbAuthSettings.RedirectUri}&client_secret={_fbAuthSettings.AppSecret}&code={fbCode}");
       return JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
     }
 

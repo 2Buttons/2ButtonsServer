@@ -40,8 +40,11 @@
       cache: 'default',
       body: json
     };
+    console.log("Hello");
 
-    fetch("http://localhost:6210/externalLogin", myInit).then(function (response) {
+    console.log(myInit);
+    fetch("http://localhost:11081/auth/externalLogin", myInit).then(function (response) {
+      console.log(response);
       /*что-то сделать при успешном запросе*/
       // window.close();
     });

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AuthorizationServer.Controllers
 {
+  //[DisableCors]
   [EnableCors("AllowAllOrigin")]
   [Produces("application/json")]
   [Route("auth")]

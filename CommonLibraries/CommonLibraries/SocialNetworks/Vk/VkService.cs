@@ -33,7 +33,7 @@ namespace CommonLibraries.SocialNetworks.Vk
     {
       var appAccessTokenResponse =
         await Client.GetStringAsync(
-          $"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri=https://2buttons.ru/vk-auth-code.html&code={vkCode}");
+          $"https://oauth.vk.com/access_token?client_id={_vkAuthSettings.AppId}&client_secret={_vkAuthSettings.AppSecret}&redirect_uri={_vkAuthSettings.RedirectUri}&code={vkCode}");
       var result = JsonConvert.DeserializeObject<VkAppAccessToken>(appAccessTokenResponse);
       if (!result.Error.IsNullOrEmpty())
         throw new Exception(result.Error + " " + result.ErrorDescription);
