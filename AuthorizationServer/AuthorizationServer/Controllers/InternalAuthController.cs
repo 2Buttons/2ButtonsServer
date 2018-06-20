@@ -79,61 +79,61 @@ namespace AuthorizationServer.Controllers
       }
     }
 
-    [HttpPost("forgotPassword")]
-    public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordViewModel model)
-    {
-      if (!ModelState.IsValid)
-      {
-        return new BadResponseResult(ModelState);
-      }
+    //[HttpPost("forgotPassword")]
+    //public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordViewModel model)
+    //{
+    //  if (!ModelState.IsValid)
+    //  {
+    //    return new BadResponseResult(ModelState);
+    //  }
 
-      if (await _internalAuthService.SendForgotPassword(model.Email)) return new OkResponseResult("Check your email to move to reset page.");
-      return new ResponseResult((int) HttpStatusCode.Forbidden, "Something wen wrong.");
-    }
+    //  if (await _internalAuthService.SendForgotPassword(model.Email)) return new OkResponseResult("Check your email to move to reset page.");
+    //  return new ResponseResult((int) HttpStatusCode.Forbidden, "Something wen wrong.");
+    //}
 
-    [HttpPost("resetPassword")]
-    public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordViewModel model)
-    {
-      if (!ModelState.IsValid)
-      {
-        return new BadResponseResult(ModelState);
-      }
+    //[HttpPost("resetPassword")]
+    //public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordViewModel model)
+    //{
+    //  if (!ModelState.IsValid)
+    //  {
+    //    return new BadResponseResult(ModelState);
+    //  }
 
-      if (!_internalAuthService.IsTokenValid(model.Token))
-      {
-        ModelState.AddModelError("Token", "Token is not valid");
-        return new BadResponseResult(ModelState);
-      }
+    //  if (!_internalAuthService.IsTokenValid(model.Token))
+    //  {
+    //    ModelState.AddModelError("Token", "Token is not valid");
+    //    return new BadResponseResult(ModelState);
+    //  }
 
-      if (await _internalAuthService.ResetPassword(model.Token, model.Email, model.Password.GetHashString()))
-      {
-        await _internalAuthService.SendResetPassword(model.Email);
-        return new OkResponseResult("Password was reseted.",new {IsReseted = false});
-      }
-      return new ResponseResult((int)HttpStatusCode.NotModified, "Password was not reseted", new { IsReseted = true });
+    //  if (await _internalAuthService.ResetPassword(model.Token, model.Email, model.Password.GetHashString()))
+    //  {
+    //    await _internalAuthService.SendResetPassword(model.Email);
+    //    return new OkResponseResult("Password was reseted.",new {IsReseted = false});
+    //  }
+    //  return new ResponseResult((int)HttpStatusCode.NotModified, "Password was not reseted", new { IsReseted = true });
 
-    }
+    //}
 
-    [HttpPost("confirmEmail")]
-    public async Task<IActionResult> ConfirmEmail([FromBody]int userId)
-    {
-      if (!ModelState.IsValid)
-        return new BadResponseResult(ModelState);
-      return await _internalAuthService.SendConfirmation(userId) ? new OkResponseResult("We sent the confirmation email") : new ResponseResult((int)HttpStatusCode.NotFound, "We can not fiund this account");
-    }
+    //[HttpPost("confirmEmail")]
+    //public async Task<IActionResult> ConfirmEmail([FromBody]int userId)
+    //{
+    //  if (!ModelState.IsValid)
+    //    return new BadResponseResult(ModelState);
+    //  return await _internalAuthService.SendConfirmation(userId) ? new OkResponseResult("We sent the confirmation email") : new ResponseResult((int)HttpStatusCode.NotFound, "We can not fiund this account");
+    //}
 
-    [HttpGet("confirmEmail")]
-    public async Task<IActionResult> ConfirmEmail(int userId, string token)
-    {
-      if (userId == 0 || token.IsNullOrEmpty() || ! _internalAuthService.IsTokenValid(token))
-        return RedirectPermanent("http://localhost:11081/confirmFail.html");
+    //[HttpGet("confirmEmail")]
+    //public async Task<IActionResult> ConfirmEmail(int userId, string token)
+    //{
+    //  if (userId == 0 || token.IsNullOrEmpty() || ! _internalAuthService.IsTokenValid(token))
+    //    return RedirectPermanent("http://localhost:11081/confirmFail.html");
 
-      if (!await _internalAuthService.TryConfirmEmail(userId, token))
-        return RedirectPermanent("http://localhost:11081/confirmFail.html");
-      {
-        await _internalAuthService.SendCongratilationsThatEmailConfirmed(userId);
-        return RedirectPermanent("http://localhost:11081/confirmSuccess.html");
-      }
-    }
+    //  if (!await _internalAuthService.TryConfirmEmail(userId, token))
+    //    return RedirectPermanent("http://localhost:11081/confirmFail.html");
+    //  {
+    //    await _internalAuthService.SendCongratilationsThatEmailConfirmed(userId);
+    //    return RedirectPermanent("http://localhost:11081/confirmSuccess.html");
+    //  }
+    //}
   }
 }

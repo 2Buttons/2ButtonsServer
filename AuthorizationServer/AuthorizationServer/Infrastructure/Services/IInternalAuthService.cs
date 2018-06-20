@@ -12,11 +12,11 @@ namespace AuthorizationServer.Infrastructure.Services
     Task<UserDto> GetUserByCredentils(LoginViewModel credentials);
     bool IsTokenValid(string token);
     Task<Token> RegisterAsync(UserRegistrationViewModel user);
-    Task<bool> ResetPassword(string token, string email, string passwordHash);
-    Task<bool> SendConfirmation(int userId);
-    Task<bool> SendCongratilationsThatEmailConfirmed(int userId);
-    Task<bool> SendForgotPassword(string email);
-    Task<bool> SendResetPassword(string email);
-    Task<bool> TryConfirmEmail(int userId, string token);
+    //Task<bool> ResetPassword(string token, string email, string passwordHash);
+    //Task<bool> SendConfirmation(int userId);
+    //Task<bool> SendCongratilationsThatEmailConfirmed(int userId);
+    //Task<bool> SendForgotPassword(string email);
+    //Task<bool> SendResetPassword(string email);
+    //Task<bool> TryConfirmEmail(int userId, string token);
   }
 }

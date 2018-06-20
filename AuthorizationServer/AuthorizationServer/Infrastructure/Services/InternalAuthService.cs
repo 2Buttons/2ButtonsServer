@@ -84,7 +84,7 @@ namespace AuthorizationServer.Infrastructure.Services
         RefreshToken = jwtToken.RefreshToken
       };
 
-      SendConfirmedEmail(userDb.UserId, role, userDb.Email).GetAwaiter();
+    // SendConfirmedEmail(userDb.UserId, role, userDb.Email);
 
       if (!await _db.Tokens.AddTokenAsync(token))
         throw new Exception("Can not add token to database. You entered just as a guest.");
@@ -136,75 +136,75 @@ namespace AuthorizationServer.Infrastructure.Services
       return await _db.Users.ResetPasswordAsync(email, passwordHash);
     }
 
-    public async Task<bool> SendConfirmation(int userId)
-    {
-      var user = await _db.Users.GetUserByUserId(userId);
-      if (user == null) return false;
-      await SendConfirmedEmail(user.UserId, user.RoleType, user.Email);
-      return true;
-    }
+    //public async Task<bool> SendConfirmation(int userId)
+    //{
+    //  var user = await _db.Users.GetUserByUserId(userId);
+    //  if (user == null) return false;
+    //  await SendConfirmedEmail(user.UserId, user.RoleType, user.Email);
+    //  return true;
+    //}
 
-    public async Task<bool> SendForgotPassword(string email)
-    {
-      var user = await _db.Users.GetUserByInternalEmail(email);
-      if (user == null || !user.EmailConfirmed)
-        throw new NotFoundException("We can not find this email or email is not confirmed");
-      await SendForgotPasswordConfirmation(user.UserId, user.RoleType, user.Email);
-      return true;
-    }
+    //public async Task<bool> SendForgotPassword(string email)
+    //{
+    //  var user = await _db.Users.GetUserByInternalEmail(email);
+    //  if (user == null || !user.EmailConfirmed)
+    //    throw new NotFoundException("We can not find this email or email is not confirmed");
+    //  await SendForgotPasswordConfirmation(user.UserId, user.RoleType, user.Email);
+    //  return true;
+    //}
 
-    public async Task<bool> SendCongratilationsThatEmailConfirmed(int userId)
-    {
-      var user = await _db.Users.GetUserByUserId(userId);
-      if (user == null || !user.EmailConfirmed)
-        throw new NotFoundException("We can not find this email or email is not confirmed");
-      await SendCongratilationsThatEmailConfirmed(user.UserId, user.RoleType, user.Email);
-      return true;
-    }
+    //public async Task<bool> SendCongratilationsThatEmailConfirmed(int userId)
+    //{
+    //  var user = await _db.Users.GetUserByUserId(userId);
+    //  if (user == null || !user.EmailConfirmed)
+    //    throw new NotFoundException("We can not find this email or email is not confirmed");
+    //  await SendCongratilationsThatEmailConfirmed(user.UserId, user.RoleType, user.Email);
+    //  return true;
+    //}
 
-    private async Task SendCongratilationsThatEmailConfirmed(int userId, RoleType role, string email)
-    {
-      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
-      var callbackUrl = $"https://2buttons.ru";
+    //private async Task SendCongratilationsThatEmailConfirmed(int userId, RoleType role, string email)
+    //{
+    //  var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+    //  var callbackUrl = $"https://2buttons.ru";
 
-      new EmailSender().SednNoReply(email, _localizer["SubjectEmailConfirmed"],
-        _localizer["BodyEmailConfirmed"] + $": <a href='{callbackUrl}'>" + "2 Buttons" + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
-    }
+    //  new EmailSender().SednNoReply(email, _localizer["SubjectEmailConfirmed"],
+    //    _localizer["BodyEmailConfirmed"] + $": <a href='{callbackUrl}'>" + "2 Buttons" + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //}
 
-    public async Task<bool> SendResetPassword(string email)
-    {
-      var user = await _db.Users.GetUserByInternalEmail(email);
-      if (user == null || !user.EmailConfirmed)
-        throw new NotFoundException("We can not find this email or email is not confirmed");
-      await SendResetPasswordConfirmation(user.UserId, user.RoleType, user.Email);
-      return true;
-    }
+    //public async Task<bool> SendResetPassword(string email)
+    //{
+    //  var user = await _db.Users.GetUserByInternalEmail(email);
+    //  if (user == null || !user.EmailConfirmed)
+    //    throw new NotFoundException("We can not find this email or email is not confirmed");
+    //  await SendResetPasswordConfirmation(user.UserId, user.RoleType, user.Email);
+    //  return true;
+    //}
 
-    private async Task SendResetPasswordConfirmation(int userId, RoleType role, string email)
-    {
-      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
-      var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
+    //private async Task SendResetPasswordConfirmation(int userId, RoleType role, string email)
+    //{
+    //  var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+    //  var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
 
-      new EmailSender().SednNoReply(email, _localizer["SubjectResetPassword"],
-        _localizer["BodyResetPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ResetPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
-    }
+    //  new EmailSender().SednNoReply(email, _localizer["SubjectResetPassword"],
+    //    _localizer["BodyResetPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ResetPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //}
 
-    private async Task SendForgotPasswordConfirmation(int userId, RoleType role, string email)
-    {
-      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
-      var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
+    //private async Task SendForgotPasswordConfirmation(int userId, RoleType role, string email)
+    //{
+    //  var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+    //  var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
 
-      new EmailSender().SednNoReply(email, _localizer["SubjectForgotPassword"],
-        _localizer["BodyForgotPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ForgotPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
-    }
+    //  new EmailSender().SednNoReply(email, _localizer["SubjectForgotPassword"],
+    //    _localizer["BodyForgotPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ForgotPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //}
 
-    private async Task SendConfirmedEmail(int userId, RoleType role, string email)
-    {
-      var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
-      var callbackUrl = $"http://localhost:6001/auth/confirm/email?userId={userId}&token={emailToken}";
-      new EmailSender().SednNoReply(email, _localizer["SubjectConfirmEmail"],
-        _localizer["BodyConfirmEmail"]+$": <a href='{callbackUrl}'>"+_localizer["ConfirmEmailLink"] +"</a> "+_localizer["IfLinkDoesNotWork"] +$": {callbackUrl}.");
-    }
+    //private async Task SendConfirmedEmail(int userId, RoleType role, string email)
+    //{
+    //  var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
+    //  var callbackUrl = $"http://localhost:6001/auth/confirm/email?userId={userId}&token={emailToken}";
+    //  new EmailSender().SednNoReply(email, _localizer["SubjectConfirmEmail"],
+    //    _localizer["BodyConfirmEmail"] + $": <a href='{callbackUrl}'>" + _localizer["ConfirmEmailLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //}
 
     public void Dispose()
     {
