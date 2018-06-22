@@ -33,7 +33,7 @@ namespace MediaServer.Infrastructure.Services
     {
       var path =_fileManager.GetAbsoluteMediaRootPath();
       var standardPath = Path.Combine(path, "standards");
-      var files = Directory.GetFiles(standardPath).Where(x=>x.Contains("question_background_")).Select(x=> ChangeStandardPathToWebPath(x));
+      var files = Directory.GetFiles(standardPath).Where(x=>x.Contains("question_background")).Select(x=> ChangeStandardPathToWebPath(x));
       return files.ToList();
     }
 

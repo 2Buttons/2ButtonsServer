@@ -18,7 +18,7 @@
     },
     "MediaServer": {
       "commandName": "Project",
-      "commandLineArgs": "host -port:15081",
+      "commandLineArgs": "host -port:15000",
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {

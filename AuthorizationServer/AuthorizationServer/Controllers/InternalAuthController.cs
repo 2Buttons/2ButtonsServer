@@ -71,7 +71,9 @@ namespace AuthorizationServer.Controllers
         case GrantType.Phone:
         case GrantType.Email:
           var user = await _internalAuthService.GetUserByCredentils(credentials);
-          var result = await _commonAuthService.GetAccessTokenAsync(user);
+          var token = await _commonAuthService.GetAccessTokenAsync(user);
+          var userInfo = await _commonAuthService.GetUserInfo(user.UserId);
+          var result = new { Token = token, User = userInfo };
           return new OkResponseResult(result);
         default:
           ModelState.AddModelError("GrantType", "Sorry, we can not find such grant type.");

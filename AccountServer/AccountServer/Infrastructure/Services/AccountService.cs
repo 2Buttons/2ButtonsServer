@@ -15,6 +15,7 @@ using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
+using CommonLibraries.Exceptions.ApiExceptions;
 
 namespace AccountServer.Infrastructure.Services
 {
@@ -52,7 +53,22 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      return await _db.UsersInfo.UpdateUserInfoAsync(user);
+      var oldUser = await _db.UsersInfo.FindUserInfoAsync(user.UserId, user.UserId);
+      if (oldUser == null) throw new NotFoundException("This user does not exist");
+
+      var updateUser = new UpdateUserInfoDto()
+      {
+        UserId = user.UserId,
+        Login  = user.Login.IsNullOrEmpty() ? oldUser.Login : user.Login,
+        BirthDate = user.BirthDate.Year<1900 ? oldUser.BirthDate : user.BirthDate,
+        Sex = user.Sex == SexType.Both ? oldUser.Sex : user.Sex,
+        City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
+        Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description,
+        LargeAvatarLink = user.LargeAvatarLink.IsNullOrEmpty() ? oldUser.LargeAvatarLink : user.LargeAvatarLink,
+        SmallAvatarLink = user.SmallAvatarLink.IsNullOrEmpty() ? oldUser.SmallAvatarLink : user.SmallAvatarLink
+      };
+
+      return await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
     }
 
     public async Task<bool> AddUserSocialAsync(int userId, string code, SocialType socialType)
