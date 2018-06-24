@@ -27,7 +27,7 @@ namespace SocialData.Account.Repostirories
     }
 
    
-    public async Task<UserDto> GetUserByUserId(int userId)
+    public async Task<UserDto> FindUserByUserId(int userId)
     {
       var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
       return user?.ToUserDto();

@@ -39,18 +39,18 @@ namespace SocialServer.Infrastructure
 
     public async Task<RecommendedUsers> GetRecommendedUsers(GetRecommendedUsers user)
     {
-      var vkFriends = GetFriendsFromVk(user.UserId);
-      var fbFriends = GetFriendsFromFb(user.UserId);
+      var vkFriends = await GetFriendsFromVk(user.UserId);
+     // var fbFriends = GetFriendsFromFb(user.UserId);
 
-      await Task.WhenAll(vkFriends, fbFriends);
-      vkFriends.Result.AddRange(fbFriends.Result);
-      var friendsFromNetwroks = vkFriends.Result.Distinct();
+      //await Task.WhenAll(vkFriends, fbFriends);
+      //vkFriends.AddRange();
+      var friendsFromNetwroks = vkFriends.Distinct();
       var socialFriends =
         await _socialDb.RecommendedPeople.GetRecommendedFromUsersId(friendsFromNetwroks);
       // return new BadResponseResult("Something goes wrong with social friends.");
 
-      var partOffset = user.PageParams.Offset / 3;
-      var partCount = user.PageParams.Count / 3;
+      var partOffset = user.PageParams.Offset ;
+      var partCount = user.PageParams.Count;
 
       var followers = await _socialDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
       // return new BadResponseResult("Something goes wrong with followers.");
@@ -77,12 +77,11 @@ namespace SocialServer.Infrastructure
 
     private async Task<List<int>> GetFriendsFromVk(int userId)
     {
-      var vkUserId = (await _socialDb.Users.GetUserByUserId(userId)).VkId;
-      if (vkUserId == 0)
-        return new List<int>();
+      var user = await _socialDb.Users.FindUserByUserId(userId);
+      if(user == null || user.VkId == 0) return new List<int>();
 
       var vkFriendIdsResponse = await Client.GetStringAsync(
-        $"https://api.vk.com/method/friends.get?user_id={vkUserId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+        $"https://api.vk.com/method/friends.get?user_id={user.VkId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
       return await _socialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
@@ -90,15 +89,15 @@ namespace SocialServer.Infrastructure
 
     private async Task<List<int>> GetFriendsFromFb(int userId)
     {
-      var user = await _socialDb.Users.GetUserByUserId(userId);
-      if (user.FacebookId == 0)
+      var user = await _socialDb.Users.FindUserByUserId(userId);
+      //if (user.FacebookId == 0)
         return new List<int>();
 
-      var fbFriendIdsResponse = await Client.GetStringAsync(
-        $"https://graph.facebook.com/v3.0/{user.FacebookId}/friends&access_token={user.FacebookToken}");
-      var fbFriendIds = JsonConvert.DeserializeObject<FbFriendIdsResponse>(fbFriendIdsResponse).Response.Items;
+      //var fbFriendIdsResponse = await Client.GetStringAsync(
+      //  $"https://graph.facebook.com/v3.0/{user.FacebookId}/friends&access_token={user.FacebookToken}");
+      //var fbFriendIds = JsonConvert.DeserializeObject<FbFriendIdsResponse>(fbFriendIdsResponse).Response.Items;
 
-      return await _socialDb.Users.GetUserIdsFromVkIds(fbFriendIds);
+      //return await _socialDb.Users.GetUserIdsFromVkIds(fbFriendIds);
     }
 
     private List<RecommendedUserViewModel> MakeSocialNetFriends(
@@ -161,15 +160,12 @@ namespace SocialServer.Infrastructure
       mainList.AddRange(followers);
       mainList.AddRange(follows);
 
-      var lo = 0;
-      var hi = mainList.Count - 1;
-      var mid = followersLength;
-      int i = 0, j = followersLength + 1;
-      for (var k = lo; k <= mid; k++)
-        if (i > mid) mainList[k].Position = j++;
-        else if (j > hi) mainList[k].Position = i++;
-        else if (mainList[j].CommonFollowsTo > mainList[i].CommonFollowsTo) mainList[k].Position = j++;
-        else mainList[k].CommonFollowsTo = i++;
+      var mainListOrdered = mainList.OrderByDescending(x => x.CommonFollowsTo).ToList();
+
+      for (var i = 0; i < mainListOrdered.Count; i++)
+      {
+        mainList[i].Position = i;
+      }
     }
 
   }
