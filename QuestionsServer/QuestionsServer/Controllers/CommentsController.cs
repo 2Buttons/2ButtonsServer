@@ -32,7 +32,7 @@ namespace QuestionsServer.Controllers
         comment.PreviousCommentId);
       if (commentId < 0)
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");
-      if (comment.PreviousCommentId > 0) NotificationServerHelper.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
+      if (comment.PreviousCommentId > 0) NotificationsServerHelper.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = commentId });
     }
 

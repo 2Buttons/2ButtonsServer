@@ -170,7 +170,7 @@ namespace QuestionsServer.Controllers
         NewsRecommendedQuestions = recommentedListResultList
       };
 
-      MonitoringServerHelper.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
+      MonitoringServerConnectionService.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
 
       return new OkResponseResult(result);
     }

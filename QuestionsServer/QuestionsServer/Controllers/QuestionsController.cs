@@ -238,7 +238,7 @@ namespace QuestionsServer.Controllers
       if (!await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
         recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
         return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
-      NotificationServerHelper.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
+      NotificationsServerHelper.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
         recommendedQuestion.UserToId, recommendedQuestion.QuestionId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
     }
