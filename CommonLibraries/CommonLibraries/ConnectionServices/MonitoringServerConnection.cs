@@ -7,15 +7,15 @@ using Newtonsoft.Json;
 
 namespace CommonLibraries.Helpers
 {
-  public class MonitoringServerHelper
+  public class MonitoringServerConnection
   {
 
-    private readonly ILogger<MediaServerConnectionService> _logger;
+    private readonly ILogger<MediaServerConnection> _logger;
 
     private readonly string _addMonitoringServerUrl;
     private readonly string _updateMonitoringServerUrl;
 
-    public MonitoringServerHelper(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerConnectionService> logger)
+    public MonitoringServerConnection(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerConnection> logger)
     {
       _logger = logger;
       _addMonitoringServerUrl = $"http://localhost:{mediaOptions.Value["Monitoring"].Port}/monitoring/add";
@@ -26,7 +26,7 @@ namespace CommonLibraries.Helpers
     {
       _logger.LogInformation($"{nameof(AddUrlMonitoring)}.Sart");
       var body = JsonConvert.SerializeObject(new {userId});
-      var result = Task.Factory.StartNew(() => MonitoringServerConnection(_addMonitoringServerUrl, body));
+      var result = Task.Factory.StartNew(() => MonitoringServerConnect(_addMonitoringServerUrl, body));
       _logger.LogInformation($"{nameof(AddUrlMonitoring)}.End");
 
       return result;
@@ -36,13 +36,13 @@ namespace CommonLibraries.Helpers
     {
       _logger.LogInformation($"{nameof(UpdateUrlMonitoring)}.Sart");
       var body = JsonConvert.SerializeObject(new { userId, UrlMonitoringType = monitoringType });
-      var result =  Task.Factory.StartNew(()=> MonitoringServerConnection(_updateMonitoringServerUrl, body));
+      var result =  Task.Factory.StartNew(()=> MonitoringServerConnect(_updateMonitoringServerUrl, body));
       _logger.LogInformation($"{nameof(UpdateUrlMonitoring)}.End");
 
       return result;
     }
 
-    private async Task<object> MonitoringServerConnection(string url, string body)
+    private async Task<object> MonitoringServerConnect(string url, string body)
     {
       var request = WebRequest.Create(url);
       request.Method = "POST";

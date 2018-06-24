@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
@@ -26,11 +27,13 @@ namespace QuestionsServer.Controllers
   {
     private readonly QuestionsUnitOfWork _mainDb;
     private readonly ILogger<QuestionsController> _logger;
+    private readonly ConnectionsHub _hub;
 
-    public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger)
+    public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger,    ConnectionsHub hub)
     {
       _mainDb = mainDb;
       _logger = logger;
+      _hub = hub;
     }
 
     [HttpGet("server")]
@@ -67,7 +70,7 @@ namespace QuestionsServer.Controllers
         out var secondPhotos, out var comments);
 
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
-      MonitoringServerHelper.UpdateUrlMonitoring(inputQuestion.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(inputQuestion.UserId,
         CommonLibraries.UrlMonitoringType.OpensQuestionPage);
       return new OkResponseResult(result);
     }
@@ -75,12 +78,12 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/statistic")]
     public async Task<IActionResult> GetQuestionFilteredStatistics([FromBody] GetQuestionFilteredStatistics statistics)
     {
-      //TODO eбрать
+      //TODO убрать
       if (statistics.UserId <= 0) return new BadResponseResult("UserId has to be more than 0");
 
       var result = await _mainDb.Questions.GetQuestionStatistic(statistics.UserId,statistics.QuestionId, statistics.MinAge,
         statistics.MaxAge, statistics.Sex, statistics.City);
-      MonitoringServerHelper.UpdateUrlMonitoring(statistics.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(statistics.UserId,
         CommonLibraries.UrlMonitoringType.FiltersQuestions);
       return new OkResponseResult("Question Statistic", result);
     }
@@ -96,7 +99,7 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/backgrounds/standard")]
     public async Task<IActionResult> GetStandardQuestionBackgrounds()
     {
-      List<string> result =  await MediaServerHelper.GetStandardBackgroundsUrl(); 
+      List<string> result =  await _hub.Media.GetStandardBackgroundsUrl(); 
       return new OkResponseResult("Standard backgrounds", result);
     }
 
@@ -151,10 +154,10 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var backgroundLink = MediaServerHelper.StandardBackground();
+      var backgroundLink = _hub.Media.StandardBackground();
       if (!question.BackgroundImageLink.IsNullOrEmpty())
       {
-        var externalUrl = await MediaServerHelper.UploadBackgroundUrl(question.BackgroundImageLink);
+        var externalUrl = await _hub.Media.UploadBackgroundUrl(question.BackgroundImageLink);
 
         if (!externalUrl.IsNullOrEmpty()) backgroundLink = externalUrl;
       }
@@ -238,7 +241,7 @@ namespace QuestionsServer.Controllers
       if (!await _mainDb.UserQuestions.AddRecommendedQuestion(recommendedQuestion.UserToId,
         recommendedQuestion.UserFromId, recommendedQuestion.QuestionId))
         return new ResponseResult((int)HttpStatusCode.NotModified, "Recommended Question was not added.");
-      NotificationsServerHelper.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
+      _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId,
         recommendedQuestion.UserToId, recommendedQuestion.QuestionId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
     }
@@ -249,7 +252,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var url = await MediaServerHelper.UploadBackgroundUrl(background.Url);
+      var url = await _hub.Media.UploadBackgroundUrl(background.Url);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
         return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult("Background was updated", new {Url = url});
@@ -260,7 +263,7 @@ namespace QuestionsServer.Controllers
       [FromBody] UploadQuestionBackgroundViaFileViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      var url = await MediaServerHelper.UploadBackgroundFile(background.File);
+      var url = await _hub.Media.UploadBackgroundFile(background.File);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
         return new ResponseResult((int)HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult("Background was updated", new { Url = url });

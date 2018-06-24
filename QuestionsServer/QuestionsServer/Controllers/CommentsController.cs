@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
@@ -17,10 +18,12 @@ namespace QuestionsServer.Controllers
   public class CommentsController : Controller
   {
     private readonly QuestionsUnitOfWork _mainDb;
+    private readonly ConnectionsHub _hub;
 
-    public CommentsController(QuestionsUnitOfWork mainDb)
+    public CommentsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub)
     {
       _mainDb = mainDb;
+      _hub = hub;
     }
 
     [HttpPost("add")]
@@ -32,7 +35,7 @@ namespace QuestionsServer.Controllers
         comment.PreviousCommentId);
       if (commentId < 0)
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");
-      if (comment.PreviousCommentId > 0) NotificationsServerHelper.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
+      if (comment.PreviousCommentId > 0) _hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = commentId });
     }
 
@@ -50,7 +53,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.Amount);
-      MonitoringServerHelper.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
+      _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
       return new OkResponseResult(comments);
     }
   }

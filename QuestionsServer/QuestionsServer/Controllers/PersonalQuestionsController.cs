@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
@@ -24,10 +25,12 @@ namespace QuestionsServer.Controllers
   public class PersonalQuestionsController : Controller //To get user's posts
   {
     private readonly QuestionsUnitOfWork _mainDb;
+    private readonly ConnectionsHub _hub;
 
-    public PersonalQuestionsController(QuestionsUnitOfWork mainDb)
+    public PersonalQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub)
     {
       _mainDb = mainDb;
+      _hub = hub;
     }
 
     [HttpPost("asked")]
@@ -48,7 +51,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
 
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
       return new OkResponseResult(result);
     }
 
@@ -69,7 +72,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         UrlMonitoringType.GetsQuestionsPersonalRecommended);
       return new OkResponseResult(result);
     }
@@ -90,7 +93,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
       return new OkResponseResult(result);
     }
 
@@ -111,7 +114,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
       return new OkResponseResult(result);
     }
 
@@ -132,7 +135,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
       return new OkResponseResult(result);
     }
 
@@ -165,16 +168,16 @@ namespace QuestionsServer.Controllers
       switch (questions.DeltaUnixTime)
       {
         case unixDay:
-          MonitoringServerConnectionService.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
+          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
           break;
         case unixWeek:
-          MonitoringServerConnectionService.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
+          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
           break;
         case unixMonth:
-          MonitoringServerConnectionService.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
+          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
           break;
         default:
-          MonitoringServerConnectionService.UpdateUrlMonitoring(questions.UserId,
+          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId,
             UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
           break;
       }

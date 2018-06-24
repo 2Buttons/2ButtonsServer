@@ -22,7 +22,7 @@ namespace MediaServer
     public static void Main(string[] args)
     {
       var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory).AddJsonFile("appsettings.json");
-
+      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "..", "commonsettings.json"));
       Configuration = builder.Build();
 
       Port = Configuration["WebHost:Port"];

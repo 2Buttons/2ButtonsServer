@@ -1,0 +1,18 @@
+﻿{
+  "ServersSettings": {
+    "Servers": [
+      {
+        "Name": "Media",
+        "Port": 15000
+      },
+      {
+        "Name": "Notifications",
+        "Port": 16000
+      },
+      {
+        "Name": "Monitoring",
+        "Port": 17000
+      }
+    ]
+  }
+}

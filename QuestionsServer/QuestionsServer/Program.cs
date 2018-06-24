@@ -21,8 +21,10 @@ namespace QuestionsServer
 
     public static void Main(string[] args)
     {
-      var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory).AddJsonFile("appsettings.json");
-
+      var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory);
+      
+      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory,"..","commonsettings.json"));
+      builder.AddJsonFile("appsettings.json");
       Configuration = builder.Build();
       Port = Configuration["WebHost:Port"];
 

@@ -9,15 +9,15 @@ using Newtonsoft.Json;
 
 namespace CommonLibraries.Helpers
 {
-  public class NotificationsServerHelper
+  public class NotificationsServerConnection
   {
-    private readonly ILogger<MediaServerHelper> _logger;
+    private readonly ILogger<MediaServerConnection> _logger;
 
     private readonly string _followNotificationUrl; //= "http://localhost:16009/notifications/internal/follow";
     private readonly string _commentNotificationUrl;// = "http://localhost:16009/notifications/internal/comment";
     private readonly string _recommendQuestionNotificationUrl;// = "http://localhost:16009/notifications/internal/recommendQuestion";
 
-    public NotificationsServerHelper(IOptions<ServersSettings> options, ILogger<MediaServerHelper> logger)
+    public NotificationsServerConnection(IOptions<ServersSettings> options, ILogger<MediaServerConnection> logger)
     {
       _logger = logger;
       _followNotificationUrl = $"http://localhost:{options.Value["Notifications"].Port}/notifications/internal/follow";
@@ -36,7 +36,7 @@ namespace CommonLibraries.Helpers
         FollowedDate = followedDate
       });
 
-      var result =  Task.Factory.StartNew(()=>NotificationsServerConnection(_followNotificationUrl, body));
+      var result =  Task.Factory.StartNew(()=> NotificationsServerConnect(_followNotificationUrl, body));
       _logger.LogInformation($"{nameof(SendFollowNotification)}.End");
       return result;
     }
@@ -53,7 +53,7 @@ namespace CommonLibraries.Helpers
         CommentedDate = commentedDate
       });
 
-      var result =  Task.Factory.StartNew(() => NotificationsServerConnection(_commentNotificationUrl, body));
+      var result =  Task.Factory.StartNew(() => NotificationsServerConnect(_commentNotificationUrl, body));
       _logger.LogInformation($"{nameof(SendCommentNotification)}.End");
       return result;
     }
@@ -70,12 +70,12 @@ namespace CommonLibraries.Helpers
         RecommendedDate = recommendedDate
       });
 
-      var result =  Task.Factory.StartNew(() => NotificationsServerConnection(_recommendQuestionNotificationUrl, body));
+      var result =  Task.Factory.StartNew(() => NotificationsServerConnect(_recommendQuestionNotificationUrl, body));
       _logger.LogInformation($"{nameof(SendRecommendQuestionNotification)}.End");
       return result;
     }
 
-    private static async Task<object> NotificationsServerConnection(string url, string body)
+    private static async Task<object> NotificationsServerConnect(string url, string body)
     {
       var request = WebRequest.Create(url);
       request.Method = "POST";

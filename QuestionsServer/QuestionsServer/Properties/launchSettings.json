@@ -18,8 +18,7 @@
     },
     "TwoButtonsServer": {
       "commandName": "Project",
-      "commandLineArgs": "host -port:13081",
-      "launchBrowser": true,
+      "commandLineArgs": "host -port:13000",
       "launchUrl": "api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

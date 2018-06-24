@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
@@ -23,10 +24,12 @@ namespace QuestionsServer.Controllers
   public class UserPageQuestionsController : Controller //To get user's posts
   {
     private readonly QuestionsUnitOfWork _mainDb;
+    private readonly ConnectionsHub _hub;
 
-    public UserPageQuestionsController(QuestionsUnitOfWork mainDb)
+    public UserPageQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub)
     {
       _mainDb = mainDb;
+      _hub = hub;
     }
 
     //[Authorize(Roles ="Guest,  User")]
@@ -47,7 +50,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
 
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAsked);
       return new OkResponseResult(result);
     }
@@ -68,7 +71,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAnswered);
       return new OkResponseResult(result);
     }
@@ -90,7 +93,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserFavorite);
       return new OkResponseResult(result);
     }
@@ -112,7 +115,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      MonitoringServerConnectionService.UpdateUrlMonitoring(userQuestions.UserId,
+      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserCommented);
       return new OkResponseResult(result);
     }

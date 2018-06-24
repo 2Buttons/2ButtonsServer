@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
 using CommonLibraries.Helpers;
 using CommonLibraries.Response;
@@ -29,11 +30,13 @@ namespace QuestionsServer.Controllers
   {
     private readonly QuestionsUnitOfWork _mainDb;
     private readonly DbContextOptions<TwoButtonsContext> _dbOptions;
+    private readonly ConnectionsHub _hub;
 
-    public NewsQuestionsController(QuestionsUnitOfWork mainDb, DbContextOptions<TwoButtonsContext> dbOptions)
+    public NewsQuestionsController(QuestionsUnitOfWork mainDb, DbContextOptions<TwoButtonsContext> dbOptions, ConnectionsHub hub)
     {
       _mainDb = mainDb;
       _dbOptions = dbOptions;
+      _hub = hub;
     }
 
 
@@ -170,7 +173,7 @@ namespace QuestionsServer.Controllers
         NewsRecommendedQuestions = recommentedListResultList
       };
 
-      MonitoringServerConnectionService.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
+      _hub.Monitoring.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
 
       return new OkResponseResult(result);
     }

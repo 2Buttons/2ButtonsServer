@@ -13,9 +13,9 @@ using Newtonsoft.Json;
 
 namespace CommonLibraries.Helpers
 {
-  public class MediaServerHelper
+  public class MediaServerConnection
   {
-    private readonly ILogger<MediaServerHelper> _logger;
+    private readonly ILogger<MediaServerConnection> _logger;
     private readonly string _standardAvatarUrl;
     private readonly string _standardBackgroundUrl;
     private readonly string _uploadedAvaterFile;
@@ -25,7 +25,7 @@ namespace CommonLibraries.Helpers
 
     private readonly string _uploadedBackgroundUrl;
 
-    public MediaServerHelper(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerHelper> logger)
+    public MediaServerConnection(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerConnection> logger)
     {
       _logger = logger;
 
@@ -55,7 +55,7 @@ namespace CommonLibraries.Helpers
       {
         _logger.LogInformation($"{nameof(GetStandardAvatarUrl)}.Start");
         var body = JsonConvert.SerializeObject(new {size = (int) avatarSize});
-        var result = (await MediaServerConnection(_standardAvatarUrl, body)).Url;
+        var result = (await MediaServerConnect(_standardAvatarUrl, body)).Url;
         _logger.LogInformation($"{nameof(GetStandardAvatarUrl)}.Start");
         return result;
       }
@@ -76,7 +76,7 @@ namespace CommonLibraries.Helpers
           {
             new KeyValuePair<string, string>("size", ((int) avatarSize).ToString())
           };
-        var result = (await MediaServerConnection(_uploadedAvaterFile, file, requestParams)).Url;
+        var result = (await MediaServerConnect(_uploadedAvaterFile, file, requestParams)).Url;
         _logger.LogInformation($"{nameof(UploadAvatarFile)}.Start");
         return result;
       }
@@ -93,7 +93,7 @@ namespace CommonLibraries.Helpers
       {
         _logger.LogInformation($"{nameof(UploadAvatarUrl)}.Start");
         var body = JsonConvert.SerializeObject(new {size = (int) avatarSize, url = imageUrl});
-        var result = (await MediaServerConnection(_uploadedAvaterUrl, body)).Url;
+        var result = (await MediaServerConnect(_uploadedAvaterUrl, body)).Url;
         _logger.LogInformation($"{nameof(UploadAvatarUrl)}.Start");
         return result;
       }
@@ -110,7 +110,7 @@ namespace CommonLibraries.Helpers
       {
         _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
         var body = JsonConvert.SerializeObject(new { });
-        var result = (await MediaServerConnection(_standardBackgroundUrl, body)).Urls;
+        var result = (await MediaServerConnect(_standardBackgroundUrl, body)).Urls;
         _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
         return result;
       }
@@ -127,7 +127,7 @@ namespace CommonLibraries.Helpers
       {
         _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
         var body = JsonConvert.SerializeObject(new {url = imageUrl});
-        var result = (await MediaServerConnection(_uploadedBackgroundUrl, body)).Url;
+        var result = (await MediaServerConnect(_uploadedBackgroundUrl, body)).Url;
         _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
         return result;
       }
@@ -143,7 +143,7 @@ namespace CommonLibraries.Helpers
       try
       {
         _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
-        var result = (await MediaServerConnection(_uploadedBackgroundFile, file,
+        var result = (await MediaServerConnect(_uploadedBackgroundFile, file,
           new List<KeyValuePair<string, string>>())).Url;
         _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
         return result;
@@ -155,7 +155,7 @@ namespace CommonLibraries.Helpers
       return string.Empty;
     }
 
-    private async Task<UrlReponse> MediaServerConnection(string url, string body)
+    private async Task<UrlReponse> MediaServerConnect(string url, string body)
     {
       var request = WebRequest.Create(url);
       request.Method = "POST";
@@ -174,7 +174,7 @@ namespace CommonLibraries.Helpers
       }
     }
 
-    private static async Task<UrlReponse> MediaServerConnection(string url, IFormFile file,
+    private static async Task<UrlReponse> MediaServerConnect(string url, IFormFile file,
       IEnumerable<KeyValuePair<string, string>> requestParams)
     {
       var client = new HttpClient();

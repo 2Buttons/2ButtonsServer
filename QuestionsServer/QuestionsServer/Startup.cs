@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using CommonLibraries;
+﻿using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
-using CommonLibraries.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,8 +32,12 @@ namespace QuestionsServer
       });
       services.AddDbContext<TwoButtonsContext>(
         options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
+      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection =
+        Configuration.GetConnectionString("TwoButtonsConnection"));
       services.AddTransient<QuestionsUnitOfWork>();
+      var p = Configuration.GetSection("ServersSettings");
+      services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
+      services.AddConnectionsHub();
 
       services.AddOptions();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
@@ -66,8 +68,7 @@ namespace QuestionsServer
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
-      if(env.IsDevelopment())
-      loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+      if (env.IsDevelopment()) loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
       app.UseExceptionHandling();
 
