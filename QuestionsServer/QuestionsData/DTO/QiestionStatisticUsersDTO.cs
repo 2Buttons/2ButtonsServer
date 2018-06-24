@@ -7,15 +7,15 @@ namespace QuestionsData.DTO
 {
   public class QiestionStatisticUsersDto
   {
-    public List<List<VoterDto>> Voters = new List<List<VoterDto>>();
+    public List<List<VoterUserDto>> Voters = new List<List<VoterUserDto>>();
   }
 
   public class UsersInfoForQuestionStatisticDto
   {
-    public List<VoterDto> Users { get; set; } = new List<VoterDto>();
+    public List<VoterUserDto> Users { get; set; } = new List<VoterUserDto>();
   }
 
-  public class VoterDto
+  public class VoterUserDto
   {
     public int UserId { get; set; }
     public string Login { get; set; }

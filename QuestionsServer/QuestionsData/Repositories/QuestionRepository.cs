@@ -32,7 +32,7 @@ namespace QuestionsData.Repositories
       return result;
     }
 
-    public async Task<QuestionStatisticDto> GetQuestionStatistic(int questionId, int minAge, int maxAge,
+    public async Task<List<QuestionStatisticDto>> GetQuestionStatistic(int userId, int questionId, int minAge, int maxAge,
       SexType sexType, string city)
     {
      
@@ -48,16 +48,37 @@ namespace QuestionsData.Repositories
       if (!_db.QuestionEntities.Any(x => x.QuestionId == questionId))
         throw new NotFoundException("We do not have this question");
 
-      var voters = await _db.AnswerEntities.Where(x => x.QuestionId == questionId)
-        .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a))
-        .Where(predicate).ToListAsync();
+      var questions = _db.AnswerEntities.Where(x => x.QuestionId == questionId).Join(_db.UserEntities, a => a.UserId,
+        u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a)).Where(predicate);
+      var votersCount = await questions.GroupBy(x=>x.Item2.AnswerType).Select(x=> new {Type = x.Key, Count = x.Count()}).ToListAsync();
 
-      var countFirstAnswerType = voters.Count(x => x.Item2.AnswerType == AnswerType.First);
-      var countSecondAnswerType = voters.Count - countFirstAnswerType;
+      var friendIds = _db.FollowEntities.Where(x => x.UserdId == userId )
+        .Join(_db.FollowEntities, x => x.FollowToId, y => y.UserdId,
+          (x, y) => new {UserId = x.UserdId, FollowingId = x.FollowToId, FollowingToMeId = y.FollowToId})
+        .Where(x=>x.UserId == x.FollowingToMeId).Select(x => x.FollowingId)
+        .ToList();
 
-      var votersList = new List<int> {countFirstAnswerType, countSecondAnswerType};
+      var votersFriends =  friendIds.Join(questions, a=>a, b=>b.Item1.UserId, (a,b)=> b).ToList();//.Where(x=>x.Follow.(x => x.Item2.AnswerType).Select(x => new { Type = x.Key, Count = x.Count() }).ToListAsync();
+      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  Sex = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink}).ToList();
+      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, Sex = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink }).ToList();
+      //var countFirstAnswerType = voters.Count(x => x.Item2.AnswerType == AnswerType.First);
+      //var countSecondAnswerType = voters.Count - countFirstAnswerType;
 
-      return new QuestionStatisticDto {Voters = votersList};
+      //var votersList = new List<int> {countFirstAnswerType, countSecondAnswerType};
+     // var voresList = new List<int> {votersCount.FirstOrDefault(x => x.Type == AnswerType.First)?.Count ?? 0, votersCount.FirstOrDefault(x => x.Type == AnswerType.Second)?.Count ?? 0 };
+      return new List<QuestionStatisticDto>
+      {
+        new QuestionStatisticDto
+        {
+          Count = votersCount.FirstOrDefault(x => x.Type == AnswerType.First)?.Count ?? 0,
+          Friends = friendsFirstAnswer
+        },
+        new QuestionStatisticDto
+        {
+          Count = votersCount.FirstOrDefault(x => x.Type == AnswerType.Second)?.Count ?? 0,
+          Friends = friendsSecondAnswer
+        },
+      };
     }
 
     public async Task<List<string>> GetCustomQuestionBackgrounds(int userId)
@@ -85,11 +106,11 @@ namespace QuestionsData.Repositories
         .Where(predicate).Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowEntities.Any(x=>x.UserdId== userId && x.FollowToId == f.Item1.UserId), isHeFollowed  = _db.FollowEntities.Any(x => x.UserdId == f.Item1.UserId && x.FollowToId == userId) })
         .OrderByDescending(x=>x.f.Item2.AnswerDate).Skip(offset).Take(count).ToListAsync();
 
-      var firstUsers = new List<VoterDto>();
-      var secondUsers = new List<VoterDto>();
+      var firstUsers = new List<VoterUserDto>();
+      var secondUsers = new List<VoterUserDto>();
       foreach (var voter in voters)
       {
-        var user = new VoterDto
+        var user = new VoterUserDto
         {
           UserId = voter.f.Item1.UserId,
           Age = voter.f.Item1.BirthDate.Age(),
@@ -113,7 +134,7 @@ namespace QuestionsData.Repositories
         }
       }
 
-      return new QiestionStatisticUsersDto {Voters = new List<List<VoterDto>> {firstUsers, secondUsers}};
+      return new QiestionStatisticUsersDto {Voters = new List<List<VoterUserDto>> {firstUsers, secondUsers}};
     }
 
     public async Task<int> GetQuestionByCommentId(int commentId)
