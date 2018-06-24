@@ -49,11 +49,11 @@ namespace QuestionsServer.Controllers
       var questionsOffset = newsVm.PageParams.Offset;
       var questionsCount = newsVm.PageParams.Count;
 
-      List<NewsAskedQuestionViewModel> askedList = new List<NewsAskedQuestionViewModel>();
-      List<NewsAnsweredQuestionViewModel> answeredList = new List<NewsAnsweredQuestionViewModel>();
-      List<NewsFavoriteQuestionViewModel> favoriteList = new List<NewsFavoriteQuestionViewModel>();
-      List<NewsCommentedQuestionViewModel> commentedList = new List<NewsCommentedQuestionViewModel>();
-      List<NewsRecommendedQuestionViewModel> recommentedList = new List<NewsRecommendedQuestionViewModel>();
+      var askedList = new List<NewsAskedQuestionViewModel>();
+      var answeredList = new List<NewsAnsweredQuestionViewModel>();
+      var favoriteList = new List<NewsFavoriteQuestionViewModel>();
+      var commentedList = new List<NewsCommentedQuestionViewModel>();
+      var recommentedList = new List<NewsRecommendedQuestionViewModel>();
 
       Parallel.Invoke(
         () =>
@@ -107,34 +107,35 @@ namespace QuestionsServer.Controllers
 
       var resultList = mainList.Except(removeList).OrderByDescending(x => x.Priority).ToList();
 
-    
-      var answeredListCount = 0;
-      var favoriteListCount = 0;
-      var commentedListCount = 0;
-      var recommentedListCount = 0;
-      var askedListCount = 0;
+      var answeredListResultList = new List<NewsAnsweredQuestionViewModel>();
+      var favoriteListResultList = new List<NewsFavoriteQuestionViewModel>();
+      var commentedListResultList = new List<NewsCommentedQuestionViewModel>();
+      var recommentedListResultList = new List<NewsRecommendedQuestionViewModel>();
+
+      var askedListResultList = new List<NewsAskedQuestionViewModel>();
+
 
       var length = questionsCount > resultList.Count ? resultList.Count : questionsCount;
 
-      for (int i = 0; i < length; i++)
+      for (var i = 0; i < length; i++)
       {
         resultList[i].Position = i + questionsOffset;
         switch (resultList[i].Type)
         {
           case NewsType.Answered:
-            answeredListCount++;
+            answeredListResultList.Add((NewsAnsweredQuestionViewModel)resultList[i]);
             break;
           case NewsType.Asked:
-            askedListCount++;
+            askedListResultList.Add((NewsAskedQuestionViewModel)resultList[i]);
             break;
           case NewsType.Commented:
-            commentedListCount++;
+            commentedListResultList.Add((NewsCommentedQuestionViewModel)resultList[i]);
             break;
           case NewsType.Favorite:
-            favoriteListCount++;
+            favoriteListResultList.Add((NewsFavoriteQuestionViewModel)resultList[i]);
             break;
           case NewsType.Recommended:
-            recommentedListCount++;
+            recommentedListResultList.Add((NewsRecommendedQuestionViewModel)resultList[i]);
             break;
         }
       }
@@ -154,22 +155,23 @@ namespace QuestionsServer.Controllers
       //};
     
 
-      var answeredListresultList = answeredList.Take(answeredListCount).ToList();
-      var favoriteListresultList = favoriteList.Take(favoriteListCount).ToList();
-      var commentedListresultList = commentedList.Take(commentedListCount).ToList();
-      var recommentedListresultList = recommentedList.Take(recommentedListCount).ToList();
-      var askedListresultList = askedList.Take(askedListCount).ToList();
+      //List<NewsAnsweredQuestionViewModel> answeredListResultList = answeredList.Take(answeredListCount).ToList();
+      //List<NewsFavoriteQuestionViewModel> favoriteListResultList = favoriteList.Take(favoriteListCount).ToList();
+      //List<NewsCommentedQuestionViewModel> commentedListResultList = commentedList.Take(commentedListCount).ToList();
+      //List<NewsRecommendedQuestionViewModel> recommentedListResultList = recommentedList.Take(recommentedListCount).ToList();
+      //List<NewsAskedQuestionViewModel> askedListResultList = askedList.Take(askedListCount).ToList();
 
       var result = new NewsViewModel
       {
-        NewsAskedQuestions = askedListresultList,
-        NewsAnsweredQuestions = answeredListresultList,
-        NewsFavoriteQuestions = favoriteListresultList,
-        NewsCommentedQuestions = commentedListresultList,
-        NewsRecommendedQuestions = recommentedListresultList
+        NewsAskedQuestions = askedListResultList,
+        NewsAnsweredQuestions = answeredListResultList,
+        NewsFavoriteQuestions = favoriteListResultList,
+        NewsCommentedQuestions = commentedListResultList,
+        NewsRecommendedQuestions = recommentedListResultList
       };
 
       MonitoringServerHelper.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
+
       return new OkResponseResult(result);
     }
 
