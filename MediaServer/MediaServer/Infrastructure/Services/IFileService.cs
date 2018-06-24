@@ -6,7 +6,7 @@ namespace MediaServer.Infrastructure.Services
   public interface IFileService
   {
     IHostingEnvironment AppEnvironment { get; }
-    MediaData MediaOptions { get; }
+    MediaSettings MediaOptions { get; }
 
     string CreateServerPath(string imageType, string imageName);
     string CreateUniqueName(string imageName);

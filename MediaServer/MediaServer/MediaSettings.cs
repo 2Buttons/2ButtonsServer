@@ -2,8 +2,8 @@
 
 namespace MediaServer
 {
-    public class MediaData
-    {
+    public class MediaSettings
+  {
         public string RootFolderName { get; set; }
         public string RootFolderRelativePath { get; set; }
         //public string MediaFoldersCount { get; set; }

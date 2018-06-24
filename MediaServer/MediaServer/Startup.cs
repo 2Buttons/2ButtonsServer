@@ -37,7 +37,8 @@ namespace MediaServer
       services.AddTransient<IMediaService, MediaService>();
 
       services.AddOptions();
-      services.Configure<MediaData>(Configuration.GetSection("MediaData"));
+      services.Configure<MediaSettings>(Configuration.GetSection("MediaData"));
+      services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
 
       services.AddMvc();
       services.AddCors(options =>
@@ -70,7 +71,7 @@ namespace MediaServer
       });
     }
 
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<MediaData> mediaOptions, ILoggerFactory loggerFactory)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<MediaSettings> mediaOptions, ILoggerFactory loggerFactory)
     {
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();

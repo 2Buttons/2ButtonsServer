@@ -5,14 +5,25 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using CommonLibraries.Exceptions;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CommonLibraries.Helpers
 {
   public class MediaServerHelper
   {
+    private ILogger<MediaServerHelper> _logger;
+    private ServersSettings _mediaOptions;
+
+    public MediaServerHelper(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerHelper> logger)
+    {
+      _logger = logger;
+      _mediaOptions = mediaOptions.Value;
+    }
 
     private const string UploadedAvaterUrl = "http://localhost:15000/media/upload/avatar/link";
     private const string UploadedAvaterFile = "http://localhost:15000/media/upload/avatar/file";

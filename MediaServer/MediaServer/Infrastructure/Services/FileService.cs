@@ -13,10 +13,10 @@ namespace MediaServer.Infrastructure.Services
   {
     private readonly IDictionary<string, string> _folders;
 
-    public MediaData MediaOptions { get; }
+    public MediaSettings MediaOptions { get; }
     public IHostingEnvironment AppEnvironment { get; }
 
-    public FileService(IHostingEnvironment appEnvironment, IOptions<MediaData> mediaOptions)
+    public FileService(IHostingEnvironment appEnvironment, IOptions<MediaSettings> mediaOptions)
     {
       MediaOptions = mediaOptions.Value;
       AppEnvironment = appEnvironment;

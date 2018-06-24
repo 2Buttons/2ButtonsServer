@@ -3,12 +3,24 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries.Response;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CommonLibraries.Helpers
 {
   public class NotificationServerHelper
   {
+    private ILogger<MediaServerHelper> _logger;
+    private ServersSettings _mediaOptions;
+
+    public NotificationServerHelper(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerHelper> logger)
+    {
+      _logger = logger;
+      _mediaOptions = mediaOptions.Value;
+    }
+
+
     private const string FollowNotificationUrl = "http://localhost:16009/notifications/internal/follow";
     private const string CommentNotificationUrl = "http://localhost:16009/notifications/internal/comment";
     private const string RecommendQuestionNotificationUrl = "http://localhost:16009/notifications/internal/recommendQuestion";

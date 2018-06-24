@@ -1,13 +1,25 @@
 ﻿using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CommonLibraries.Helpers
 {
   public class MonitoringServerHelper
   {
-    private const string AddMonitoringServerUrl = "http://localhost:17009/monitoring/add";
+
+    private ILogger<MediaServerHelper> _logger;
+    private ServersSettings _mediaOptions;
+
+    public MonitoringServerHelper(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerHelper> logger)
+    {
+      _logger = logger;
+      _mediaOptions = mediaOptions.Value;
+    }
+
+    private const string AddMonitoringServerUrl = $"http://localhost:{_mediaOptions.Servers.}/monitoring/add";
     private const string UpdateMonitoringServerUrl = "http://localhost:17009/monitoring/update";
 
     public static Task AddUrlMonitoring(int userId)
