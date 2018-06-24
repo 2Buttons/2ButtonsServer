@@ -78,7 +78,7 @@ namespace QuestionsServer.Controllers
       //TODO eбрать
       if (statistics.UserId <= 0) return new BadResponseResult("UserId has to be more than 0");
 
-      var result = await _mainDb.Questions.GetQuestionStatistic(statistics.QuestionId, statistics.MinAge,
+      var result = await _mainDb.Questions.GetQuestionStatistic(statistics.UserId,statistics.QuestionId, statistics.MinAge,
         statistics.MaxAge, statistics.Sex, statistics.City);
       MonitoringServerHelper.UpdateUrlMonitoring(statistics.UserId,
         CommonLibraries.UrlMonitoringType.FiltersQuestions);
@@ -94,7 +94,7 @@ namespace QuestionsServer.Controllers
     }
 
     [HttpPost("get/backgrounds/standard")]
-    public async Task<IActionResult> GetStandardQuestionBackgrounds([FromBody] GetQuestionFilteredStatistics statistics)
+    public async Task<IActionResult> GetStandardQuestionBackgrounds()
     {
       List<string> result =  await MediaServerHelper.GetStandardBackgroundsUrl(); 
       return new OkResponseResult("Standard backgrounds", result);

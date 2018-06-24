@@ -66,7 +66,7 @@ namespace QuestionsServer
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
-
+      if(env.IsDevelopment())
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
       app.UseExceptionHandling();

@@ -70,8 +70,7 @@ namespace CommonLibraries.CommandLine
 
     public virtual Command Parse(string[] args)
     {
-      Command result;
-      if (TryParse(args, out result)) return result;
+      if (TryParse(args, out Command result)) return result;
 
       throw new FormatException();
     }

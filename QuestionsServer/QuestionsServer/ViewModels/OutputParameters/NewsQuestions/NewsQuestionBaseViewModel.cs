@@ -28,10 +28,10 @@ namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
     {
 
       //Check whether the compared object is null. 
-      if (Object.ReferenceEquals(other, null)) return false;
+      if (other == null) return false;
 
       //Check whether the compared object references the same data. 
-      if (Object.ReferenceEquals(this, other)) return true;
+      if (ReferenceEquals(this, other)) return true;
 
       //Check whether the products' properties are equal.
       return Condition == other.Condition && UserId == other.UserId;
