@@ -30,16 +30,16 @@ namespace QuestionsServer
       {
         options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
       });
-      services.AddDbContext<TwoButtonsContext>(
-        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection =
-        Configuration.GetConnectionString("TwoButtonsConnection"));
+      services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
       services.AddTransient<QuestionsUnitOfWork>();
-      var p = Configuration.GetSection("ServersSettings");
+      services.AddOptions();
+      var p = Configuration.GetSection(nameof(ServersSettings));
+      var t = Configuration.GetConnectionString("TwoButtonsConnection");
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
       services.AddConnectionsHub();
 
-      services.AddOptions();
+      
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var secretKey = jwtAppSettingOptions["SecretKey"];
       var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
