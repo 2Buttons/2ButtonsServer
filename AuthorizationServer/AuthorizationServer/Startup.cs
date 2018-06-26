@@ -8,6 +8,7 @@ using AuthorizationServer.Infrastructure.EmailJwt;
 using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Infrastructure.Services;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -50,6 +51,7 @@ namespace AuthorizationServer
       });
 
       services.AddOptions();
+      services.AddConnectionsHub();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
 
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));

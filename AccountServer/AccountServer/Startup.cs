@@ -7,6 +7,7 @@ using AccountData.Account;
 using AccountData.Main;
 using AccountServer.Infrastructure.Services;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -49,7 +50,8 @@ namespace AccountServer
       services.AddTransient<ICityService, CityService>();
       services.AddTransient<IVkService, VkService>();
       services.AddTransient<IFbService, FbService>();
-     // services.AddWebSocketManager();
+      services.AddConnectionsHub();
+      // services.AddWebSocketManager();
 
       services.AddOptions();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));

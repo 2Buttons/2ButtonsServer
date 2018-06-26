@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Helpers;
 using NotificationsData;
 using NotificationsServer.Models;
@@ -11,13 +12,14 @@ namespace NotificationsServer.Services
   public class NotificationsMessageService : INotificationsMessageService
   {
     private readonly NotificationsDataUnitOfWork _db;
-
+    private readonly ConnectionsHub _hub;
     private readonly NotificationManager _notificationManager;
    // private readonly WebSocketManager _webSocketManager;
 
-    public NotificationsMessageService(NotificationsDataUnitOfWork db, NotificationManager notificationManager)
+    public NotificationsMessageService(ConnectionsHub hub, NotificationsDataUnitOfWork db, NotificationManager notificationManager)
     {
       _db = db;
+      _hub = hub;
       _notificationManager = notificationManager;
       // _webSocketManager = webSocketManager;
     }
@@ -80,7 +82,7 @@ namespace NotificationsServer.Services
     private async Task PushNotification(int sendToId, Notification notification)
     {
       await _notificationManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
-      MonitoringServerHelper.UpdateUrlMonitoring(sendToId, UrlMonitoringType.GetsNotifications);
+      _hub.Monitoring.UpdateUrlMonitoring(sendToId, UrlMonitoringType.GetsNotifications);
     }
   }
 }

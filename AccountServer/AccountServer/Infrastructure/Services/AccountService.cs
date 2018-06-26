@@ -15,6 +15,7 @@ using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
 
 namespace AccountServer.Infrastructure.Services
@@ -24,10 +25,12 @@ namespace AccountServer.Infrastructure.Services
     private readonly AccountDataUnitOfWork _db;
     private readonly IFbService _fbService;
     private readonly IVkService _vkService;
+    private readonly ConnectionsHub _hub;
 
-    public AccountService(AccountDataUnitOfWork accountDb, IVkService vkService, IFbService fbService)
+    public AccountService(AccountDataUnitOfWork accountDb, ConnectionsHub hub, IVkService vkService, IFbService fbService)
     {
       _db = accountDb;
+      _hub = hub;
       _vkService = vkService;
       _fbService = fbService;
     }
@@ -46,7 +49,7 @@ namespace AccountServer.Infrastructure.Services
       if (userId != userPageId) user.UserStatistics.AnsweredQuestions = 0;
 
       user.Social = ConvertContactsDtoToViewModel(userContactsTask.Result);
-      MonitoringServerHelper.UpdateUrlMonitoring(userId,
+      _hub.Monitoring.UpdateUrlMonitoring(userId,
         userId != userPageId ? UrlMonitoringType.OpensUserPage : UrlMonitoringType.OpensPersonalPage);
       return user;
     }
@@ -105,11 +108,11 @@ namespace AccountServer.Infrastructure.Services
 
       if (userInfo.SmallAvatarLink.IsNullOrEmpty() || userInfo.SmallAvatarLink.Contains("stan") && !user.SmallPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.SmallAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
+        userInfo.SmallAvatarLink = await (_hub.Media.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.SmallAvatar);
       }
       if (userInfo.LargeAvatarLink.IsNullOrEmpty() || userInfo.LargeAvatarLink.Contains("stan") && !user.LargePhotoUrl.IsNullOrEmpty())
       {
-        userInfo.LargeAvatarLink = await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl) ?? MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
+        userInfo.LargeAvatarLink = (await _hub.Media.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar);
       }
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
@@ -137,14 +140,14 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<(bool isUpdated, string url)> UpdateAvatarViaLink(int userId, AvatarSizeType avatarSize, string newAvatarUrl)
     {
-      var url = await MediaServerHelper.UploadAvatarUrl(avatarSize, newAvatarUrl);
+      var url = await _hub.Media.UploadAvatarUrl(avatarSize, newAvatarUrl);
       if (url.IsNullOrEmpty()) return (false, null);
       return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
     }
 
     public async Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarSizeType avatarSize, IFormFile file)
     {
-      var url = await MediaServerHelper.UploadAvatarFile(avatarSize, file);
+      var url = await _hub.Media.UploadAvatarFile(avatarSize, file);
       if (url.IsNullOrEmpty()) return (false, null);
       return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
     }

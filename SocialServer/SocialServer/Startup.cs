@@ -1,4 +1,5 @@
 ﻿using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +42,7 @@ namespace SocialServer
       services.AddTransient<IFriendsService, FriendsService>();
 
       services.AddOptions();
+      services.AddConnectionsHub();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var secretKey = jwtAppSettingOptions["SecretKey"];

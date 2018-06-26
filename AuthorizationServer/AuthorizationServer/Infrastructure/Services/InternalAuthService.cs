@@ -12,6 +12,7 @@ using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
+using CommonLibraries.ConnectionServices;
 using CommonLibraries.EmailManager;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
@@ -23,13 +24,15 @@ namespace AuthorizationServer.Infrastructure.Services
   public class InternalAuthService : IInternalAuthService
   {
     private readonly AuthorizationUnitOfWork _db;
+    private readonly ConnectionsHub _hub;
     private readonly IEmailJwtService _emailJwtService;
     private readonly IJwtService _jwtService;
     private readonly IStringLocalizer<InternalAuthService> _localizer;
 
-    public InternalAuthService(IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db, IStringLocalizer<InternalAuthService> localizer)
+    public InternalAuthService(ConnectionsHub hub, IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db, IStringLocalizer<InternalAuthService> localizer)
     {
       _db = db;
+      _hub = hub;
       _jwtService = jwtService;
       _emailJwtService = emailJwtService;
       _localizer = localizer;
@@ -63,8 +66,8 @@ namespace AuthorizationServer.Infrastructure.Services
         Sex = user.SexType,
         City = user.City,
         Description = user.Description,
-        LargeAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar),
-        SmallAvatarLink = MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar)
+        LargeAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar),
+        SmallAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.SmallAvatar)
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
@@ -73,7 +76,7 @@ namespace AuthorizationServer.Infrastructure.Services
         throw new Exception("We are not able to add your indformation. Please, tell us about it.");
       }
 
-      MonitoringServerHelper.AddUrlMonitoring(userDb.UserId);
+      _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
 
       var jwtToken = await _jwtService.GenerateJwtAsync(userDb.UserId, role);
 
