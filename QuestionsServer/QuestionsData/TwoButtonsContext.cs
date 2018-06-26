@@ -18,6 +18,8 @@ namespace QuestionsData
     public virtual DbSet<AnswerEntity> AnswerEntities { get; set; }
     public virtual DbSet<QuestionEntity> QuestionEntities { get; set; }
     public virtual DbSet<FollowEntity> FollowEntities { get; set; }
+    public virtual DbSet<QuestionTagEntity> QuestionTagEntities { get; set; }
+    public virtual DbSet<TagEntity> TagEntities { get; set; }
     
 
     //for functions and prosedures

@@ -34,8 +34,6 @@ namespace QuestionsServer
       services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
       services.AddTransient<QuestionsUnitOfWork>();
       services.AddOptions();
-      var p = Configuration.GetSection(nameof(ServersSettings));
-      var t = Configuration.GetConnectionString("TwoButtonsConnection");
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
       services.AddConnectionsHub();
 

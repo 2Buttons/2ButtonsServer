@@ -21,6 +21,12 @@ namespace QuestionsData.Repositories
       return await _db.Database.ExecuteSqlCommandAsync($"addTag {questionId}, {tagText}, {position}") > 0;
     }
 
+    public async Task<bool> AddTags(IEnumerable<TagEntity> tags)
+    {
+      _db.TagEntities.AddRange(tags);
+      return await _db.SaveChangesAsync() > 0;
+    }
+
     public async Task<List<TagDb>> GetTags(int questionId)
     {
       return _db.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
@@ -29,6 +35,18 @@ namespace QuestionsData.Repositories
     public List<TagDb> GetTags(TwoButtonsContext context, int questionId)
     {
       return context.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
+    }
+
+
+
+    public async Task<List<TagEntity>> GetTags(int offset, int count)
+    {
+      return await _db.TagEntities.OrderBy(x => x.TagText).Skip(offset).Take(count).ToListAsync();
+    }
+
+    public async Task<List<TagEntity>> GetPopularTags(int offset, int count)
+    {
+      return await _db.QuestionTagEntities.GroupBy(x => x.TagId).Select(x => new { TagId = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).Skip(offset).Take(count).Join(_db.TagEntities, x => x.TagId, y => y.TagId, (x, y) => y).ToListAsync();
     }
   }
 }

@@ -20,6 +20,8 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public string BackgroundImageLink { get; set; } = null;
 
     public List<string> Tags { get; set; } = new List<string>();
+
+    public List<int> RecommendedToIds { get; set; } = new List<int>();
   }
 
   public class GetQuestionFilteredStatistics : QuestionIdViewModel
@@ -80,8 +82,8 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 
   public class AddRecommendedQuestionViewModel
   {
-    [IdValidation]
-    public int UserToId { get; set; }
+    [Required]
+    public List<int> UsersToId { get; set; }
     [IdValidation]
     public int UserFromId { get; set; }
     [IdValidation]

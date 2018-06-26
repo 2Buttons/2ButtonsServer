@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using QuestionsData.DTO;
 using QuestionsData.Queries.UserQuestions;
 
 namespace QuestionsData.Repositories
@@ -15,6 +16,11 @@ namespace QuestionsData.Repositories
     public UserQuestionsRepository(TwoButtonsContext db)
     {
       _db = db;
+    }
+
+    public async Task<List<UserIdValidDto>> CheckIdsValid(IEnumerable<int> ids)
+    {
+      return await _db.UserEntities.Select(x => new UserIdValidDto { UserId=x.UserId, IsValid= ids.Contains(x.UserId)}).ToListAsync();
     }
 
     public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, int questionId)
