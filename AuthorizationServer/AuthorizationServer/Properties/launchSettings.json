@@ -18,7 +18,7 @@
     },
     "AuthorizedServer": {
       "commandName": "Project",
-      "commandLineArgs": "host -port:11081",
+      "commandLineArgs": "host -port:11000",
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {

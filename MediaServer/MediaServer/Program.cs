@@ -21,27 +21,31 @@ namespace MediaServer
 
     public static void Main(string[] args)
     {
-      var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory).AddJsonFile("appsettings.json");
-      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "..", "commonsettings.json"));
-      Configuration = builder.Build();
-
-      Port = Configuration["WebHost:Port"];
-
-      if (Command.WithName("host").HasOption("-port", "-p").TryParse(args, out var command))
-        if (command is HostCommand hostCommand && !hostCommand.Port.IsNullOrEmpty())
-          Port = hostCommand.Port;
       BuildWebHost(args).Run();
     }
 
     public static IWebHost BuildWebHost(string[] args)
     {
-      return WebHost.CreateDefaultBuilder(args).UseUrls(Url)
+      var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory);
+
+      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "appsettings.json"));
+      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "..", "commonsettings.json"));
+
+      Configuration = builder.Build();
+      Port = Configuration["WebHost:Port"];
+
+      var commandLine = Command.WithName("host").HasOption("-port", "-p");
+
+      if (commandLine.TryParse(args, out var command) && command is HostCommand hostCommand &&
+          !hostCommand.Port.IsNullOrEmpty()) Port = hostCommand.Port;
+
+      return WebHost.CreateDefaultBuilder(args).UseConfiguration(Configuration).UseUrls(Url)
         .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Trace)).UseStartup<Startup>().UseSerilog(
           (ctx, cfg) =>
           {
             var serverName = Configuration.GetValue<string>("ServerName");
             var path = Path.Combine(AppContext.BaseDirectory, ".." + Path.DirectorySeparatorChar, "Logs",
-              serverName + "{Date}-" + ".log");
+              serverName + "{Date}" + ".log");
 
             cfg.ReadFrom.Configuration(ctx.Configuration).MinimumLevel.Debug().MinimumLevel
               .Override("Microsoft", LogEventLevel.Information).WriteTo.RollingFile(path,

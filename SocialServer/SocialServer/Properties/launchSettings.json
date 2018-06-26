@@ -18,7 +18,7 @@
     },
     "SocialServer": {
       "commandName": "Project",
-      "commandLineArgs": "host -port:17000",
+      "commandLineArgs": "host -port:14000",
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {

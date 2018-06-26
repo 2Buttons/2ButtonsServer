@@ -19,69 +19,70 @@ using MonitoringData;
 
 namespace MonitoringServer
 {
-    public class Startup
-    {
+  public class Startup
+  {
     public IConfiguration Configuration { get; }
 
-      public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration)
+    {
+      Configuration = configuration;
+    }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc();
+      services.AddCors(options =>
       {
-        Configuration = configuration;
-      }
+        options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+      });
+      services.AddDbContext<TwoButtonsContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
+      services.AddTransient<MonitoringUnitOfWork>();
 
-      public void ConfigureServices(IServiceCollection services)
+      services.AddOptions();
+      services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
+      var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
+      var secretKey = jwtAppSettingOptions["SecretKey"];
+      var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
+      var audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
+
+      services.Configure<JwtSettings>(options =>
       {
-        services.AddMvc();
-        services.AddCors(options =>
-        {
-          options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-        });
-        services.AddDbContext<TwoButtonsContext>(
-          options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-        services.AddTransient<MonitoringUnitOfWork>();
+        options.Issuer = issuer;
+        options.Audience = audience;
+        options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey),
+          SecurityAlgorithms.HmacSha256);
+      });
 
-        services.AddOptions();
-        var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
-        var secretKey = jwtAppSettingOptions["SecretKey"];
-        var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
-        var audience = jwtAppSettingOptions[nameof(JwtSettings.Audience)];
-
-        services.Configure<JwtSettings>(options =>
-        {
-          options.Issuer = issuer;
-          options.Audience = audience;
-          options.SigningCredentials = new SigningCredentials(JwtSettings.CreateSecurityKey(secretKey),
-            SecurityAlgorithms.HmacSha256);
-        });
-
-        services.AddAuthentication(options =>
-        {
-          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(configureOptions =>
-        {
-          configureOptions.ClaimsIssuer = issuer;
-          configureOptions.RequireHttpsMetadata = false;
-          configureOptions.TokenValidationParameters =
-            JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
-        });
-      }
-
-      public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+      services.AddAuthentication(options =>
       {
-        loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-        loggerFactory.AddDebug();
-        app.UseExceptionHandling();
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      }).AddJwtBearer(configureOptions =>
+      {
+        configureOptions.ClaimsIssuer = issuer;
+        configureOptions.RequireHttpsMetadata = false;
+        configureOptions.TokenValidationParameters =
+          JwtSettings.CreateTokenValidationParameters(issuer, audience, JwtSettings.CreateSecurityKey(secretKey));
+      });
+    }
 
-        app.UseDefaultFiles();
-        app.UseStaticFiles();
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    {
+      loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+      loggerFactory.AddDebug();
+      app.UseExceptionHandling();
 
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-          ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-        });
+      app.UseDefaultFiles();
+      app.UseStaticFiles();
 
-        app.UseAuthentication();
-        app.UseMvc();
-      }
+      app.UseForwardedHeaders(new ForwardedHeadersOptions
+      {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+      });
+
+      app.UseAuthentication();
+      app.UseMvc();
+    }
   }
 }

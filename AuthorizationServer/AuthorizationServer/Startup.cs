@@ -50,6 +50,7 @@ namespace AuthorizationServer
       });
 
       services.AddOptions();
+      services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
 
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
       services.Configure<VkAuthSettings>(Configuration.GetSection(nameof(VkAuthSettings)));

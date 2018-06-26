@@ -41,6 +41,7 @@ namespace SocialServer
       services.AddTransient<IFriendsService, FriendsService>();
 
       services.AddOptions();
+      services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var secretKey = jwtAppSettingOptions["SecretKey"];
       var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];

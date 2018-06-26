@@ -12,7 +12,7 @@ namespace NotificationsServer.Services
   {
     private readonly NotificationsDataUnitOfWork _db;
 
-    private NotificationManager _notificationManager;
+    private readonly NotificationManager _notificationManager;
    // private readonly WebSocketManager _webSocketManager;
 
     public NotificationsMessageService(NotificationsDataUnitOfWork db, NotificationManager notificationManager)
