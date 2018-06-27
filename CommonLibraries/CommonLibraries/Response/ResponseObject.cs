@@ -19,8 +19,9 @@ namespace CommonLibraries.Response
 
     public ResponseObject(int status, string message, object data)
     {
-      Status = status;
+      
       Message = string.IsNullOrEmpty(message) ? GetDafaultMesage(status) : message;
+      Status = status == 304 ? 500: status;
       Data = data;
     }
 

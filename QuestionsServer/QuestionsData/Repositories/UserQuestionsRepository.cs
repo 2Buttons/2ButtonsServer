@@ -18,13 +18,15 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<List<UserIdValidDto>> CheckIdsValid(IEnumerable<int> ids)
-    {
-      return await _db.UserEntities.Select(x => new UserIdValidDto { UserId=x.UserId, IsValid= ids.Contains(x.UserId)}).ToListAsync();
-    }
+    //public async Task<List<UserIdValidDto>> CheckIdsValid(IEnumerable<int> ids)
+    //{
+    //  return await _db.UserEntities.Where(x=> ids.Contains(x.UserId)x.UserId.Select(x => new UserIdValidDto { UserId=x.UserId, IsValid= ids.Contains(x.UserId)}).ToListAsync();
+    //}
 
     public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, int questionId)
     {
+      if (_db.UserEntities.All(x => x.UserId != userToId)) return false;
+
       var recommendedDate = DateTime.UtcNow;
 
       return await _db.Database.ExecuteSqlCommandAsync(

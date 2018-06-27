@@ -173,19 +173,19 @@ namespace QuestionsServer.Controllers
 
       var notFoundIds = new List<int>();
 
-      var validIds = await _mainDb.UserQuestions.CheckIdsValid(question.RecommendedToIds);
+     // var validIds = await _mainDb.UserQuestions.CheckIdsValid(question.RecommendedToIds);
 
-      foreach (var id in validIds)
+      foreach (var id in question.RecommendedToIds)
       {
-        if (id.IsValid && !await _mainDb.UserQuestions.AddRecommendedQuestion(id.UserId, question.UserId,
+        if (!await _mainDb.UserQuestions.AddRecommendedQuestion(id, question.UserId,
               questionId))
-          _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id.UserId,
+          _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id,
             questionId, DateTime.UtcNow);
-        else notFoundIds.Add(id.UserId);
+        else notFoundIds.Add(id);
       }
 
       if (badAddedTags.Count != 0)
-        return new ResponseResult((int) HttpStatusCode.InternalServerError, "Not all tages were inserted.",
+        return new ResponseResult((int) HttpStatusCode.InternalServerError, "Not all tags were inserted.",
           new {NotAddedTags = badAddedTags});
       return new OkResponseResult(questionId);
     }
@@ -252,25 +252,25 @@ namespace QuestionsServer.Controllers
 
       var notFoundIds = new List<int>();
 
-      var validIds = await _mainDb.UserQuestions.CheckIdsValid(recommendedQuestion.UsersToId);
+     // var validIds = await _mainDb.UserQuestions.CheckIdsValid(recommendedQuestion.UsersToId);
 
-      foreach (var id in validIds)
+      foreach (var id in recommendedQuestion.UsersToId)
       {
-        if (id.IsValid && !await _mainDb.UserQuestions.AddRecommendedQuestion(id.UserId, recommendedQuestion.UserFromId,
+        if (await _mainDb.UserQuestions.AddRecommendedQuestion(id, recommendedQuestion.UserFromId,
           recommendedQuestion.QuestionId))
-          _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id.UserId,
+          _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
             recommendedQuestion.QuestionId, DateTime.UtcNow);
-        else notFoundIds.Add(id.UserId);
+        else notFoundIds.Add(id);
       }
 
-      return notFoundIds.Count > 0
-        ? new ResponseResult((int) HttpStatusCode.NotModified, "Not all ids were found.",
-          new {NotFoundIds = notFoundIds})
-        : new ResponseResult((int) HttpStatusCode.Created, (object) "Recommended Question was added.");
+      if (notFoundIds.Count > 0)
+        return new ResponseResult((int) HttpStatusCode.NotModified, "Not all ids were found.",
+          new {NotFoundIds = notFoundIds});
+      return new ResponseResult((int) HttpStatusCode.Created, (object) "Recommended Question was added.");
     }
 
-    [HttpPost("update/bakground/link")]
-    public async Task<IActionResult> UpdateBakgroundViaLink(
+    [HttpPost("update/background/link")]
+    public async Task<IActionResult> UpdateBackgroundViaLink(
       [FromBody] UploadQuestionBackgroundViaLinkViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -281,8 +281,8 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Background was updated", new {Url = url});
     }
 
-    [HttpPost("update/bakground/file")]
-    public async Task<IActionResult> UpdateBakgroundViaFile(
+    [HttpPost("update/background/file")]
+    public async Task<IActionResult> UpdateBackgroundViaFile(
       [FromBody] UploadQuestionBackgroundViaFileViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
