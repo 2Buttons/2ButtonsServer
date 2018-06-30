@@ -20,11 +20,6 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    //public async Task<List<UserIdValidDto>> CheckIdsValid(IEnumerable<int> ids)
-    //{
-    //  return await _db.UserEntities.Where(x=> ids.Contains(x.UserId)x.UserId.Select(x => new UserIdValidDto { UserId=x.UserId, IsValid= ids.Contains(x.UserId)}).ToListAsync();
-    //}
-
     public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, int questionId)
     {
       if (_db.UserEntities.All(x => x.UserId != userToId)) return false;
@@ -99,96 +94,51 @@ namespace QuestionsData.Repositories
         .Take(count).ToListAsync();
     }
 
-    //public async Task<List<RecommendedQuestionDto>> GetPersonalRecommendedQuestions(int userId, int offset, int count,
-    //  Expression<Func<RecommendedQuestionDto, object>> predicate)
-    //{
-    //  var questions = _db.RecommendedQuestionsDb.AsNoTracking()
-    //    .FromSql($"select * from dbo.getUserRecommendedQuestions({userId})").OrderByDescending(predicate).Skip(offset)
-    //    .Take(count).Select(
-    //    y => new RecommendedQuestionDto
+    public async Task<List<RecommendedQuestionDto>> GetRecommendedQuestions(int userId,int offset,
+      int count, Expression<Func<RecommendedQuestionDb, object>> predicate)
+    {
 
-    //    {
-    //      QuestionId = y.QuestionId,
-    //      UserId = y.UserId,
-    //      Condition = y.Condition,
-    //      IsAnonymity = y.IsAnonymity,
-    //      IsAudience = y.IsAudience,
-    //      QuestionType = y.QuestionType,
-    //      QuestionAddDate = y.QuestionAddDate,
-    //      BackgroundImageLink = y.BackgroundImageLink,
-    //      Answers = y.Answers,
-    //      Likes = y.Likes,
-    //      Dislikes = y.Dislikes,
-    //      IsDeleted = y.IsDeleted
-    //    }
+      var questions = await _db.RecommendedQuestionsDb.AsNoTracking()
+        .FromSql($"select * from dbo.getUserRecommendedQuestions({userId})").OrderByDescending(predicate).ToListAsync();
 
-    //  ).OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
+      var result = new List<RecommendedQuestionDto>();
 
-    //  // var questionUIds = _db.QuestionIdQueries.Intersect(questions.Select(x => new QuestionIdQuery { QuestionId = x.QuestionId}));// = questions.Select(x => new RecommendedUserQuestionQuery {QuestionId = x.QuestionId, UserId = userId}).ToList();
+      foreach (RecommendedQuestionDb t in questions)
+      {
+        if (result.Count == 0 || result.All(x=>x.QuestionId != t.QuestionId))
+        { result.Add(new RecommendedQuestionDto
+          {
+            QuestionId = t.QuestionId,
+            Condition = t.Condition,
+            FirstOption = t.FirstOption,
+            SecondOption = t.SecondOption,
+            BackgroundImageLink = t.BackgroundImageLink,
+            QuestionType = t.QuestionType,
+            QuestionAddDate = t.QuestionAddDate,
+            UserId = t.UserId,
+            Login = t.Login,
+            SmallAvatarLink = t.SmallAvatarLink,
+            Likes = t.Likes,
+            Dislikes = t.Dislikes,
+            YourFeedback = t.YourFeedback,
+            YourAnswer = t.YourAnswer,
+            InFavorites = t.InFavorites,
+            IsSaved = t.IsSaved,
+            Comments = t.Comments,
+            FirstAnswers = t.FirstAnswers,
+            SecondAnswers = t.SecondAnswers,
+          });
+       
+        }
+        var question = result.FirstOrDefault(x => x.QuestionId == t.QuestionId);
+        if(question!=null && question.RecommendedToUsers.All(x=>x.UserId != t.ToUserId)) question.RecommendedToUsers
+          .Add(new RecommendedToUserDto {UserId = t.ToUserId, Login = t.ToUserLogin});
+      }
 
-    //  for (var i = 0; i < questions.Count; i++)
-    //  {
-    //    var i1 = i;
-    //    questions[i].RecommendedToUsers = await _db.RecommendedQuestionEntities.Where(x => x.UserFromId == userId && x.QuestionId == questions[i1].QuestionId)
-    //      .Join(_db.UserEntities, x => x.UserToId, y => y.UserId, (x, y) => y)
-    //      .Select(x => new RecommendedToUserDto { UserId = x.UserId, Login = x.Login }).ToListAsync();
-    //  }
-    //  return questions;
+      return result;
 
-      // var questions =  await _db.RecommendedQuestionEntities.Where(x => x.UserFromId == userId).Join(_db.QuestionEntities,
-      //          x => x.QuestionId, y => y.QuestionId,
-      //          (x, y) =>new RecommendedQuestionDto
-
-      //          {
-      //            QuestionId = y.QuestionId,
-      //            UserId = y.UserId,
-      //            Condition = y.Condition,
-      //            IsAnonymity = y.IsAnonymity,
-      //            IsAudience = y.IsAudience,
-      //            QuestionType = y.QuestionType,
-      //            QuestionAddDate = y.QuestionAddDate,
-      //            BackgroundImageLink = y.BackgroundImageLink,
-      //            Answers = y.Answers,
-      //            Likes = y.Likes,
-      //            Dislikes = y.Dislikes,
-      //            IsDeleted = y.IsDeleted
-      //          }
-
-      // ).OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync() ;
-
-      //// var questionUIds = _db.QuestionIdQueries.Intersect(questions.Select(x => new QuestionIdQuery { QuestionId = x.QuestionId}));// = questions.Select(x => new RecommendedUserQuestionQuery {QuestionId = x.QuestionId, UserId = userId}).ToList();
-
-      // for (var i = 0; i < questions.Count; i++)
-      // {
-      //   var i1 = i;
-      //   questions[i].RecommendedToUsers = await _db.RecommendedQuestionEntities.Where(x => x.UserFromId == userId && x.QuestionId == questions[i1].QuestionId)
-      //     .Join(_db.UserEntities, x => x.UserToId, y => y.UserId, (x, y) => y)
-      //     .Select(x => new RecommendedToUserDto {UserId = x.UserId, Login = x.Login}).ToListAsync();
-      // }
-      // return questions;
-      //var questionUIds.Join(_db.RecommendedQuestionEntities, x => x.QuestionId, y => y.QuestionId, (x, y) => y)
-      //  .Where(x => x.UserFromId == userId).Join(_db.UserEntities, x => x.UserToId, y => y.UserId, (x, y) => y)
-      //  .Select(x => new RecommendedToUserDto {UserId = x.UserId, Login = x.Login}).ToListAsync();
-
-      //_db.RecommendedQuestionEntities.Where(x => x.UserFromId == userId).Join(_db.QuestionEntities,
-      //  x => x.QuestionId, y => y.QuestionId,
-      //  (x, y) => y
-      //  //{
-      //  //  QuestionId = y.QuestionId,
-      //  //  UserId = y.UserId,
-      //  //  Condition = y.Condition,
-      //  //  IsAnonymity = y.IsAnonymity,
-      //  //  IsAudience = y.IsAudience,
-      //  //  QuestionType = y.QuestionType,
-      //  //  QuestionAddDate = y.QuestionAddDate,
-      //  //  BackgroundImageLink = y.BackgroundImageLink,
-      //  //  Answers = y.Answers,
-      //  //  Likes = y.Likes,
-      //  //  Dislikes = y.Dislikes,
-      //  //  IsDeleted = y.IsDeleted
-      //  //}
-      //).OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
- //   }
+     
+    }
 
     public async Task<List<SelectedQuestionDb>> GetSelectedQuestions(int userId, int pageUserId, int offset, int count)
     {

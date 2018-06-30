@@ -59,8 +59,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId,
-        userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+      var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
 
       var result = new List<RecommendedQuestionViewModel>();
@@ -199,5 +198,6 @@ namespace QuestionsServer.Controllers
       secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
     }
+
   }
 }

@@ -17,6 +17,7 @@ namespace QuestionsData
     public virtual DbSet<CityEntity> CityEntities { get; set; }
     public virtual DbSet<AnswerEntity> AnswerEntities { get; set; }
     public virtual DbSet<QuestionEntity> QuestionEntities { get; set; }
+    public virtual DbSet<OptionEntity> OptionEntities { get; set; }
     public virtual DbSet<FollowEntity> FollowEntities { get; set; }
     public virtual DbSet<QuestionTagEntity> QuestionTagEntities { get; set; }
     public virtual DbSet<TagEntity> TagEntities { get; set; }

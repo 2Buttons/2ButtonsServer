@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CommonLibraries.Extensions;
+using QuestionsData.DTO;
 using QuestionsData.DTO.NewsQuestions;
 using QuestionsData.Queries;
 using QuestionsData.Queries.UserQuestions;
@@ -147,15 +148,26 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
+
     public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(this RecommendedQuestionDb dbEntity,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos)
     {
       var viewModel =
         QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
-      viewModel.ToUserId = dbEntity.ToUserId;
-      viewModel.ToUserLogin = dbEntity.ToUserLogin;
-      viewModel.RecommendDate = dbEntity.RecommendDate;
+      //viewModel.ToUserId = dbEntity.ToUserId;
+      //viewModel.ToUserLogin = dbEntity.ToUserLogin;
+      //viewModel.RecommendDate = dbEntity.RecommendDate;
 
+      return viewModel;
+    }
+
+    public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(this RecommendedQuestionDto dbEntity,
+      IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos)
+    {
+      var viewModel =
+        QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+
+      viewModel.Users = dbEntity.RecommendedToUsers;
       return viewModel;
     }
 
