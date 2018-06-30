@@ -116,7 +116,7 @@ namespace SocialServer.Infrastructure
           Login = item.Login,
           SmallAvatarLink = item.SmallAvatarLink,
           BirthDate = item.BirthDate,
-          SexType = item.Sex
+          SexType = item.SexType
         });
       }
       return result;
@@ -140,7 +140,7 @@ namespace SocialServer.Infrastructure
           Login = item.Login,
           SmallAvatarLink = item.SmallAvatarLink,
           BirthDate = item.BirthDate,
-          SexType = item.Sex,
+          SexType = item.SexType,
           CommonFollowsTo = item.CommonFollowsTo
         });
 
@@ -152,7 +152,7 @@ namespace SocialServer.Infrastructure
           Login = item.Login,
           SmallAvatarLink = item.SmallAvatarLink,
           BirthDate = item.BirthDate,
-          SexType = item.Sex,
+          SexType = item.SexType,
           CommonFollowsTo = item.CommonFollowsTo
         });
 

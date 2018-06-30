@@ -231,7 +231,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         UserId = p.UserId,
         Age = p.BirthDate.Age(),
         Login = p.Login,
-        SexType = p.Sex,
+        SexType = p.SexType,
         SmallAvatarLink = p.SmallAvatarLink
       }).ToList();
     }
@@ -262,7 +262,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Login = v.Login,
         SmallAvatarLink = v.SmallAvatarLink,
         Age = v.BirthDate.Age(),
-        SexType = v.Sex,
+        SexType = v.SexType,
         IsHeFollowed = v.HeFollowed,
         IsYouFollowed = v.YouFollowed
       }).ToList();

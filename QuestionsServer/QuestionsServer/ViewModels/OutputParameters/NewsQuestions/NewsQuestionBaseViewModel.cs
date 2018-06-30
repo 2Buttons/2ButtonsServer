@@ -8,7 +8,7 @@ namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
 {
   public class NewsQuestionBaseViewModel : QuestionBaseViewModel, IEquatable<NewsQuestionBaseViewModel>, IEqualityComparer<NewsQuestionBaseViewModel>
   {
-    public SexType Sex { get; set; }
+    public SexType SexType { get; set; }
     public int Position { get; set; }
 
     [JsonIgnore]

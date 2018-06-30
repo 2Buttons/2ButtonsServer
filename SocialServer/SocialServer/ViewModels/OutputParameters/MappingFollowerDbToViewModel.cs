@@ -15,7 +15,7 @@ namespace SocialServer.ViewModels.OutputParameters
           Login = f.Login,
           SmallAvatarLink = f.SmallAvatarLink,
           Age = f.BirthDate.Age(),
-          SexType = f.Sex,
+          SexType = f.SexType,
           IsYouFollowed = f.YouFollowed,
           IsHeFollowed = f.HeFollowed
         })
@@ -30,7 +30,7 @@ namespace SocialServer.ViewModels.OutputParameters
           Login = f.Login,
           SmallAvatarLink = f.SmallAvatarLink,
           Age = f.BirthDate.Age(),
-          SexType = f.Sex,
+          SexType = f.SexType,
           VisitsAmount = f.Visits,
           IsYouFollowed = f.YouFollowed,
           IsHeFollowed = f.HeFollowed

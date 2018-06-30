@@ -79,7 +79,7 @@ namespace QuestionsServer.Controllers
       if (statistics.UserId <= 0) return new BadResponseResult("UserId has to be more than 0");
 
       var result = await _mainDb.Questions.GetQuestionStatistic(statistics.UserId, statistics.QuestionId,
-        statistics.MinAge, statistics.MaxAge, statistics.Sex, statistics.City);
+        statistics.MinAge, statistics.MaxAge, statistics.SexType, statistics.City);
       _hub.Monitoring.UpdateUrlMonitoring(statistics.UserId, UrlMonitoringType.FiltersQuestions);
       return new OkResponseResult("Question Statistic", result);
     }
@@ -89,7 +89,7 @@ namespace QuestionsServer.Controllers
       [FromBody] GetQuestionFilteredStatistics statistics)
     {
       var result = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.UserId, statistics.QuestionId,
-        statistics.MinAge, statistics.MaxAge, statistics.Sex, statistics.City, statistics.PageParams.Offset,
+        statistics.MinAge, statistics.MaxAge, statistics.SexType, statistics.City, statistics.PageParams.Offset,
         statistics.PageParams.Count);
       return new OkResponseResult("Question Statistic -> Users", result);
     }

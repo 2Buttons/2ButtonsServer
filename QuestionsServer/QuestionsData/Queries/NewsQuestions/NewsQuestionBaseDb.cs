@@ -1,10 +1,12 @@
-﻿using CommonLibraries;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using CommonLibraries;
 
 namespace QuestionsData.Queries.NewsQuestions
 {
   public class NewsQuestionBaseDb : QuestionBaseDb
   {
-    public SexType Sex { get; set; }
+    [Column("Sex")]
+    public SexType SexType { get; set; }
     public int AnsweredFollowTo { get; set; }
   }
 }

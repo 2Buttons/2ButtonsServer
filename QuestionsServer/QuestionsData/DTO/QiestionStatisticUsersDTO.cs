@@ -19,7 +19,7 @@ namespace QuestionsData.DTO
   {
     public int UserId { get; set; }
     public string Login { get; set; }
-    public SexType Sex { get; set; }
+    public SexType SexType { get; set; }
     public int Age { get; set; }
     public string SmallAvatarLink { get; set; }
     public bool IsYouFollowed { get; set; }

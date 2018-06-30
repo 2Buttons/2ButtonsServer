@@ -59,8 +59,8 @@ namespace QuestionsData.Repositories
         .ToList();
 
       var votersFriends =  friendIds.Join(questions, a=>a, b=>b.Item1.UserId, (a,b)=> b).ToList();//.Where(x=>x.Follow.(x => x.Item2.AnswerType).Select(x => new { Type = x.Key, Count = x.Count() }).ToListAsync();
-      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  Sex = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink}).ToList();
-      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, Sex = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink }).ToList();
+      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  SexType = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink}).ToList();
+      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, SexType = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink }).ToList();
       //var countFirstAnswerType = voters.Count(x => x.Item2.AnswerType == AnswerType.First);
       //var countSecondAnswerType = voters.Count - countFirstAnswerType;
 
@@ -118,7 +118,7 @@ namespace QuestionsData.Repositories
           IsYouFollowed =voter.isYouFollowed,
           City = voter.s.Name,
           Login = voter.f.Item1.Login,
-          Sex = voter.f.Item1.SexType,
+          SexType = voter.f.Item1.SexType,
           
           SmallAvatarLink = voter.f.Item1.SmallAvatarLink
         };
