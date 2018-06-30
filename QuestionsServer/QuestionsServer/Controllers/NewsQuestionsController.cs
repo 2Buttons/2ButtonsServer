@@ -61,27 +61,27 @@ namespace QuestionsServer.Controllers
         () =>
         {
           using (var context = new TwoButtonsContext(_dbOptions))
-            askedList = GetNewsAskedQuestionsAsync(context, userId, questionsOffset, questionsCount);
+            askedList = GetNewsAskedQuestionsAsync(context, userId);
         },
         () =>
         {
           using (var context = new TwoButtonsContext(_dbOptions))
-            answeredList = GetNewsAnsweredQuestionsAsync(context, userId, questionsOffset, questionsCount);
+            answeredList = GetNewsAnsweredQuestionsAsync(context, userId);
         },
         () =>
         {
           using (var context = new TwoButtonsContext(_dbOptions))
-            favoriteList = GetNewsFavoriteQuestionsAsync(context, userId, questionsOffset, questionsCount);
+            favoriteList = GetNewsFavoriteQuestionsAsync(context, userId);
         },
         () =>
         {
           using (var context = new TwoButtonsContext(_dbOptions))
-            commentedList = GetNewsCommentedQuestions(context, userId, questionsOffset, questionsCount);
+            commentedList = GetNewsCommentedQuestions(context, userId);
         },
         () =>
         {
           using (var context = new TwoButtonsContext(_dbOptions))
-            recommentedList = TryGetNewsRecommendedQuestions(context, userId, questionsOffset, questionsCount);
+            recommentedList = TryGetNewsRecommendedQuestions(context, userId);
         });
 
 
@@ -107,7 +107,7 @@ namespace QuestionsServer.Controllers
         }
       }
 
-      var resultList = mainList.Except(removeList).OrderByDescending(x => x.Priority).ToList();
+      var resultList = mainList.Except(removeList).OrderByDescending(x => x.Priority).Skip(questionsOffset).Take(questionsCount).ToList();
 
       var answeredListResultList = new List<NewsAnsweredQuestionViewModel>();
       var favoriteListResultList = new List<NewsFavoriteQuestionViewModel>();
@@ -177,10 +177,9 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
-    private List<NewsAskedQuestionViewModel> GetNewsAskedQuestionsAsync(TwoButtonsContext context, int userId, int questionsPage = 1,
-      int questionsAmount = 10)
+    private List<NewsAskedQuestionViewModel> GetNewsAskedQuestionsAsync(TwoButtonsContext context, int userId)
     {
-      var userAskedQuestions = _mainDb.News.GetNewsAskedQuestions(context, userId, questionsPage, questionsAmount);
+      var userAskedQuestions = _mainDb.News.GetNewsAskedQuestions(context, userId);
       //return new List<NewsAskedQuestionViewModel>();
 
       var result = new List<NewsAskedQuestionViewModel>();
@@ -195,10 +194,9 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestionsAsync(TwoButtonsContext context, int userId, int questionsPage = 1,
-      int questionsAmount = 10)
+    private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestionsAsync(TwoButtonsContext context, int userId)
     {
-      var userAnsweredQuestions = _mainDb.News.GetNewsAnsweredQuestions(context, userId, questionsPage, questionsAmount);
+      var userAnsweredQuestions = _mainDb.News.GetNewsAnsweredQuestions(context, userId);
       //return new List<NewsAnsweredQuestionViewModel>();
       var result = new List<NewsAnsweredQuestionViewModel>();
       foreach (var question in userAnsweredQuestions)
@@ -211,10 +209,9 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestionsAsync(TwoButtonsContext context, int userId, int questionsPage = 1,
-      int questionsAmount = 10)
+    private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestionsAsync(TwoButtonsContext context, int userId)
     {
-      var userFavoriteQuestions = _mainDb.News.GetNewsFavoriteQuestions(context, userId, questionsPage, questionsAmount);
+      var userFavoriteQuestions = _mainDb.News.GetNewsFavoriteQuestions(context, userId);
       //return new List<NewsFavoriteQuestionViewModel>();
 
       var result = new List<NewsFavoriteQuestionViewModel>();
@@ -229,10 +226,9 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(TwoButtonsContext context, int userId, int questionsPage = 1,
-      int questionsAmount = 10)
+    private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(TwoButtonsContext context, int userId)
     {
-      var userCommentedQuestions = _mainDb.News.GetNewsCommentedQuestions(context, userId, questionsPage, questionsAmount);
+      var userCommentedQuestions = _mainDb.News.GetNewsCommentedQuestions(context, userId);
       //return new List<NewsCommentedQuestionViewModel>();
 
       var result = new List<NewsCommentedQuestionViewModel>();
@@ -246,11 +242,10 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(TwoButtonsContext context, int userId, int questionsPage = 1,
-      int questionsAmount = 10)
+    private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(TwoButtonsContext context, int userId)
     {
       var newsRecommendedQuestions =
-         _mainDb.News.GetNewsRecommendedQuestions(context, userId, questionsPage, questionsAmount);
+         _mainDb.News.GetNewsRecommendedQuestions(context, userId);
 
       var result = new List<NewsRecommendedQuestionViewModel>();
 
