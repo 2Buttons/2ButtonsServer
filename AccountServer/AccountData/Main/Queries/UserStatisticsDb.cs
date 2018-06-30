@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AccountData.Main.Entities
+namespace AccountData.Main.Queries
 {
   public class UserStatisticsDb
   {

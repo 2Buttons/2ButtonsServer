@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace CommonLibraries.Helpers
+namespace CommonLibraries.ConnectionServices
 {
   public class MonitoringServerConnection
   {

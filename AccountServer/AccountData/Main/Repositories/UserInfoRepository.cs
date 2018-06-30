@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AccountData.DTO;
 using AccountData.Main.Entities;
+using AccountData.Main.Queries;
 using CommonLibraries.Exceptions.ApiExceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +29,7 @@ namespace AccountData.Main.Repositories
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.Sex}, {user.City},  {user.Description}, {user.LargeAvatarLink}, {user.SmallAvatarLink}") > 0;
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.LargeAvatarLink}, {user.SmallAvatarLink}") > 0;
     }
 
     public async Task<bool> UpdateUserLargeAvatar(int userId, string fullAvatarLink)

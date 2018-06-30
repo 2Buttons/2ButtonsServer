@@ -10,7 +10,7 @@ namespace CommonLibraries.SocialNetworks
     public int ExpiresIn { get; set; }
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
-    public SexType Sex { get; set; }
+    public SexType SexType { get; set; }
     public string City { get; set; }
     public string LargePhotoUrl { get; set; }
     public string SmallPhotoUrl { get; set; }

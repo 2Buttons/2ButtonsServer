@@ -1,4 +1,5 @@
 ﻿using AccountData.Main.Entities;
+using AccountData.Main.Queries;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
@@ -15,7 +16,7 @@ namespace AccountServer.ViewModels
         UserId = dbEntity.UserId,
         Login = dbEntity.Login,
         Age = dbEntity.BirthDate.Age(),
-        SexType =  dbEntity.Sex,
+        SexType =  dbEntity.SexType,
         Description = dbEntity.Description,
         LargeAvatarLink = dbEntity.LargeAvatarLink,
         SmallAvatarLink = dbEntity.SmallAvatarLink,

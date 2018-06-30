@@ -10,7 +10,6 @@ using AccountServer.ViewModels.InputParameters;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
-using CommonLibraries.Helpers;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;

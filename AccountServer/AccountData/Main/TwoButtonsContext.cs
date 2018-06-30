@@ -1,4 +1,5 @@
 ﻿using AccountData.Main.Entities;
+using AccountData.Main.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Main

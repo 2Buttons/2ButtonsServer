@@ -1,9 +1,8 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
-namespace AccountData.Main.Entities
+namespace AccountData.Main.Queries
 {
   public class UserInfoDb
   {
@@ -12,7 +11,8 @@ namespace AccountData.Main.Entities
 
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
-    public SexType Sex { get; set; }
+    [Column("Sex")]
+    public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
 

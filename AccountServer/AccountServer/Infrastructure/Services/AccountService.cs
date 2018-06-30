@@ -8,7 +8,6 @@ using AccountServer.ViewModels;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
-using CommonLibraries.Helpers;
 using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -64,7 +63,7 @@ namespace AccountServer.Infrastructure.Services
         UserId = user.UserId,
         Login  = user.Login.IsNullOrEmpty() ? oldUser.Login : user.Login,
         BirthDate = user.BirthDate.Year<1900 ? oldUser.BirthDate : user.BirthDate,
-        Sex = user.Sex == SexType.Both ? oldUser.Sex : user.Sex,
+        SexType = user.SexType == SexType.Both ? oldUser.SexType : user.SexType,
         City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
         Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description,
         LargeAvatarLink = user.LargeAvatarLink.IsNullOrEmpty() ? oldUser.LargeAvatarLink : user.LargeAvatarLink,
@@ -120,7 +119,7 @@ namespace AccountServer.Infrastructure.Services
         UserId = userInfo.UserId,
         Login = userInfo.Login,
         BirthDate = userInfo.BirthDate,
-        Sex = userInfo.Sex,
+        SexType = userInfo.SexType,
         City = userInfo.City,
         Description = userInfo.Description,
         LargeAvatarLink = userInfo.LargeAvatarLink,

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
 
-namespace AccountData.Main.Entities
+namespace AccountData.Main.Queries
 {
     public class NotificationDb
     {

@@ -1,6 +1,4 @@
-﻿using CommonLibraries.Helpers;
-
-namespace CommonLibraries.ConnectionServices
+﻿namespace CommonLibraries.ConnectionServices
 {
   public class ConnectionsHub
   {

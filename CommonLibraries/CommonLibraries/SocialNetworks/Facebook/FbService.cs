@@ -52,7 +52,7 @@ namespace CommonLibraries.SocialNetworks.Facebook
         ExpiresIn = expiresIn,
         Login = userInfo.FirstName + " " + userInfo.LastName,
         BirthDate = userInfo.Birthday,
-        Sex = userInfo.SexType,
+        SexType = userInfo.SexType,
         City = userInfo.City?.Title,
         SmallPhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=normal",
         LargePhotoUrl = $"https://graph.facebook.com/v3.0/{userInfo.ExternalId}/picture?type=large"

@@ -116,7 +116,7 @@ namespace AuthorizationServer.Infrastructure.Services
         UserId = userDb.UserId,
         Login = user.Login,
         BirthDate = user.BirthDate,
-        Sex = user.Sex,
+        SexType = user.SexType,
         City = user.City,
         LargeAvatarLink = fullLink,
         SmallAvatarLink = smallLink
