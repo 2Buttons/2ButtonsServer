@@ -11,7 +11,8 @@ namespace AuthorizationData.Main.Entities
     public int UserId { get; set; }
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
-    public SexType Sex { get; set; }
+    [Column("Sex")]
+    public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
     [Column("FullAvatarLink")]

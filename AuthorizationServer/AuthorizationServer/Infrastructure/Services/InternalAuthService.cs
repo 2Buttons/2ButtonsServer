@@ -16,7 +16,6 @@ using CommonLibraries.ConnectionServices;
 using CommonLibraries.EmailManager;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
-using CommonLibraries.Helpers;
 using Microsoft.Extensions.Localization;
 
 namespace AuthorizationServer.Infrastructure.Services
@@ -63,7 +62,7 @@ namespace AuthorizationServer.Infrastructure.Services
         UserId = userDb.UserId,
         Login = user.Login,
         BirthDate = user.BirthDate,
-        Sex = user.SexType,
+        SexType = user.SexType,
         City = user.City,
         Description = user.Description,
         LargeAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar),
