@@ -141,27 +141,6 @@ namespace QuestionsServer.Controllers
             break;
         }
       }
-      //if (answeredListCount == 0 && answeredList.Count > 0) answeredListCount = 1;
-      //if (favoriteListCount == 0 && favoriteList.Count > 0) answeredListCount = 1;
-      //if (commentedListCount == 0 && commentedList.Count > 0) answeredListCount = 1;
-      //if (recommentedListCount == 0 && recommentedList.Count > 0) answeredListCount=1;
-      //if (askedListCount == 0 && askedList.Count > 0) answeredListCount = 1;
-
-      //List<(int count, NewsType type)> counts = new List<(int, NewsType)>()
-      //{
-      //  (answeredListCount,NewsType.Answered),
-      //  (favoriteListCount,NewsType.Favorite),
-      //  (commentedListCount,NewsType.Commented),
-      //  (recommentedListCount,NewsType.Recommended),
-      //  (askedListCount,NewsType.Asked)
-      //};
-    
-
-      //List<NewsAnsweredQuestionViewModel> answeredListResultList = answeredList.Take(answeredListCount).ToList();
-      //List<NewsFavoriteQuestionViewModel> favoriteListResultList = favoriteList.Take(favoriteListCount).ToList();
-      //List<NewsCommentedQuestionViewModel> commentedListResultList = commentedList.Take(commentedListCount).ToList();
-      //List<NewsRecommendedQuestionViewModel> recommentedListResultList = recommentedList.Take(recommentedListCount).ToList();
-      //List<NewsAskedQuestionViewModel> askedListResultList = askedList.Take(askedListCount).ToList();
 
       var result = new NewsViewModel
       {
