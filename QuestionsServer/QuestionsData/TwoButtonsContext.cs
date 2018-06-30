@@ -20,9 +20,10 @@ namespace QuestionsData
     public virtual DbSet<FollowEntity> FollowEntities { get; set; }
     public virtual DbSet<QuestionTagEntity> QuestionTagEntities { get; set; }
     public virtual DbSet<TagEntity> TagEntities { get; set; }
+    public virtual DbSet<RecommendedQuestionEntity> RecommendedQuestionEntities { get; set; }
     
 
-    //for functions and prosedures
+    //for functions and procedures
     public virtual DbQuery<QuestionDb> QuestionDb { get; set; }
     public virtual DbQuery<QuestionIdDb> QuestionIdDb { get; set; }
     public virtual DbQuery<ComplaintDb> ComplaintDb { get; set; }
@@ -45,10 +46,12 @@ namespace QuestionsData
     public virtual DbQuery<AskedQuestionDb> AskedQuestionsDb { get; set; }
     public virtual DbQuery<SavedQuestionDb> SavedQuestionsDb { get; set; }
     public virtual DbQuery<RecommendedQuestionDb> RecommendedQuestionsDb { get; set; }
-    public virtual DbQuery<ChosenQuestionDb> ChosenQuestionsDb { get; set; }
+    public virtual DbQuery<SelectedQuestionDb> SelectedQuestionsDb { get; set; }
     public virtual DbQuery<LikedQuestionDb> LikedQuestionsDb { get; set; }
     public virtual DbQuery<TopQuestionDb> TopQuestionsDb { get; set; }
 
+    public virtual DbQuery<RecommendedUserQuestionQuery> RecommendedUserQuestionQueries { get; set; }
+    public virtual DbQuery<QuestionIdQuery> QuestionIdQueries { get; set; }
     public virtual DbQuery<PhotoDb> PhotoDb { get; set; }
 
 

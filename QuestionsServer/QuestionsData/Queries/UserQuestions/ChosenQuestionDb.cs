@@ -1,6 +1,6 @@
 ﻿namespace QuestionsData.Queries.UserQuestions
 {
-  public class ChosenQuestionDb : QuestionBaseDb
+  public class SelectedQuestionDb : QuestionBaseDb
   {
   }
 }

@@ -82,7 +82,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var chosenQuestions = await _mainDb.UserQuestions.GetChosenQuestions(userQuestions.UserId, userQuestions.UserId,
+      var chosenQuestions = await _mainDb.UserQuestions.GetSelectedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
 
       var result = new List<ChosenQuestionsViewModel>();

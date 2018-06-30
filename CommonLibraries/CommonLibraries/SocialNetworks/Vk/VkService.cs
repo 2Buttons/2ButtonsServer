@@ -57,7 +57,7 @@ namespace CommonLibraries.SocialNetworks.Vk
         ExpiresIn = expiresIn,
         Login = userInfo.FirstName + " " + userInfo.LastName,
         BirthDate = userInfo.Birthday,
-        Sex = userInfo.Sex,
+        SexType = userInfo.Sex,
         City = await cityName ?? userInfo.City?.Title,
         SmallPhotoUrl = userInfo.SmallPhoto,
         LargePhotoUrl = userInfo.LargePhoto
