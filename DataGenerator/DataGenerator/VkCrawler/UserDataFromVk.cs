@@ -1,7 +1,7 @@
 ﻿using System;
 using DataGenerator.ReaderObjects;
 
-namespace CommonLibraries.SocialNetworks
+namespace DataGenerator.VkCrawler
 {
   public class UserDataFromVk
   {

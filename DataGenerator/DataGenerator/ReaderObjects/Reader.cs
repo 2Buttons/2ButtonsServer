@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using DataGenerator.VkCrawler;
 using Independentsoft.Office.Spreadsheet;
+using Newtonsoft.Json;
 
 //using Microsoft.Office.Interop.Excel;
 
@@ -22,29 +26,29 @@ namespace DataGenerator.ReaderObjects
       return result;
     }
 
-    public List<string> ReadMaleNames(string path)
-    {
-      var result = new List<string>();
+    //public List<string> ReadMaleNames(string path)
+    //{
+    //  var result = new List<string>();
 
-      using (var sr = new StreamReader(path, Encoding.UTF8))
-      {
-        string line;
-        while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
-      }
-      return result;
-    }
+    //  using (var sr = new StreamReader(path, Encoding.UTF8))
+    //  {
+    //    string line;
+    //    while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
+    //  }
+    //  return result;
+    //}
 
-    public List<string> ReadFemaleNames(string path)
-    {
-      var result = new List<string>();
+    //public List<string> ReadFemaleNames(string path)
+    //{
+    //  var result = new List<string>();
 
-      using (var sr = new StreamReader(path, Encoding.UTF8))
-      {
-        string line;
-        while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
-      }
-      return result;
-    }
+    //  using (var sr = new StreamReader(path, Encoding.UTF8))
+    //  {
+    //    string line;
+    //    while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
+    //  }
+    //  return result;
+    //}
 
     //public List<Surname> ReadSurnames(string path)
     //{
@@ -138,6 +142,17 @@ namespace DataGenerator.ReaderObjects
       //var t = maping;
       //Console.WriteLine(t.Count);
       //return new List<City>();
+    }
+
+    public List<VkUserData> ReadUserFromVkFile(string path)
+    {
+      var responce = "";
+      using (StreamReader sr = new StreamReader(path))
+      {
+        responce = sr.ReadToEnd();
+      }
+
+      return JsonConvert.DeserializeObject<VkUserDataResponse>(responce).Response.Items.ToList();
     }
   }
 }

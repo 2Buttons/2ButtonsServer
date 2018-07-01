@@ -2,7 +2,7 @@
 using DataGenerator.ReaderObjects;
 using Newtonsoft.Json;
 
-namespace CommonLibraries.SocialNetworks.Vk
+namespace DataGenerator.VkCrawler
 {
   public class VkUserDataResponse
   {

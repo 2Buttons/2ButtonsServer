@@ -1,4 +1,4 @@
-﻿namespace CommonLibraries.SocialNetworks.Vk
+﻿namespace DataGenerator.VkCrawler
 {
   public class VkAuthSettings
   {

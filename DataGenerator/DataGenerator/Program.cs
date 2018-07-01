@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
-using CommonLibraries.SocialNetworks.Vk;
+using System.Threading.Tasks;
 using DataGenerator.ReaderObjects;
+using DataGenerator.VkCrawler;
 
 namespace DataGenerator
 {
@@ -38,14 +40,12 @@ namespace DataGenerator
       //  }
       //}
 
-     // var p = reader.ReadSurnames(SurnamesUrl);
+      // var p = reader.ReadSurnames(SurnamesUrl);
 
       //foreach (var t in p) Console.WriteLine($"{t.Title} {t.Gender}");
 
 
-      var AppId = "6469856";
-      var AppSecret = "Zcec8RyHjpvaVfvRxLvq";
-      var AppAccess = "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a";
+     
 
       VkService service = new VkService();
 
@@ -63,25 +63,36 @@ namespace DataGenerator
 
 
 
-      var groupId = "opros_tyta";
+      //var groupId = "opros_tyta";
 
-      for (int i = 0; i < 100; i++)
-      {
-        var path = VkUsersUrl + "_"+groupId + $"_{i}_" + ".txt";
-        var users = service.GetJsonFromGroup(groupId, i, AppAccess).GetAwaiter().GetResult();
-        using (StreamWriter sw = new StreamWriter(path, false, System.Text.Encoding.UTF8))
-        {
+      //for (int i = 0; i < 100; i++)
+      //{
+      //  var path = VkUsersUrl + "_" + groupId + $"_{i}_" + ".txt";
+      //  var users = service.GetJsonFromGroup(groupId, i, AppAccess).GetAwaiter().GetResult();
+      //  using (StreamWriter sw = new StreamWriter(path, false, System.Text.Encoding.UTF8))
+      //  {
 
-          sw.WriteLine(users);
+      //    sw.WriteLine(users);
 
-        }
-        Thread.Sleep(4000);
-      }
-     
-     
+      //  }
+      //  Thread.Sleep(4000);
+      //}
+
+      var t = new Reader().ReadUserFromVkFile(VkUsersUrl + "_opros_tyta_0_.txt");
+      var m = t;
+      Console.ReadKey();
 
 
 
     }
+
+    public async Task<string> GetJsonFromGroup(string groupId, int offset, string externalToken)
+    {
+      offset = offset * 1000;
+      return await new HttpClient().GetStringAsync(
+        $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={offset}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
+
+    }
+
   }
 }
