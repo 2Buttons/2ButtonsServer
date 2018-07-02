@@ -25,6 +25,18 @@ namespace DataGenerator.ScriptsGenerators
       return Environment.NewLine + "GO" + Environment.NewLine;
     }
 
+    private string SwitchIdentityInsertAccount(bool isEnable)
+    {
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Users]";
+      return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
+    }
+
+    private string SwitchIdentityInsertMain(bool isEnable)
+    {
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[User]";
+      return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
+    }
+
     private string GetInsertionInitLineMain()
     {
       return "INSERT INTO[dbo].[User] " + "([userID]," + "[login], " + "[birthDate], " + "[sex], " + "[cityID], " +
@@ -73,9 +85,34 @@ namespace DataGenerator.ScriptsGenerators
       return result.ToString();
     }
 
-    public string GetInsertionLineAccount()
+    public string GetInsertionLineAccount(IList<UserEntity> users)
     {
-      
+      StringBuilder result = new StringBuilder();
+      result.Append(GetUsingLineAccountDb());
+      result.Append(GetGo());
+      result.Append(SwitchIdentityInsertAccount(true));
+      result.Append(GetGo());
+      result.Append(GetInserionInitLineAccount());
+      result.Append(GetInsertionLineUsersAccount(users));
+      result.Append(GetGo());
+      result.Append(SwitchIdentityInsertAccount(false));
+      result.Append(GetGo());
+      return result.ToString();
+    }
+
+    public string GetInsertionLineMain(IList<UserInfoEntity> users)
+    {
+      StringBuilder result = new StringBuilder();
+      result.Append(GetUsingLineMainDb());
+      result.Append(GetGo());
+      result.Append(SwitchIdentityInsertMain(true));
+      result.Append(GetGo());
+      result.Append(GetInsertionInitLineMain());
+      result.Append(GetInsertionLineUsersMain(users));
+      result.Append(GetGo());
+      result.Append(SwitchIdentityInsertMain(false));
+      result.Append(GetGo());
+      return result.ToString();
     }
   }
 }

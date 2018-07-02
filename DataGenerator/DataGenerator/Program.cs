@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CommonLibraries.Extensions;
 using DataGenerator.Entities;
 using DataGenerator.ReaderObjects;
 using DataGenerator.ScriptsGenerators;
@@ -36,19 +37,19 @@ namespace DataGenerator
 
     private static void Main(string[] args)
     {
-      var reader = new Reader();
+      //var reader = new Reader();
 
 
-      var vkUsers = reader.ReadUserFromVkFile(VkUsersUrl + "_opros_tyta_0_.txt");
+      //var vkUsers = reader.ReadUserFromVkFile(VkUsersUrl + "_opros_tyta_0_.txt");
 
-      var cities = vkUsers.Where(x=>x.City!=null).Select(x => new CityEntity {CityId = x.City.CityId, Name = x.City.Title, People = 0}).ToList();
+      //var cities = vkUsers.Where(x=>x.City!=null).Select(x => new CityEntity {CityId = x.City.CityId, Name = x.City.Title, People = 0}).ToList();
 
-      var citySQL = new CityGenerator("TwoButtons").GetFullInsertionLine(cities);
+      //var citySQL = new CityGenerator().GetFullInsertionLine(cities);
 
-      using (StreamWriter sw = new StreamWriter(FolderUrl+"CitiesFromVK.txt", false, System.Text.Encoding.UTF8))
-      {
-        sw.WriteLine(citySQL);
-      }
+      //using (StreamWriter sw = new StreamWriter(FolderUrl+"CitiesFromVK.txt", false, System.Text.Encoding.UTF8))
+      //{
+      //  sw.WriteLine(citySQL);
+      //}
 
       //if (File.Exists(@"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Questions.xlsx"))
       //{
@@ -102,8 +103,16 @@ namespace DataGenerator
       //var m = t;
       //Console.ReadKey();
 
+      new VkService().WriteMemberGroupsStringToFile("mudakoff", 100000,
+        "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a", FolderUrl).GetAwaiter().GetResult();
+    //  new UsersManaging().GetUsersFromVkFiles(FolderUrl);
 
-
+      //var users = new Reader().ReadUsers(FolderUrl+"Users.txt");
+      //var count = users.Count(x => x.Birthday.Age() > 16 && x.Birthday.Age() < 21);
+      //var l = count;
+      //var m = users.Where(x => x.Birthday.Age() >= 12 && x.Birthday.Age() <= 20).ToList();
+      //var average = m.Average(x => x.Birthday.Age());
+      //var p = m;
     }
 
     public async Task<string> GetJsonFromGroup(string groupId, int offset, string externalToken)

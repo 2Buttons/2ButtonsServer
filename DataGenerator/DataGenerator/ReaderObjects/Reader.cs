@@ -13,18 +13,18 @@ namespace DataGenerator.ReaderObjects
 {
   public class Reader
   {
-    public List<string> ReadCities(string path)
-    {
-      var result = new List<string>();
+    //public List<string> ReadCities(string path)
+    //{
+    //  var result = new List<string>();
 
-      using (var sr = new StreamReader(path, Encoding.UTF8))
-      {
-        string line;
-        var index = 0;
-        while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
-      }
-      return result;
-    }
+    //  using (var sr = new StreamReader(path, Encoding.UTF8))
+    //  {
+    //    string line;
+    //    var index = 0;
+    //    while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
+    //  }
+    //  return result;
+    //}
 
     //public List<string> ReadMaleNames(string path)
     //{
@@ -143,7 +143,20 @@ namespace DataGenerator.ReaderObjects
       //return new List<City>();
     }
 
-    public List<VkUserData> ReadUserFromVkFile(string path)
+    public List<string> ReadCities(string path)
+    {
+      var result = new List<string>();
+
+      using (var sr = new StreamReader(path, Encoding.UTF8))
+      {
+        string line;
+        var index = 0;
+        while ((line = sr.ReadLine()) != null) if (!string.IsNullOrEmpty(line)) result.Add(line.Trim());
+      }
+      return result;
+    }
+
+    public List<VkUserData> ReadUsers(string path)
     {
       var responce = "";
       using (StreamReader sr = new StreamReader(path))
@@ -151,7 +164,7 @@ namespace DataGenerator.ReaderObjects
         responce = sr.ReadToEnd();
       }
 
-      return JsonConvert.DeserializeObject<VkUserDataResponse>(responce).Response.Items.ToList();
+      return JsonConvert.DeserializeObject<List<VkUserData>>(responce).ToList();
     }
   }
 }

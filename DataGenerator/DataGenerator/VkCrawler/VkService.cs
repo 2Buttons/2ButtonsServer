@@ -40,7 +40,7 @@ namespace DataGenerator.VkCrawler
 
     public async Task WriteMemberGroupsToFile(string groupId, int count, string externalToken, string folderPath)
     {
-      var path = folderPath + "_" + groupId + ".txt";
+      var path = folderPath + "VkUsers_" + groupId + ".txt";
       string jsonUsers;
       string userInfoResponse;
       var result = new List<VkUserData>();
@@ -70,6 +70,41 @@ namespace DataGenerator.VkCrawler
       {
         sw.WriteLine(jsonUsers);
       }
+    }
+
+    public async Task WriteMemberGroupsStringToFile(string groupId, int count, string externalToken, string folderPath)
+    {
+      var path = folderPath + "VkUsers_" + groupId + ".txt";
+      string userInfoResponse;
+
+      if (count < 1000)
+      {
+        userInfoResponse = await Client.GetStringAsync(
+          $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={0}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
+       
+          
+
+        using (var sw = new StreamWriter(path, false, Encoding.UTF8))
+        {
+          sw.WriteLine(userInfoResponse);
+        }
+        return;
+      }
+      for (var i = 0; i < count / 1000; i++)
+      {
+        path = folderPath + "VkUsers_" + groupId +$"_{i}_"+ ".txt";
+        var offset = i * 1000;
+        userInfoResponse = await Client.GetStringAsync(
+          $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={offset}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
+        using (var sw = new StreamWriter(path, true, Encoding.UTF8))
+        {
+          sw.WriteLine(userInfoResponse);
+        }
+        Thread.Sleep(4000);
+      }
+      
+      
+     
     }
 
     public async Task<string> GetJsonFromGroup(string groupId, int offset, string externalToken)
