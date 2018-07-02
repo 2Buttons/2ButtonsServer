@@ -99,9 +99,8 @@ namespace DataGenerator.ReaderObjects
       var book = new Workbook(path);
 
       foreach (var sheet in book.Sheets)
-        if (sheet is Worksheet)
+        if (sheet is Worksheet worksheet)
         {
-          var worksheet = (Worksheet) sheet;
           var cells = worksheet.GetCells();
 
           for (var i = 0; i < cells.Count; i++)

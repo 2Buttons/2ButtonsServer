@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using DataGenerator.Entities;
 using DataGenerator.ReaderObjects;
+using DataGenerator.ScriptsGenerators;
 using DataGenerator.VkCrawler;
 
 namespace DataGenerator
@@ -27,9 +30,26 @@ namespace DataGenerator
     public const string VkUsersUrl =
       @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\VkUsers";
 
+    public const string FolderUrl =
+      @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\";
+
+
     private static void Main(string[] args)
     {
       var reader = new Reader();
+
+
+      var vkUsers = reader.ReadUserFromVkFile(VkUsersUrl + "_opros_tyta_0_.txt");
+
+      var cities = vkUsers.Where(x=>x.City!=null).Select(x => new CityEntity {CityId = x.City.CityId, Name = x.City.Title, People = 0}).ToList();
+
+      var citySQL = new CityGenerator("TwoButtons").GetFullInsertionLine(cities);
+
+      using (StreamWriter sw = new StreamWriter(FolderUrl+"CitiesFromVK.txt", false, System.Text.Encoding.UTF8))
+      {
+        sw.WriteLine(citySQL);
+      }
+
       //if (File.Exists(@"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Questions.xlsx"))
       //{
       //  var  p  = reader.ReadQuestions(@"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Questions.xlsx");
@@ -45,7 +65,7 @@ namespace DataGenerator
       //foreach (var t in p) Console.WriteLine($"{t.Title} {t.Gender}");
 
 
-     
+
 
       VkService service = new VkService();
 
@@ -78,9 +98,9 @@ namespace DataGenerator
       //  Thread.Sleep(4000);
       //}
 
-      var t = new Reader().ReadUserFromVkFile(VkUsersUrl + "_opros_tyta_0_.txt");
-      var m = t;
-      Console.ReadKey();
+      //var t = new Reader().ReadUserFromVkFile(VkUsersUrl + "_opros_tyta_0_.txt");
+      //var m = t;
+      //Console.ReadKey();
 
 
 
