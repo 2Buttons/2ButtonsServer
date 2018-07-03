@@ -19,22 +19,22 @@ namespace DataGenerator.VkCrawler
   public class VkCityResponse
   {
     [JsonProperty("response")]
-    public VkCity[] Response { get; set; }
+    public VkItems<VkCity> Response { get; set; }
   }
 
   public class VkFriendIdsResponse
   {
     [JsonProperty("response")]
-    public VkFriendItems<int> Response { get; set; }
+    public VkItems<int> Response { get; set; }
   }
 
   public class VkFriendsDataResponse
   {
     [JsonProperty("response")]
-    public VkFriendItems<VkFriendData> Response { get; set; }
+    public VkItems<VkFriendData> Response { get; set; }
   }
 
-  public class VkFriendItems<T>
+  public class VkItems<T>
   {
     [JsonProperty("count")]
     public int Count { get; set; }

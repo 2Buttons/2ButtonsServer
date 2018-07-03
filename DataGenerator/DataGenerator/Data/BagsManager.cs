@@ -24,7 +24,7 @@ namespace DataGenerator.Data
     public const string CitiesBag = "Cities.txt";
     public const string CitiesMatching = "CitiesMatching.txt";
 
-    public const string VkUsersUrl = @"E:\Projects\2Buttons\Project\VkUsers\";
+    public const string VkUsersUrl = @"E:\Projects\2Buttons\Project\Data\Files\VkUsers\";
 
     public const string BagsUrl = @"E:\Projects\2Buttons\Project\Data\Bags\";
 
@@ -88,7 +88,7 @@ namespace DataGenerator.Data
         _citiesMatching.Add(new CityMatching
         {
           VkId = cities[i].CityId,
-          TwoBId = cities[i].CityId,
+          TwoBId = i+1,
           Title = cities[i].Title
         });
         cities[i].CityId = i + 1;
@@ -146,6 +146,10 @@ namespace DataGenerator.Data
         var email = new EmailBlank { Text = emailsStrings[i]};
         result.Add(email);
       }
+      using (var sw = new StreamWriter(BagsUrl + EmailsBag, false, Encoding.UTF8))
+      {
+        sw.WriteLine(JsonConvert.SerializeObject(result));
+      }
     }
 
     private void SwitchMaleData(List<User> users)
@@ -182,6 +186,11 @@ namespace DataGenerator.Data
         users[i].LastName = users[kSurname].LastName;
         users[kSurname].LastName = surname;
       }
+    }
+
+    public void CombineUsers()
+    {
+      _reader.CombineVkUsers(VkUsersUrl, "VkUsers", FilesUrl, UsersBag);
     }
   }
 

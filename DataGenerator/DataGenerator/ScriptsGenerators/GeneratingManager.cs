@@ -30,7 +30,7 @@ namespace DataGenerator.ScriptsGenerators
     private List<UserInfoEntity> _userInfos;
     private List<UserEntity> _users;
 
-    
+
 
     public GeneratingManager(Range users, Range questions)
     {
@@ -53,7 +53,7 @@ namespace DataGenerator.ScriptsGenerators
       var usersUrl = "Users.sql";
       var usersInfoUrl = "UsersInfo.sql";
       var citiesUrl = "Cities.sql";
-      using (var sw = new StreamWriter(Path.Combine(path,optionsUrl), false, Encoding.UTF8))
+      using (var sw = new StreamWriter(Path.Combine(path, optionsUrl), false, Encoding.UTF8))
       {
         sw.WriteLine(new OptionGenerator().GetInsertionLine(_options));
       }
@@ -83,15 +83,16 @@ namespace DataGenerator.ScriptsGenerators
     private void PrepareEmails()
     {
       const string mail = "@mockmail.com";
-      foreach (var t in _bagEmails)
+      for (var i = 0; i < _bagEmails.Count; i++)
       {
-        t.Text= t + $"{_bagEmails[1]}" + mail;
+        //var t = _bagEmails[i];
+        _bagEmails[i].Text = _bagEmails[i].Text + $"{_bagEmails[i].Text}" + $"{i}" + mail;
       }
     }
 
-    private void  ToEntitys(IEnumerable<City> cities)
+    private void ToEntitys(IEnumerable<City> cities)
     {
-      _cities = cities.Select(x=> new CityEntity {CityId = x.CityId, Title = x.Title, People = 0}).ToList();
+      _cities = cities.Select(x => new CityEntity { CityId = x.CityId, Title = x.Title, People = 0 }).ToList();
     }
 
     private void ToEntitys(IEnumerable<Question> questions)
@@ -103,7 +104,7 @@ namespace DataGenerator.ScriptsGenerators
       {
         _options.Add(new OptionEntity
         {
-          OptionId = t.QuestionId * 2-1,
+          OptionId = t.QuestionId * 2 - 1,
           QuestionId = t.QuestionId,
           OptionText = t.FirstOption,
           Position = 1,
@@ -114,8 +115,8 @@ namespace DataGenerator.ScriptsGenerators
         {
           OptionId = t.QuestionId * 2,
           QuestionId = t.QuestionId,
-          OptionText = t.FirstOption,
-          Position = 1,
+          OptionText = t.SecondOption,
+          Position = 2,
           Answers = 0,
         });
         _questions.Add(new QuestionEntity
@@ -128,15 +129,15 @@ namespace DataGenerator.ScriptsGenerators
           IsDeleted = false,
           IsAnonimoty = false,
           Likes = 0,
-          QuestionAddDate = DateTime.Now.AddDays(-80),
+          QuestionAddDate = RandomDay(),
           QuestionType = QuestionType.Opened,
           Shows = 0,
           UserId = 0
         });
-        _mediaManager.SetStandardsBackground(_questions, @"E:\Projects\2Buttons\Project\MediaData\standards\");
+        _mediaManager.SetStandardsBackground(_questions, @"E:\Projects\2Buttons\Project\MediaData\standards\", @"E:\Projects\2Buttons\Project\Data\Media\");
       }
 
-    
+
     }
     private void ToEntitys(IList<User> users)
     {
@@ -176,12 +177,16 @@ namespace DataGenerator.ScriptsGenerators
 
     public void DistributeQuestions()
     {
-      var restQuestions = _questions.Select(x => x).ToList();
+
+
+      var restQuestions = _questions.ToList();
+
 
       foreach (var t in _users)
       {
-        var questionIndex =  _random.Next(0, restQuestions.Count - 1);
-        _questions[questionIndex].UserId = t.UserId;
+        if (restQuestions.Count <= 0) return;
+        var questionIndex = _random.Next(0, restQuestions.Count);
+        restQuestions[questionIndex].UserId = t.UserId;
         restQuestions.RemoveAt(questionIndex);
       }
     }
@@ -193,6 +198,19 @@ namespace DataGenerator.ScriptsGenerators
         city.People = _userInfos.Count(x => x.CityId == city.CityId);
       }
     }
+
+    //public void CreateAnswers()
+    //{
+    //  foreach (var t in _users)
+    //  {
+    //    for (int i = 0; i < 25; i++)
+    //    {
+    //      var questionIndex = _random.Next(0, _questions.Count);
+    //      var answer = _random.Next(1, 3);
+    //      if(_)
+    //    }
+    //  }
+    //}
 
     private DateTime RandomDay()
     {

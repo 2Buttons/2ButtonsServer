@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DataGenerator.ScriptsGenerators.Entities;
 
@@ -33,7 +34,7 @@ namespace DataGenerator.ScriptsGenerators
 
     private string GetInsertionOptionLine(OptionEntity option)
     {
-      return $"({option.OptionId}, {option.QuestionId}, '{option.OptionText}', {option.Position}, {option.Answers})";
+      return $"({option.OptionId}, {option.QuestionId}, N'{option.OptionText}', {option.Position}, {option.Answers})";
     }
 
     private string GetInsertionOptionsLine(IList<OptionEntity> options)
@@ -45,18 +46,27 @@ namespace DataGenerator.ScriptsGenerators
       return result.ToString();
     }
 
-    public string GetInsertionLine(IList<OptionEntity> cities)
+    public string GetInsertionLine(IList<OptionEntity> options)
     {
       var result = new StringBuilder();
-      result.Append(GetUsingDb());
-      result.Append(GetGo());
-      result.Append(SwitchIdentityInsert(true));
-      result.Append(GetGo());
-      result.Append(GetInsertInit());
-      result.Append(GetInsertionOptionsLine(cities));
-      result.Append(GetGo());
-      result.Append(SwitchIdentityInsert(false));
-      result.Append(GetGo());
+      var times = options.Count < 1000 ? 1 : options.Count / 1000;
+      for (var i = 0; i < times; i++)
+      {
+        var coptionsIter = options.Skip(i * 1000).Take(1000).ToList();
+        result.Append(GetUsingDb());
+        result.Append(GetGo());
+        result.Append("ALTER TABLE [dbo].[Option] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
+        result.Append(GetGo());
+        result.Append(SwitchIdentityInsert(true));
+        result.Append(GetGo());
+        result.Append(GetInsertInit());
+        result.Append(GetInsertionOptionsLine(coptionsIter));
+        result.Append(GetGo());
+        result.Append(SwitchIdentityInsert(false));
+        result.Append(GetGo());
+        result.Append("ALTER TABLE [dbo].[Option] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
+        result.Append(GetGo());
+      }
       return result.ToString();
     }
   }

@@ -36,14 +36,21 @@ namespace DataGenerator
 
     private static void Main(string[] args)
     {
+      GeneratingManager manager = new GeneratingManager(new Range { From = 0, To = 1000 }, new Range { From = 0, To = 300 });
+      
       BagsManager bags = new BagsManager();
-      bags.SaveBags();
+      bags.CombineUsers();
+      //bags.SaveBags();
 
-      GeneratingManager manager = new GeneratingManager(new Range{From=0, To=1000},new Range{From = 0,To =300});
+      
 
-      manager.CalculatePopulationInCities();
-      manager.DistributeQuestions();
-      manager.CreateScripts();
+      //manager.CalculatePopulationInCities();
+      //manager.DistributeQuestions();
+      //manager.CreateScripts();
+
+      //var users = bags.LoadUsers();
+      //var av = users.Where(x => x.Birthday.Age() >= 14 && x.Birthday.Age() <= 25).Average(x => x.Birthday.Age());
+      //var t = av;
 
       //var reader = new Reader();
 

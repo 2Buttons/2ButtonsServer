@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using CommonLibraries.Extensions;
 using DataGenerator.Data.ReaderObjects;
 using DataGenerator.VkCrawler;
 using Independentsoft.Office.Spreadsheet;
@@ -23,7 +24,7 @@ namespace DataGenerator.Data.Reader
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
         var json = sr.ReadToEnd();
-        return JsonConvert.DeserializeObject<VkCityResponse>(json).Response
+        return JsonConvert.DeserializeObject<VkCityResponse>(json).Response.Items
           .Select(x => new City {CityId = x.CityId, Title = x.Title}).ToList();
       }
     }
@@ -33,8 +34,19 @@ namespace DataGenerator.Data.Reader
       var result = new List<string>();
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
-        var line = sr.ReadLine().Trim().Split(' ').ElementAt(1);
-        result.Add(line);
+
+        string line;
+        while ((line = sr.ReadLine()) != null)
+        {
+          if (line != string.Empty)
+          {
+            line = line.Trim().Split(' ').ElementAt(2);
+            result.Add(line);
+          }
+        }
+        //var line = sr.ReadLine();
+        //var lines = line.Trim().Split(' ').ToList();
+        
       }
 
       return result;
@@ -55,9 +67,9 @@ namespace DataGenerator.Data.Reader
             var question = new Question
             {
               QuestionId = int.Parse(cells[i].Value),
-              Condition = cells[i + 1].Value,
-              FirstOption = cells[i + 2].Value,
-              SecondOption = cells[i + 5].Value
+              Condition = cells[i + 1].Value.Replace("'", "''"),
+              FirstOption = cells[i + 2].Value.Replace("'", "''"),
+              SecondOption = cells[i + 5].Value.Replace("'", "''")
             };
             result.Add(question);
             i = i + 5;
@@ -70,8 +82,8 @@ namespace DataGenerator.Data.Reader
     {
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
-        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd())
-          .Select(x => new City {CityId = x.City.CityId, Title = x.City.Title}).ToList();
+        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Where(x=>x.City !=null).OrderBy(x=>x.City.CityId)
+          .Select(x =>  new City {CityId = x.City.CityId, Title = x?.City.Title.Replace("'", "''") }).ToList();
       }
     }
 
@@ -79,11 +91,11 @@ namespace DataGenerator.Data.Reader
     {
       using (var sr = new StreamReader(path))
       {
-        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Select(x => new User
+        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Where(x=>x.Birthday.Age()>10 && !x.LargePhoto.Contains("deactivated") &&x.City !=null).Select(x => new User
         {
           UserId = x.UserId,
-          FirstName = x.FirstName,
-          LastName = x.LastName,
+          FirstName = x.FirstName.Replace("'", "''"),
+          LastName = x.LastName.Replace("'", "''"),
           Sex = x.Sex,
           Birthday = x.Birthday,
           CityId = x.City.CityId,
@@ -101,8 +113,8 @@ namespace DataGenerator.Data.Reader
       foreach (var file in files)
         using (var sr = new StreamReader(file))
         {
-          var json = sr.ReadToEnd().Replace("29.2", "25.2").Replace("32.5", "30.5");
-          var jsonUsers = JsonConvert.DeserializeObject<VkUserDataResponse>(json).Response.Items.ToList();
+          var json = sr.ReadToEnd().Replace("29.2", "25.2").Replace("32.5", "30.5").Replace("No","").Replace("Name","");
+          var jsonUsers = JsonConvert.DeserializeObject<VkUserDataResponse>(json).Response.Items.Where(x=>x.Birthday.Age()>5).ToList();
           result.AddRange(jsonUsers);
         }
 

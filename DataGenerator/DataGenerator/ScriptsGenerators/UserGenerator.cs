@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DataGenerator.ScriptsGenerators.Entities;
 
@@ -46,72 +47,83 @@ namespace DataGenerator.ScriptsGenerators
 
     private string GetInserionInitLineAccount()
     {
-      return "INSERT INTO [dbo].[Users] " + " ([AccessFailedCount]," + "[Email]," +
-             "[EmailConfirmed]," + "[PasswordHash]," + "[PhoneNumber]," + "[PhoneNumberConfirme]," +
-             "[RoleType]," + "[TwoFactorEnabled]," + "[RegistrationDate]," + "[IsBot])" +
-             "VALUES" + Environment.NewLine;
+      return "INSERT INTO [dbo].[Users] " + " ([userID], [AccessFailedCount]," + "[Email]," + "[EmailConfirmed]," +
+             "[PasswordHash]," + "[PhoneNumber]," + "[PhoneNumberConfirmed]," + "[RoleType]," + "[TwoFactorEnabled]," +
+             "[RegistrationDate]," + "[IsBot])" + "VALUES" + Environment.NewLine;
     }
 
     private string GetInserionLineAccount(UserEntity user)
     {
       return
-        $"({user.UserId}, 0, '{user.Email}', 1, {user.PasswordHash}, {user.PhoneNumber}, 1, {user.RoleType}, 0, '{user.RegistrationDate}', 1)";
+        $"({user.UserId}, 0, N'{user.Email}', 1, N'{user.PasswordHash}', '{user.PhoneNumber}', 1, {(int) user.RoleType}, 0, '{user.RegistrationDate}', 1)";
     }
+
     private string GetInserionLineMain(UserInfoEntity user)
     {
       return
-        $"({user.UserId}, {user.Login}, '{user.BirthDate}', {(int)user.SexType}, {user.CityId}, {user.Description}, '{user.LastNotsSeenDate}', '{user.LargeAvatarLink}', '{user.SmallAvatarLink}')";
+        $"({user.UserId}, N'{user.Login}', N'{user.BirthDate}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', N'{user.LastNotsSeenDate}', N'{user.LargeAvatarLink}', N'{user.SmallAvatarLink}')";
     }
 
-    private string GetInsertionLineUsersMain(IList<UserInfoEntity> users )
+    private string GetInsertionLineUsersMain(IList<UserInfoEntity> users)
     {
-      StringBuilder result = new StringBuilder();
-      for (int i = 0; i < users.Count - 1; i++)
-      {
+      var result = new StringBuilder();
+      for (var i = 0; i < users.Count - 1; i++)
         result.Append(GetInserionLineMain(users[i]) + "," + Environment.NewLine);
-      }
       result.Append(GetInserionLineMain(users[users.Count - 1]));
       return result.ToString();
     }
 
     private string GetInsertionLineUsersAccount(IList<UserEntity> users)
     {
-      StringBuilder result = new StringBuilder();
-      for (int i = 0; i < users.Count - 1; i++)
-      {
+      var result = new StringBuilder();
+      for (var i = 0; i < users.Count - 1; i++)
         result.Append(GetInserionLineAccount(users[i]) + "," + Environment.NewLine);
-      }
       result.Append(GetInserionLineAccount(users[users.Count - 1]));
       return result.ToString();
     }
 
     public string GetInsertionLineAccount(IList<UserEntity> users)
     {
-      StringBuilder result = new StringBuilder();
-      result.Append(GetUsingLineAccountDb());
-      result.Append(GetGo());
-      result.Append(SwitchIdentityInsertAccount(true));
-      result.Append(GetGo());
-      result.Append(GetInserionInitLineAccount());
-      result.Append(GetInsertionLineUsersAccount(users));
-      result.Append(GetGo());
-      result.Append(SwitchIdentityInsertAccount(false));
-      result.Append(GetGo());
+      var result = new StringBuilder();
+      var times = users.Count < 1000 ? 1 : users.Count / 1000;
+      for (var i = 0; i < times; i++)
+      {
+        var usersIter = users.Skip(i * 1000).Take(1000).ToList();
+        result.Append(GetUsingLineAccountDb());
+        result.Append(GetGo());
+        result.Append(SwitchIdentityInsertAccount(true));
+        result.Append(GetGo());
+        result.Append(GetInserionInitLineAccount());
+        result.Append(GetInsertionLineUsersAccount(usersIter));
+        result.Append(GetGo());
+        result.Append(SwitchIdentityInsertAccount(false));
+        result.Append(GetGo());
+      }
       return result.ToString();
     }
 
     public string GetInsertionLineMain(IList<UserInfoEntity> users)
     {
-      StringBuilder result = new StringBuilder();
-      result.Append(GetUsingLineMainDb());
-      result.Append(GetGo());
-      result.Append(SwitchIdentityInsertMain(true));
-      result.Append(GetGo());
-      result.Append(GetInsertionInitLineMain());
-      result.Append(GetInsertionLineUsersMain(users));
-      result.Append(GetGo());
-      result.Append(SwitchIdentityInsertMain(false));
-      result.Append(GetGo());
+      var result = new StringBuilder();
+      var times = users.Count < 1000 ? 1 : users.Count / 1000;
+      for (var i = 0; i < times; i++)
+      {
+        var usersIter = users.Skip(i * 1000).Take(1000).ToList();
+        
+        result.Append(GetUsingLineMainDb());
+        result.Append(GetGo());
+        result.Append("ALTER TABLE [dbo].[User] NOCHECK CONSTRAINT FK_USER_CITY");
+        result.Append(GetGo());
+        result.Append(SwitchIdentityInsertMain(true));
+        result.Append(GetGo());
+        result.Append(GetInsertionInitLineMain());
+        result.Append(GetInsertionLineUsersMain(usersIter));
+        result.Append(GetGo());
+        result.Append(SwitchIdentityInsertMain(false));
+        result.Append(GetGo());
+        result.Append("ALTER TABLE [dbo].[User] WITH CHECK CHECK CONSTRAINT FK_USER_CITY");
+        result.Append(GetGo());
+      }
       return result.ToString();
     }
   }

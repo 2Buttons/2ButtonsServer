@@ -11,15 +11,22 @@ namespace DataGenerator.ScriptsGenerators
 {
   public class MediaManager
   {
-    public void SetStandardsBackground(IList<QuestionEntity> questions, string standardsBackgroundFolder)
+    public void SetStandardsBackground(IList<QuestionEntity> questions, string standardsBackgroundFolder, string saveToFolder)
     {
       var random = new Random();
       var backgrounds = Directory.GetFiles(standardsBackgroundFolder).Where(x => x.Contains("background")).ToList();
 
       foreach (var t in questions)
       {
-        var backgroundIndex = random.Next(1, backgrounds.Count);
-        t.BackgroundImageLink = "/standards/" + backgrounds[backgroundIndex];
+
+       // var oldName = backgrounds[backgroundIndex];
+       // var newName = $"/{imageType}/" + uniqueName;
+
+        var backgroundIndex = random.Next(0, backgrounds.Count <=1 ? 1 : backgrounds.Count);
+        t.BackgroundImageLink = "/standards/" + Path.GetFileName(backgrounds[backgroundIndex]);
+      //  t.BackgroundImageLink = newName;
+        if (standardsBackgroundFolder != saveToFolder && !File.Exists(Path.Combine(saveToFolder, "standards", Path.GetFileName(backgrounds[backgroundIndex])))) File.Copy(Path.Combine(backgrounds[backgroundIndex]), Path.Combine(saveToFolder, "standards", Path.GetFileName(backgrounds[backgroundIndex])));
+
       }
     }
 
@@ -54,8 +61,8 @@ namespace DataGenerator.ScriptsGenerators
         var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
         var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
 
-        new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
-        new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
+        //new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
+       // new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
 
         t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
         t.LargeAvatarLink = "/" + largeAvatar + "/" + largeName;
