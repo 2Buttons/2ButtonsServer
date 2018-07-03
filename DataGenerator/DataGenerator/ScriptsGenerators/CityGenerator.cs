@@ -42,7 +42,7 @@ namespace DataGenerator.ScriptsGenerators
 
     private string GetUpdatingSetLine(CityEntity city)
     {
-      return $"[name] = '{city.Name}',[people] {city.People}"+ Environment.NewLine;
+      return $"[name] = '{city.Title}',[people] {city.People}"+ Environment.NewLine;
     }
 
     private string GetUpdatingWhere(int cityId)
@@ -57,7 +57,7 @@ namespace DataGenerator.ScriptsGenerators
 
     private string GetInsertionCityLine(CityEntity city)
     {
-      return $"({city.CityId}, '{city.Name}', {city.People})";
+      return $"({city.CityId}, '{city.Title}', {city.People})";
     }
 
     private string GetInsertionCitiesLine(IList<CityEntity> cities)

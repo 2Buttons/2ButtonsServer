@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
+using DataGenerator.Data;
 using DataGenerator.ScriptsGenerators;
 using DataGenerator.VkCrawler;
 
@@ -35,6 +36,15 @@ namespace DataGenerator
 
     private static void Main(string[] args)
     {
+      BagsManager bags = new BagsManager();
+      bags.SaveBags();
+
+      GeneratingManager manager = new GeneratingManager(new Range{From=0, To=1000},new Range{From = 0,To =300});
+
+      manager.CalculatePopulationInCities();
+      manager.DistributeQuestions();
+      manager.CreateScripts();
+
       //var reader = new Reader();
 
 
@@ -101,8 +111,8 @@ namespace DataGenerator
       //var m = t;
       //Console.ReadKey();
 
-       new VkService().WriteMemberGroupsStringToFile("mudakoff", 10_000_000,
-        "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a", FolderUrl).GetAwaiter().GetResult();
+       //new VkService().WriteMemberGroupsStringToFile("mudakoff", 10_000_000,
+       // "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a", FolderUrl).GetAwaiter().GetResult();
       //new UsersManaging().GetUsersFromVkFiles(FolderUrl);
 
       //var users = new Reader().ReadUsers(FolderUrl + "Users.txt");
@@ -113,13 +123,13 @@ namespace DataGenerator
       //var p = m;
     }
 
-    public async Task<string> GetJsonFromGroup(string groupId, int offset, string externalToken)
-    {
-      offset = offset * 1000;
-      return await new HttpClient().GetStringAsync(
-        $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={offset}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
+    //public async Task<string> GetJsonFromGroup(string groupId, int offset, string externalToken)
+    //{
+    //  offset = offset * 1000;
+    //  return await new HttpClient().GetStringAsync(
+    //    $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={offset}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
 
-    }
+    //}
 
   }
 }

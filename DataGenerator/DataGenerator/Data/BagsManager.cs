@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using CommonLibraries.Extensions;
 using DataGenerator.Data.Reader;
+using DataGenerator.Data.Reader.Objects;
+using DataGenerator.Data.ReaderObjects;
 using Newtonsoft.Json;
 
 namespace DataGenerator.Data
@@ -14,9 +16,11 @@ namespace DataGenerator.Data
     public const string QuestionsFile = @"Questions.xlsx";
     public const string UsersFile = "Users.txt";
     public const string MainCitiesFile = "MainCities.txt";
+    public const string EmailFile = "EnglishWord.txt";
 
     public const string UsersBag = "Users.txt";
     public const string QuestionsBag = "Questions.txt";
+    public const string EmailsBag = "Emails.txt";
     public const string CitiesBag = "Cities.txt";
     public const string CitiesMatching = "CitiesMatching.txt";
 
@@ -34,8 +38,30 @@ namespace DataGenerator.Data
     private readonly Random _random = new Random();
 
     private readonly FilesReader _reader = new FilesReader();
+    private readonly BagsReader _bagReader = new BagsReader();
 
+    public List<City> LoadCities()
+    {
+      return _bagReader.ReadCities(BagsUrl + CitiesBag);
+    }
 
+    public List<User> LoadUsers()
+    {
+
+      return _bagReader.ReadUsers(BagsUrl + UsersBag);
+    }
+
+    public List<EmailBlank> LoadEmails()
+    {
+
+      return _bagReader.ReadEmails(BagsUrl + EmailsBag);
+    }
+
+    public List<Question> LoadQuestions()
+    {
+
+      return _bagReader.ReadQuestions(BagsUrl + QuestionsBag);
+    }
 
     public void SaveBags()
     {
@@ -43,6 +69,7 @@ namespace DataGenerator.Data
       SaveCitiesMatchingBag();
       SaveUsersBag();
       SaveQuestionsBag();
+      SaveEmailBags();
     }
 
     private void SaveCitiesBag()
@@ -99,7 +126,34 @@ namespace DataGenerator.Data
       {
         users[i].CityId = _citiesMatching.First(x => x.VkId == users[i].CityId).TwoBId;
         users[i].UserId = i + 1;
+      }
+      SwitchFemaleData(users);
+      SwitchMaleData(users);
 
+      using (var sw = new StreamWriter(BagsUrl + UsersBag, false, Encoding.UTF8))
+      {
+        sw.WriteLine(JsonConvert.SerializeObject(users));
+      }
+    }
+
+    private void SaveEmailBags()
+    {
+     
+      var emailsStrings = _reader.ReadEnglishWords(FilesUrl + EmailFile);
+      var result = new List<EmailBlank>();
+      for (var i = 0; i < emailsStrings.Count; i++)
+      {
+        var email = new EmailBlank { Text = emailsStrings[i]};
+        result.Add(email);
+      }
+    }
+
+    private void SwitchMaleData(List<User> users)
+    {
+
+      users = users.Where(x => x.Sex == CommonLibraries.SexType.Man).ToList();
+      for (var i = 0; i < users.Count; i++)
+      {
         var jName = _random.Next(i, users.Count);
         var name = users[i].FirstName;
         users[i].FirstName = users[jName].FirstName;
@@ -110,10 +164,23 @@ namespace DataGenerator.Data
         users[i].LastName = users[kSurname].LastName;
         users[kSurname].LastName = surname;
       }
+    }
 
-      using (var sw = new StreamWriter(BagsUrl + UsersBag, false, Encoding.UTF8))
+    private void SwitchFemaleData(List<User> users)
+    {
+
+      users = users.Where(x => x.Sex == CommonLibraries.SexType.Woman).ToList();
+      for (var i = 0; i < users.Count; i++)
       {
-        sw.WriteLine(JsonConvert.SerializeObject(users));
+        var jName = _random.Next(i, users.Count);
+        var name = users[i].FirstName;
+        users[i].FirstName = users[jName].FirstName;
+        users[jName].FirstName = name;
+
+        var kSurname = _random.Next(i, users.Count);
+        var surname = users[i].LastName;
+        users[i].LastName = users[kSurname].LastName;
+        users[kSurname].LastName = surname;
       }
     }
   }

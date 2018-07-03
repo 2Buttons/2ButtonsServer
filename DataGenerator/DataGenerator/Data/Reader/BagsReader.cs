@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using DataGenerator.Data.Reader.Objects;
 using DataGenerator.Data.ReaderObjects;
 using Newtonsoft.Json;
 
@@ -22,6 +23,14 @@ namespace DataGenerator.Data.Reader
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
         return JsonConvert.DeserializeObject<List<User>>(sr.ReadToEnd()).ToList();
+      }
+    }
+
+    public List<EmailBlank> ReadEmails(string path)
+    {
+      using (var sr = new StreamReader(path, Encoding.UTF8))
+      {
+        return JsonConvert.DeserializeObject<List<EmailBlank>>(sr.ReadToEnd()).ToList();
       }
     }
 

@@ -11,20 +11,33 @@ namespace DataGenerator.Data.Reader
 {
   public class FilesReader
   {
-    public const string QuestionsUrl =
-      @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Questions.xlsx";
+    //public const string QuestionsUrl =
+    //  @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Questions.xlsx";
 
-    public const string VkUsersUrl = @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\VkUsers";
+    //public const string VkUsersUrl = @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\VkUsers";
 
-    public const string FolderUrl = @"E:\Projects\2Buttons\Project\VkUsers\";
+    //public const string FolderUrl = @"E:\Projects\2Buttons\Project\VkUsers\";
 
     public List<City> ReadMainCities(string path)
     {
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
-        return JsonConvert.DeserializeObject<VkCityResponse>(sr.ReadToEnd()).Response
+        var json = sr.ReadToEnd();
+        return JsonConvert.DeserializeObject<VkCityResponse>(json).Response
           .Select(x => new City {CityId = x.CityId, Title = x.Title}).ToList();
       }
+    }
+
+    public List<string> ReadEnglishWords(string path)
+    {
+      var result = new List<string>();
+      using (var sr = new StreamReader(path, Encoding.UTF8))
+      {
+        var line = sr.ReadLine().Trim().Split(' ').ElementAt(1);
+        result.Add(line);
+      }
+
+      return result;
     }
 
     public List<Question> ReadQuestions(string path)
