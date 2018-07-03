@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DataGenerator.Entities;
+using DataGenerator.ScriptsGenerators.Entities;
 
 namespace DataGenerator.ScriptsGenerators
 {

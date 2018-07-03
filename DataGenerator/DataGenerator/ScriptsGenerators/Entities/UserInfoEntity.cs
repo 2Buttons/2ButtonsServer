@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonLibraries;
 
-namespace DataGenerator.Entities
+namespace DataGenerator.ScriptsGenerators.Entities
 {
   public class UserInfoEntity
   {

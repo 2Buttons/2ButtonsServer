@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DataGenerator.Entities
+﻿namespace DataGenerator.ScriptsGenerators.Entities
 {
     public class CityEntity
     {

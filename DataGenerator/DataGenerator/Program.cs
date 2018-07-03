@@ -5,8 +5,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
-using DataGenerator.Entities;
-using DataGenerator.ReaderObjects;
 using DataGenerator.ScriptsGenerators;
 using DataGenerator.VkCrawler;
 

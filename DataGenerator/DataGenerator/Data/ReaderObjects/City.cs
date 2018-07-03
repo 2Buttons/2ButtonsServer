@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DataGenerator.ReaderObjects
+namespace DataGenerator.Data.ReaderObjects
 {
   public class City : IEqualityComparer<City>
   {

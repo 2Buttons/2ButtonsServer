@@ -1,5 +1,4 @@
 ﻿using System;
-using DataGenerator.ReaderObjects;
 
 namespace DataGenerator.VkCrawler
 {

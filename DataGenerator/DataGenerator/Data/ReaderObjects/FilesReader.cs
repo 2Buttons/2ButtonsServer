@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,9 +8,9 @@ using Newtonsoft.Json;
 
 //using Microsoft.Office.Interop.Excel;
 
-namespace DataGenerator.ReaderObjects
+namespace DataGenerator.Data.ReaderObjects
 {
-  public class Reader
+  public class FilesReader
   {
 
    // public const string CitiesUrl = @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Cities.txt";
@@ -161,11 +160,21 @@ namespace DataGenerator.ReaderObjects
       }
     }
 
-    public List<VkUserData> ReadUsers(string path)
+    public List<User> ReadUsers(string path)
     {
       using (StreamReader sr = new StreamReader(path))
       {
-        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Select(x=>new User{ }).ToList();
+        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Select(x => new User
+        {
+          UserId = x.UserId,
+          FirstName = x.FirstName,
+          LastName = x.LastName,
+          Sex = x.Sex,
+          Birthday = x.Birthday,
+          CityId = x.City.CityId,
+          SmallPhoto = x.SmallPhoto,
+          LargePhoto = x.LargePhoto
+        }).ToList();
       }
     }
 

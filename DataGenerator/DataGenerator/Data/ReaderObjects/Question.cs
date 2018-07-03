@@ -1,4 +1,4 @@
-﻿namespace DataGenerator.ReaderObjects
+﻿namespace DataGenerator.Data.ReaderObjects
 {
   public class Question
   {

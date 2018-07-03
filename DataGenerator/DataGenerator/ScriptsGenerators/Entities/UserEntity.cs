@@ -1,9 +1,7 @@
-﻿using CommonLibraries;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using CommonLibraries;
 
-namespace DataGenerator.Entities
+namespace DataGenerator.ScriptsGenerators.Entities
 {
 
   public  class UserEntity

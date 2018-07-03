@@ -4,12 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CommonLibraries.Extensions;
-using DataGenerator.ReaderObjects;
+using DataGenerator.Data.ReaderObjects;
 using Newtonsoft.Json;
 
-namespace DataGenerator
+namespace DataGenerator.Data
 {
-  public class GeneratingManager
+  public class BagsManager
   {
     public const string QuestionsFile = @"Questions.xlsx";
     public const string UsersFile = "Users.txt";
@@ -33,21 +33,19 @@ namespace DataGenerator
 
     private readonly Random _random = new Random();
 
-    private readonly Reader _reader = new Reader();
+    private readonly FilesReader _reader = new FilesReader();
 
-    public void GenerateCities()
+
+
+    public void SaveBags()
     {
+      SaveCitiesBag();
+      SaveCitiesMatchingBag();
+      SaveUsersBag();
+      SaveQuestionsBag();
     }
 
-    public void GenerateBags()
-    {
-      GenerateCitiesBag();
-      GenerateCitiesMatchingBag();
-      GenerateUsersBag();
-      GenerateQuestionsBag();
-    }
-
-    public void GenerateCitiesBag()
+    private void SaveCitiesBag()
     {
       var mainCities = _reader.ReadMainCities(FilesUrl + MainCitiesFile);
       var usersCitis = _reader.ReadCities(FilesUrl + UsersFile);
@@ -75,7 +73,7 @@ namespace DataGenerator
       }
     }
 
-    public void GenerateCitiesMatchingBag()
+    private void SaveCitiesMatchingBag()
     {
       using (var sw = new StreamWriter(BagsUrl + CitiesMatching, false, Encoding.UTF8))
       {
@@ -83,7 +81,7 @@ namespace DataGenerator
       }
     }
 
-    public void GenerateQuestionsBag()
+    private void SaveQuestionsBag()
     {
       var questions = _reader.ReadQuestions(FilesUrl + QuestionsFile);
 
@@ -93,20 +91,9 @@ namespace DataGenerator
       }
     }
 
-    public void GenerateUsersBag()
+    private void SaveUsersBag()
     {
-      var users = _reader.ReadUsers(FilesUrl + UsersFile)
-        .Select(x => new User
-        {
-          UserId = x.UserId,
-          FirstName = x.FirstName,
-          LastName = x.LastName,
-          Sex = x.Sex,
-          Birthday = x.Birthday,
-          CityId = x.City.CityId,
-          SmallPhoto = x.SmallPhoto,
-          LargePhoto = x.LargePhoto
-        }).OrderBy(x => x.Birthday.Age()).ToList();
+      var users = _reader.ReadUsers(FilesUrl + UsersFile).OrderBy(x => x.Birthday.Age()).ToList();
 
       for (var i = 0; i < users.Count; i++)
       {
@@ -124,7 +111,7 @@ namespace DataGenerator
         users[kSurname].LastName = surname;
       }
 
-      using (var sw = new StreamWriter(BagsUrl + QuestionsBag, false, Encoding.UTF8))
+      using (var sw = new StreamWriter(BagsUrl + UsersBag, false, Encoding.UTF8))
       {
         sw.WriteLine(JsonConvert.SerializeObject(users));
       }

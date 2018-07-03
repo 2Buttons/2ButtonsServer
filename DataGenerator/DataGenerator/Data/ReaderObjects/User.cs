@@ -1,8 +1,7 @@
 ﻿using System;
 using CommonLibraries;
-using DataGenerator.VkCrawler;
 
-namespace DataGenerator.ReaderObjects
+namespace DataGenerator.Data.ReaderObjects
 {
   public class User
   {
