@@ -32,7 +32,7 @@ namespace DataGenerator
       @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\VkUsers";
 
     public const string FolderUrl =
-      @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\";
+      @"E:\Projects\2Buttons\Project\VkUsers\";
 
 
     private static void Main(string[] args)
@@ -103,14 +103,14 @@ namespace DataGenerator
       //var m = t;
       //Console.ReadKey();
 
-      new VkService().WriteMemberGroupsStringToFile("mudakoff", 100000,
+       new VkService().WriteMemberGroupsStringToFile("mudakoff", 10_000_000,
         "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a", FolderUrl).GetAwaiter().GetResult();
-    //  new UsersManaging().GetUsersFromVkFiles(FolderUrl);
+      //new UsersManaging().GetUsersFromVkFiles(FolderUrl);
 
-      //var users = new Reader().ReadUsers(FolderUrl+"Users.txt");
+      //var users = new Reader().ReadUsers(FolderUrl + "Users.txt");
       //var count = users.Count(x => x.Birthday.Age() > 16 && x.Birthday.Age() < 21);
       //var l = count;
-      //var m = users.Where(x => x.Birthday.Age() >= 12 && x.Birthday.Age() <= 20).ToList();
+      //var m = users.Where(x => x.Birthday.Age() >= 14 && x.Birthday.Age() <= 25).ToList();
       //var average = m.Average(x => x.Birthday.Age());
       //var p = m;
     }
