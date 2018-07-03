@@ -2,13 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using DataGenerator.Data.ReaderObjects;
 using DataGenerator.VkCrawler;
 using Independentsoft.Office.Spreadsheet;
 using Newtonsoft.Json;
 
 //using Microsoft.Office.Interop.Excel;
 
-namespace DataGenerator.Data.ReaderObjects
+namespace DataGenerator.Data.Reader
 {
   public class FilesReader
   {

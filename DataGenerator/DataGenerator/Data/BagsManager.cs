@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CommonLibraries.Extensions;
-using DataGenerator.Data.ReaderObjects;
+using DataGenerator.Data.Reader;
 using Newtonsoft.Json;
 
 namespace DataGenerator.Data
