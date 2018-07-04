@@ -1,4 +1,4 @@
-﻿namespace DataGenerator.VkCrawler
+﻿namespace DataGenerator.Data.VkCrawler
 {
   public class VkAuthSettings
   {

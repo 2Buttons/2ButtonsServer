@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CommonLibraries.Extensions;
-using DataGenerator.Data.ReaderObjects;
-using DataGenerator.VkCrawler;
+using DataGenerator.Data.Reader.Objects;
+using DataGenerator.Data.VkCrawler;
 using Independentsoft.Office.Spreadsheet;
 using Newtonsoft.Json;
 
@@ -34,19 +34,15 @@ namespace DataGenerator.Data.Reader
       var result = new List<string>();
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
-
         string line;
         while ((line = sr.ReadLine()) != null)
-        {
           if (line != string.Empty)
           {
             line = line.Trim().Split(' ').ElementAt(2);
             result.Add(line);
           }
-        }
         //var line = sr.ReadLine();
         //var lines = line.Trim().Split(' ').ToList();
-        
       }
 
       return result;
@@ -78,50 +74,84 @@ namespace DataGenerator.Data.Reader
       return result;
     }
 
-    public List<City> ReadCities(string path)
+    public List<VkCity> ReadCities(string path)
     {
       using (var sr = new StreamReader(path, Encoding.UTF8))
       {
-        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Where(x=>x.City !=null).OrderBy(x=>x.City.CityId)
-          .Select(x =>  new City {CityId = x.City.CityId, Title = x?.City.Title.Replace("'", "''") }).ToList();
+        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Where(x => x.City != null)
+          .OrderBy(x => x.City.CityId)
+          .Select(x => x.City).ToList();
       }
     }
 
-    public List<User> ReadUsers(string path)
+    public List<VkUserData> ReadUsers(string path)
     {
       using (var sr = new StreamReader(path))
       {
-        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd()).Where(x=>x.Birthday.Age()>10 && !x.LargePhoto.Contains("deactivated") &&x.City !=null).Select(x => new User
-        {
-          UserId = x.UserId,
-          FirstName = x.FirstName.Replace("'", "''"),
-          LastName = x.LastName.Replace("'", "''"),
-          Sex = x.Sex,
-          Birthday = x.Birthday,
-          CityId = x.City.CityId,
-          SmallPhoto = x.SmallPhoto,
-          LargePhoto = x.LargePhoto
-        }).ToList();
+        return JsonConvert.DeserializeObject<List<VkUserData>>(sr.ReadToEnd());
       }
     }
 
-    public void CombineVkUsers(string folderFromPath, string pattern, string folderPathTo, string fileName)
+    /// <summary>
+    ///   для каждого 100 000 выборки формировать свой файл собственный. так как id по убыванию, то  можно подумать, что
+    ///   сначала молодые будут. Однако распределение позволяет сказать, что так может быть не всегда. Сохранять построчно
+    ///   кажый объект
+    /// </summary>
+    /// <param name="folderFromPath"></param>
+    /// <param name="pattern"></param>
+    /// <param name="folderPathTo"></param>
+    /// <param name="fileName"></param>
+    public void ProcessVkUsers(string folderFromPath, string pattern, string folderPathTo, string fileName)
     {
       var result = new List<VkUserData>();
 
       var files = Directory.GetFiles(folderFromPath).Where(x => x.Contains(pattern)).ToList();
-      foreach (var file in files)
-        using (var sr = new StreamReader(file))
-        {
-          var json = sr.ReadToEnd().Replace("29.2", "25.2").Replace("32.5", "30.5").Replace("No","").Replace("Name","");
-          var jsonUsers = JsonConvert.DeserializeObject<VkUserDataResponse>(json).Response.Items.Where(x=>x.Birthday.Age()>5).ToList();
-          result.AddRange(jsonUsers);
-        }
-
-      using (var sw = new StreamWriter(folderPathTo + fileName, false, Encoding.UTF8))
+      for (var i = 0; i < files.Count / 100; i++)
       {
-        sw.WriteLine(JsonConvert.SerializeObject(result));
+        var curFiles = files.Skip(i * 100).Take(100).ToList();
+        foreach (var file in curFiles)
+          using (var sr = new StreamReader(file))
+          {
+            var json = sr.ReadToEnd().Replace("No", "").Replace("Name", "");
+            var jsonUsers = JsonConvert.DeserializeObject<VkUserDataResponse>(json).Response.Items
+              .Where(x => x.Birthday.Age() >= 10 && x.Birthday.Age() <= 25  && !x.LargePhoto.Contains("deactivated") && x.City != null).OrderBy(x => x.Birthday.Age()).ToList();
+            result.AddRange(jsonUsers);
+          }
+        using (var sw =
+          new StreamWriter(folderPathTo + Path.GetFileNameWithoutExtension(fileName) + $"_{i}" + Path.GetExtension(fileName), false,
+            Encoding.UTF8))
+        {
+          sw.WriteLine(JsonConvert.SerializeObject(result));
+        }
+        result.Clear();
       }
+
+
     }
+
+    //public void CombineVkUsers(string folderFromPath, string pattern, string folderPathTo, string fileName)
+    //{
+    //  var result = new List<VkUserData>();
+
+    //  var files = Directory.GetFiles(folderFromPath).Where(x => x.Contains(pattern)).ToList();
+    //  foreach (var file in files)
+    //    using (var sr = new StreamReader(file))
+    //    {
+    //      using (var sw = new StreamWriter(folderPathTo + fileName, false, Encoding.UTF8))
+    //      {
+    //        var json = sr.ReadToEnd().Replace("29.2", "25.2").Replace("32.5", "30.5").Replace("99.1", "27.1")
+    //          .Replace("-27.1", "27.1").Replace("No", "").Replace("Name", "");
+    //        var jsonUsers = JsonConvert.DeserializeObject<VkUserDataResponse>(json).Response.Items
+    //          .Where(x => x.Birthday.Age() > 5).ToList();
+
+    //        foreach (var item in jsonUsers)
+    //        {
+
+    //          sw.WriteLine(JsonConvert.SerializeObject(item));
+    //        }
+    //      }
+    //    }
+
+    //}
   }
 }

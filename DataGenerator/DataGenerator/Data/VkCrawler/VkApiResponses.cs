@@ -2,7 +2,7 @@
 using CommonLibraries;
 using Newtonsoft.Json;
 
-namespace DataGenerator.VkCrawler
+namespace DataGenerator.Data.VkCrawler
 {
   public class VkUserDataResponse
   {
@@ -100,7 +100,14 @@ namespace DataGenerator.VkCrawler
     [JsonProperty("bdate")]
     public string VkBirthday { private get; set; }
 
-    public DateTime Birthday => string.IsNullOrEmpty(VkBirthday) ? DateTime.UtcNow : Convert.ToDateTime(VkBirthday);
+    public DateTime Birthday => ParseDateTime(VkBirthday);
+
+    private DateTime ParseDateTime(string str)
+    {
+      if (string.IsNullOrEmpty(str)) return DateTime.UtcNow;
+      if (DateTime.TryParse(str, out var result)) return result;
+      return DateTime.UtcNow;
+    }
 
     [JsonProperty("city")]
     public VkCity City { get; set; }

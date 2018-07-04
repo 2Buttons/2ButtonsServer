@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using DataGenerator.Data;
 using DataGenerator.ScriptsGenerators;
-using DataGenerator.VkCrawler;
 
 namespace DataGenerator
 {
@@ -36,11 +35,11 @@ namespace DataGenerator
 
     private static void Main(string[] args)
     {
-      GeneratingManager manager = new GeneratingManager(new Range { From = 0, To = 1000 }, new Range { From = 0, To = 300 });
+     // GeneratingManager manager = new GeneratingManager(new Range { From = 0, To = 1000 }, new Range { From = 0, To = 300 });
       
       BagsManager bags = new BagsManager();
-      bags.CombineUsers();
-      //bags.SaveBags();
+      //bags.CombineUsers();
+      bags.SaveBags();
 
       
 
@@ -83,7 +82,7 @@ namespace DataGenerator
 
 
 
-      VkService service = new VkService();
+     // VkService service = new VkService();
 
       //var users = service.GetUsersFromGroup(1,AppAccess).GetAwaiter().GetResult();
 

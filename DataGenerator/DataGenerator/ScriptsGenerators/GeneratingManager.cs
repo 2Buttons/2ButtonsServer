@@ -6,7 +6,6 @@ using System.Text;
 using CommonLibraries;
 using DataGenerator.Data;
 using DataGenerator.Data.Reader.Objects;
-using DataGenerator.Data.ReaderObjects;
 using DataGenerator.ScriptsGenerators.Entities;
 using Microsoft.Extensions.Options;
 
@@ -14,21 +13,23 @@ namespace DataGenerator.ScriptsGenerators
 {
   public class GeneratingManager
   {
-    private BagsManager _manager = new BagsManager();
-    private MediaManager _mediaManager = new MediaManager();
+    private readonly BagsManager _manager = new BagsManager();
+    private readonly MediaManager _mediaManager = new MediaManager();
 
 
-    private Random _random = new Random();
+    private readonly Random _random = new Random();
 
-    private List<City> _bagCities;
-    private List<Question> _bagQuestions;
-    private List<EmailBlank> _bagEmails;
-    private List<User> _bagUsers;
+    private readonly List<City> _bagCities;
+    private readonly List<Question> _bagQuestions;
+    private readonly List<EmailBlank> _bagEmails;
+    private readonly List<User> _bagUsers;
     private List<CityEntity> _cities;
     private List<OptionEntity> _options;
     private List<QuestionEntity> _questions;
     private List<UserInfoEntity> _userInfos;
     private List<UserEntity> _users;
+    public List<AnswerEntity> _answers;
+    public List<FollowEntity> _follows;
 
 
 
@@ -42,6 +43,8 @@ namespace DataGenerator.ScriptsGenerators
       ToEntitys(_bagCities);
       ToEntitys(_bagQuestions);
       ToEntitys(_bagUsers);
+      _answers = new List<AnswerEntity>();
+      _follows = new List<FollowEntity>();
     }
 
 
