@@ -13,6 +13,8 @@ namespace DataGenerator.ScriptsGenerators
 {
   public class GeneratingManager
   {
+    private const string Mail = "@mockmail.com";
+
     private readonly BagsManager _manager = new BagsManager();
     private readonly MediaManager _mediaManager = new MediaManager();
 
@@ -28,25 +30,33 @@ namespace DataGenerator.ScriptsGenerators
     private List<QuestionEntity> _questions;
     private List<UserInfoEntity> _userInfos;
     private List<UserEntity> _users;
-    public List<AnswerEntity> _answers;
-    public List<FollowEntity> _follows;
+    private List<AnswerEntity> _answers;
+    private List<FollowEntity> _follows;
 
 
 
     public GeneratingManager(Range users, Range questions)
     {
       _bagCities = _manager.LoadCities().ToList();
-      _bagQuestions = _manager.LoadQuestions().Skip(questions.From).Take(questions.To).ToList();
-      _bagUsers = _manager.LoadUsers().Skip(users.From).Take(users.To).ToList();
+      _bagQuestions = _manager.LoadQuestions().Skip(questions.Offset).Take(questions.Count).ToList();
+      _bagUsers = _manager.LoadUsers(users.Count, users.Offset,0).ToList();
       _bagEmails = _manager.LoadEmails();
-      PrepareEmails();
+    }
+
+    public void PreprocessData()
+    {
       ToEntitys(_bagCities);
       ToEntitys(_bagQuestions);
       ToEntitys(_bagUsers);
       _answers = new List<AnswerEntity>();
       _follows = new List<FollowEntity>();
-    }
 
+      CalculatePopulationInCities();
+      DistributeQuestions();
+      DistributeAnswers();
+      DistributeFollowers();
+
+    }
 
     public void CreateScripts()
     {
@@ -56,6 +66,8 @@ namespace DataGenerator.ScriptsGenerators
       var usersUrl = "Users.sql";
       var usersInfoUrl = "UsersInfo.sql";
       var citiesUrl = "Cities.sql";
+      var answersUrl = "Answers.sql";
+      var followsUrl = "Follows.sql";
       using (var sw = new StreamWriter(Path.Combine(path, optionsUrl), false, Encoding.UTF8))
       {
         sw.WriteLine(new OptionGenerator().GetInsertionLine(_options));
@@ -81,16 +93,16 @@ namespace DataGenerator.ScriptsGenerators
         sw.WriteLine(new CityGenerator().GetInsertionLine(_cities));
       }
 
-    }
-
-    private void PrepareEmails()
-    {
-      const string mail = "@mockmail.com";
-      for (var i = 0; i < _bagEmails.Count; i++)
+      using (var sw = new StreamWriter(Path.Combine(path, answersUrl), false, Encoding.UTF8))
       {
-        //var t = _bagEmails[i];
-        _bagEmails[i].Text = _bagEmails[i].Text + $"{_bagEmails[i].Text}" + $"{i}" + mail;
+        sw.WriteLine(new AnswerGenerator().GetInsertionLine(_answers));
       }
+
+      using (var sw = new StreamWriter(Path.Combine(path, followsUrl), false, Encoding.UTF8))
+      {
+        sw.WriteLine(new FollowGenerator().GetInsertionLine(_follows));
+      }
+
     }
 
     private void ToEntitys(IEnumerable<City> cities)
@@ -149,7 +161,7 @@ namespace DataGenerator.ScriptsGenerators
 
       foreach (User t in users)
       {
-        var email = _bagEmails[_random.Next(_bagEmails.Count)].Text;
+        var email = _bagEmails[_random.Next(_bagEmails.Count)].Text + $"{_random.Next(1000)}"+$"{t.UserId}" + Mail;
         var user = new UserEntity
         {
           UserId = t.UserId,
@@ -178,7 +190,7 @@ namespace DataGenerator.ScriptsGenerators
 
     }
 
-    public void DistributeQuestions()
+    private void DistributeQuestions()
     {
 
 
@@ -194,7 +206,7 @@ namespace DataGenerator.ScriptsGenerators
       }
     }
 
-    public void CalculatePopulationInCities()
+    private void CalculatePopulationInCities()
     {
       foreach (var city in _cities)
       {
@@ -202,18 +214,62 @@ namespace DataGenerator.ScriptsGenerators
       }
     }
 
-    //public void CreateAnswers()
-    //{
-    //  foreach (var t in _users)
-    //  {
-    //    for (int i = 0; i < 25; i++)
-    //    {
-    //      var questionIndex = _random.Next(0, _questions.Count);
-    //      var answer = _random.Next(1, 3);
-    //      if(_)
-    //    }
-    //  }
-    //}
+    private void DistributeAnswers()
+    {
+      foreach (var t in _users)
+      {
+        for (int i = 0; i < 35; i++)
+        {
+          var questionIndex = _random.Next(0, _questions.Count);
+          var answer = _random.Next(1, 3);
+          if (_answers.Any(x => x.QuestionId == _questions[questionIndex].QuestionId && x.UserId == t.UserId)) continue;
+          _answers.Add(new AnswerEntity
+          {
+            UserId = t.UserId,
+            QuestionId = _questions[questionIndex].QuestionId,
+            AnswerDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
+            AnswerType = (AnswerType) answer,
+            IsLiked = false
+          });
+          _options.First(x => x.QuestionId == _questions[questionIndex].QuestionId && x.Position == answer).Answers++;
+          _questions[questionIndex].Shows++;
+          if (_random.Next(100) % 5 == 0) _questions[questionIndex].Likes++;
+        }
+      }
+    }
+
+    private void DistributeFollowers()
+    {
+      foreach (var t in _users)
+      {
+        var followersCount = _random.Next(15, 80);
+        for (int i = 0; i < followersCount; i++)
+        {
+          var following = _users[_random.Next(_users.Count)];
+          if (_follows.Any(x => x.FollowerId == t.UserId && x.FollowingId == following.UserId))
+          {
+            i = i - 1;
+            continue;
+          }
+
+          _follows.Add(new FollowEntity
+          {
+            FollowerId = t.UserId,
+            FollowingId = following.UserId,
+            FollowDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
+            Visits = _random.Next(100)
+          });
+          _follows.Add(new FollowEntity
+          {
+            FollowerId = following.UserId,
+            FollowingId = t.UserId,
+            FollowDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
+            Visits = _random.Next(100)
+          });
+
+        }
+      }
+    }
 
     private DateTime RandomDay()
     {
@@ -225,7 +281,7 @@ namespace DataGenerator.ScriptsGenerators
 
   public class Range
   {
-    public int From { get; set; }
-    public int To { get; set; }
+    public int Offset { get; set; }
+    public int Count { get; set; }
   }
 }

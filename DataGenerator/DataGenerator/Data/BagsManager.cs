@@ -107,7 +107,7 @@ namespace DataGenerator.Data
       }
    
 
-      var cities = new List<CitiyCount>();
+      var cities = new List<City>();
 
 
      // var predCities = userCities;
