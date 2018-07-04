@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonLibraries;
 
-namespace DataGenerator.Data.ReaderObjects
+namespace DataGenerator.Data.Reader.Objects
 {
   public class User
   {

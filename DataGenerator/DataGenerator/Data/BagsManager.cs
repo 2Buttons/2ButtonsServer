@@ -6,7 +6,6 @@ using System.Text;
 using CommonLibraries.Extensions;
 using DataGenerator.Data.Reader;
 using DataGenerator.Data.Reader.Objects;
-using DataGenerator.Data.ReaderObjects;
 using Newtonsoft.Json;
 
 namespace DataGenerator.Data
@@ -75,14 +74,21 @@ namespace DataGenerator.Data
     private void SaveCitiesBag()
     {
       var mainCities = _reader.ReadMainCities(FilesUrl + MainCitiesFile);
-      var usersCitis = _reader.ReadCities(FilesUrl + UsersFile);
+      var userCities = new List<City>();
+      var files = Directory.GetFiles(FilesUrl).Where(x => x.Contains("Users")).ToList();
+      foreach (var file in files)
+      {
+        userCities.AddRange(_reader.ReadCities(file).Select(x => new City { CityId = x.CityId, Title = x.Title.Replace("'", "''") }).OrderBy(x => x.CityId).Distinct(new City()).ToList());
+        userCities = userCities.Distinct(new City()).ToList();
+      }
+
+     
 
       var cities = new List<City>();
       cities.AddRange(mainCities);
-      cities.AddRange(usersCitis);
+      cities.AddRange(userCities.OrderBy(x=>x.Title));
 
-      cities = cities.OrderBy(x => x.CityId).Distinct(new City()).ToList();
-
+      cities = cities.Distinct(new City()).ToList();
       for (var i = 0; i < cities.Count; i++)
       {
         _citiesMatching.Add(new CityMatching
@@ -120,19 +126,37 @@ namespace DataGenerator.Data
 
     private void SaveUsersBag()
     {
-      var users = _reader.ReadUsers(FilesUrl + UsersFile).OrderBy(x => x.Birthday.Age()).ToList();
-
-      for (var i = 0; i < users.Count; i++)
+      var files = Directory.GetFiles(FilesUrl).Where(x => x.Contains("Users")).ToList();
+      for (var i = 0; i < files.Count; i++)
       {
-        users[i].CityId = _citiesMatching.First(x => x.VkId == users[i].CityId).TwoBId;
-        users[i].UserId = i + 1;
-      }
-      SwitchFemaleData(users);
-      SwitchMaleData(users);
+        var file = files[i];
+        var users = _reader.ReadUsers(file)
+          .Select(x => new User
+          {
+            UserId = x.UserId,
+            FirstName = x.FirstName.Replace("'", "''"),
+            LastName = x.LastName.Replace("'", "''"),
+            Sex = x.Sex,
+            Birthday = x.Birthday,
+            CityId = x.City.CityId,
+            SmallPhoto = x.SmallPhoto,
+            LargePhoto = x.LargePhoto
+          }).ToList().OrderBy(x => x.Birthday.Age()).ToList();
 
-      using (var sw = new StreamWriter(BagsUrl + UsersBag, false, Encoding.UTF8))
-      {
-        sw.WriteLine(JsonConvert.SerializeObject(users));
+        for (var k = 0; k < users.Count; k++)
+        {
+          users[k].CityId = _citiesMatching.First(x => x.VkId == users[k].CityId).TwoBId;
+          users[k].UserId = k + 1;
+        }
+        SwitchFemaleData(users);
+        SwitchMaleData(users);
+
+        using (var sw =
+          new StreamWriter(BagsUrl + Path.GetFileNameWithoutExtension(UsersBag) + $"_{i}" + Path.GetExtension(UsersBag),
+            false, Encoding.UTF8))
+        {
+          sw.WriteLine(JsonConvert.SerializeObject(users));
+        }
       }
     }
 
@@ -190,7 +214,7 @@ namespace DataGenerator.Data
 
     public void CombineUsers()
     {
-      _reader.CombineVkUsers(VkUsersUrl, "VkUsers", FilesUrl, UsersBag);
+      _reader.ProcessVkUsers(VkUsersUrl, "VkUsers", FilesUrl, UsersBag);
     }
   }
 

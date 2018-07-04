@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DataGenerator.VkCrawler
+﻿namespace DataGenerator.Data.VkCrawler
 {
   public class UserDataFromVk
   {

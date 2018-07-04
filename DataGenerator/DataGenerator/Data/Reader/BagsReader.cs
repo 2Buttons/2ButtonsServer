@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DataGenerator.Data.Reader.Objects;
-using DataGenerator.Data.ReaderObjects;
 using Newtonsoft.Json;
 
 namespace DataGenerator.Data.Reader
