@@ -34,7 +34,7 @@ namespace DataGenerator.ScriptsGenerators
 
     private string GetInsertionFollowLine(FollowEntity follow)
     {
-      return $"({follow.FollowId}, {follow.FollowingId}, {follow.Visits}, '{follow.FollowDate}', 0)";
+      return $"({follow.FollowerId}, {follow.FollowingId}, {follow.Visits}, '{follow.FollowDate}', 0)";
     }
 
     private string GetInsertionFollowsLine(IList<FollowEntity> follows)

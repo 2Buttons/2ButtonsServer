@@ -35,13 +35,14 @@ namespace DataGenerator
 
     private static void Main(string[] args)
     {
-     // GeneratingManager manager = new GeneratingManager(new Range { From = 0, To = 1000 }, new Range { From = 0, To = 300 });
-      
+    // GeneratingManager manager = new GeneratingManager(new Range { Offset = 0, Count = 1000 }, new Range { Offset = 0, Count = 300 });
+     // manager.PreprocessData();
+      //manager.CreateScripts();
       BagsManager bags = new BagsManager();
       //bags.CombineUsers();
       bags.SaveBags();
 
-      
+
 
       //manager.CalculatePopulationInCities();
       //manager.DistributeQuestions();
@@ -82,7 +83,7 @@ namespace DataGenerator
 
 
 
-     // VkService service = new VkService();
+      // VkService service = new VkService();
 
       //var users = service.GetUsersFromGroup(1,AppAccess).GetAwaiter().GetResult();
 
@@ -117,8 +118,8 @@ namespace DataGenerator
       //var m = t;
       //Console.ReadKey();
 
-       //new VkService().WriteMemberGroupsStringToFile("mudakoff", 10_000_000,
-       // "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a", FolderUrl).GetAwaiter().GetResult();
+      //new VkService().WriteMemberGroupsStringToFile("mudakoff", 10_000_000,
+      // "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a", FolderUrl).GetAwaiter().GetResult();
       //new UsersManaging().GetUsersFromVkFiles(FolderUrl);
 
       //var users = new Reader().ReadUsers(FolderUrl + "Users.txt");

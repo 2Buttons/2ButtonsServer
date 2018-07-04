@@ -10,6 +10,5 @@ namespace DataGenerator.ScriptsGenerators.Entities
     public AnswerType AnswerType { get; set; }
     public bool IsLiked { get; set; }
     public DateTime AnswerDate { get; set; }
-    public bool IsDeleted { get; set; }
   }
 }
