@@ -50,7 +50,7 @@ namespace QuestionsServer
             cfg.ReadFrom.Configuration(ctx.Configuration).MinimumLevel.Debug().MinimumLevel
               .Override("Microsoft", LogEventLevel.Information).WriteTo.RollingFile(path,
                 outputTemplate:
-                "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Application} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");
+                "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Application} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");//,fileSizeLimitBytes:500*1024*1024);
           }).Build();
     }
   }

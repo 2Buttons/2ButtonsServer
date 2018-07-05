@@ -1,18 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
 using DataGenerator.Data;
+using DataGenerator.Data.Reader.Objects;
 using DataGenerator.ScriptsGenerators;
+using Newtonsoft.Json;
 
 namespace DataGenerator
 {
   internal class Program
   {
-    public const string CitiesUrl = @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Cities.txt";
+    public const string CitiesUrl = @"E:\Projects\2Buttons\Project\Data\Bags\Cities.txt";
+    public const string CitiesMatchingUrl = @"E:\Projects\2Buttons\Project\Data\Bags\CitiesMatching.txt";
 
     public const string QuestionsUrl =
       @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\Questions.xlsx";
@@ -30,17 +35,84 @@ namespace DataGenerator
       @"E:\Projects\2Buttons\Project\Server\DataGenerator\DataGenerator\Files\VkUsers";
 
     public const string FolderUrl =
-      @"E:\Projects\2Buttons\Project\VkUsers\";
+      @"E:\Projects\2Buttons\Project\Data\Bags\";
 
 
     private static void Main(string[] args)
     {
-    // GeneratingManager manager = new GeneratingManager(new Range { Offset = 0, Count = 1000 }, new Range { Offset = 0, Count = 300 });
-     // manager.PreprocessData();
+       GeneratingManager manager = new GeneratingManager(new Range { Offset = 0, Count = 1000 }, new Range { Offset = 0, Count = 150 });
+      manager.DownloadPhotos();
+      Console.ReadLine();
+
+      // manager.PreprocessData();
       //manager.CreateScripts();
-      BagsManager bags = new BagsManager();
+      //BagsManager bags = new BagsManager();
       //bags.CombineUsers();
-      bags.SaveBags();
+      //bags.SaveBags();
+
+      //List<City> cities;
+
+      //using (var sw = new StreamReader(CitiesUrl, Encoding.UTF8))
+      //{
+      //  cities = JsonConvert.DeserializeObject<List<City>>(sw.ReadToEnd());
+      //}
+
+      //for (int i = 0; i < cities.Count; i++)
+      //{
+      //  cities[i].CityId = cities[i].CityId + 2000;
+      //}
+
+      //using (var sw = new StreamWriter(CitiesUrl, false, Encoding.UTF8))
+      //{
+      //  sw.WriteLine(JsonConvert.SerializeObject(cities));
+      //}
+
+      //cities.Clear();
+
+
+      //List<CityMatching> citiesMacthin;
+
+      //using (var sw = new StreamReader(CitiesMatchingUrl, Encoding.UTF8))
+      //{
+      //  citiesMacthin = JsonConvert.DeserializeObject<List<CityMatching>>(sw.ReadToEnd());
+      //}
+
+      //for (int i = 0; i < citiesMacthin.Count; i++)
+      //{
+      //  citiesMacthin[i].TwoBId= citiesMacthin[i].TwoBId + 2000;
+      //}
+
+      //using (var sw = new StreamWriter(CitiesMatchingUrl, false, Encoding.UTF8))
+      //{
+      //  sw.WriteLine(JsonConvert.SerializeObject(citiesMacthin));
+      //}
+
+      //citiesMacthin.Clear();
+
+      //List<User> users;
+
+      //var files = Directory.GetFiles(FolderUrl).Where(x => x.Contains("Users")).ToList();
+
+      //foreach (var file in files)
+      //{
+      //  using (var sw = new StreamReader(file, Encoding.UTF8))
+      //  {
+      //    users = JsonConvert.DeserializeObject<List<User>>(sw.ReadToEnd());
+      //  }
+
+      //  for (int i = 0; i < citiesMacthin.Count; i++)
+      //  {
+      //    users[i].City.CityId = users[i].City.CityId + 2000;
+      //  }
+
+      //  using (var sw = new StreamWriter(file, false, Encoding.UTF8))
+      //  {
+      //    sw.WriteLine(JsonConvert.SerializeObject(users));
+      //  }
+
+      //}
+
+
 
 
 

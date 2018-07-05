@@ -60,9 +60,22 @@ namespace DataGenerator.ScriptsGenerators
 
         var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
         var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
-
-        //new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
-       // new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
+        try
+        {
+          new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(t.SmallAvatarLink);
+        }
+        try
+        {
+          new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(t.LargeAvatarLink);
+        }
 
         t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
         t.LargeAvatarLink = "/" + largeAvatar + "/" + largeName;

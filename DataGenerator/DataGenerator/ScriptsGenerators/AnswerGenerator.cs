@@ -57,7 +57,7 @@ namespace DataGenerator.ScriptsGenerators
         result.Append(GetUsingDb());
         result.Append(GetGo());
         //result.Append("ALTER TABLE [dbo].[Answer] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
-        result.Append(GetGo());
+        //result.Append(GetGo());
         result.Append(SwitchIdentityInsert(true));
         result.Append(GetGo());
         result.Append(GetInsertInit());

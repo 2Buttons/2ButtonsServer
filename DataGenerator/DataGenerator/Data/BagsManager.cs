@@ -39,7 +39,7 @@ namespace DataGenerator.Data
 
     public const string ScriptsUrl = @"E:\Projects\2Buttons\Project\Data\Scripts\";
 
-    private readonly List<CityMatching> _citiesMatching = new List<CityMatching>();
+    private  List<CityMatching> _citiesMatching = new List<CityMatching>();
     private readonly List<int> _questionsIds = new List<int>();
 
     private readonly Random _random = new Random();
@@ -72,63 +72,68 @@ namespace DataGenerator.Data
 
     public void SaveBags()
     {
-      SaveCitiesBag();
-      SaveCitiesMatchingBag();
+      //  SaveCitiesBag();
+      //  SaveCitiesMatchingBag();
+      _citiesMatching = _bagReader.ReadCitiesMatching(BagsUrl + "CitiesMatching.txt");
       SaveUsersBag();
-      SaveQuestionsBag();
-      SaveEmailBags();
+      
+      // SaveQuestionsBag();
+      // SaveEmailBags();
     }
 
     private void SaveCitiesBag()
     {
-      var mainCities = _reader.ReadMainCities(FilesUrl + MainCitiesFile);
+      //var mainCities = _reader.ReadMainCities(FilesUrl + MainCitiesFile);
       
+      //var files = Directory.GetFiles(FilesUrl).Where(x => x.Contains("Users")).ToList();
+      //var citiesArray = new List<List<City>>();
+      //foreach (var file in files)
+      //{
+      //  citiesArray.Add(new List<City>());
+      //}
+
+      //Parallel.For(0, files.Count, (i) =>
+      
+      //{
+      //  citiesArray[i] = _reader.ReadCities(files[i]).Select(x => new City { CityId = x.CityId, Title = x.Title.Replace("'", "''") })
+      //    .Distinct(new City()).ToList();
+      //});
+
+      //var userCities = new List<City>();
+
+      //userCities.AddRange(mainCities);
+      //foreach (var items in citiesArray)
+      //{
+      //  userCities.AddRange(items);
+      //  userCities = userCities.Distinct(new City()).ToList();
+      //}
+
+
+      var mainCities = _reader.ReadMainCities(FilesUrl + MainCitiesFile);
+      var userCities = new List<City>();
       var files = Directory.GetFiles(FilesUrl).Where(x => x.Contains("Users")).ToList();
-      var citiesArray = new List<List<City>>();
       foreach (var file in files)
       {
-        citiesArray.Add(new List<City>());
-      }
-
-      Parallel.For(0, files.Count, (i) =>
-      
-      {
-        citiesArray[i] = _reader.ReadCities(files[i]).Select(x => new City { CityId = x.CityId, Title = x.Title.Replace("'", "''") })
-          .Distinct(new City()).ToList();
-      });
-
-      var userCities = new List<City>();
-
-      userCities.AddRange(mainCities);
-      foreach (var items in citiesArray)
-      {
-        userCities.AddRange(items);
+        userCities.AddRange(_reader.ReadCities(file).Select(x => new City { CityId = x.CityId, Title = x.Title.Replace("'", "''") }).OrderBy(x => x.CityId).Distinct(new City()).ToList());
         userCities = userCities.Distinct(new City()).ToList();
       }
-   
+
+
 
       var cities = new List<City>();
+      cities.AddRange(mainCities);
+      cities.AddRange(userCities.OrderBy(x => x.Title));
 
-
-     // var predCities = userCities;
-      foreach (var city in userCities)
-      {
-        var existingCity = cities.FirstOrDefault(x => x.City.Title == city.Title);
-        if (existingCity != null && existingCity.VkkIds.All(x => x != city.CityId)) existingCity.VkkIds.Add(city.CityId);
-        else cities.Add(new CitiyCount {City = city, VkkIds = new List<int>()});
-      }
-
-      var london = cities.FirstOrDefault(x => x.City.Title == "London");
-      var ahelezn = cities.First(x => x.City.Title == "Железногорск").VkkIds.Count();
+      cities = cities.Distinct(new City()).ToList();
       for (var i = 0; i < cities.Count; i++)
       {
         _citiesMatching.Add(new CityMatching
         {
-          VkIds = cities[i].VkkIds,
+          VkId = cities[i].CityId,
           TwoBId = i + 1,
-          Title = cities[i].City.Title
+          Title = cities[i].Title
         });
-        cities[i].City.CityId = i + 1;
+        cities[i].CityId = i + 1;
       }
 
       using (var sw = new StreamWriter(BagsUrl + CitiesBag, false, Encoding.UTF8))
@@ -159,7 +164,7 @@ namespace DataGenerator.Data
     {
       var offset = 100;
       var files = Directory.GetFiles(FilesUrl).Where(x => x.Contains("Users")).ToList();
-      for (var i = 0; i < files.Count; i++)
+      for (var i = 35; i < files.Count; i++)
       {
         var file = files[i];
         var users = _reader.ReadUsers(file)
@@ -170,14 +175,19 @@ namespace DataGenerator.Data
             LastName = x.LastName.Replace("'", "''"),
             Sex = x.Sex,
             Birthday = x.Birthday,
-            CityId = x.City.CityId,
+            City = new City{ Title = x.City.Title, CityId  = x.City.CityId},
             SmallPhoto = x.SmallPhoto,
             LargePhoto = x.LargePhoto
           }).ToList().OrderBy(x => x.Birthday.Age()).ToList();
 
         for (var k = 0; k < users.Count; k++)
         {
-          users[k].CityId = _citiesMatching.First(x => x.VkIds.Any(y=>y== users[k].CityId)).TwoBId;
+          var cityMatching = _citiesMatching.FirstOrDefault(x => x.VkId == users[k].City.CityId) ?? _citiesMatching.FirstOrDefault(x => x.Title == users[k].City.Title.Replace("'", "''"));
+          //if (cityMatching == null)
+          //{
+          //  int a = 5;
+          //}
+          users[k].City.CityId = cityMatching?.TwoBId ?? 1 ;
           users[k].UserId = k + offset;
         }
 
@@ -254,7 +264,7 @@ namespace DataGenerator.Data
 
   public class CityMatching
   {
-    public List<int> VkIds { get; set; }
+    public int VkId { get; set; }
     public int TwoBId { get; set; }
     public string Title { get; set; }
   }

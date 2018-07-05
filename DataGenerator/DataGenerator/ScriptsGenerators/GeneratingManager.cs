@@ -24,7 +24,7 @@ namespace DataGenerator.ScriptsGenerators
     private readonly List<City> _bagCities;
     private readonly List<Question> _bagQuestions;
     private readonly List<EmailBlank> _bagEmails;
-    private readonly List<User> _bagUsers;
+    private  List<User> _bagUsers;
     private List<CityEntity> _cities;
     private List<OptionEntity> _options;
     private List<QuestionEntity> _questions;
@@ -33,20 +33,33 @@ namespace DataGenerator.ScriptsGenerators
     private List<AnswerEntity> _answers;
     private List<FollowEntity> _follows;
 
+    public void DownloadPhotos()
+    {
+      var users = _manager.LoadUsers(1000, 0, 0).ToList();
+      var userEntities =
+        users.Select(x => new UserInfoEntity
+        {
+          UserId = x.UserId,
+          LargeAvatarLink = x.LargePhoto,
+          SmallAvatarLink = x.SmallPhoto
+        }).ToList();
+      _mediaManager.SetAvatars(userEntities, @"E:\Projects\2Buttons\Project\Data\Media\");
 
+    }
 
     public GeneratingManager(Range users, Range questions)
     {
-      _bagCities = _manager.LoadCities().ToList();
-      _bagQuestions = _manager.LoadQuestions().Skip(questions.Offset).Take(questions.Count).ToList();
-      _bagUsers = _manager.LoadUsers(users.Count, users.Offset,0).ToList();
-      _bagEmails = _manager.LoadEmails();
+
+      //_bagCities = _manager.LoadCities().ToList();
+      //_bagQuestions = _manager.LoadQuestions().Skip(questions.Offset).Take(questions.Count).ToList();
+      //_bagUsers = _manager.LoadUsers(users.Count, users.Offset,0).ToList();
+      //_bagEmails = _manager.LoadEmails();
     }
 
     public void PreprocessData()
     {
       ToEntitys(_bagCities);
-      ToEntitys(_bagQuestions);
+      ToEntitys(_bagQuestions,2000);
       ToEntitys(_bagUsers);
       _answers = new List<AnswerEntity>();
       _follows = new List<FollowEntity>();
@@ -110,10 +123,15 @@ namespace DataGenerator.ScriptsGenerators
       _cities = cities.Select(x => new CityEntity { CityId = x.CityId, Title = x.Title, People = 0 }).ToList();
     }
 
-    private void ToEntitys(IEnumerable<Question> questions)
+    private void ToEntitys(IList<Question> questions, int startIndex)
     {
       _options = new List<OptionEntity>();
       _questions = new List<QuestionEntity>();
+
+      for (int i = 0; i < questions.Count; i++)
+      {
+        questions[i].QuestionId = startIndex + i;
+      }
 
       foreach (var t in questions)
       {
@@ -176,7 +194,7 @@ namespace DataGenerator.ScriptsGenerators
         {
           UserId = t.UserId,
           BirthDate = t.Birthday,
-          CityId = t.CityId,
+          CityId = t.City.CityId,
           Description = null,
           Login = t.FirstName + " " + t.LastName,
           SexType = t.Sex,

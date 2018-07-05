@@ -17,6 +17,14 @@ namespace DataGenerator.Data.Reader
       }
     }
 
+    public List<CityMatching> ReadCitiesMatching(string path)
+    {
+      using (var sr = new StreamReader(path, Encoding.UTF8))
+      {
+        return JsonConvert.DeserializeObject<List<CityMatching>>(sr.ReadToEnd()).ToList();
+      }
+    }
+
     public List<User> ReadUsers(string path)
     {
       using (var sr = new StreamReader(path, Encoding.UTF8))

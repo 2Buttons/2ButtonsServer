@@ -9,12 +9,12 @@ namespace DataGenerator.Data.Reader.Objects
 
     public bool Equals(City x, City y)
     {
-      return CityId == x.CityId && x.Title == y.Title;
+      return  x.Title == y.Title;
     }
 
     public int GetHashCode(City obj)
     {
-      return obj.CityId ^ obj.Title.GetHashCode() ^ 17;
+      return obj.Title.GetHashCode() ^ 17;
     }
 
   }
