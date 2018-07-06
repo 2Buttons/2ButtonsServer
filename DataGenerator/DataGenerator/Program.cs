@@ -41,8 +41,8 @@ namespace DataGenerator
     private static void Main(string[] args)
     {
        GeneratingManager manager = new GeneratingManager(new Range { Offset = 0, Count = 1000 }, new Range { Offset = 0, Count = 150 });
-      manager.DownloadPhotos();
-      Console.ReadLine();
+      //manager.DownloadPhotos();
+      //Console.ReadLine();
 
       // manager.PreprocessData();
       //manager.CreateScripts();
@@ -50,67 +50,67 @@ namespace DataGenerator
       //bags.CombineUsers();
       //bags.SaveBags();
 
-      //List<City> cities;
+      List<City> cities;
 
-      //using (var sw = new StreamReader(CitiesUrl, Encoding.UTF8))
-      //{
-      //  cities = JsonConvert.DeserializeObject<List<City>>(sw.ReadToEnd());
-      //}
+      using (var sw = new StreamReader(CitiesUrl, Encoding.UTF8))
+      {
+        cities = JsonConvert.DeserializeObject<List<City>>(sw.ReadToEnd());
+      }
 
-      //for (int i = 0; i < cities.Count; i++)
-      //{
-      //  cities[i].CityId = cities[i].CityId + 2000;
-      //}
+      for (int i = 0; i < cities.Count; i++)
+      {
+        cities[i].CityId = cities[i].CityId + 2000;
+      }
 
-      //using (var sw = new StreamWriter(CitiesUrl, false, Encoding.UTF8))
-      //{
-      //  sw.WriteLine(JsonConvert.SerializeObject(cities));
-      //}
+      using (var sw = new StreamWriter(CitiesUrl, false, Encoding.UTF8))
+      {
+        sw.WriteLine(JsonConvert.SerializeObject(cities));
+      }
 
-      //cities.Clear();
+      cities.Clear();
 
 
-      //List<CityMatching> citiesMacthin;
+      List<CityMatching> citiesMacthin;
 
-      //using (var sw = new StreamReader(CitiesMatchingUrl, Encoding.UTF8))
-      //{
-      //  citiesMacthin = JsonConvert.DeserializeObject<List<CityMatching>>(sw.ReadToEnd());
-      //}
+      using (var sw = new StreamReader(CitiesMatchingUrl, Encoding.UTF8))
+      {
+        citiesMacthin = JsonConvert.DeserializeObject<List<CityMatching>>(sw.ReadToEnd());
+      }
 
-      //for (int i = 0; i < citiesMacthin.Count; i++)
-      //{
-      //  citiesMacthin[i].TwoBId= citiesMacthin[i].TwoBId + 2000;
-      //}
+      for (int i = 0; i < citiesMacthin.Count; i++)
+      {
+        citiesMacthin[i].TwoBId = citiesMacthin[i].TwoBId + 2000;
+      }
 
-      //using (var sw = new StreamWriter(CitiesMatchingUrl, false, Encoding.UTF8))
-      //{
-      //  sw.WriteLine(JsonConvert.SerializeObject(citiesMacthin));
-      //}
+      using (var sw = new StreamWriter(CitiesMatchingUrl, false, Encoding.UTF8))
+      {
+        sw.WriteLine(JsonConvert.SerializeObject(citiesMacthin));
+      }
 
-      //citiesMacthin.Clear();
+      citiesMacthin.Clear();
 
-      //List<User> users;
+      List<User> users;
 
-      //var files = Directory.GetFiles(FolderUrl).Where(x => x.Contains("Users")).ToList();
+      var files = Directory.GetFiles(FolderUrl).Where(x => x.Contains("Users")).ToList();
 
-      //foreach (var file in files)
-      //{
-      //  using (var sw = new StreamReader(file, Encoding.UTF8))
-      //  {
-      //    users = JsonConvert.DeserializeObject<List<User>>(sw.ReadToEnd());
-      //  }
+      foreach (var file in files)
+      {
+        using (var sw = new StreamReader(file, Encoding.UTF8))
+        {
+          users = JsonConvert.DeserializeObject<List<User>>(sw.ReadToEnd());
+        }
 
-      //  for (int i = 0; i < citiesMacthin.Count; i++)
-      //  {
-      //    users[i].City.CityId = users[i].City.CityId + 2000;
-      //  }
+        for (int i = 0; i < citiesMacthin.Count; i++)
+        {
+          users[i].City.CityId = users[i].City.CityId + 2000;
+        }
 
-      //  using (var sw = new StreamWriter(file, false, Encoding.UTF8))
-      //  {
-      //    sw.WriteLine(JsonConvert.SerializeObject(users));
-      //  }
+        using (var sw = new StreamWriter(file, false, Encoding.UTF8))
+        {
+          sw.WriteLine(JsonConvert.SerializeObject(users));
+        }
 
-      //}
+      }
 
 
 

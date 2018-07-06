@@ -35,7 +35,7 @@ namespace DataGenerator.ScriptsGenerators
     private string GetInsertionAnswerLine(AnswerEntity answer)
     {
       var isLiked = answer.IsLiked ? 1 : 0;
-      return $"({answer.UserId}, {answer.QuestionId}, {(int)answer.AnswerType}, {isLiked}, '{answer.AnswerDate}', 0)";
+      return $"({answer.UserId}, {answer.QuestionId}, {(int)answer.AnswerType}, {isLiked}, '{answer.AnswerDate:u}', 0)";
     }
 
     private string GetInsertionAnswersLine(IList<AnswerEntity> answers)

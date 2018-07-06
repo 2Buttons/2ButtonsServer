@@ -42,7 +42,7 @@ namespace DataGenerator.ScriptsGenerators
     {
       var anonymyty = question.IsAnonimoty ? 1 : 0;
       return
-        $"({question.QuestionId}, {question.UserId}, N'{question.Condition}', {anonymyty}, {(int) question.AudienceType}, {(int) question.QuestionType}, N'{question.QuestionAddDate}', N'{question.BackgroundImageLink}', {question.Shows}, {question.Likes}, {question.Dislikes}, {0})";
+        $"({question.QuestionId}, {question.UserId}, N'{question.Condition}', {anonymyty}, {(int) question.AudienceType}, {(int) question.QuestionType}, '{question.QuestionAddDate:u}', N'{question.BackgroundImageLink}', {question.Shows}, {question.Likes}, {question.Dislikes}, {0})";
     }
 
     private string GetInsertionQuestionsLine(IList<QuestionEntity> questions)

@@ -55,13 +55,13 @@ namespace DataGenerator.ScriptsGenerators
     private string GetInserionLineAccount(UserEntity user)
     {
       return
-        $"({user.UserId}, 0, N'{user.Email}', 1, N'{user.PasswordHash}', '{user.PhoneNumber}', 1, {(int) user.RoleType}, 0, '{user.RegistrationDate}', 1)";
+        $"({user.UserId}, 0, N'{user.Email}', 1, N'{user.PasswordHash}', '{user.PhoneNumber}', 1, {(int) user.RoleType}, 0, '{user.RegistrationDate:u}', 1)";
     }
 
     private string GetInserionLineMain(UserInfoEntity user)
     {
       return
-        $"({user.UserId}, N'{user.Login}', N'{user.BirthDate}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', N'{user.LastNotsSeenDate}', N'{user.LargeAvatarLink}', N'{user.SmallAvatarLink}')";
+        $"({user.UserId}, N'{user.Login}', '{user.BirthDate:u}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', '{user.LastNotsSeenDate:u}', N'{user.LargeAvatarLink}', N'{user.SmallAvatarLink}')";
     }
 
     private string GetInsertionLineUsersMain(IList<UserInfoEntity> users)

@@ -50,10 +50,10 @@ namespace DataGenerator.ScriptsGenerators
     public GeneratingManager(Range users, Range questions)
     {
 
-      //_bagCities = _manager.LoadCities().ToList();
-      //_bagQuestions = _manager.LoadQuestions().Skip(questions.Offset).Take(questions.Count).ToList();
-      //_bagUsers = _manager.LoadUsers(users.Count, users.Offset,0).ToList();
-      //_bagEmails = _manager.LoadEmails();
+      _bagCities = _manager.LoadCities().ToList();
+      _bagQuestions = _manager.LoadQuestions().Skip(questions.Offset).Take(questions.Count).ToList();
+      _bagUsers = _manager.LoadUsers(users.Count, users.Offset, 0).ToList();
+      _bagEmails = _manager.LoadEmails();
     }
 
     public void PreprocessData()
