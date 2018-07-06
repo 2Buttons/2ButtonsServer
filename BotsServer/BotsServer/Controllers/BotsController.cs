@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using BotsServer.ViewModels.Input;
+using CommonLibraries.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BotsServer.Controllers
@@ -13,25 +15,27 @@ namespace BotsServer.Controllers
     {
         
         [HttpGet("questions")]
-        public ActionResult GetQuestions([FromBody]PageParams vm)
+        public IActionResult GetQuestions([FromBody]GetQuestions vm)
         {
-            return new string[] { "value1", "value2" };
+          if (vm.Code != "MySecretCode!123974_QQ")
+            return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+            
         }
 
       [HttpGet("questions/pattern")]
-      public ActionResult GetQuestionsByPattern([FromBody]GetGuestionsByPatternViewModel vm)
+      public IActionResult GetQuestionsByPattern([FromBody]GetGuestionsByPatternViewModel vm)
       {
         return new string[] { "value1", "value2" };
       }
 
       [HttpGet("questions/id")]
-      public ActionResult GetQuestionsById([FromBody]GetQuestionByIdViewModel vm)
+      public IActionResult GetQuestionsById([FromBody]GetQuestionByIdViewModel vm)
       {
         return new string[] { "value1", "value2" };
       }
 
       [HttpGet("magic")]
-      public ActionResult GetQuestionsByPattern([FromBody]GetQuestionByIdViewModel vm)
+      public IActionResult GetQuestionsByPattern([FromBody]MagicViewModel vm)
       {
         return new string[] { "value1", "value2" };
       }
