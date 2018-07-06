@@ -10,6 +10,7 @@ using CommonLibraries.Extensions;
 using DataGenerator.Data;
 using DataGenerator.Data.Reader.Objects;
 using DataGenerator.ScriptsGenerators;
+using DataGenerator.ScriptsGenerators.Entities;
 using Newtonsoft.Json;
 
 namespace DataGenerator
@@ -40,7 +41,7 @@ namespace DataGenerator
 
     private static void Main(string[] args)
     {
-       GeneratingManager manager = new GeneratingManager(new Range { Offset = 0, Count = 1000 }, new Range { Offset = 0, Count = 150 });
+       //GeneratingManager manager = new GeneratingManager(new Range { Offset = 0, Count = 1000 }, new Range { Offset = 0, Count = 150 });
       //manager.DownloadPhotos();
       //Console.ReadLine();
 
@@ -50,67 +51,84 @@ namespace DataGenerator
       //bags.CombineUsers();
       //bags.SaveBags();
 
-      List<City> cities;
 
-      using (var sw = new StreamReader(CitiesUrl, Encoding.UTF8))
+      //using (var sr = new StreamReader(@"E:\Projects\2Buttons\Project\Data\Scripts\Users.sql", Encoding.UTF8))
+     // {
+
+        var usersStat = new List<StatisticsEntity>();
+      for (int i = 100; i <= 1099; i++)
       {
-        cities = JsonConvert.DeserializeObject<List<City>>(sw.ReadToEnd());
+        usersStat.Add(new StatisticsEntity {UserId = i});
       }
+        var script = new StatisticsGenerator().GetInsertionLine(usersStat);
 
-      for (int i = 0; i < cities.Count; i++)
-      {
-        cities[i].CityId = cities[i].CityId + 2000;
-      }
-
-      using (var sw = new StreamWriter(CitiesUrl, false, Encoding.UTF8))
-      {
-        sw.WriteLine(JsonConvert.SerializeObject(cities));
-      }
-
-      cities.Clear();
-
-
-      List<CityMatching> citiesMacthin;
-
-      using (var sw = new StreamReader(CitiesMatchingUrl, Encoding.UTF8))
-      {
-        citiesMacthin = JsonConvert.DeserializeObject<List<CityMatching>>(sw.ReadToEnd());
-      }
-
-      for (int i = 0; i < citiesMacthin.Count; i++)
-      {
-        citiesMacthin[i].TwoBId = citiesMacthin[i].TwoBId + 2000;
-      }
-
-      using (var sw = new StreamWriter(CitiesMatchingUrl, false, Encoding.UTF8))
-      {
-        sw.WriteLine(JsonConvert.SerializeObject(citiesMacthin));
-      }
-
-      citiesMacthin.Clear();
-
-      List<User> users;
-
-      var files = Directory.GetFiles(FolderUrl).Where(x => x.Contains("Users")).ToList();
-
-      foreach (var file in files)
-      {
-        using (var sw = new StreamReader(file, Encoding.UTF8))
+        using (var sw = new StreamWriter(@"E:\Projects\2Buttons\Project\Data\Scripts\Statistics.sql", false, Encoding.UTF8))
         {
-          users = JsonConvert.DeserializeObject<List<User>>(sw.ReadToEnd());
+          sw.WriteLine(script);
         }
+     // }
 
-        for (int i = 0; i < citiesMacthin.Count; i++)
-        {
-          users[i].City.CityId = users[i].City.CityId + 2000;
-        }
+      //List<City> cities;
 
-        using (var sw = new StreamWriter(file, false, Encoding.UTF8))
-        {
-          sw.WriteLine(JsonConvert.SerializeObject(users));
-        }
+      //using (var sw = new StreamReader(CitiesUrl, Encoding.UTF8))
+      //{
+      //  cities = JsonConvert.DeserializeObject<List<City>>(sw.ReadToEnd());
+      //}
 
-      }
+      //for (int i = 0; i < cities.Count; i++)
+      //{
+      //  cities[i].CityId = cities[i].CityId + 2000;
+      //}
+
+      //using (var sw = new StreamWriter(CitiesUrl, false, Encoding.UTF8))
+      //{
+      //  sw.WriteLine(JsonConvert.SerializeObject(cities));
+      //}
+
+      //cities.Clear();
+
+
+      //List<CityMatching> citiesMacthin;
+
+      //using (var sw = new StreamReader(CitiesMatchingUrl, Encoding.UTF8))
+      //{
+      //  citiesMacthin = JsonConvert.DeserializeObject<List<CityMatching>>(sw.ReadToEnd());
+      //}
+
+      //for (int i = 0; i < citiesMacthin.Count; i++)
+      //{
+      //  citiesMacthin[i].TwoBId = citiesMacthin[i].TwoBId + 2000;
+      //}
+
+      //using (var sw = new StreamWriter(CitiesMatchingUrl, false, Encoding.UTF8))
+      //{
+      //  sw.WriteLine(JsonConvert.SerializeObject(citiesMacthin));
+      //}
+
+      //citiesMacthin.Clear();
+
+      //List<User> users;
+
+      //var files = Directory.GetFiles(FolderUrl).Where(x => x.Contains("Users")).ToList();
+
+      //foreach (var file in files)
+      //{
+      //  using (var sw = new StreamReader(file, Encoding.UTF8))
+      //  {
+      //    users = JsonConvert.DeserializeObject<List<User>>(sw.ReadToEnd());
+      //  }
+
+      //  for (int i = 0; i < citiesMacthin.Count; i++)
+      //  {
+      //    users[i].City.CityId = users[i].City.CityId + 2000;
+      //  }
+
+      //  using (var sw = new StreamWriter(file, false, Encoding.UTF8))
+      //  {
+      //    sw.WriteLine(JsonConvert.SerializeObject(users));
+      //  }
+
+      //}
 
 
 
