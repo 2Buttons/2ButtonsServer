@@ -2,44 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BotsServer.ViewModels.Input;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BotsServer.Controllers
 {
-    [Route("bots")]
+    [Route("TwoButtons123456790TwoButtons/bots")]
     [ApiController]
     public class BotsController : ControllerBase
     {
         
         [HttpGet("questions")]
-        public ActionResult GetQuestions()
+        public ActionResult GetQuestions([FromBody]PageParams vm)
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
+      [HttpGet("questions/pattern")]
+      public ActionResult GetQuestionsByPattern([FromBody]GetGuestionsByPatternViewModel vm)
+      {
+        return new string[] { "value1", "value2" };
+      }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+      [HttpGet("questions/id")]
+      public ActionResult GetQuestionsById([FromBody]GetQuestionByIdViewModel vm)
+      {
+        return new string[] { "value1", "value2" };
+      }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+      [HttpGet("magic")]
+      public ActionResult GetQuestionsByPattern([FromBody]GetQuestionByIdViewModel vm)
+      {
+        return new string[] { "value1", "value2" };
+      }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-    }
+
+  }
 }
