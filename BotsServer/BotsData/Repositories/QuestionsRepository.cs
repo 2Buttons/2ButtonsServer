@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BotsData.Contexts;
+using BotsData.Dto;
+using BotsData.Entities;
+using CommonLibraries;
+using Microsoft.EntityFrameworkCore;
+
+namespace BotsData.Repositories
+{
+  public class QuestionsRepository
+  {
+    private readonly TwoButtonsContext _context;
+    private readonly TwoButtonsAccountContext _contextAccount;
+
+    public QuestionsRepository(TwoButtonsContext context, TwoButtonsAccountContext contextAccount)
+    {
+      _context = context;
+      _contextAccount = contextAccount;
+    }
+
+    public async Task<List<QuestionDto>> GetQuestions(int offset, int count)
+    {
+      var result = await  _context.QuestionEntities.Skip(offset).Take(count).GroupJoin(_context.OptionEntities,
+        x => x.QuestionId, y => y.QuestionId,
+        (x, y) => new QuestionDto
+        {QuestionId  = x.QuestionId,
+         UserId = x.UserId,
+         BackgroundImageLink = x.BackgroundImageLink,
+           AudienceType = x.AudienceType,
+            Condition = x.Condition,
+             DislikesAmount = x.Dislikes,
+             LikesAmount = x.Likes,
+              QuestionAddDate = x.QuestionAddDate,
+               QuestionType = x.QuestionType,
+          Options = y.Select(o => new OptionDto {Text = o.OptionText, Voters = o.Answers})
+        }).ToListAsync();
+
+      return result;
+    }
+
+    public async Task<List<QuestionDto>> GetQuestionsByPattern( string pattern,int offset, int count)
+    {
+      pattern = pattern.ToLower();
+      var result = await _context.QuestionEntities.Where(x=>x.Condition.ToLower().Contains(pattern)).Skip(offset).Take(count).GroupJoin(_context.OptionEntities,
+        x => x.QuestionId, y => y.QuestionId,
+        (x, y) => new QuestionDto
+        {
+          QuestionId = x.QuestionId,
+          UserId = x.UserId,
+          BackgroundImageLink = x.BackgroundImageLink,
+          AudienceType = x.AudienceType,
+          Condition = x.Condition,
+          DislikesAmount = x.Dislikes,
+          LikesAmount = x.Likes,
+          QuestionAddDate = x.QuestionAddDate,
+          QuestionType = x.QuestionType,
+          Options = y.Select(o => new OptionDto { Text = o.OptionText, Voters = o.Answers })
+        }).ToListAsync();
+
+      return result;
+    }
+
+    public async Task<List<QuestionDto>> GetQuestionById(int questionId)
+    {
+      var result = await _context.QuestionEntities.Where(x=>x.QuestionId == questionId).Take(1).GroupJoin(_context.OptionEntities,
+        x => x.QuestionId, y => y.QuestionId,
+        (x, y) => new QuestionDto
+        {
+          QuestionId = x.QuestionId,
+          UserId = x.UserId,
+          BackgroundImageLink = x.BackgroundImageLink,
+          AudienceType = x.AudienceType,
+          Condition = x.Condition,
+          DislikesAmount = x.Dislikes,
+          LikesAmount = x.Likes,
+          QuestionAddDate = x.QuestionAddDate,
+          QuestionType = x.QuestionType,
+          Options = y.Select(o => new OptionDto { Text = o.OptionText, Voters = o.Answers })
+        }).ToListAsync();
+
+      return result;
+    }
+
+    public async Task<bool> UpdateAnswer(int userId, int questionId, AnswerType answerType)
+    {
+      var answered = DateTime.Now;
+
+      return await _context.Database.ExecuteSqlCommandAsync(
+               $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
+    }
+
+  }
+}
