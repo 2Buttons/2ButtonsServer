@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BotsData.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BotsData
+namespace BotsData.Contexts
 {
   public class TwoButtonsContext : DbContext
   {

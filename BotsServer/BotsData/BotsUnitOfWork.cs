@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BotsData.Contexts;
+using BotsData.Repositories;
 
 namespace BotsData
 {
@@ -10,9 +12,15 @@ namespace BotsData
     private readonly TwoButtonsContext _dbMain;
 
 
-    public UserInfoRepository UsersInfo => _usersInfoRepository ?? (_usersInfoRepository = new UserInfoRepository(_dbMain));
+    private QuestionsRepository _questionRepository;
 
-    public AuthorizationUnitOfWork(TwoButtonsContext dbMain, TwoButtonsAccountContext dbAccount)
+    public QuestionsRepository  QuestionRepository => _questionRepository ?? (_questionRepository = new QuestionsRepository(_dbMain, _dbAccount));
+
+    private BotsRepository   _botsRepository;
+
+    public BotsRepository BotsRepository => _botsRepository ?? (_botsRepository = new BotsRepository(_dbMain, _dbAccount));
+
+    public BotsUnitOfWork(TwoButtonsContext dbMain, TwoButtonsAccountContext dbAccount)
     {
       _dbMain = dbMain;
       _dbAccount = dbAccount;

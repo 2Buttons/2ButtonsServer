@@ -1,11 +1,9 @@
-﻿using CommonLibraries;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using CommonLibraries;
 
-namespace BotsData
+namespace BotsData.Entities
 {
   [Table("Users")]
   public class UserEntity

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CommonLibraries;
 
-namespace BotsData
+namespace BotsData.Entities
 {
   [Table("Question")]
   public class QuestionEntity
@@ -14,22 +15,20 @@ namespace BotsData
     public string Condition { get; set; }
 
     [Column("anonymity")]
-    public int IsAnonymity { get; set; }
+    public QuestionType QuestionType { get; set; }
 
     [Column("audience")]
-    public int IsAudience { get; set; }
+    public AudienceType AudienceType { get; set; }
 
-    public int QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
 
     [Column("backbroundImageLink")]
     public string BackgroundImageLink { get; set; }
 
-    public int Answers { get; set; }
     public int Likes { get; set; }
     public int Dislikes { get; set; }
 
     [Column("deleted")]
-    public int IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
   }
 }

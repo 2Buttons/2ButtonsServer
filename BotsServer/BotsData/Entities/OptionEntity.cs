@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BotsData
+namespace BotsData.Entities
 {
   [Table("Option")]
   public class OptionEntity
