@@ -2,6 +2,6 @@
 {
   public class GetQuestions : ClientIdentity
   {
-    public PageParams PageParams { get; set; }
+    public PageParams PageParams { get; set; } = new PageParams();
   }
 }

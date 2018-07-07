@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BotsData;
+using BotsData.Contexts;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
@@ -36,8 +38,8 @@ namespace BotsServer
         options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
       });
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
-      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
-      services.AddTransient<QuestionsUnitOfWork>();
+      services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+      services.AddTransient<BotsUnitOfWork>();
       services.AddOptions();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
       services.AddConnectionsHub();
@@ -71,7 +73,11 @@ namespace BotsServer
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
-      if (env.IsDevelopment()) loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+      if (env.IsDevelopment())
+      {
+        loggerFactory.AddConsole();
+        loggerFactory.AddDebug();
+      }
       loggerFactory.AddDebug();
       app.UseExceptionHandling();
 

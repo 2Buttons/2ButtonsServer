@@ -3,6 +3,6 @@
     public class GetGuestionsByPatternViewModel : ClientIdentity
   {
     public string Pattern { get; set; }
-    public PageParams PageParams { get; set; }
-    }
+    public PageParams PageParams { get; set; } = new PageParams();
+  }
 }
