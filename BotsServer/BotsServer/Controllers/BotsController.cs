@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using BotsData;
 using BotsServer.ViewModels.Input;
@@ -44,6 +45,16 @@ namespace BotsServer.Controllers
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
       var result = await _uow.QuestionRepository.GetQuestionById(vm.QuestionId);
+      return new OkResponseResult(result);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> GetBotsCount([FromBody]GetBotsCount vm)
+    {
+      if (vm.Code != "MySecretCode!123974_QQ")
+        return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+      var result = _uow.BotsRepository.GetBotsCount();
       return new OkResponseResult(result);
     }
 

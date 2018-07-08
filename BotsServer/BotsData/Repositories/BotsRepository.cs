@@ -38,9 +38,14 @@ namespace BotsData.Repositories
       return await _contextAccount.UserEntities.Where(x => x.IsBot).ToListAsync();
     }
 
-    public  int GetBotsCount(int botId)
+    public async Task<List<int>> GetAllBotsIds()
     {
-      return  _contextAccount.UserEntities.Count(x => x.UserId == botId);
+      return await _contextAccount.UserEntities.Where(x => x.IsBot).Select(x=>x.UserId).ToListAsync();
+    }
+
+    public  int GetBotsCount()
+    {
+      return  _contextAccount.UserEntities.Count(x => x.IsBot);
     }
   }
 }
