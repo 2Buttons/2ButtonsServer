@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BotsData;
 using BotsData.Contexts;
+using BotsServer.Jobs;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
@@ -39,7 +40,9 @@ namespace BotsServer
       });
       services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
       services.AddDbContext<TwoButtonsAccountContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsAccountConnection")));
+      services.Configure<ConnectionStrings>(options => options.TwoButtonsConnection = Configuration.GetConnectionString("TwoButtonsConnection"));
       services.AddTransient<BotsUnitOfWork>();
+      services.AddSingleton<BotsManager>();
       services.AddOptions();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
       services.AddConnectionsHub();

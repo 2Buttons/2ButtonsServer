@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using BotsData;
+using BotsData.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace BotsServer.Jobs
 {
@@ -11,5 +13,6 @@ namespace BotsServer.Jobs
     public BotsUnitOfWork Db { get; set; }
     public Timer Timer { get; set; }
     public Stack<BotVoting> BotVotings { get; set; }
+    public DbContextOptions<TwoButtonsContext> DbOptions { get; set; }
   }
 }

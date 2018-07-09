@@ -5,9 +5,12 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using BotsData;
+using BotsData.Contexts;
+using BotsServer.Jobs;
 using BotsServer.ViewModels.Input;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BotsServer.Controllers
 {
@@ -16,9 +19,13 @@ namespace BotsServer.Controllers
   public class BotsController : ControllerBase
   {
     private readonly BotsUnitOfWork _uow;
-    public BotsController(BotsUnitOfWork uow)
+    private readonly BotsManager _botsManager;
+    private DbContextOptions<TwoButtonsContext> _dbOptions;
+    public BotsController(BotsUnitOfWork uow, BotsManager botsManager, DbContextOptions<TwoButtonsContext> dbOptions)
     {
       _uow = uow;
+      _botsManager = botsManager;
+      _dbOptions = dbOptions;
     }
 
     [HttpPost("questions")]
@@ -59,11 +66,12 @@ namespace BotsServer.Controllers
     }
 
     [HttpPost("magic")]
-    public IActionResult Magic([FromBody]MagicViewModel vm)
+    public async Task<IActionResult> Magic([FromBody]MagicViewModel vm)
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
-      
+      await _botsManager.CreateTimer(_uow, _dbOptions,vm);
+      return new OkResponseResult();
     }
 
 

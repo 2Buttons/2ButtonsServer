@@ -4,27 +4,28 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BotsData;
+using BotsData.Contexts;
+using BotsData.Entities;
 using BotsServer.ViewModels.Input;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BotsServer.Jobs
 {
   public class BotsManager
   {
   
-    private readonly Stack<BotVoting> _votings = new Stack<BotVoting>();
 
     private readonly Random _random = new Random();
-    public BotsManager(BotsUnitOfWork db, MagicViewModel magic)
+    public BotsManager()
     {
 
     }
 
-    public async Task CreateTimer(BotsUnitOfWork db, MagicViewModel magic)
+    public async Task CreateTimer(BotsUnitOfWork db, DbContextOptions<TwoButtonsContext> dbOptions, MagicViewModel magic)
     {
-      TimerCallback TimerDelegate =
-        Task;
+      TimerCallback timerDelegate = Task;
      
     
 
@@ -63,25 +64,43 @@ namespace BotsServer.Jobs
      
       Stack<BotVoting> stack = new Stack<BotVoting>(list);
 
-      var job = new JobState { BotVotings = stack , RemainingIteration = list.Count / magic.BotsPerVote , BotsPerVote = magic.BotsPerVote};
+      var job = new JobState { BotVotings = stack , RemainingIteration = list.Count / magic.BotsPerVote , BotsPerVote = magic.BotsPerVote, Db = db, DbOptions = dbOptions};
 
-      var timer = new Timer(TimerDelegate, job, 0, 500);
-      job.Timer = timer;
+      await new TaskFactory().StartNew(() => Task(job));
+      //  var timer = new Timer(timerDelegate, job, 0, magic.IntervalInMilliseconds);
+      //job.Timer = timer;
     }
-
 
     private void Task(object jobState)
     {
-      var job = (JobState) jobState;
+      var job = (JobState)jobState;
       if (job.RemainingIteration <= 0) job.Timer.Dispose();
-      for (int i = 0; i < job.BotsPerVote; i++)
+      while (job.BotVotings.Count > 1)
       {
-        if (job.BotVotings.Count <= 0) job.Timer.Dispose();
+        Thread.Sleep(2000);
         var bot = job.BotVotings.Pop();
-        job.Db.QuestionRepository.UpdateAnswer(bot.BotId, bot.QuestionId, bot.AnswerType);
+        job.Db.QuestionRepository.UpdateAnswer(new TwoButtonsContext(job.DbOptions), bot.BotId, bot.QuestionId, bot.AnswerType);
       }
+
+
       job.RemainingIteration--;
     }
-   
+
+
+    //private void Task(object jobState)
+    //{
+    //  var job = (JobState) jobState;
+    //  if (job.RemainingIteration <= 0) job.Timer.Dispose();
+    //  for (int i = 0; i < job.BotsPerVote; i++)
+    //  {
+    //    if (job.BotVotings.Count <= 1) job.Timer.Dispose();
+    //    var bot = job.BotVotings.Pop();
+    //    job.Db.QuestionRepository.UpdateAnswer(new TwoButtonsContext(job.DbOptions), bot.BotId, bot.QuestionId, bot.AnswerType).GetAwaiter();
+    //  }
+
+
+    //  job.RemainingIteration--;
+    //}
+
   }
 }
