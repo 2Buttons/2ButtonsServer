@@ -87,21 +87,8 @@ namespace BotsData.Repositories
     public async Task<bool> UpdateAnswer(int userId, int questionId, AnswerType answerType)
     {
       var answered = DateTime.Now;
-      var m = _context.AnswerEntities.ToList();
-      var t = m;
-      _context.AnswerEntities.Add(new AnswerEntity
-      {
-        AnswerType = answerType,
-        QuestionId = questionId,
-        UserId = userId
-      });
-
-      var p = _context.AnswerEntities.ToList();
-      var y = p;
-
-      return await _context.SaveChangesAsync() > 0;
-      //return await _context.Database.ExecuteSqlCommandAsync(
-      //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
+      return await _context.Database.ExecuteSqlCommandAsync(
+               $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
 
     public bool UpdateAnswer(TwoButtonsContext context, int userId, int questionId, AnswerType answerType)

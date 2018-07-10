@@ -12,7 +12,8 @@ namespace BotsServer.Jobs
     public int BotsPerVote { get; set; }
     public BotsUnitOfWork Db { get; set; }
     public Timer Timer { get; set; }
-    public Stack<BotVoting> BotVotings { get; set; }
+    public List<BotVoting> BotVotings { get; set; }
+    public int Index;
     public DbContextOptions<TwoButtonsContext> DbOptions { get; set; }
   }
 }
