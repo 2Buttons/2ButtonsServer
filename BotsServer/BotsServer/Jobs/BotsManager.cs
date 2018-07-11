@@ -50,25 +50,31 @@ namespace BotsServer.Jobs
       var firstBotsCount = magic.BotsCount * firstOptionPercent / 100;
       var secondBotsCount = magic.BotsCount * secondOptionPercent / 100;
 
-      var allBots = await db.BotsRepository.GetAllBotsIds();
+      var allBots = await db.BotsRepository.GetAllBotsIdsExceptVoted(magic.QuestionId);
       RandomizerExtension.Shuffle(allBots);
       
       
       List<BotVoting> list = new List<BotVoting>();
-      for (int i = 0; i < secondBotsCount + firstBotsCount  && i<allBots.Count; i+=2)
+
+      for (int i = 0; i < firstBotsCount && i < allBots.Count; i++)
       {
-        list.Add(new BotVoting { BotId = allBots[i],QuestionId = magic.QuestionId, AnswerType = AnswerType.First});
+        list.Add(new BotVoting { BotId = allBots[i], QuestionId = magic.QuestionId, AnswerType = AnswerType.First });
+       
+      }
+
+      for (int i = firstBotsCount; i < secondBotsCount + firstBotsCount  && i<allBots.Count; i++)
+      {
         list.Add(new BotVoting {BotId = allBots[i], QuestionId = magic.QuestionId, AnswerType = AnswerType.Second});
       }
 
-     
+      RandomizerExtension.Shuffle<BotVoting>(list);
       List<BotVoting> stack = new List<BotVoting>(list);
 
       var job = new JobState { BotVotings = stack , RemainingIteration = list.Count / magic.BotsPerVote , BotsPerVote = magic.BotsPerVote, Db = db, DbOptions = dbOptions, Index =  0};
 
-      await new TaskFactory().StartNew(() => Task(job));
-      //  var timer = new Timer(timerDelegate, job, 0, magic.IntervalInMilliseconds);
-      //job.Timer = timer;
+      //await new TaskFactory().StartNew(() => Task(job));
+        var timer = new Timer(timerDelegate, job, 0, magic.IntervalInMilliseconds);
+     job.Timer = timer;
     }
 
     //private void Task(object jobState)
@@ -91,13 +97,33 @@ namespace BotsServer.Jobs
     {
       var job = (JobState)jobState;
       if (job.RemainingIteration <= 0) job.Timer.Dispose();
+      var db = new TwoButtonsContext(job.DbOptions);
       for (int i = 0; i < job.BotsPerVote; i++)
       {
-        Interlocked.Increment(ref job.Index);
-        if (job.Index>=job.BotVotings.Count-1) job.Timer.Dispose();
+        
+        if (job.Index >= job.BotVotings.Count)
+        {
+          job.Timer.Dispose();
+          return;
+        }
      
         var bot = job.BotVotings[job.Index];
-        job.Db.QuestionRepository.UpdateAnswer( bot.BotId, bot.QuestionId, bot.AnswerType).GetAwaiter();
+        var answered = DateTime.Now;
+        // var m = context.AnswerEntities.ToList();
+        // var t = m;
+        var answer = new AnswerEntity
+        {
+          AnswerType = bot.AnswerType,
+          QuestionId = bot.QuestionId,
+          UserId = bot.BotId,
+           AnsweredDate  =  answered,
+            IsDeleted = 0,
+             IsLiked = 0
+          
+        };
+
+        job.Db.QuestionRepository.UpdateAnswer(db, answer);
+        Interlocked.Increment(ref job.Index);
       }
 
 

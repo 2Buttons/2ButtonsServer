@@ -38,12 +38,20 @@ namespace BotsData.Repositories
       return await _contextAccount.UserEntities.Where(x => x.IsBot).ToListAsync();
     }
 
+   
+
     public async Task<List<int>> GetAllBotsIds()
     {
       return await _contextAccount.UserEntities.Where(x => x.IsBot).Select(x=>x.UserId).ToListAsync();
     }
 
-    public  int GetBotsCount()
+    public async Task<List<int>> GetAllBotsIdsExceptVoted(int questionId)
+    {
+      return await _contextAccount.UserEntities.Where(x => x.IsBot).Select(x => x.UserId).Except(await _context.AnswerEntities.Where(x=>x.QuestionId == questionId).Select(x=>x.UserId).ToListAsync()).ToListAsync();
+    }
+
+
+    public int GetBotsCount()
     {
       return  _contextAccount.UserEntities.Count(x => x.IsBot);
     }

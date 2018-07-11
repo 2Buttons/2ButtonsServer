@@ -103,13 +103,27 @@ namespace BotsData.Repositories
         UserId = userId
       });
 
-      var p = context.AnswerEntities.ToList();
-      var y = p;
+    //  var p = context.AnswerEntities.ToList();
+     // var y = p;
 
       return context.SaveChanges() > 0;
       //return await _context.Database.ExecuteSqlCommandAsync(
       //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
+
+    public bool UpdateAnswer(TwoButtonsContext context, AnswerEntity answer)
+    {
+     
+      context.AnswerEntities.Add(answer);
+
+      //  var p = context.AnswerEntities.ToList();
+      // var y = p;
+
+      return context.SaveChanges() > 0;
+      //return await _context.Database.ExecuteSqlCommandAsync(
+      //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
+    }
+
 
   }
 }
