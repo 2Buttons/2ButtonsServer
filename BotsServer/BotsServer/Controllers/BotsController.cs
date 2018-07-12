@@ -29,7 +29,7 @@ namespace BotsServer.Controllers
     }
 
     [HttpPost("questions")]
-    public async Task<IActionResult> GetQuestions([FromBody]GetQuestions vm)
+    public async Task<IActionResult> GetQuestions([FromBody]GetQuestionsViewModel vm)
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");

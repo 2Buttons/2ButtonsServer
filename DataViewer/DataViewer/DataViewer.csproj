@@ -95,15 +95,27 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppSettings.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponceObject.cs" />
+    <Compile Include="ViewModels\ClientIdentity.cs" />
+    <Compile Include="ViewModels\Enums.cs" />
+    <Compile Include="ViewModels\GetQuestionsViewModel.cs" />
+    <Compile Include="ViewModels\MagicViewModel.cs" />
+    <Compile Include="ViewModels\OptionViewModel.cs" />
+    <Compile Include="ViewModels\PageParams.cs" />
+    <Compile Include="ViewModels\QuestionViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="appsettings.json">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="DataViewer_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +141,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.5</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
