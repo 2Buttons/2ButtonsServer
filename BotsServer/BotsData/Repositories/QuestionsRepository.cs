@@ -111,7 +111,17 @@ namespace BotsData.Repositories
       //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
 
-    public bool UpdateAnswer(TwoButtonsContext context, AnswerEntity answer)
+    public async  Task<bool> UpdateAnswer(AnswerEntity answer)
+    {
+      _context.AnswerEntities.Add(answer);
+
+
+      return await  _context.SaveChangesAsync() > 0;
+      //return await _context.Database.ExecuteSqlCommandAsync(
+      //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
+    }
+
+    public async Task<bool> UpdateAnswer(TwoButtonsContext context, AnswerEntity answer)
     {
      
       context.AnswerEntities.Add(answer);
@@ -119,7 +129,7 @@ namespace BotsData.Repositories
       //  var p = context.AnswerEntities.ToList();
       // var y = p;
 
-      return context.SaveChanges() > 0;
+      return await context.SaveChangesAsync() > 0;
       //return await _context.Database.ExecuteSqlCommandAsync(
       //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }

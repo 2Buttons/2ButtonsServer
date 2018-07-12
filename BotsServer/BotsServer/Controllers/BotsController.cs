@@ -56,7 +56,7 @@ namespace BotsServer.Controllers
     }
 
 
-    [HttpPost]
+    [HttpPost("count")]
     public async Task<IActionResult> GetBotsCount([FromBody]GetBotsCount vm)
     {
       if (vm.Code != "MySecretCode!123974_QQ")
