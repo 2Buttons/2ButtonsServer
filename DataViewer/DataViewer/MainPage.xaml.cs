@@ -97,10 +97,9 @@ namespace DataViewer
       {
         Code = "MySecretCode!123974_QQ",
          BotsCount = int.Parse(tbBotsCount.Text),
-          BotsPerVote = int.Parse(tbBotsPerVote.Text),
            FirstOptionPercent = int.Parse(tbOption1Voters.Text),
            SecondOptionPercent = int.Parse(tbOption2Voters.Text),
-            IntervalInMilliseconds = int.Parse(tbInterval.Text),
+            VoteDurationInMilliseconds = int.Parse(tbInterval.Text)*1000,
              QuestionId = int.Parse(tbId.Text)
       });
       var response = JsonConvert.DeserializeObject<ResponseObject<object>>(Request(body, url));

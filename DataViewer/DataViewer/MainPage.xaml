@@ -6,29 +6,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="608.973" Width="921.446">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="590" Width="770">
 
     <Grid>
-        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="Id вопроса" TextWrapping="Wrap" VerticalAlignment="Top" Margin="13,14,0,0" />
-        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="Первый ответ" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,79,0,0"/>
-        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="Второй ответ" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,136,0,0" />
-        <TextBlock HorizontalAlignment="Left" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,176,0,0"  Height="63" Width="220"><Run Text="Интервал голосования"/><Run Text=", милисек"/></TextBlock>
-        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="Всего ботов" TextWrapping="Wrap" VerticalAlignment="Top" Margin="8,251,0,0" />
-        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="Ботов за одно голосование " TextWrapping="Wrap" VerticalAlignment="Top" Margin="13,321,0,0" />
-
-        <TextBlock x:Name="tbServerResponce" Padding="10" FontSize="20" HorizontalAlignment="Left" Height="78" Margin="10,526,0,0" Text="Ответ сервера"  TextWrapping="Wrap" VerticalAlignment="Top" Width="575"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Height="40" Width="200"  Text="Id вопроса" TextWrapping="Wrap" VerticalAlignment="Top" Margin="330,31,0,0" />
 
 
-        <Button x:Name="btnVote" Content="Проголосовать" FontSize="20" HorizontalAlignment="Left" Margin="139,399,0,0" VerticalAlignment="Top" Height="60" Width="258" Click="btnVote_Click" />
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Height="40" Width="200" Text="Первый ответ, %"  TextWrapping="Wrap" VerticalAlignment="Top" Margin="330,140,0,0"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Height="40" Width="200" Text="Второй ответ, %" TextWrapping="Wrap" VerticalAlignment="Top" Margin="330,83,0,0" />
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Height="52" Width="200" TextWrapping="Wrap" VerticalAlignment="Top" Margin="330,201,0,0" ><Run Text="Продолжительность голосования"/><Run Text=","/><Run Text=" сек"/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Height="40" Width="200" Text="Боты, кол-во" TextWrapping="Wrap" VerticalAlignment="Top" Margin="330,265,0,0" />
 
-        <TextBox x:Name="tbId" HorizontalAlignment="Left" Margin="178,24,0,0"  TextWrapping="Wrap" VerticalAlignment="Top" Height="26" Width="340" />
-        <TextBox x:Name="tbOption1Voters" HorizontalAlignment="Left" FontSize="20" PlaceholderText="Проценты" VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="36" Width="191" Margin="224,83,0,0"/>
-        <TextBox x:Name="tbOption2Voters" HorizontalAlignment="Left" FontSize="20" PlaceholderText="Проценты" VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="36" Width="191" Margin="224,136,0,0"/>
-        <TextBox x:Name="tbInterval" HorizontalAlignment="Left" Margin="259,187,0,0" PlaceholderText="Интервал голосования" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbBotsCount" HorizontalAlignment="Left" Margin="178,248,0,0" PlaceholderText="Ботов надо" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbBotsPerVote" HorizontalAlignment="Left" Margin="308,316,0,0" PlaceholderText="Ботов за одно голосование" VerticalAlignment="Top"/>
-        <Button Content="Получить вопросы" HorizontalAlignment="Left" Margin="688,16,0,0" VerticalAlignment="Top" Height="36" Width="157" Click="Button_Click"/>
-        <ListView x:Name="lstQuestions" HorizontalAlignment="Left" Height="507" Margin="615,92,0,0" VerticalAlignment="Top" Width="296" BorderBrush="Red" BorderThickness="5"/>
+        <TextBlock x:Name="tbServerResponce"  Padding="10" FontSize="20" HorizontalAlignment="Left" Height="134" Margin="330,390,0,0" Text="Ответ сервера"  TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+
+
+        <Button x:Name="btnVote" Content="Проголосовать" FontSize="20" HorizontalAlignment="Left" Margin="330,328,0,0" VerticalAlignment="Top" Height="39" Width="400" Click="btnVote_Click" />
+
+        <TextBox x:Name="tbId" HorizontalAlignment="Left" FontSize="20"  VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="40" Width="200" Margin="530,31,0,0"/>
+        <TextBox x:Name="tbOption1Voters" HorizontalAlignment="Left" FontSize="20"  VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="40" Width="200" Margin="530,83,0,0"/>
+        <TextBox x:Name="tbOption2Voters" HorizontalAlignment="Left" FontSize="20"  VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="40" Width="200" Margin="530,140,0,0"/>
+        <TextBox x:Name="tbInterval" HorizontalAlignment="Left" FontSize="20"  VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="40" Width="200" Margin="530,208,0,0"  />
+        <TextBox x:Name="tbBotsCount" HorizontalAlignment="Left" FontSize="20"  VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="40" Width="200" Margin="530,265,0,0" />
+        <Button Content="Получить вопросы" HorizontalAlignment="Left" FontSize="20"  VerticalAlignment="Top" BorderBrush="Blue" BorderThickness="1" Height="40" Width="296" Margin="10,16,0,0" Click="Button_Click"/>
+        <ListView x:Name="lstQuestions" HorizontalAlignment="Left" Height="507" Margin="10,68,0,0" VerticalAlignment="Top" Width="296" BorderBrush="Red" BorderThickness="5"/>
 
     </Grid>
 </Page>
