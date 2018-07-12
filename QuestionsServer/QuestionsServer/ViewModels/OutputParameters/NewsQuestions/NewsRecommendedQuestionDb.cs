@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
+﻿namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
 {
-    public class NewsRecommendedQuestionViewModel : NewsQuestionBaseViewModel
-    {
-        public int RecommendedUserId { get; set; }
-        public string RecommendedUserLogin { get; set; }
-    }
+  public class NewsRecommendedQuestionViewModel : NewsQuestionBaseViewModel
+  {
+    public NewsUserViewModel RecommendedUser { get; set; }
+  }
 }
