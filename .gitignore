@@ -1,7 +1,6 @@
 2ButtonsServer/.idea/
 DataGenerator/DataGenerator/Files/
-*/*/appsettings.json
-appsettings.json
+*appsettings.json
 
 
 ## Ignore Visual Studio temporary files, build results, and
