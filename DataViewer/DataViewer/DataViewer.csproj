@@ -103,6 +103,7 @@
     <Compile Include="ResponceObject.cs" />
     <Compile Include="ViewModels\ClientIdentity.cs" />
     <Compile Include="ViewModels\Enums.cs" />
+    <Compile Include="ViewModels\GetBotsCount.cs" />
     <Compile Include="ViewModels\GetQuestionsViewModel.cs" />
     <Compile Include="ViewModels\MagicViewModel.cs" />
     <Compile Include="ViewModels\OptionViewModel.cs" />

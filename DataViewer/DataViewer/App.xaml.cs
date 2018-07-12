@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -68,8 +69,9 @@ namespace DataViewer
                     // параметр
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
-                // Обеспечение активности текущего окна
-                Window.Current.Activate();
+        // Обеспечение активности текущего окна
+              //ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(750, 550));
+        Window.Current.Activate();
             }
         }
 

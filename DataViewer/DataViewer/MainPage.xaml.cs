@@ -26,25 +26,91 @@ namespace DataViewer
   /// </summary>
   public sealed partial class MainPage : Page
   {
+    public List<QuestionViewModel> Questions { get; set; }
+
     public MainPage()
     {
       this.InitializeComponent();
+      tbOption1Voters.TextChanged += TbOption1Voters_TextChanged;
+      tbOption2Voters.TextChanged += TbOption2Voters_TextChanged;
+      lstQuestions.SelectionChanged += LstQuestions_SelectionChanged;
+      tbId.TextChanged += TbId_TextChanged;
+    }
+
+    private void TbId_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (Questions == null || Questions.Count == 0 || string.IsNullOrEmpty(((TextBox)sender).Text))
+      {
+        tBlockIdError.Text = "";
+        return;
+      }
+
+      if (!int.TryParse(((TextBox)sender).Text, out var questionId))
+      {
+        questionId = 0;
+      }
+     
+      if (!Questions.Any(x => x.QuestionId == questionId))
+      {
+        tBlockIdError.Text = "id не найден";
+        return;
+      }
+
+      tBlockIdError.Text = "";
+    }
+
+    private void LstQuestions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      var value = (string)((ListView) sender).SelectedItem ?? "";
+      if (!string.IsNullOrEmpty(value.Trim()))
+      {
+        var elements = value.Split(' ');
+        var id = int.Parse(elements[1]);
+        tbId.Text = id.ToString();
+        var option1 = int.Parse(elements[6]);
+        var option2 = int.Parse(elements[12]);
+        tbOption1Voters.Text = option1.ToString();
+        tbOption2Voters.Text = option2.ToString();
+      }
+    }
+
+    private void TbOption2Voters_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (!int.TryParse(((TextBox)sender).Text, out var secondVoters))
+      {
+        secondVoters = 0;
+      }
+      tbOption1Voters.Text = (100 - secondVoters).ToString();
+    }
+
+    private void TbOption1Voters_TextChanged(object sender, TextChangedEventArgs e)
+    {
+
+      if(!int.TryParse(((TextBox)sender).Text,out var firstVoters))
+      {
+        firstVoters = 0;
+      }
+      tbOption2Voters.Text = (100 - firstVoters).ToString();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
       var questions =  GetQuestions();
-      
+      Questions = questions;
+
+
       lstQuestions.ItemsSource = questions.Select((x)=>
       {
         int first = x.Options.First().Voters;
         int second = x.Options.Last().Voters;
         if (second + first == 0) first = 1;
 
-        return "Id: " + x.QuestionId + " | f: " + first + "=" + (first/(first + second)*100) + "%  | s:" + second + "=" +
-               (second/(first + second)*100)+"%";
+        return "Id: " + x.QuestionId + " | f: " + first + " = " + (first * 100 / (first + second)) + " %  | s:" + second + " = " +
+               (second * 100  / (first + second))+" %";
       }).ToList();
 
+      tBlockQCount.Text = "Вопросы: "+Questions.Count.ToString();
+      tBlockBCount.Text = "Боты: "+GetBotsCount();
     }
 
     public List<QuestionViewModel> GetQuestions()
@@ -57,6 +123,20 @@ namespace DataViewer
       });
       var response = JsonConvert.DeserializeObject<ResponseObject<List<QuestionViewModel>>>(Request(body, url));
       tbServerResponce.Text = "Code: " + response.Status + " Message:" + response.Message;
+      var result = response.Data;
+      return result;
+    }
+
+    public int GetBotsCount()
+    {
+      
+      string url = "http://localhost:18000/TwoButtons1234567890TwoButtons/bots/count";
+      string body = JsonConvert.SerializeObject(new GetBotsCount
+      {
+        Code = "MySecretCode!123974_QQ"
+      });
+      var response = JsonConvert.DeserializeObject<ResponseObject<int>>(Request(body, url));
+     // tbServerResponce.Text = "Code: " + response.Status + " Message:" + response.Message;
       var result = response.Data;
       return result;
     }
