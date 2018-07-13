@@ -30,11 +30,23 @@ namespace AccountServer.Controllers
       _account = accountService;
     }
 
-    [HttpPost("server/{userId:int}")]
+    [HttpPost("server")]
     public IActionResult ServerName()
     {
       return new OkResponseResult((object)"Account");
     }
+
+    [HttpPost("getCityAndBirthdate")]
+    public async Task<IActionResult> GetCityAndBirthdate([FromBody] UserIdViewModel userPage)
+    {
+      if (!ModelState.IsValid)
+        return new BadResponseResult(ModelState);
+
+      var result = await _account.GetCityAndBirthdate(userPage.UserId);
+
+      return new OkResponseResult(new {UserId = userPage.UserId, City = result.city, BirthDate = result.birthdate});
+    }
+
 
     [Authorize]
     [HttpPost("{userPageId:int}")]

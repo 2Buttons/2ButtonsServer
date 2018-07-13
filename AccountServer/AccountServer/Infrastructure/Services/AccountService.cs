@@ -34,6 +34,12 @@ namespace AccountServer.Infrastructure.Services
       _fbService = fbService;
     }
 
+    public async Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId)
+    {
+      var userInfoTask = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
+      return (userInfoTask.City, userInfoTask.BirthDate);
+    }
+
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
     {
       var userInfoTask = _db.UsersInfo.FindUserInfoAsync(userId, userPageId);

@@ -17,6 +17,7 @@ namespace AccountServer.ViewModels
         Login = dbEntity.Login,
         Age = dbEntity.BirthDate.Age(),
         SexType =  dbEntity.SexType,
+        City = dbEntity.City,
         Description = dbEntity.Description,
         LargeAvatarLink = dbEntity.LargeAvatarLink,
         SmallAvatarLink = dbEntity.SmallAvatarLink,

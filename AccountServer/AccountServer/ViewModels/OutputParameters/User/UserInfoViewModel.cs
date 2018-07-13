@@ -9,6 +9,7 @@ namespace AccountServer.ViewModels.OutputParameters.User
     public string Login { get; set; }
     public int Age { get; set; }
     public SexType SexType { get; set; }
+    public string City { get; set; }
     public string Description { get; set; }
     public string LargeAvatarLink { get; set; }
     public string SmallAvatarLink { get; set; }
