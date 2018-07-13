@@ -19,9 +19,9 @@ namespace QuestionsServer.ViewModels.OutputParameters
         QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dto.NewsAnsweredQuestionDb, dbTags, dbFirstPhotos,
           dbSecondPhotos);
 
-      viewModel.AnsweredFollowToAmount = dto.NewsAnsweredQuestionDb.AnsweredFollowTo;
+      //viewModel.AnsweredFollowToAmount = dto.NewsAnsweredQuestionDb.AnsweredFollowTo;
       viewModel.Priority = dto.Priority;
-      viewModel.Type =  CommonLibraries.NewsType.Answered;
+      viewModel.NewsType =  CommonLibraries.NewsType.Answered;
       return viewModel;
     }
 
@@ -33,7 +33,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
           dbSecondPhotos);
 
       viewModel.Priority = dto.Priority;
-      viewModel.Type = CommonLibraries.NewsType.Asked;
+      viewModel.NewsType = CommonLibraries.NewsType.Asked;
       return viewModel;
     }
 
@@ -44,12 +44,16 @@ namespace QuestionsServer.ViewModels.OutputParameters
         QuestionDbToViewModel<NewsCommentedQuestionViewModel>(dto.NewsCommentedQuestionDb, dbTags, dbFirstPhotos,
           dbSecondPhotos);
 
-      viewModel.CommentUserId = dto.NewsCommentedQuestionDb.CommentUserId;
-      viewModel.CommentUserLogin = dto.NewsCommentedQuestionDb.CommentUserLogin;
+      viewModel.CommentedUser = new NewsUserViewModel
+      {
+        UserId = dto.NewsCommentedQuestionDb.CommentUserId,
+        Login = dto.NewsCommentedQuestionDb.CommentUserLogin,
+        SexType = dto.NewsCommentedQuestionDb.CommentUserSexType
+      };
       viewModel.UserCommentsAmount = dto.NewsCommentedQuestionDb.CommentsAmount;
 
       viewModel.Priority = dto.Priority;
-      viewModel.Type = CommonLibraries.NewsType.Commented;
+      viewModel.NewsType = CommonLibraries.NewsType.Commented;
 
       return viewModel;
     }
@@ -60,11 +64,15 @@ namespace QuestionsServer.ViewModels.OutputParameters
       var viewModel =
         QuestionDbToViewModel<NewsFavoriteQuestionViewModel>(dto.NewsFavoriteQuestionDb, dbTags, dbFirstPhotos,
           dbSecondPhotos);
-      viewModel.FavoriteAddedUserId = dto.NewsFavoriteQuestionDb.FavoriteAddedUserId;
-      viewModel.FavoriteAddedUserLogin = dto.NewsFavoriteQuestionDb.FavoriteAddedUserLogin;
+      viewModel.FavoriteAddedUser = new NewsUserViewModel
+      {
+        UserId = dto.NewsFavoriteQuestionDb.FavoriteAddedUserId,
+        SexType = dto.NewsFavoriteQuestionDb.FavoriteAddedSexType,
+        Login = dto.NewsFavoriteQuestionDb.FavoriteAddedUserLogin
+      };
 
       viewModel.Priority = dto.Priority;
-      viewModel.Type = CommonLibraries.NewsType.Favorite;
+      viewModel.NewsType = CommonLibraries.NewsType.Favorite;
       return viewModel;
     }
 
@@ -75,11 +83,15 @@ namespace QuestionsServer.ViewModels.OutputParameters
       var viewModel =
         QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dto.NewsRecommendedQuestionDb, dbTags, dbFirstPhotos,
           dbSecondPhotos);
-      viewModel.RecommendedUserId = dto.NewsRecommendedQuestionDb.RecommendedUserId;
-      viewModel.RecommendedUserLogin = dto.NewsRecommendedQuestionDb.RecommendedUserLogin;
+      viewModel.RecommendedUser = new NewsUserViewModel
+      {
+        UserId = dto.NewsRecommendedQuestionDb.RecommendedUserId,
+        Login = dto.NewsRecommendedQuestionDb.RecommendedUserLogin,
+        SexType = dto.NewsRecommendedQuestionDb.RecommendedUserSexType
+      };
 
       viewModel.Priority = dto.Priority;
-      viewModel.Type = CommonLibraries.NewsType.Recommended;
+      viewModel.NewsType = CommonLibraries.NewsType.Recommended;
 
       return viewModel;
     }
@@ -209,9 +221,14 @@ namespace QuestionsServer.ViewModels.OutputParameters
         BackgroundImageLink = dbEntity.BackgroundImageLink,
         QuestionType = dbEntity.QuestionType,
         QuestionAddDate = dbEntity.QuestionAddDate,
-        UserId = dbEntity.UserId,
-        Login = dbEntity.Login,
-        SmallAvatarLink = dbEntity.SmallAvatarLink,
+        Author = new AuthorViewModel
+        {
+          UserId = dbEntity.UserId,
+          Login = dbEntity.Login,
+          SexType = dbEntity.SexType,
+          SmallAvatarLink = dbEntity.SmallAvatarLink,
+        },
+       
         LikesAmount = dbEntity.Likes,
         DislikesAmount = dbEntity.Dislikes,
         YourFeedbackType = dbEntity.YourFeedback,

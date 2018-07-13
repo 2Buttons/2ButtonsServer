@@ -94,7 +94,7 @@ namespace QuestionsServer.Controllers
       newsList.AddRange(favoriteList);
       newsList.AddRange(recommentedList);
 
-      var mainList = newsList.OrderBy(x => x.UserId).ToList();
+      var mainList = newsList.OrderBy(x => x.Author.UserId).ToList();
 
       var removeList = new List<NewsQuestionBaseViewModel>();
       var compare = new NewsQuestionBaseCompare();
@@ -122,7 +122,7 @@ namespace QuestionsServer.Controllers
       for (var i = 0; i < length; i++)
       {
         resultList[i].Position = i + questionsOffset;
-        switch (resultList[i].Type)
+        switch (resultList[i].NewsType)
         {
           case NewsType.Answered:
             answeredListResultList.Add((NewsAnsweredQuestionViewModel)resultList[i]);

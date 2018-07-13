@@ -8,12 +8,12 @@ namespace QuestionsServer.Infrastructure
   {
     public bool Equals(NewsQuestionBaseViewModel x, NewsQuestionBaseViewModel y)
     {
-      return x.Condition == y.Condition && x.UserId == y.UserId;
+      return x.Condition == y.Condition && x.Author.UserId == y.Author.UserId;
     }
 
     public int GetHashCode(NewsQuestionBaseViewModel obj)
     {
-      return obj.UserId ^ obj.Condition.GetHashCode() ^ 17;
+      return obj.Author.UserId ^ obj.Condition.GetHashCode() ^ 17;
     }
   }
 }

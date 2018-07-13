@@ -14,6 +14,7 @@ namespace QuestionsData.DTO
     public DateTime QuestionAddDate { get; set; }
     public int UserId { get; set; }
     public string Login { get; set; }
+    public SexType SexType { get; set; }
     public string SmallAvatarLink { get; set; }
     public int LikesAmount { get; set; }
     public int DislikesAmount { get; set; }

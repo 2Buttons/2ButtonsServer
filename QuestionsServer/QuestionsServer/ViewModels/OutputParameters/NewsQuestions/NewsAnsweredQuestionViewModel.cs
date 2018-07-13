@@ -2,6 +2,5 @@
 {
   public class NewsAnsweredQuestionViewModel : NewsQuestionBaseViewModel
   {
-    public int AnsweredFollowToAmount { get; set; }
   }
 }

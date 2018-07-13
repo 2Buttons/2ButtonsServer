@@ -11,7 +11,7 @@ namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
     public int Position { get; set; }
 
     [JsonIgnore]
-    public NewsType Type { get; set; }
+    public NewsType NewsType { get; set; }
     [JsonIgnore]
     public int Priority { get; set; }
 
@@ -19,7 +19,7 @@ namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
     {
       QuestionBaseViewModel x = (QuestionBaseViewModel)obj1;
       QuestionBaseViewModel y = (QuestionBaseViewModel)obj2;
-      return x.Condition == y.Condition && x.UserId == y.UserId;
+      return x.Condition == y.Condition && x.Author.UserId == y.Author.UserId;
 
     }
 
@@ -33,7 +33,7 @@ namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
       if (ReferenceEquals(this, other)) return true;
 
       //Check whether the products' properties are equal.
-      return Condition == other.Condition && UserId == other.UserId;
+      return Condition == other.Condition && Author.UserId == other.Author.UserId;
     }
 
     // If Equals() returns true for a pair of objects  
@@ -49,7 +49,7 @@ namespace QuestionsServer.ViewModels.OutputParameters.NewsQuestions
       int hashProductCode = Options.GetHashCode();
 
       //Calculate the hash code for the product. 
-      return hashProductName ^ hashProductCode ^ UserId;
+      return hashProductName ^ hashProductCode ^ Author.UserId;
     }
 
     public bool Equals(NewsQuestionBaseViewModel x, NewsQuestionBaseViewModel y)

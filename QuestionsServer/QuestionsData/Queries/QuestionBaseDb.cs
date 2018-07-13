@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
 namespace QuestionsData.Queries
@@ -17,6 +18,8 @@ namespace QuestionsData.Queries
     public DateTime QuestionAddDate { get; set; }
     public int UserId { get; set; }
     public string Login { get; set; }
+    [Column("sex")]
+    public SexType SexType { get; set; }
     public string SmallAvatarLink { get; set; }
     public int Likes { get; set; }
     public int Dislikes { get; set; }
