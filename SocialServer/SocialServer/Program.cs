@@ -29,7 +29,8 @@ namespace SocialServer
       var builder = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory);
 
       builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "appsettings.json"));
-      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "..", "commonsettings.json"));
+      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "..", "routingsettings.json"));
+      builder.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "..", "hiddensettings.json"));
 
       Configuration = builder.Build();
       Port = Configuration["WebHost:Port"];
