@@ -81,14 +81,22 @@ namespace QuestionsServer.ViewModels.OutputParameters
       IEnumerable<PhotoDb> dbSecondPhotos)
     {
       var viewModel =
-        QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dto.NewsRecommendedQuestionDb, dbTags, dbFirstPhotos,
+        QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dto, dbTags, dbFirstPhotos,
           dbSecondPhotos);
-      viewModel.RecommendedUser = new NewsUserViewModel
+
+      viewModel.RecommendedUsers = new List<NewsUserViewModel>(dto.RecommendedUsers.Count);
+
+      foreach (var user in dto.RecommendedUsers)
       {
-        UserId = dto.NewsRecommendedQuestionDb.RecommendedUserId,
-        Login = dto.NewsRecommendedQuestionDb.RecommendedUserLogin,
-        SexType = dto.NewsRecommendedQuestionDb.RecommendedUserSexType
-      };
+        viewModel.RecommendedUsers.Add(new NewsUserViewModel
+        {
+          UserId = user.UserId,
+          Login = user.Login,
+          SexType = user.SexType
+        });
+      }
+
+
 
       viewModel.Priority = dto.Priority;
       viewModel.NewsType = CommonLibraries.NewsType.Recommended;
@@ -153,10 +161,10 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
-    public static ChosenQuestionsViewModel MapToChosenQuestionsViewModel(this SelectedQuestionDb dbEntity,
+    public static SelectedQuestionsViewModel MapToChosenQuestionsViewModel(this SelectedQuestionDb dbEntity,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos)
     {
-      var viewModel = QuestionDbToViewModel<ChosenQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
+      var viewModel = QuestionDbToViewModel<SelectedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
       return viewModel;
     }
 

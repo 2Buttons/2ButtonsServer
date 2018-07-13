@@ -230,7 +230,7 @@ namespace QuestionsServer.Controllers
 
       foreach (var question in newsRecommendedQuestions)
       {
-        GetTagsAndPhotos(context, userId, question.NewsRecommendedQuestionDb.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
+        GetTagsAndPhotos(context, userId, question.QuestionId, out var tags, out var firstPhotos, out var secondPhotos);
         var resultQuestion = question.MapNewsRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos);
         result.Add(resultQuestion);
       }

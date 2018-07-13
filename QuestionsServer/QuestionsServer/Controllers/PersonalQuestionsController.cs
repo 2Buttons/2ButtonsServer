@@ -83,7 +83,7 @@ namespace QuestionsServer.Controllers
       var chosenQuestions = await _mainDb.UserQuestions.GetSelectedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
 
-      var result = new List<ChosenQuestionsViewModel>();
+      var result = new List<SelectedQuestionsViewModel>();
 
       foreach (var question in chosenQuestions)
       {

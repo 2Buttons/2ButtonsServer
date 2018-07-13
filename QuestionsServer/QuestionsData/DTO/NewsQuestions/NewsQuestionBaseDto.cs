@@ -1,6 +1,8 @@
-﻿namespace QuestionsData.DTO.NewsQuestions
+﻿using QuestionsData.Queries.NewsQuestions;
+
+namespace QuestionsData.DTO.NewsQuestions
 {
-  public class NewsQuestionBaseDto
+  public class NewsQuestionBaseDto : NewsQuestionBaseDb
   {
     public int Priority { get; set; }
   }
