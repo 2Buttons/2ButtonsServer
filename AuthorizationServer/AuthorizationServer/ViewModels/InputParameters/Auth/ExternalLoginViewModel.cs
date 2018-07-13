@@ -6,6 +6,9 @@ namespace AuthorizationServer.ViewModels.InputParameters.Auth
 {
   public class ExternalLoginViewModel
   {
+    [JsonProperty("isTest")]
+    public bool IsTest { get; set; } = false;
+
     [Required]
     [JsonProperty("state")]
     public string State { get; set; }

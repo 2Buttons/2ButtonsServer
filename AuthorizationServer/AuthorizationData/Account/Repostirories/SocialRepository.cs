@@ -34,7 +34,16 @@ namespace AuthorizationData.Account.Repostirories
         PhoneNumberConfirmed = o.PhoneNumberConfirmed,
         RoleType = o.RoleType,
         TwoFactorEnabled = o.TwoFactorEnabled
-      }).FirstOrDefaultAsync();
+      }).LastOrDefaultAsync();
+    }
+
+    public async Task<bool> UpdateExternalAccessToken(long externalId, SocialType socialType, string externalToken, long expiresIn)
+    {
+      var social = await 
+        _contextAccount.SocialsDb.FirstOrDefaultAsync(x => x.SocialType == socialType && x.ExternalId == externalId);
+      social.ExternalToken = externalToken;
+      social.ExpiresIn = expiresIn;
+      return await _contextAccount.SaveChangesAsync() > 0;
     }
 
     public async Task<UserDto> FindUserByExternalEmaildAsync(string externalEmail)

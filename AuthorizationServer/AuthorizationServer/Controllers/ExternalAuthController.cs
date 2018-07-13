@@ -45,11 +45,30 @@ namespace AuthorizationServer.Controllers
         return new BadResponseResult(ModelState);
       }
 
-      var userDto = await _externalAuthService.GetUserViaExternalSocialNet(auth.Code, auth.SocialType);
+      var userDto = await _externalAuthService.GetUserViaExternalSocialNet(auth.Code, auth.SocialType, auth.IsTest);
       var token = await _commonAuthService.GetAccessTokenAsync(userDto);
 
       var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
       var result = new {Token = token, User = userInfo };
+      return new OkResponseResult(result);
+    }
+
+    [HttpPost("externalLogin/mobile")]
+    public async Task<IActionResult> ExternalLoginMobile([FromBody] ExternalLoginMobileViewModel auth)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      if (auth.State != "S5ocialCode!129_Code")
+      {
+        ModelState.AddModelError("State", "You are hacker! Your state is incorrect.");
+        return new BadResponseResult(ModelState);
+      }
+ 
+
+      var userDto = await _externalAuthService.GetUserViaExternalSocialNet(auth.ExternalUserId,auth.Email,auth.AccessToken,auth.ExpiresIn, auth.SocialType);
+      var token = await _commonAuthService.GetAccessTokenAsync(userDto);
+
+      var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
+      var result = new { Token = token, User = userInfo };
       return new OkResponseResult(result);
     }
   }

@@ -56,6 +56,7 @@ namespace AuthorizationServer
 
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
       services.Configure<VkAuthSettings>(Configuration.GetSection(nameof(VkAuthSettings)));
+      services.Configure<VkAuthSettingsTest>(Configuration.GetSection(nameof(VkAuthSettingsTest)));
 
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var secretKey = jwtAppSettingOptions["SecretKey"];

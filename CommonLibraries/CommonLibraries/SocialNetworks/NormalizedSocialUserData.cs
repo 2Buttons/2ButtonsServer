@@ -7,7 +7,7 @@ namespace CommonLibraries.SocialNetworks
     public long ExternalId { get; set; }
     public string ExternalEmail { get; set; }
     public string ExternalToken { get; set; }
-    public int ExpiresIn { get; set; }
+    public long ExpiresIn { get; set; }
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType SexType { get; set; }

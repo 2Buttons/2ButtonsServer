@@ -36,7 +36,31 @@ namespace AuthorizationServer.Infrastructure.Services
       _db.Dispose();
     }
 
-    public async Task<UserDto> GetUserViaExternalSocialNet(string code, SocialType socialType)
+
+    public async Task<UserDto> GetUserViaExternalSocialNet(long externalUserId, string email, string externalToken, long expiresIn, SocialType socialType)
+    {
+      NormalizedSocialUserData socialUserData;
+      switch (socialType)
+      {
+        
+        case SocialType.Vk:
+          socialUserData = await _vkService.GetUserInfoAsync(externalUserId,  email,  externalToken,  expiresIn);
+          break;
+        case SocialType.Facebook:
+        case SocialType.Twiter:
+        case SocialType.GooglePlus:
+        case SocialType.Telegram:
+        case SocialType.Badoo:
+        case SocialType.Nothing:
+        default: throw new Exception($"We do not support mobile logging via {socialType}.");
+      }
+
+      return await ExternalUserProcessing(socialUserData, socialType);
+
+    }
+
+
+    public async Task<UserDto> GetUserViaExternalSocialNet(string code, SocialType socialType, bool isTest = false)
     {
       NormalizedSocialUserData socialUserData;
       switch (socialType)
@@ -45,18 +69,29 @@ namespace AuthorizationServer.Infrastructure.Services
           socialUserData = await _fbService.GetUserInfoAsync(code);
           break;
         case SocialType.Vk:
-          socialUserData = await _vkService.GetUserInfoAsync(code);
+          socialUserData = await _vkService.GetUserInfoAsync(code, isTest);
           break;
         case SocialType.Twiter:
         case SocialType.GooglePlus:
         case SocialType.Telegram:
         case SocialType.Badoo:
         case SocialType.Nothing:
-        default: throw new Exception($"We do not support loging in via {socialType}.");
+        default: throw new Exception($"We do not support logging via {socialType}.");
       }
+      return await ExternalUserProcessing(socialUserData, socialType);
+    }
+
+    private async Task<UserDto> ExternalUserProcessing(NormalizedSocialUserData socialUserData, SocialType socialType)
+    { 
 
       var user = await _db.Socials.FindUserByExternalUserIdAsync(socialUserData.ExternalId, socialType);
-      if (user != null) return user;
+      if (user != null)
+      {
+        if (socialUserData.ExpiresIn == 0)
+          await _db.Socials.UpdateExternalAccessToken(socialUserData.ExternalId, socialType, socialUserData.ExternalToken,
+            socialUserData.ExpiresIn);
+        return user;
+      }
 
       user = await FindUserByEmail(socialUserData.ExternalEmail);
       if (user == null) return await RegisterViaExternalSocial(socialUserData, socialType);
@@ -124,7 +159,7 @@ namespace AuthorizationServer.Infrastructure.Services
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
       {
         await _db.Users.RemoveUserAsync(userDb.UserId);
-        throw new Exception("We are not able to add your indformation. Please, tell us about it.");
+        throw new Exception("We are not able to add your information. Please, tell us about it.");
       }
 
      
