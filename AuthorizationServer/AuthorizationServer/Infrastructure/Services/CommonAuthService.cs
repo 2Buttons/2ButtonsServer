@@ -31,9 +31,9 @@ namespace AuthorizationServer.Infrastructure.Services
     }
 
 
-    public async Task<bool> SaveEmail(string email)
+    public async Task<bool> IsEmailFree(string email)
     {
-      return await _db.Users.AddEmail(email);
+      return ! await _db.Users.IsUserExistByEmailAsync(email) && ! await _db.Socials.IsUserExistByEmailAsync(email);
     }
 
     public async Task<Token> GetAccessTokenAsync(UserDto user)

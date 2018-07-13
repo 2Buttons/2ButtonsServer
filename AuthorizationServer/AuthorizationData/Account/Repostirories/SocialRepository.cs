@@ -52,6 +52,11 @@ namespace AuthorizationData.Account.Repostirories
       }).FirstOrDefaultAsync();
     }
 
+    public async Task<bool> IsUserExistByEmailAsync(string email)
+    {
+      return await _contextAccount.SocialsDb.AsNoTracking().AnyAsync(x => x.Email == email);
+    }
+
     public async Task<bool> AddUserSocialAsync(SocialDb social)
     {
       _contextAccount.SocialsDb.Add(social);

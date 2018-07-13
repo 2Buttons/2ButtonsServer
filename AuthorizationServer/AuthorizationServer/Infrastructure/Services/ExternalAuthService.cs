@@ -58,7 +58,7 @@ namespace AuthorizationServer.Infrastructure.Services
       var user = await _db.Socials.FindUserByExternalUserIdAsync(socialUserData.ExternalId, socialType);
       if (user != null) return user;
 
-      user = await FindUserByExternalEmail(socialUserData.ExternalEmail);
+      user = await FindUserByEmail(socialUserData.ExternalEmail);
       if (user == null) return await RegisterViaExternalSocial(socialUserData, socialType);
 
       if(!await AddExternalEnter(user.UserId, socialType, socialUserData))
@@ -154,12 +154,12 @@ namespace AuthorizationServer.Infrastructure.Services
       return await _db.Socials.AddUserSocialAsync(social);
     }
 
-    private async Task<UserDto> FindUserByExternalEmail(string externalEmail)
+    private async Task<UserDto> FindUserByEmail(string email)
     {
-      if (externalEmail.IsNullOrEmpty()) return null;
-      var user = await _db.Users.GetUserByInternalEmail(externalEmail);
+      if (email.IsNullOrEmpty()) return null;
+      var user = await _db.Users.GetUserByInternalEmail(email);
       if (user != null) return user;
-      return await _db.Socials.FindUserByExternalEmaildAsync(externalEmail);
+      return await _db.Socials.FindUserByExternalEmaildAsync(email);
     }
   }
 }

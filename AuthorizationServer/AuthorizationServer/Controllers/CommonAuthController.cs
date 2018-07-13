@@ -24,12 +24,12 @@ namespace AuthorizationServer.Controllers
       _authService = authService;
     }
 
-    [HttpPost("saveEmail")]
-    public async Task<IActionResult> SaveEmail([FromBody]EmailViewModel email)
+    [HttpPost("isEmailFree")]
+    public async Task<IActionResult> IsEmailFree([FromBody]EmailViewModel email)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      await _authService.SaveEmail(email.Email);
-      return new OkResponseResult("We saved.");
+      var isFree = await _authService.IsEmailFree(email.Email);
+      return new OkResponseResult(new {IsFree  = isFree});
     }
 
     [HttpGet("server")]
