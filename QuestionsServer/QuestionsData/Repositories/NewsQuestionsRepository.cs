@@ -83,7 +83,9 @@ namespace QuestionsData.Repositories
             FirstAnswers = t.FirstAnswers,
             SecondAnswers = t.SecondAnswers,
 
-            Priority = t.AnsweredFollowTo * 7
+            Priority = t.AnsweredFollowTo * 7,
+
+            RecommendedUsers = new List<RecommendedUserDto>()
           });
 
         }

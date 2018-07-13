@@ -1,4 +1,5 @@
-﻿using CommonLibraries;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using CommonLibraries;
 
 namespace QuestionsData.Queries.NewsQuestions
 {
@@ -6,6 +7,7 @@ namespace QuestionsData.Queries.NewsQuestions
   {
     public int CommentUserId { get; set; }
     public string CommentUserLogin { get; set; }
+    [Column("commentUserSex")]
     public SexType CommentUserSexType { get; set; }
     public int CommentsAmount { get; set; }
   }

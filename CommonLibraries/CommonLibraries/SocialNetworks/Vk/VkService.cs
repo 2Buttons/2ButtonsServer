@@ -43,11 +43,11 @@ namespace CommonLibraries.SocialNetworks.Vk
     async Task<NormalizedSocialUserData> GetUserVkInfoAsync(int externalUserId, string email, string externalToken, int expiresIn)
     {
       var userInfoResponse = await Client.GetStringAsync(
-        $"https://api.vk.com/method/users.get?user_ids={externalUserId}&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.74");
+        $"https://api.vk.com/method/users.get?user_ids={externalUserId}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
       var userInfo = JsonConvert.DeserializeObject<VkUserDataResponse>(userInfoResponse).Response.FirstOrDefault();
 
-      var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Russian);
-      userInfo.City.Title = await cityName ?? userInfo.City.Title;
+      //var cityName = GetCityNameByIdFromVk(userInfo.City.CityId, LanguageType.Russian);
+      //userInfo.City.Title = await cityName ?? userInfo.City.Title;
 
       var result = new NormalizedSocialUserData
       {
@@ -58,7 +58,7 @@ namespace CommonLibraries.SocialNetworks.Vk
         Login = userInfo.FirstName + " " + userInfo.LastName,
         BirthDate = userInfo.Birthday,
         SexType = userInfo.Sex,
-        City = await cityName ?? userInfo.City?.Title,
+        City = userInfo.City?.Title,
         SmallPhotoUrl = userInfo.SmallPhoto,
         LargePhotoUrl = userInfo.LargePhoto
       };
@@ -69,27 +69,27 @@ namespace CommonLibraries.SocialNetworks.Vk
     {
       var vkFriendsDataResponse =
         await Client.GetStringAsync(
-          $"https://api.vk.com/method/friends.get?user_id={vkId}&count={5000}&fields=photo_100&name_case=nom&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+          $"https://api.vk.com/method/friends.get?user_id={vkId}&lang=0&count={5000}&fields=photo_100&name_case=nom&access_token={_vkAuthSettings.AppAccess}&v=5.80");
       return JsonConvert.DeserializeObject<VkFriendsDataResponse>(vkFriendsDataResponse).Response.Items.ToList();
     }
 
-    private async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
-    {
-      string data;
-      WebRequest request =
-        WebRequest.CreateHttp(
-          $"https://api.vk.com/method/database.getCitiesById?city_ids={cityId}&access_token={_vkAuthSettings.AppAccess}&v=5.74");
-      request.Headers.Add("Cookie", $"remixlang={language}");
-      var response = await request.GetResponseAsync();
-      using (var stream = response.GetResponseStream())
-      {
-        using (var reader = new StreamReader(stream))
-        {
-          data = reader.ReadToEnd();
-        }
-      }
-      response.Close();
-      return JsonConvert.DeserializeObject<VkCityResponse>(data).Response.FirstOrDefault().Title;
-    }
+    //private async Task<string> GetCityNameByIdFromVk(int cityId, LanguageType language)
+    //{
+    //  string data;
+    //  WebRequest request =
+    //    WebRequest.CreateHttp(
+    //      $"https://api.vk.com/method/database.getCitiesById?city_ids={cityId}&lang=0&access_token={_vkAuthSettings.AppAccess}&v=5.80");
+    //  request.Headers.Add("Cookie", $"remixlang={language}");
+    //  var response = await request.GetResponseAsync();
+    //  using (var stream = response.GetResponseStream())
+    //  {
+    //    using (var reader = new StreamReader(stream))
+    //    {
+    //      data = reader.ReadToEnd();
+    //    }
+    //  }
+    //  response.Close();
+    //  return JsonConvert.DeserializeObject<VkCityResponse>(data).Response.FirstOrDefault().Title;
+    //}
   }
 }
