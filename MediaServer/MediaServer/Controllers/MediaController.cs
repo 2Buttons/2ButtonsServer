@@ -11,6 +11,10 @@ using MediaServer.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Transforms;
 
 namespace MediaServer.Controllers
 {
@@ -94,6 +98,16 @@ namespace MediaServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var url = await _mediaService.UploadBackground(background.File);
       return url.IsNullOrEmpty() ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult(new UrlViewModel { Url = url });
+    }
+
+    public void REsize()
+    {
+      using (Image<Rgba32> image = Image.Load("foo.jpg")) //open the file and detect the file type and decode it
+      {
+        // image is now in a file format agnostic structure in memory as a series of Rgba32 pixels
+        image.Mutate(ctx => ctx.Resize(image.Width / 2, image.Height / 2)); // resize the image in place and return it for chaining
+        image.Save("bar.jpg"); // based on the file extension pick an encoder then encode and write the data to disk
+      } // dispose - releasing memory into a memory pool ready for the next image you wish to process
     }
   }
 }

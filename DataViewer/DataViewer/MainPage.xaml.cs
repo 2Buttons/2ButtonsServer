@@ -115,7 +115,9 @@ namespace DataViewer
 
     public List<QuestionViewModel> GetQuestions()
     {
-      string url = "http://localhost:18000/TwoButtons1234567890TwoButtons/bots/questions";
+      var version = GetServerVersion();
+      string url = $"https://api.2buttons.ru/{version}/TwoButtons1234567890TwoButtons/bots/questions";
+      //string url = "https://localhost:18000/TwoButtons1234567890TwoButtons/bots/questions";
       string body = JsonConvert.SerializeObject(new GetQuestionsViewModel
       {
         Code = "MySecretCode!123974_QQ",
@@ -129,8 +131,9 @@ namespace DataViewer
 
     public int GetBotsCount()
     {
-      
-      string url = "http://localhost:18000/TwoButtons1234567890TwoButtons/bots/count";
+      var version = GetServerVersion();
+      string url = $"https://api.2buttons.ru/{version}/TwoButtons1234567890TwoButtons/bots/count";
+      //string url = "http://localhost:18000/TwoButtons1234567890TwoButtons/bots/count";
       string body = JsonConvert.SerializeObject(new GetBotsCount
       {
         Code = "MySecretCode!123974_QQ"
@@ -162,17 +165,20 @@ namespace DataViewer
 
     public string GetServerVersion()
     {
-      string path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-      using (StreamReader sr = new System.IO.StreamReader(new FileStream(path, FileMode.Open)))
-      {
-        var file = sr.ReadToEnd();
-        return JsonConvert.DeserializeObject<AppSettings>(file).ServerVersion;
-      }
+      return "v0.12";
+      //string path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+      //using (StreamReader sr = new System.IO.StreamReader(new FileStream(path, FileMode.Open)))
+      //{
+      //  var file = sr.ReadToEnd();
+      //  return JsonConvert.DeserializeObject<AppSettings>(file).ServerVersion;
+      //}
     }
 
     private void btnVote_Click(object sender, RoutedEventArgs e)
     {
-      string url = "http://localhost:18000/TwoButtons1234567890TwoButtons/bots/magic";
+      var version = GetServerVersion();
+      string url = $"https://api.2buttons.ru/{version}/TwoButtons1234567890TwoButtons/bots/magic";
+      //string url = "http://localhost:18000/TwoButtons1234567890TwoButtons/bots/magic";
       string body = JsonConvert.SerializeObject(new MagicViewModel
       {
         Code = "MySecretCode!123974_QQ",
