@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using QuestionsData;
+using QuestionsData.DTO;
 using QuestionsData.Entities;
 using QuestionsData.Queries;
 using QuestionsData.Queries.UserQuestions;

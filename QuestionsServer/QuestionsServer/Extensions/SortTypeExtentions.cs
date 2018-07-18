@@ -13,9 +13,9 @@ namespace QuestionsServer.Extensions
       switch (type)
       {
         case SortType.Raiting:
-          return x => x.Likes-x.Dislikes;
+          return x => x.LikesCount-x.DislikesCount;
         case SortType.AnswersAmount:
-          return x => x.FirstAnswers+x.SecondAnswers;
+          return x => x.FirstAnswersCount+x.SecondAnswersCount;
         case SortType.DateTime:
         default:
           return x => x.QuestionAddDate;

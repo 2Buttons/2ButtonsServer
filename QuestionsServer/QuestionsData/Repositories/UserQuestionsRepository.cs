@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.DTO;
+using QuestionsData.DTO.NewsQuestions;
 using QuestionsData.Entities;
 using QuestionsData.Queries;
 using QuestionsData.Queries.UserQuestions;
@@ -60,12 +62,58 @@ namespace QuestionsData.Repositories
         .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<UserCommentedQuestionDb>> GetUserCommentedQuestions(int userId, int pageUserId, int offset,
+    public async Task<List<UserCommentedQuestionDto>> GetUserCommentedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<UserCommentedQuestionDb, object>> predicate)
     {
-      return await _db.UserCommentedQuestionsDb.AsNoTracking()
+      var questions =  await _db.UserCommentedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId})").OrderByDescending(predicate)
         .Skip(offset).Take(count).ToListAsync();
+
+
+
+      var result = new List<UserCommentedQuestionDto>();
+
+      foreach (var t in questions)
+      {
+        if (result.Count == 0 || result.All(x => x.QuestionId != t.QuestionId))
+        {
+          result.Add(new UserCommentedQuestionDto
+          {
+            QuestionId = t.QuestionId,
+            Condition = t.Condition,
+            FirstOption = t.FirstOption,
+            SecondOption = t.SecondOption,
+            BackgroundImageLink = t.BackgroundImageLink,
+            QuestionType = t.QuestionType,
+            QuestionAddDate = t.QuestionAddDate,
+            UserId = t.UserId,
+            Login = t.Login,
+            SmallAvatarLink = t.SmallAvatarLink,
+            LikesCount = t.LikesCount,
+            DislikesCount = t.DislikesCount,
+            YourFeedback = t.YourFeedback,
+            YourAnswer = t.YourAnswer,
+            InFavorites = t.InFavorites,
+            IsSaved = t.IsSaved,
+            CommentsCount = t.CommentsCount,
+            FirstAnswersCount = t.FirstAnswersCount,
+            SecondAnswersCount = t.SecondAnswersCount,
+
+            Comments = new List<UserCommentQuestionDto>()
+          });
+
+        }
+        var question = result.FirstOrDefault(x => x.QuestionId == t.QuestionId);
+        if (question != null && question.Comments.All(x => x.CommentId != t.CommentId))
+        {
+          question.Comments
+            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentAddDate, DislikesAmount = t.CommentDislikes, LikesAmount = t.CommentLikes, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedback, Text = t.Text});
+        }
+      }
+
+      return result;
+
+
     }
 
     public async Task<List<TopQuestionDb>> GeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
@@ -118,15 +166,15 @@ namespace QuestionsData.Repositories
             UserId = t.UserId,
             Login = t.Login,
             SmallAvatarLink = t.SmallAvatarLink,
-            Likes = t.Likes,
-            Dislikes = t.Dislikes,
+            LikesCount = t.LikesCount,
+            DislikesCount = t.DislikesCount,
             YourFeedback = t.YourFeedback,
             YourAnswer = t.YourAnswer,
             InFavorites = t.InFavorites,
             IsSaved = t.IsSaved,
-            Comments = t.Comments,
-            FirstAnswers = t.FirstAnswers,
-            SecondAnswers = t.SecondAnswers,
+            CommentsCount = t.CommentsCount,
+            FirstAnswersCount = t.FirstAnswersCount,
+            SecondAnswersCount = t.SecondAnswersCount,
           });
        
         }
@@ -144,9 +192,9 @@ namespace QuestionsData.Repositories
     {
       return await _db.SelectedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNotAnsweredQuestions({userId})")
-        .OrderByDescending(x => (5 * x.Likes - 3 * x.Dislikes > 10
-                                  ? 5 * x.Likes - 3 * x.Dislikes
-                                  : 15 + 5 * x.Likes - 3 * x.Dislikes) - (x.FirstAnswers + x.SecondAnswers))
+        .OrderByDescending(x => (5 * x.LikesCount - 3 * x.DislikesCount > 10
+                                  ? 5 * x.LikesCount - 3 * x.DislikesCount
+                                  : 15 + 5 * x.LikesCount - 3 * x.DislikesCount) - (x.FirstAnswersCount + x.SecondAnswersCount))
         .Skip(offset).Take(count).ToListAsync();
     }
 

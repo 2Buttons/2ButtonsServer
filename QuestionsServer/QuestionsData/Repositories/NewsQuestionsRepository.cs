@@ -40,7 +40,7 @@ namespace QuestionsData.Repositories
         .Select(x => new NewsCommentedQuestionDto
         {
           NewsCommentedQuestionDb = x,
-          Priority = x.Comments * x.AnsweredFollowTo * 2
+          Priority = x.CommentsCount * x.AnsweredFollowTo * 2
         }).OrderBy(x => x.NewsCommentedQuestionDb.UserId).ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
@@ -73,15 +73,15 @@ namespace QuestionsData.Repositories
             UserId = t.UserId,
             Login = t.Login,
             SmallAvatarLink = t.SmallAvatarLink,
-            Likes = t.Likes,
-            Dislikes = t.Dislikes,
+            LikesCount = t.LikesCount,
+            DislikesCount = t.DislikesCount,
             YourFeedback = t.YourFeedback,
             YourAnswer = t.YourAnswer,
             InFavorites = t.InFavorites,
             IsSaved = t.IsSaved,
-            Comments = t.Comments,
-            FirstAnswers = t.FirstAnswers,
-            SecondAnswers = t.SecondAnswers,
+            CommentsCount = t.CommentsCount,
+            FirstAnswersCount = t.FirstAnswersCount,
+            SecondAnswersCount = t.SecondAnswersCount,
 
             Priority = t.AnsweredFollowTo * 7,
 

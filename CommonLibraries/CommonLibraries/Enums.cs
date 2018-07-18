@@ -40,12 +40,13 @@
     Recommended
   }
 
-  public enum AvatarSizeType
+  public enum AvatarSizeType 
   {
     SmallAvatar = 0,
     LargeAvatar = 1
   }
 
+  
   public enum BackgroundType
   {
     Background = 0,

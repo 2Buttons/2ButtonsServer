@@ -122,19 +122,13 @@ namespace QuestionsServer.ViewModels.OutputParameters
     }
 
     public static UserCommentedQuestionsViewModel MapToUserCommentedQuestionsViewModel(
-      this UserCommentedQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      this UserCommentedQuestionDto dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos)
     {
       var viewModel =
         QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos);
 
-      viewModel.CommentId = dbEntity.CommentId;
-      viewModel.CommentText = dbEntity.Comment;
-      viewModel.LikesAmount = dbEntity.CommentLikes;
-      viewModel.DislikesAmount = dbEntity.CommentDislikes;
-      viewModel.YourCommentFeedbackType = dbEntity.YourFeedback;
-      viewModel.PreviousCommentId = dbEntity.PreviousCommentId.GetValueOrDefault(0);
-      viewModel.CommentAddDate = dbEntity.CommentAddDate;
+      viewModel.Comments = dbEntity.Comments;
       return viewModel;
     }
 
@@ -223,8 +217,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Options =
           new List<Option>
           {
-            new Option(dbEntity.FirstAnswers, dbEntity.FirstOption),
-            new Option(dbEntity.SecondAnswers, dbEntity.SecondOption)
+            new Option(dbEntity.FirstAnswersCount, dbEntity.FirstOption),
+            new Option(dbEntity.SecondAnswersCount, dbEntity.SecondOption)
           },
         BackgroundImageLink = dbEntity.BackgroundImageLink,
         QuestionType = dbEntity.QuestionType,
@@ -237,13 +231,13 @@ namespace QuestionsServer.ViewModels.OutputParameters
           SmallAvatarLink = dbEntity.SmallAvatarLink,
         },
        
-        LikesAmount = dbEntity.Likes,
-        DislikesAmount = dbEntity.Dislikes,
+        LikesAmount = dbEntity.LikesCount,
+        DislikesAmount = dbEntity.DislikesCount,
         YourFeedbackType = dbEntity.YourFeedback,
         YourAnswerType = dbEntity.YourAnswer,
         IsInFavorites = dbEntity.InFavorites,
         IsSaved = dbEntity.IsSaved,
-        CommentsAmount = dbEntity.Comments,
+        CommentsAmount = dbEntity.CommentsCount,
         Tags = dbTags.MapTagsDbToTagViewModel(),
         FirstPhotos = dbFirstPhotos.MapPhotosDbToViewModel(),
         SecondPhotos = dbSecondPhotos.MapPhotosDbToViewModel()

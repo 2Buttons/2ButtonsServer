@@ -21,15 +21,20 @@ namespace QuestionsData.Queries
     [Column("sex")]
     public SexType SexType { get; set; }
     public string SmallAvatarLink { get; set; }
-    public int Likes { get; set; }
-    public int Dislikes { get; set; }
+    [Column("likes")]
+    public int LikesCount { get; set; }
+    [Column("dislikes")]
+    public int DislikesCount { get; set; }
     public FeedbackType YourFeedback { get; set; }
     public AnswerType YourAnswer { get; set; }
     public bool InFavorites { get; set; }
     public bool IsSaved { get; set; }
-    public int Comments { get; set; }
+    [Column("comments")]
+    public int CommentsCount { get; set; }
 
-    public int FirstAnswers { get; set; }
-    public int SecondAnswers { get; set; }
+    [Column("firstAnswers")]
+    public int FirstAnswersCount { get; set; }
+    [Column("secondAnswers")]
+    public int SecondAnswersCount { get; set; }
   }
 }
