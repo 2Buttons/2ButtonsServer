@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MediaServer.ViewModel
 {
-  public class UploadQuestionBackgroundViewModel
+  public class UploadBackgroundViewModel
   {
     public BackgroundType BackgroundType { get; set; } = BackgroundType.Custom;
     [Required]

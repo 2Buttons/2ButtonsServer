@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MediaServer.ViewModel
 {
-  public class UploadUserAvatarViewModel
+  public class UploadAvatarViewModel
   {
     public AvatarType AvatarType { get; set; } = AvatarType.Custom;
     [Required]
