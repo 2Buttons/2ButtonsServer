@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using CommonLibraries;
-using MediaServer.Infrastructure.Services.Configuration;
+using CommonLibraries.MediaFolders.Configurations;
 using MediaServer.Models;
 using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;

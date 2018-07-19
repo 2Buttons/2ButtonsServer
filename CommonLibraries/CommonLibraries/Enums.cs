@@ -43,8 +43,15 @@
   public enum AvatarSizeType 
   {
     Original = 0,
-    SmallAvatar = 1,
-    LargeAvatar = 2
+    Small = 1,
+    Large = 2
+  }
+
+  public enum DefaultSizeType
+  {
+    Original = 0,
+    Small = 1,
+    Large = 2
   }
 
   public enum AvatarType
@@ -63,6 +70,15 @@
   {
     Original = 0,
     Mobile = 1
+  }
+
+  public enum MediaType
+  {
+    None = 0,
+    Default = 1,
+    Avatar = 2,
+    Background =3,
+
   }
 
   public enum ApplicationType

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CommonLibraries.Extensions;
 
-namespace MediaServer.Infrastructure.Services.Configuration
+namespace CommonLibraries.MediaFolders.Configurations
 {
   public class FolderConfiguration
   {
@@ -30,11 +31,11 @@ namespace MediaServer.Infrastructure.Services.Configuration
     }
   }
 
-  public abstract class BaseFolder
+  public  class BaseFolder
   {
     public BaseFolder RootFolder { get; set; }
     public string FolderName { get; set; }
-    public string HashName => FolderName.Substring(0, 2) + FolderName.GetMd5Hash().Substring(0, 4);
+    public string HashName => FolderName.Substring(0, 2) + FolderName.GetMd5HashString().Substring(0, 5);
 
     public BaseFolder(string folderName, BaseFolder rootFolder)
     {
@@ -67,7 +68,7 @@ namespace MediaServer.Infrastructure.Services.Configuration
       while (currentFolder != null)
       {
 
-        paths.Add(currentFolder.FolderName.Substring(0, 2) + currentFolder.FolderName.GetMd5Hash().Substring(0, 5));
+        paths.Add(currentFolder.FolderName.Substring(0, 2) + currentFolder.HashName);
         currentFolder = currentFolder.RootFolder;
       }
       paths.Reverse();
@@ -76,7 +77,7 @@ namespace MediaServer.Infrastructure.Services.Configuration
     }
   }
 
-  public abstract class SizeFolder : BaseFolder
+  public  class SizeFolder : BaseFolder
   {
     public Size Size { get; set; }
 

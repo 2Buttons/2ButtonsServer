@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CommonLibraries.Extensions;
-using MediaServer.Infrastructure.Services.Configuration;
+using CommonLibraries.MediaFolders.Configurations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -234,7 +234,7 @@ namespace MediaServer.Infrastructure.Services
       var currentFolder = this;
       while (currentFolder != null)
       {
-        paths.Add(currentFolder.Name.Substring(0, 2) + currentFolder.Name.GetMd5Hash().Substring(0, 5));
+        paths.Add(currentFolder.Name.Substring(0, 2) + currentFolder.Name.GetMd5HashString().Substring(0, 5));
         currentFolder = currentFolder.RootFolder;
       }
       paths.Reverse();

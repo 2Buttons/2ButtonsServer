@@ -1,4 +1,4 @@
-﻿namespace MediaServer.Infrastructure.Services.Configuration
+﻿namespace CommonLibraries.MediaFolders.Configurations
 {
   public class BackgroundFolder : BaseFolder
   {
