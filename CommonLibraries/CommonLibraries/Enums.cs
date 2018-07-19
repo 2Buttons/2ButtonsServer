@@ -42,15 +42,27 @@
 
   public enum AvatarSizeType 
   {
-    SmallAvatar = 0,
-    LargeAvatar = 1
+    Original = 0,
+    SmallAvatar = 1,
+    LargeAvatar = 2
   }
 
-  
+  public enum AvatarType
+  {
+    Standard = 1,
+    Custom = 0
+  }
+
   public enum BackgroundType
   {
-    Background = 0,
-    CustomBackground = 1
+    Standard = 1,
+    Custom = 0
+  }
+
+  public enum BackgroundSizeType
+  {
+    Original = 0,
+    Mobile = 1
   }
 
   public enum ApplicationType

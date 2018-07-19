@@ -4,6 +4,7 @@ using System.Net.Mime;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
 using MediaServer.Infrastructure.Services;
+using MediaServer.Infrastructure.Services.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,8 +34,9 @@ namespace MediaServer
       //services.AddDbContext<TwoButtonsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TwoButtonsConnection")));
       //services.AddTransient<MediaUnitOfWork>();
 
-      services.AddSingleton<IFileService, FileService>();
-      services.AddTransient<IMediaService, MediaService>();
+      services.AddSingleton<FileService>();
+      services.AddSingleton<FolderConfiguration>();
+      services.AddTransient<MediaService>();
 
       services.AddOptions();
       services.Configure<MediaSettings>(Configuration.GetSection("MediaData"));

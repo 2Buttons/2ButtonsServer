@@ -6,8 +6,7 @@ namespace MediaServer.ViewModel
 {
   public class UploadAvatarViaLinkViewModel
   {
-    [Required]
-    public AvatarSizeType Size { get; set; }
+    public AvatarType AvatarType { get; set; } = AvatarType.Custom;
     [Required]
     public string Url { get; set; }
   }
