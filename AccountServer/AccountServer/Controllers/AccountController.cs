@@ -89,7 +89,7 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (socialAuth.State != "S5ocialCode!129_Code")
       {
-        ModelState.AddModelError("State", "You are hacker! Your state in incorret");
+        ModelState.AddModelError("State", "You are hacker! Your state in incorrect");
         return new BadResponseResult(ModelState);
       }
       if (!socialAuth.Status || !socialAuth.Error.IsNullOrEmpty())

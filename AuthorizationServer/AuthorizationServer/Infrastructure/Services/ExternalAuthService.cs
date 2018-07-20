@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AuthorizationData;
@@ -9,6 +10,7 @@ using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
@@ -106,13 +108,9 @@ namespace AuthorizationServer.Infrastructure.Services
     {
       if (!await AddUserSocialAsync(userId, socialType, socialUserData)) return false;
       var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId);
-      if (userInfo.SmallAvatarLink.IsNullOrEmpty() || userInfo.SmallAvatarLink.Contains("stan") && !socialUserData.SmallPhotoUrl.IsNullOrEmpty())
+      if (userInfo.LargeAvatarLink.IsNullOrEmpty() ||  MediaConverter.IsStandardBackground(userInfo.LargeAvatarLink) && !socialUserData.OriginalPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.SmallAvatarLink = await _hub.Media.UploadAvatarUrl(AvatarSizeType.SmallAvatar, socialUserData.SmallPhotoUrl) ?? _hub.Media.StandardAvatar(AvatarSizeType.SmallAvatar);
-      }
-      if (userInfo.LargeAvatarLink.IsNullOrEmpty() ||  userInfo.LargeAvatarLink.Contains("stan") && !socialUserData.LargePhotoUrl.IsNullOrEmpty())
-      {
-        userInfo.LargeAvatarLink = await _hub.Media.UploadAvatarUrl(AvatarSizeType.LargeAvatar, socialUserData.LargePhotoUrl) ?? _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar);
+        userInfo.LargeAvatarLink = await _hub.Media.UploadAvatarUrl(AvatarType.Custom, socialUserData.OriginalPhotoUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
       }
 
       await _db.UsersInfo.UpdateUserInfoAsync(userInfo);
@@ -127,18 +125,18 @@ namespace AuthorizationServer.Infrastructure.Services
       var isAdded = await _db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
-      var fullLink = _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar);
+      var fullLink = _hub.Media.StandardAvatar(AvatarSizeType.Large);
       if (!user.LargePhotoUrl.IsNullOrEmpty())
       {
-        var url = await _hub.Media.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl);
+        var url = await _hub.Media.UploadAvatarUrl(AvatarSizeType.Large, user.LargePhotoUrl);
         if (!url.IsNullOrEmpty())
           fullLink = url;
       }
 
-      var smallLink = _hub.Media.StandardAvatar(AvatarSizeType.SmallAvatar);
+      var smallLink = _hub.Media.StandardAvatar(AvatarSizeType.Small);
       if (!user.SmallPhotoUrl.IsNullOrEmpty())
       {
-        var url = await _hub.Media.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl);
+        var url = await _hub.Media.UploadAvatarUrl(AvatarSizeType.Small, user.SmallPhotoUrl);
         if (!url.IsNullOrEmpty())
           smallLink = url;
       }
@@ -169,7 +167,7 @@ namespace AuthorizationServer.Infrastructure.Services
         throw new Exception("We are not able to add your social information. Please, tell us about it.");
       }
 
-      _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
+      await _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
 
       return new UserDto { UserId = userDb.UserId, RoleType = userDb.RoleType };
     }

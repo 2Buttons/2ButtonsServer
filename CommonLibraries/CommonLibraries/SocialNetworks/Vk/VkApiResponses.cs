@@ -98,11 +98,11 @@ namespace CommonLibraries.SocialNetworks.Vk
     [JsonProperty("city")]
     public VkCity City { get; set; }
 
-    [JsonProperty("photo_100")]
-    public string SmallPhoto { get; set; }
+    //[JsonProperty("photo_100")]
+    //public string SmallPhoto { get; set; }
 
     [JsonProperty("photo_max_orig")]
-    public string LargePhoto { get; set; }
+    public string OriginalPhoto { get; set; }
   }
 
   public class VkCity

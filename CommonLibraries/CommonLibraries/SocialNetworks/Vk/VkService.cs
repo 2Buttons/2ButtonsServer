@@ -69,8 +69,8 @@ namespace CommonLibraries.SocialNetworks.Vk
         BirthDate = userInfo.Birthday,
         SexType = userInfo.Sex,
         City = userInfo.City?.Title,
-        SmallPhotoUrl = userInfo.SmallPhoto,
-        LargePhotoUrl = userInfo.LargePhoto
+        //SmallPhotoUrl = userInfo.SmallPhoto,
+        OriginalPhotoUrl = userInfo.OriginalPhoto
       };
       return result;
     }

@@ -54,7 +54,7 @@ namespace AccountServer.Infrastructure.Services
       if (userId != userPageId) user.UserStatistics.AnsweredQuestions = 0;
 
       user.Social = ConvertContactsDtoToViewModel(userContactsTask.Result);
-      _hub.Monitoring.UpdateUrlMonitoring(userId,
+      await _hub.Monitoring.UpdateUrlMonitoring(userId,
         userId != userPageId ? UrlMonitoringType.OpensUserPage : UrlMonitoringType.OpensPersonalPage);
       return user;
     }
@@ -111,13 +111,13 @@ namespace AccountServer.Infrastructure.Services
 
       var userInfo = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
 
-      if (userInfo.SmallAvatarLink.IsNullOrEmpty() || userInfo.SmallAvatarLink.Contains("stan") && !user.SmallPhotoUrl.IsNullOrEmpty())
+      if (userInfo.SmallAvatarLink.IsNullOrEmpty() || userInfo.SmallAvatarLink.ToLower().Contains("/st") && !user.SmallPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.SmallAvatarLink = await (_hub.Media.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.SmallAvatar);
+        userInfo.SmallAvatarLink = await (_hub.Media.UploadAvatarUrl(AvatarSizeType.Small, user.SmallPhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.Small);
       }
-      if (userInfo.LargeAvatarLink.IsNullOrEmpty() || userInfo.LargeAvatarLink.Contains("stan") && !user.LargePhotoUrl.IsNullOrEmpty())
+      if (userInfo.LargeAvatarLink.IsNullOrEmpty() || userInfo.LargeAvatarLink.ToLower().Contains("/st") && !user.LargePhotoUrl.IsNullOrEmpty())
       {
-        userInfo.LargeAvatarLink = (await _hub.Media.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar);
+        userInfo.LargeAvatarLink = (await _hub.Media.UploadAvatarUrl(AvatarSizeType.Large, user.LargePhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.Large);
       }
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto

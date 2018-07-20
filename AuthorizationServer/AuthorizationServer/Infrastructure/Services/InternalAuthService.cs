@@ -51,7 +51,7 @@ namespace AuthorizationServer.Infrastructure.Services
         Email = user.Email,
         PhoneNumber = user.Phone,
         RoleType = role,
-        PasswordHash = user.Password.GetHashString(),
+        PasswordHash = user.Password.GetMd5HashString(),
         RegistrationDate = DateTime.UtcNow
       };
       var isAdded = await _db.Users.AddUserAsync(userDb);
@@ -65,17 +65,17 @@ namespace AuthorizationServer.Infrastructure.Services
         SexType = user.SexType,
         City = user.City,
         Description = user.Description,
-        LargeAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.LargeAvatar),
-        SmallAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.SmallAvatar)
+        LargeAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.Large),
+        SmallAvatarLink = _hub.Media.StandardAvatar(AvatarSizeType.Small)
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
       {
         await _db.Users.RemoveUserAsync(userDb.UserId);
-        throw new Exception("We are not able to add your indformation. Please, tell us about it.");
+        throw new Exception("We are not able to add your information. Please, tell us about it.");
       }
 
-      _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
+      await _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
 
       var jwtToken = await _jwtService.GenerateJwtAsync(userDb.UserId, role);
 

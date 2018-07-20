@@ -36,37 +36,67 @@ namespace CommonLibraries.ConnectionServices
       _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/background/link";
       _uploadedBackgroundFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/background/file";
       _standardBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/standards/background/";
+
+      _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/link";
+      _uploadedBackgroundFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/file";
+      _standardBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/default";
     }
 
-    public string StandardAvatar(AvatarSizeType sizeType)
-    {
-      var size = sizeType.ToString().Contains("S") ? "small" : "large";
-      return $"/standards/{size}_avatar.jpg";
-    }
 
-    public string StandardBackground()
-    {
-      return "/standards/question_background.jpg";
-    }
 
-    public async Task<string> GetStandardAvatarUrl(AvatarSizeType avatarSize)
+    public async Task<List<string>> GetStandardAvatarUrls(AvatarSizeType avatarSize)
     {
       try
       {
-        _logger.LogInformation($"{nameof(GetStandardAvatarUrl)}.Start");
+        _logger.LogInformation($"{nameof(GetStandardAvatarUrls)}.Start");
         var body = JsonConvert.SerializeObject(new {size = (int) avatarSize});
-        var result = (await MediaServerConnect(_standardAvatarUrl, body)).Url;
-        _logger.LogInformation($"{nameof(GetStandardAvatarUrl)}.Start");
+        var result = (await MediaServerConnect(_standardAvatarUrl, body)).Urls;
+        _logger.LogInformation($"{nameof(GetStandardAvatarUrls)}.Start");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(GetStandardAvatarUrl)}");
+        _logger.LogError(ex, $"{nameof(GetStandardAvatarUrls)}");
       }
-      return string.Empty;
+      return new List<string>();
     }
 
-    public async Task<string> UploadAvatarFile(AvatarSizeType avatarSize, IFormFile file)
+    public async Task<List<string>> GetStandardBackgroundsUrl(BackgroundSizeType backgroundSize)
+    {
+      try
+      {
+        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        var body = JsonConvert.SerializeObject(new { size = (int)backgroundSize } );
+        var result = (await MediaServerConnect(_standardBackgroundUrl, body)).Urls;
+        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        return result;
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, $"{nameof(GetStandardBackgroundsUrl)}");
+      }
+      return new List<string>();
+    }
+
+    public async Task<List<string>> GetStandardDefaultsUrl(DefaultSizeType defaultSize, string pattern)
+    {
+      try
+      {
+        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        var body = JsonConvert.SerializeObject(new { size = (int)defaultSize, pattern = pattern });
+        var result = (await MediaServerConnect(_standardBackgroundUrl, body)).Urls;
+        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        return result;
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, $"{nameof(GetStandardBackgroundsUrl)}");
+      }
+      return new List<string>();
+    }
+
+
+    public async Task<string> UploadAvatarFile(AvatarType  avatarType, IFormFile file)
     {
       try
       {
@@ -74,7 +104,7 @@ namespace CommonLibraries.ConnectionServices
         var requestParams =
           new List<KeyValuePair<string, string>>
           {
-            new KeyValuePair<string, string>("size", ((int) avatarSize).ToString())
+            new KeyValuePair<string, string>("avatarType", ((int) avatarType).ToString())
           };
         var result = (await MediaServerConnect(_uploadedAvaterFile, file, requestParams)).Url;
         _logger.LogInformation($"{nameof(UploadAvatarFile)}.Start");
@@ -87,12 +117,12 @@ namespace CommonLibraries.ConnectionServices
       return string.Empty;
     }
 
-    public async Task<string> UploadAvatarUrl(AvatarSizeType avatarSize, string imageUrl)
+    public async Task<string> UploadAvatarUrl(AvatarType avatarType, string imageUrl)
     {
       try
       {
         _logger.LogInformation($"{nameof(UploadAvatarUrl)}.Start");
-        var body = JsonConvert.SerializeObject(new {size = (int) avatarSize, url = imageUrl});
+        var body = JsonConvert.SerializeObject(new { avatarType = (int)avatarType, url = imageUrl});
         var result = (await MediaServerConnect(_uploadedAvaterUrl, body)).Url;
         _logger.LogInformation($"{nameof(UploadAvatarUrl)}.Start");
         return result;
@@ -104,29 +134,13 @@ namespace CommonLibraries.ConnectionServices
       return string.Empty;
     }
 
-    public async Task<List<string>> GetStandardBackgroundsUrl()
-    {
-      try
-      {
-        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
-        var body = JsonConvert.SerializeObject(new { });
-        var result = (await MediaServerConnect(_standardBackgroundUrl, body)).Urls;
-        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
-        return result;
-      }
-      catch (Exception ex)
-      {
-        _logger.LogError(ex, $"{nameof(GetStandardBackgroundsUrl)}");
-      }
-      return new List<string>();
-    }
-
-    public async Task<string> UploadBackgroundUrl(string imageUrl)
+   
+    public async Task<string> UploadBackgroundUrl(BackgroundType backgroundType, string imageUrl)
     {
       try
       {
         _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
-        var body = JsonConvert.SerializeObject(new {url = imageUrl});
+        var body = JsonConvert.SerializeObject(new { backgroundType = (int)backgroundType, url = imageUrl});
         var result = (await MediaServerConnect(_uploadedBackgroundUrl, body)).Url;
         _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
         return result;
@@ -138,13 +152,53 @@ namespace CommonLibraries.ConnectionServices
       return string.Empty;
     }
 
-    public async Task<string> UploadBackgroundFile(IFormFile file)
+    public async Task<string> UploadBackgroundFile(BackgroundType backgroundType, IFormFile file)
     {
       try
       {
         _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
-        var result = (await MediaServerConnect(_uploadedBackgroundFile, file,
-          new List<KeyValuePair<string, string>>())).Url;
+        var requestParams =
+          new List<KeyValuePair<string, string>>
+          {
+            new KeyValuePair<string, string>("backgroundType", ((int) backgroundType).ToString())
+          };
+        var result = (await MediaServerConnect(_uploadedBackgroundFile, file, requestParams))
+          .Url;
+        _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
+        return result;
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, $"{nameof(UploadBackgroundFile)}");
+      }
+      return string.Empty;
+    }
+
+
+    public async Task<string> UploadDefaultUrl(string imageUrl)
+    {
+      try
+      {
+        _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
+        var body = JsonConvert.SerializeObject(new {  url = imageUrl });
+        var result = (await MediaServerConnect(_uploadedBackgroundUrl, body)).Url;
+        _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
+        return result;
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, $"{nameof(UploadBackgroundUrl)}");
+      }
+      return string.Empty;
+    }
+
+    public async Task<string> UploadDefaultFile(IFormFile file)
+    {
+      try
+      {
+        _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
+        var result = (await MediaServerConnect(_uploadedBackgroundFile, file, new List<KeyValuePair<string, string>>()))
+          .Url;
         _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
         return result;
       }

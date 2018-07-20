@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using CommonLibraries.MediaFolders.Configurations;
 
@@ -9,7 +10,6 @@ namespace CommonLibraries.MediaFolders
     private static readonly FolderConfiguration FolderConfiguration = new FolderConfiguration();
     public static string MediaUrl { get; } = "http://media.2buttons.ru/";
 
-
     public static MediaType GetMediaUrlType(string shortOriginalUrl)
     {
       shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
@@ -18,101 +18,66 @@ namespace CommonLibraries.MediaFolders
       if (fragments[0] == FolderConfiguration.Avatars.HashName) return MediaType.Avatar;
       if (fragments[0] == FolderConfiguration.Defaults.HashName) return MediaType.Default;
       return MediaType.None;
+    }
 
+    public static bool IsStandardBackground(string shortOriginalUrl)
+    {
+      return shortOriginalUrl.Contains(new StandardBackgroundFolder(null).HashName);
     }
 
     public static string ToFullBackgroundurlUrl(string shortOriginalUrl, BackgroundSizeType backgroundSize)
     {
-      var relativePath = "";
+      shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
+
       var name = Path.GetFileName(shortOriginalUrl);
+
+      if (backgroundSize == BackgroundSizeType.Original) return MediaUrl + shortOriginalUrl.Replace("\\", "/") + name;
+
       name = name.Replace("original", backgroundSize.ToString().ToLower());
 
-      shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
-      var fragments = shortOriginalUrl.Split('/');
-      if (fragments[1] == FolderConfiguration.Backgrounds.Customs.HashName)
-        switch (backgroundSize)
-        {
-          case BackgroundSizeType.Original:
-            relativePath = FolderConfiguration.Backgrounds.Customs.Originals.GetFullHashPath();
-            break;
-          case BackgroundSizeType.Mobile:
-            relativePath = FolderConfiguration.Backgrounds.Customs.Mobiles.GetFullHashPath();
-            break;
-        }
-      else if (fragments[1] == FolderConfiguration.Backgrounds.Standards.HashName)
-        switch (backgroundSize)
-        {
-          case BackgroundSizeType.Original:
-            relativePath = FolderConfiguration.Backgrounds.Standards.Originals.GetFullHashPath();
-            break;
-          case BackgroundSizeType.Mobile:
-            relativePath = FolderConfiguration.Backgrounds.Standards.Mobiles.GetFullHashPath();
-            break;
-        }
-
-      return MediaUrl + relativePath.Replace("\\", "/") + name;
+      switch (backgroundSize)
+      {
+        case BackgroundSizeType.Mobile:
+          return MediaUrl + shortOriginalUrl.Replace("\\", "/").Replace(new OriginalSizeFolder(null).HashName,
+                   new MobileBackgroundSizeFolder(null).HashName) + name;
+        default: throw new Exception($"There is no such background size {backgroundSize}");
+      }
     }
 
-    public static string ToFullAvatarUrl(string shortOriginalUrl, AvatarSizeType  avatarSize)
+    public static string ToFullAvatarUrl(string shortOriginalUrl, AvatarSizeType avatarSize)
     {
-      var relativePath = "";
+      shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
+
       var name = Path.GetFileName(shortOriginalUrl);
+
+      if (avatarSize == AvatarSizeType.Original) return MediaUrl + shortOriginalUrl.Replace("\\", "/") + name;
+
       name = name.Replace("original", avatarSize.ToString().ToLower());
 
-      shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
-      var fragments = shortOriginalUrl.Split('/');
-      if (fragments[1] == FolderConfiguration.Backgrounds.Customs.HashName)
-        switch (avatarSize)
-        {
-          case AvatarSizeType.Original:
-            relativePath = FolderConfiguration.Avatars.Customs.Originals.GetFullHashPath();
-            break;
-          case AvatarSizeType.Small:
-            relativePath = FolderConfiguration.Avatars.Customs.Smalls.GetFullHashPath();
-            break;
-          case AvatarSizeType.Large:
-            relativePath = FolderConfiguration.Avatars.Customs.Larges.GetFullHashPath();
-            break;
-        }
-      else if (fragments[1] == FolderConfiguration.Backgrounds.Standards.HashName)
-        switch (avatarSize)
-        {
-          case AvatarSizeType.Original:
-            relativePath = FolderConfiguration.Avatars.Customs.Originals.GetFullHashPath();
-            break;
-          case AvatarSizeType.Small:
-            relativePath = FolderConfiguration.Avatars.Customs.Smalls.GetFullHashPath();
-            break;
-          case AvatarSizeType.Large:
-            relativePath = FolderConfiguration.Avatars.Customs.Larges.GetFullHashPath();
-            break;
-        }
+      switch (avatarSize)
+      {
+        case AvatarSizeType.Small:
+          return MediaUrl + shortOriginalUrl.Replace("\\", "/")
+                   .Replace(new OriginalSizeFolder(null).HashName, new SmallAvatarSizeFolder(null).HashName) + name;
 
-      return MediaUrl + relativePath.Replace("\\", "/") + name;
+        case AvatarSizeType.Large:
+          return MediaUrl + shortOriginalUrl.Replace("\\", "/")
+                   .Replace(new OriginalSizeFolder(null).HashName, new LargeAvatarSizeFolder(null).HashName) + name;
+
+        default: throw new Exception($"There is no such background size {avatarSize}");
+      }
     }
 
     public static string ToFullDefaultUrl(string shortOriginalUrl, DefaultSizeType defaultSize)
     {
-      var relativePath = "";
-      var name = Path.GetFileName(shortOriginalUrl);
-      name = name.Replace("original", defaultSize.ToString().ToLower());
-
       shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
 
-      switch (defaultSize)
-      {
-        case DefaultSizeType.Original:
-          relativePath = FolderConfiguration.Defaults.Originals.GetFullHashPath();
-          break;
-        case DefaultSizeType.Small:
-          relativePath = FolderConfiguration.Defaults.Smalls.GetFullHashPath();
-          break;
-        case DefaultSizeType.Large:
-          relativePath = FolderConfiguration.Defaults.Larges.GetFullHashPath();
-          break;
-      }
+      var name = Path.GetFileName(shortOriginalUrl);
 
-      return MediaUrl + relativePath.Replace("\\", "/") + name;
+
+      name = name.Replace("original", defaultSize.ToString().ToLower());
+      return MediaUrl + shortOriginalUrl.Replace("\\", "/") + name;
+
     }
   }
 }

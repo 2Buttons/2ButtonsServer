@@ -23,7 +23,7 @@ namespace AccountData.Main.Repositories
       var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
         .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
 
-      if (userId != userPageId && user.YouFollowed) UpdateVisitsAsync(userId, userPageId);
+      if (userId != userPageId && user.YouFollowed) await UpdateVisitsAsync(userId, userPageId);
       return user;
     }
 
