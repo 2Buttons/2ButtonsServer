@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AccountData.DTO;
 using AccountData.Main.Entities;
 using AccountData.Main.Queries;
+using CommonLibraries.Exceptions.ApiExceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Main.Repositories
@@ -16,11 +17,10 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
-    public async Task<UserInfoDb> GetUserInfoAsync(int userId, int userPageId)
+    public async Task<UserInfoDb> FindUserInfoAsync(int userId, int userPageId)
     {
       var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
-        .FirstOrDefaultAsync();
-      if (user == null) return null;
+        .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
       if (userId != userPageId && user.YouFollowed) await UpdateVisitsAsync(userId, userPageId);
       return user;
     }

@@ -36,13 +36,13 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId)
     {
-      var userInfoTask = await _db.UsersInfo.GetUserInfoAsync(userId, userId)?? throw new NotFoundException("User not found");
+      var userInfoTask = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
       return (userInfoTask.City, userInfoTask.BirthDate);
     }
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
     {
-      var userInfoTask = _db.UsersInfo.GetUserInfoAsync(userId, userPageId) ?? throw new NotFoundException("User not found");
+      var userInfoTask = _db.UsersInfo.FindUserInfoAsync(userId, userPageId);
       var userStatisticsTask = _db.UsersInfo.GetUserStatisticsAsync(userPageId);
       var userContactsTask = _db.Users.GetUserSocialsAsync(userPageId);
 
@@ -61,7 +61,7 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      var oldUser = await _db.UsersInfo.GetUserInfoAsync(user.UserId, user.UserId) ?? throw new NotFoundException("User not found");
+      var oldUser = await _db.UsersInfo.FindUserInfoAsync(user.UserId, user.UserId);
       if (oldUser == null) throw new NotFoundException("This user does not exist");
 
       var updateUser = new UpdateUserInfoDto()
@@ -108,7 +108,7 @@ namespace AccountServer.Infrastructure.Services
 
       if (!await _db.Users.AddUserSocialAsync(social)) return false;
 
-      var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId, userId) ?? throw new NotFoundException("User not found");
+      var userInfo = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
 
       if (userInfo.OriginalAvatarUrl.IsNullOrEmpty() || MediaConverter.IsStandardBackground(userInfo.OriginalAvatarUrl) && !user.OriginalPhotoUrl.IsNullOrEmpty())
       {
