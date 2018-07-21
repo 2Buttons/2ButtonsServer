@@ -16,7 +16,7 @@ namespace QuestionsData.Queries
     public SexType SexType { get; set; }
 
     public DateTime BirthDate { get; set; }
-    public string SmallAvatarLink { get; set; }
+    public string SmallAvatarUrl { get; set; }
     public string City { get; set; }
   }
 }

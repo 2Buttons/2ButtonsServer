@@ -8,6 +8,6 @@ namespace QuestionsServer.ViewModels.OutputParameters
         public string Login { get; set; }
         public SexType SexType { get; set; }
         public int Age { get; set; }
-        public string SmallAvatarLink { get; set; }
+        public string SmallAvatarUrl { get; set; }
     }
 }

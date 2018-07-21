@@ -13,6 +13,6 @@ namespace QuestionsData.DTO
   {
     public int UserId { get; set; }
     public string Login { get; set; }
-    //public string SmallAvatarLink { get; set; }
+    //public string SmallAvatarUrl { get; set; }
   }
 }

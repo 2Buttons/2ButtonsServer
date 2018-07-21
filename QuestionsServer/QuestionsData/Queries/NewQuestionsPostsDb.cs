@@ -12,7 +12,7 @@ namespace QuestionsData.Queries
         public DateTime QuestionAddDate { get; set; }
         public int AskerId { get; set; }
         public string Login { get; set; }
-        public string SmallAvatarLink { get; set; }
+        public string SmallAvatarUrl { get; set; }
         public int Answers { get; set; }
         public int Raiting { get; set; }
         public int YourFeedback { get; set; }

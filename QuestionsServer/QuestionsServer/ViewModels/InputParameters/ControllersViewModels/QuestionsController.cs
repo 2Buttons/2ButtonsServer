@@ -17,7 +17,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public string FirstOption { get; set; }
     [Required]
     public string SecondOption { get; set; }
-    public string BackgroundImageLink { get; set; } = null;
+    public string BackgroundImageUrl { get; set; } = null;
 
     public List<string> Tags { get; set; } = new List<string>();
 
@@ -50,7 +50,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public int CommentId { get; set; }
   }
 
-  public class UploadQuestionBackgroundViaLinkViewModel : QuestionIdViewModel
+  public class UploadQuestionBackgroundViaUrlViewModel : QuestionIdViewModel
   {
     [Required]
     public string Url { get; set; }
