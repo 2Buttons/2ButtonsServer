@@ -16,9 +16,9 @@ namespace AccountData.Main.Queries
     public string City { get; set; }
     public string Description { get; set; }
 
-    [Column("fullAvatarLink")]
-    public string OriginalAvatarLink { get; set; }
-    //public string SmallAvatarLink { get; set; }
+    [Column("fullAvatarUrl")]
+    public string OriginalAvatarUrl { get; set; }
+    //public string SmallAvatarUrl { get; set; }
     public bool YouFollowed { get; set; }
     public bool HeFollowed { get; set; }
 

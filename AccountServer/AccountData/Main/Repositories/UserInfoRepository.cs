@@ -29,12 +29,12 @@ namespace AccountData.Main.Repositories
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.LargeAvatarLink}, {user.SmallAvatarLink}") > 0;
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.LargeAvatarUrl}, {user.SmallAvatarUrl}") > 0;
     }
 
-    public async Task<bool> UpdateUserLargeAvatar(int userId, string fullAvatarLink)
+    public async Task<bool> UpdateUserLargeAvatar(int userId, string fullAvatarUrl)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserFullAvatar {userId}, {fullAvatarLink}") > 0;
+      return await _db.Database.ExecuteSqlCommandAsync($"updateUserFullAvatar {userId}, {fullAvatarUrl}") > 0;
     }
 
     public async Task<bool> UpdateUserSmallAvatar(int userId, string smallAvatar)

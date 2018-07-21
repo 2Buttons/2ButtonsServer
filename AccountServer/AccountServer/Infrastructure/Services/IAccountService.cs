@@ -13,7 +13,7 @@ namespace AccountServer.Infrastructure.Services
     Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId);
     Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId);
     Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarSizeType avatarSize, IFormFile file);
-    Task<(bool isUpdated, string url)> UpdateAvatarViaLink(int userId, AvatarSizeType avatarSize, string newAvatarUrl);
+    Task<(bool isUpdated, string url)> UpdateAvatarViaUrl(int userId, AvatarSizeType avatarSize, string newAvatarUrl);
     Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user);
   }
 }

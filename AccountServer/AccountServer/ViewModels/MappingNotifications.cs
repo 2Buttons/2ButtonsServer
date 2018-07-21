@@ -16,7 +16,7 @@ namespace AccountServer.ViewModels
           {
             UserId = n.UserId,
             Login = n.Login,
-            SmallAvatarLink = n.SmallAvatarLink,
+            SmallAvatarUrl = n.SmallAvatarUrl,
             Action = n.Action,  /*1 - follow, 2 - recommend, 3 - answer*/
             EmmiterId = n.EmmiterId,
             ActionDate = n.ActionDate

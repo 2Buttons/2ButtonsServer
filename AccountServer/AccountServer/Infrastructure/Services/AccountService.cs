@@ -73,8 +73,8 @@ namespace AccountServer.Infrastructure.Services
         SexType = user.SexType == SexType.Both ? oldUser.SexType : user.SexType,
         City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
         Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description,
-        LargeAvatarLink = user.LargeAvatarLink.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarLink, AvatarSizeType.Large) : user.LargeAvatarLink,
-        SmallAvatarLink = user.SmallAvatarLink.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarLink, AvatarSizeType.Small) : user.SmallAvatarLink
+        LargeAvatarUrl = user.LargeAvatarUrl.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarUrl, AvatarSizeType.Large) : user.LargeAvatarUrl,
+        SmallAvatarUrl = user.SmallAvatarUrl.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarUrl, AvatarSizeType.Small) : user.SmallAvatarUrl
       };
 
       return await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
@@ -112,9 +112,9 @@ namespace AccountServer.Infrastructure.Services
 
       var userInfo = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
 
-      if (userInfo.OriginalAvatarLink.IsNullOrEmpty() || MediaConverter.IsStandardBackground(userInfo.OriginalAvatarLink) && !user.OriginalPhotoUrl.IsNullOrEmpty())
+      if (userInfo.OriginalAvatarUrl.IsNullOrEmpty() || MediaConverter.IsStandardBackground(userInfo.OriginalAvatarUrl) && !user.OriginalPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.OriginalAvatarLink = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
+        userInfo.OriginalAvatarUrl = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
       }
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
@@ -125,8 +125,8 @@ namespace AccountServer.Infrastructure.Services
         SexType = userInfo.SexType,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargeAvatarLink = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarLink, AvatarSizeType.Large),
-        SmallAvatarLink = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarLink, AvatarSizeType.Small)
+        LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
+        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small)
       };
 
       try
@@ -146,7 +146,7 @@ namespace AccountServer.Infrastructure.Services
       return await _hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
     }
 
-    public async Task<(bool isUpdated, string url)> UpdateAvatarViaLink(int userId, AvatarSizeType avatarSize, string newAvatarUrl)
+    public async Task<(bool isUpdated, string url)> UpdateAvatarViaUrl(int userId, AvatarSizeType avatarSize, string newAvatarUrl)
     {
       var url = await _hub.Media.UploadAvatarUrl( AvatarType.Custom, newAvatarUrl);
       if (url.IsNullOrEmpty()) return (false, null);

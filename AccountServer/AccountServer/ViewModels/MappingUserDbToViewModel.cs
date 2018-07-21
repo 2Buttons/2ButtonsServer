@@ -3,6 +3,7 @@ using AccountData.Main.Queries;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 
 namespace AccountServer.ViewModels
 {
@@ -19,7 +20,8 @@ namespace AccountServer.ViewModels
         SexType =  dbEntity.SexType,
         City = dbEntity.City,
         Description = dbEntity.Description,
-        LargeAvatarLink = dbEntity.OriginalAvatarLink,
+        LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Large),
+        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small),
         IsYouFollowed = dbEntity.YouFollowed,
         IsHeFollowed = dbEntity.HeFollowed,
 

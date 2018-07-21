@@ -30,7 +30,7 @@ namespace AccountServer.Controllers
     }
 
     [HttpPost("update/file")]
-    public async Task<IActionResult> UpdateAvatarViaLink([FromBody]UpdateAvatarFileViewModel avatar)
+    public async Task<IActionResult> UpdateAvatarViaUrl([FromBody]UpdateAvatarFileViewModel avatar)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
@@ -45,7 +45,7 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var (isUpdated, url) = await _account.UpdateAvatarViaLink(avatar.UserId, avatar.Size, avatar.Url);
+      var (isUpdated, url) = await _account.UpdateAvatarViaUrl(avatar.UserId, avatar.Size, avatar.Url);
       return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
     }
 

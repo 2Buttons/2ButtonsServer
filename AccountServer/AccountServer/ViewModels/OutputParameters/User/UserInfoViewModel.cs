@@ -11,8 +11,8 @@ namespace AccountServer.ViewModels.OutputParameters.User
     public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-    public string LargeAvatarLink { get; set; }
-    public string SmallAvatarLink { get; set; }
+    public string LargeAvatarUrl { get; set; }
+    public string SmallAvatarUrl { get; set; }
     public bool IsYouFollowed { get; set; }
     public bool IsHeFollowed { get; set; }
 
