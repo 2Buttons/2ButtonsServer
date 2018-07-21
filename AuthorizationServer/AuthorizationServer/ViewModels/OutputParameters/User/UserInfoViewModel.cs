@@ -1,7 +1,6 @@
 ﻿using System;
 using AuthorizationData.Main.Entities;
 using CommonLibraries.MediaFolders;
-using CommonTypes;
 
 namespace AuthorizationServer.ViewModels.OutputParameters.User
 {
