@@ -11,7 +11,7 @@ namespace QuestionsData.Queries
     public int UserId { get; set; }
 
     public string Login { get; set; }
-    public string SmallAvatarUrl { get; set; }
+    public string OriginalAvatarUrl { get; set; }
     public DateTime BirthDate { get; set; }
     [Column("Sex")]
     public SexType SexType { get; set; }

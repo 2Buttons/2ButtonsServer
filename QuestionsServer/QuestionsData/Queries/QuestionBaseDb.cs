@@ -13,14 +13,14 @@ namespace QuestionsData.Queries
     public string Condition { get; set; }
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }
-    public string BackgroundImageLink { get; set; }
+    public string BackgroundImageUrl { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
     public int UserId { get; set; }
     public string Login { get; set; }
     [Column("sex")]
     public SexType SexType { get; set; }
-    public string SmallAvatarLink { get; set; }
+    public string OriginalAvatarUrl { get; set; }
     [Column("likes")]
     public int LikesCount { get; set; }
     [Column("dislikes")]

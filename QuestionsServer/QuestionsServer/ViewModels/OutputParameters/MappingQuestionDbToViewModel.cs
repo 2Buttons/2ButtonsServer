@@ -220,7 +220,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
             new Option(dbEntity.FirstAnswersCount, dbEntity.FirstOption),
             new Option(dbEntity.SecondAnswersCount, dbEntity.SecondOption)
           },
-        BackgroundImageLink = dbEntity.BackgroundImageLink,
+        BackgroundImageUrl = dbEntity.BackgroundImageUrl,
         QuestionType = dbEntity.QuestionType,
         QuestionAddDate = dbEntity.QuestionAddDate,
         Author = new AuthorViewModel
@@ -228,7 +228,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
           UserId = dbEntity.UserId,
           Login = dbEntity.Login,
           SexType = dbEntity.SexType,
-          SmallAvatarLink = dbEntity.SmallAvatarLink,
+          SmallAvatarUrl = dbEntity.SmallAvatarUrl,
         },
        
         LikesAmount = dbEntity.LikesCount,
@@ -263,7 +263,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Age = p.BirthDate.Age(),
         Login = p.Login,
         SexType = p.SexType,
-        SmallAvatarLink = p.SmallAvatarLink
+        SmallAvatarUrl = p.SmallAvatarUrl
       }).ToList();
     }
 
@@ -274,7 +274,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         CommentId = c.CommentId,
         UserId = c.UserId,
         Login = c.Login,
-        SmallAvatarLink = c.SmallAvatarLink,
+        SmallAvatarUrl = c.SmallAvatarUrl,
         Text = c.Comment,
         LikesAmount = c.Likes,
         DislikesAmount = c.Dislikes,
@@ -291,7 +291,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       {
         UserId = v.UserId,
         Login = v.Login,
-        SmallAvatarLink = v.SmallAvatarLink,
+        SmallAvatarUrl = v.SmallAvatarUrl,
         Age = v.BirthDate.Age(),
         SexType = v.SexType,
         IsHeFollowed = v.HeFollowed,

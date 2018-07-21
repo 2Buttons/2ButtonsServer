@@ -10,7 +10,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public int QuestionId { get; set; }
     public string Condition { get; set; }
     public List<Option> Options { get; set; }
-    public string BackgroundImageLink { get; set; }
+    public string BackgroundImageUrl { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
     public AuthorViewModel Author { get; set; }

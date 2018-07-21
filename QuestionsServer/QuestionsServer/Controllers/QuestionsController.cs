@@ -151,15 +151,15 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var backgroundLink = _hub.Media.StandardBackground();
-      if (!question.BackgroundImageLink.IsNullOrEmpty())
+      var backgroundUrl = _hub.Media.StandardBackground();
+      if (!question.BackgroundImageUrl.IsNullOrEmpty())
       {
-        var externalUrl = await _hub.Media.UploadBackgroundUrl(question.BackgroundImageLink);
+        var externalUrl = await _hub.Media.UploadBackgroundUrl(question.BackgroundImageUrl);
 
-        if (!externalUrl.IsNullOrEmpty()) backgroundLink = externalUrl;
+        if (!externalUrl.IsNullOrEmpty()) backgroundUrl = externalUrl;
       }
 
-      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, backgroundLink,
+      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, backgroundUrl,
         question.IsAnonymity ? 1 : 0, question.AudienceType, question.QuestionType, question.FirstOption,
         question.SecondOption);
 
@@ -270,13 +270,13 @@ namespace QuestionsServer.Controllers
     }
 
     [HttpPost("update/background/link")]
-    public async Task<IActionResult> UpdateBackgroundViaLink(
-      [FromBody] UploadQuestionBackgroundViaLinkViewModel background)
+    public async Task<IActionResult> UpdateBackgroundViaUrl(
+      [FromBody] UploadQuestionBackgroundViaUrlViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var url = await _hub.Media.UploadBackgroundUrl(background.Url);
-      if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
+      if (!await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url))
         return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult("Background was updated", new {Url = url});
     }
@@ -287,7 +287,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var url = await _hub.Media.UploadBackgroundFile(background.File);
-      if (!await _mainDb.Questions.UpdateQuestionBackgroundLink(background.QuestionId, url))
+      if (!await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url))
         return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult("Background was updated", new {Url = url});
     }

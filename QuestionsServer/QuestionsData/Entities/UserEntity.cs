@@ -20,7 +20,7 @@ namespace QuestionsData.Entities
     public int CityId { get; set; }
     public string Description { get; set; }
     public DateTime? LastNotsSeenDate { get; set; }
-    public string FullAvatarLink { get; set; }
-    public string SmallAvatarLink { get; set; }
+    [Column("FullAvatarUrl")]
+    public string OriginalAvatarUrl{ get; set; }
   }
 }

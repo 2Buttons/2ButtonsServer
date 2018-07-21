@@ -22,8 +22,8 @@ namespace QuestionsData.Entities
     public int QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
 
-    [Column("backbroundImageLink")]
-    public string BackgroundImageLink { get; set; }
+    [Column("backbroundImageUrl")]
+    public string OriginalBackgroundUrl{ get; set; }
 
     public int Answers { get; set; }
     public int Likes { get; set; }

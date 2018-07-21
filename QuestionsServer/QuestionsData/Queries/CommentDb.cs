@@ -9,7 +9,7 @@ namespace QuestionsData.Queries
         public int CommentId { get; set; }
         public int UserId { get; set; }
         public string Login { get; set; }
-        public string SmallAvatarUrl { get; set; }
+        public string OriginalAvatarUrl { get; set; }
         public string Comment { get; set; }
         public int Likes { get; set; }
         public int Dislikes { get; set; }

@@ -8,7 +8,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         public int CommentId { get; set; }
         public int UserId { get; set; }
         public string Login { get; set; }
-        public string SmallAvatarLink { get; set; }
+        public string SmallAvatarUrl { get; set; }
         public string Text { get; set; }
         public int LikesAmount { get; set; }
         public int DislikesAmount { get; set; }

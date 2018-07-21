@@ -59,8 +59,8 @@ namespace QuestionsData.Repositories
         .ToList();
 
       var votersFriends =  friendIds.Join(questions, a=>a, b=>b.Item1.UserId, (a,b)=> b).ToList();//.Where(x=>x.Follow.(x => x.Item2.AnswerType).Select(x => new { Type = x.Key, Count = x.Count() }).ToListAsync();
-      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  SexType = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink}).ToList();
-      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, SexType = x.Item1.SexType, SmallAvatarLink = x.Item1.SmallAvatarLink }).ToList();
+      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  SexType = x.Item1.SexType, SmallAvatarUrl = x.Item1.SmallAvatarUrl}).ToList();
+      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, SexType = x.Item1.SexType, SmallAvatarUrl = x.Item1.SmallAvatarUrl }).ToList();
       //var countFirstAnswerType = voters.Count(x => x.Item2.AnswerType == AnswerType.First);
       //var countSecondAnswerType = voters.Count - countFirstAnswerType;
 
@@ -83,7 +83,7 @@ namespace QuestionsData.Repositories
 
     public async Task<List<string>> GetCustomQuestionBackgrounds(int userId)
     {
-      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.BackgroundImageLink).Distinct().ToListAsync();
+      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.BackgroundImageUrl).Distinct().ToListAsync();
     }
 
     public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(int userId, int questionId, int minAge, int maxAge,
@@ -120,7 +120,7 @@ namespace QuestionsData.Repositories
           Login = voter.f.Item1.Login,
           SexType = voter.f.Item1.SexType,
           
-          SmallAvatarLink = voter.f.Item1.SmallAvatarLink
+          SmallAvatarUrl = voter.f.Item1.SmallAvatarUrl
         };
 
         switch (voter.f.Item2.AnswerType)
@@ -144,7 +144,7 @@ namespace QuestionsData.Repositories
              ?.QuestionId ?? -1;
     }
 
-    public async Task<int> AddQuestion(int userId, string condition, string backgroundImageLink, int anonymity,
+    public async Task<int> AddQuestion(int userId, string condition, string backgroundImageUrl, int anonymity,
       AudienceType audienceType, QuestionType questionType, string firstOption, string secondOption)
     {
       var questionAddDate = DateTime.UtcNow;
@@ -152,7 +152,7 @@ namespace QuestionsData.Repositories
       var questionIdDb = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
 
       await _db.Database.ExecuteSqlCommandAsync(
-        $"addQuestion {userId}, {condition}, {backgroundImageLink}, {anonymity}, {audienceType}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
+        $"addQuestion {userId}, {condition}, {backgroundImageUrl}, {anonymity}, {audienceType}, {questionType}, {questionAddDate}, {firstOption}, {secondOption}, {questionIdDb} OUT");
       return (int) questionIdDb.Value;
     }
 
@@ -191,10 +191,10 @@ namespace QuestionsData.Repositories
                $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
 
-    public async Task<bool> UpdateQuestionBackgroundLink(int questionId, string backgroundImageLink)
+    public async Task<bool> UpdateQuestionBackgroundUrl(int questionId, string backgroundImageUrl)
     {
       return await _db.Database.ExecuteSqlCommandAsync(
-               $"updateQuestionBackground {questionId}, {backgroundImageLink}") > 0;
+               $"updateQuestionBackground {questionId}, {backgroundImageUrl}") > 0;
     }
 
     public async Task<List<PhotoDb>> GetPhotos(int userId, int questionId, int answer, int count, DateTime bornAfter,
