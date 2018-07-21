@@ -68,7 +68,7 @@ namespace QuestionsServer.Controllers
         out var secondPhotos, out var comments);
 
       var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
-      _hub.Monitoring.UpdateUrlMonitoring(inputQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
+      await _hub.Monitoring.UpdateUrlMonitoring(inputQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
       return new OkResponseResult(result);
     }
 
@@ -80,7 +80,7 @@ namespace QuestionsServer.Controllers
 
       var result = await _mainDb.Questions.GetQuestionStatistic(statistics.UserId, statistics.QuestionId,
         statistics.MinAge, statistics.MaxAge, statistics.SexType, statistics.City);
-      _hub.Monitoring.UpdateUrlMonitoring(statistics.UserId, UrlMonitoringType.FiltersQuestions);
+      await _hub.Monitoring.UpdateUrlMonitoring(statistics.UserId, UrlMonitoringType.FiltersQuestions);
       return new OkResponseResult("Question Statistic", result);
     }
 
@@ -258,7 +258,7 @@ namespace QuestionsServer.Controllers
       {
         if (await _mainDb.UserQuestions.AddRecommendedQuestion(id, recommendedQuestion.UserFromId,
           recommendedQuestion.QuestionId))
-          _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
+          await _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
             recommendedQuestion.QuestionId, DateTime.UtcNow);
         else notFoundIds.Add(id);
       }

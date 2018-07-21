@@ -50,7 +50,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
 
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAsked);
       return new OkResponseResult(result);
     }
@@ -71,7 +71,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAnswered);
       return new OkResponseResult(result);
     }
@@ -93,7 +93,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserFavorite);
       return new OkResponseResult(result);
     }
@@ -115,7 +115,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserCommented);
       return new OkResponseResult(result);
     }

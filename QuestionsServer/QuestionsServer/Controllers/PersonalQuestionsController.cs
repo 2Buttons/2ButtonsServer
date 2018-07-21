@@ -50,7 +50,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
 
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
       return new OkResponseResult(result);
     }
 
@@ -70,7 +70,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         UrlMonitoringType.GetsQuestionsPersonalRecommended);
       return new OkResponseResult(result);
     }
@@ -91,7 +91,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
       return new OkResponseResult(result);
     }
 
@@ -112,7 +112,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
       return new OkResponseResult(result);
     }
 
@@ -133,7 +133,7 @@ namespace QuestionsServer.Controllers
           out var secondPhotos);
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos));
       }
-      _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
+      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
       return new OkResponseResult(result);
     }
 
@@ -166,16 +166,16 @@ namespace QuestionsServer.Controllers
       switch (questions.DeltaUnixTime)
       {
         case unixDay:
-          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
+          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
           break;
         case unixWeek:
-          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
+          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
           break;
         case unixMonth:
-          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
+          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
           break;
         default:
-          _hub.Monitoring.UpdateUrlMonitoring(questions.UserId,
+          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId,
             UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
           break;
       }

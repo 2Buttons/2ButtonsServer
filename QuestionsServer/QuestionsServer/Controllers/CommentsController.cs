@@ -34,7 +34,7 @@ namespace QuestionsServer.Controllers
         comment.PreviousCommentId);
       if (commentId < 0)
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");
-      if (comment.PreviousCommentId > 0) _hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
+      if (comment.PreviousCommentId > 0) await _hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
       return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = commentId });
     }
 
@@ -52,7 +52,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.Amount);
-      _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
+      await _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
       return new OkResponseResult(comments);
     }
   }

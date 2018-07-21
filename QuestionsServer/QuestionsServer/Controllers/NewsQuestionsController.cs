@@ -151,7 +151,7 @@ namespace QuestionsServer.Controllers
         NewsRecommendedQuestions = recommentedListResultList
       };
 
-      _hub.Monitoring.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
+      await _hub.Monitoring.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
 
       return new OkResponseResult(result);
     }
