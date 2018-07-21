@@ -59,7 +59,7 @@ namespace MonitoringData.Repositories
           userMonitoring.GetsQuestionsPersonalRecommended++;
           break;
         case UrlMonitoringType.GetsQuestionsPersonalChosen:
-          userMonitoring.GetsQuestionsPersonalChosen++;
+          userMonitoring.GetsQuestionsPersonalSelected++;
           break;
         case UrlMonitoringType.GetsQuestionsPersonalLiked:
           userMonitoring.GetsQuestionsPersonalLiked++;

@@ -29,15 +29,15 @@ namespace CommonLibraries.ConnectionServices
     {
       _logger = logger;
 
-      _uploadedAvaterUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/avatar/link";
+      _uploadedAvaterUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/avatar/url";
       _uploadedAvaterFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/avatar/file";
       _standardAvatarUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/standards/avatar/";
 
-      _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/background/link";
+      _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/background/url";
       _uploadedBackgroundFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/background/file";
       _standardBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/standards/background/";
 
-      _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/link";
+      _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/url";
       _uploadedBackgroundFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/file";
       _standardBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/default";
     }

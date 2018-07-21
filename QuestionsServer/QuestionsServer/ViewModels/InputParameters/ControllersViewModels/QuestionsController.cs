@@ -10,7 +10,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
   {
     [Required]
     public string Condition { get; set; }
-    public bool IsAnonymity { get; set; }
+    public bool IsAnonymous { get; set; }
     public AudienceType AudienceType { get; set; }
     public QuestionType QuestionType { get; set; }
     [Required]

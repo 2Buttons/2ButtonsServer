@@ -13,7 +13,7 @@ namespace QuestionsData.Repositories
     public List<NewsAskedQuestionDto> GetNewsAskedQuestions(TwoButtonsContext context, int userId)
     {
       return context.NewsAskedQuestionsDb.AsNoTracking().FromSql($"select * from dbo.getNewsAskedQuestions({userId})")
-        .Select(x => new NewsAskedQuestionDto { NewsAskedQuestionDb = x, Priority = x.AnsweredFollowTo * 4 }).OrderBy(x => x.NewsAskedQuestionDb.UserId)
+        .Select(x => new NewsAskedQuestionDto { NewsAskedQuestionDb = x, Priority = x.AnsweredFollowingsCount * 4 }).OrderBy(x => x.NewsAskedQuestionDb.UserId)
         .ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
@@ -21,7 +21,7 @@ namespace QuestionsData.Repositories
     {
       return context.NewsAnsweredQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsAnsweredQuestions({userId})")
-        .Select(x => new NewsAnsweredQuestionDto { NewsAnsweredQuestionDb = x, Priority = x.AnsweredFollowTo }).OrderBy(x => x.NewsAnsweredQuestionDb.UserId)
+        .Select(x => new NewsAnsweredQuestionDto { NewsAnsweredQuestionDb = x, Priority = x.AnsweredFollowingsCount }).OrderBy(x => x.NewsAnsweredQuestionDb.UserId)
         .ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
@@ -29,7 +29,7 @@ namespace QuestionsData.Repositories
     {
       return context.NewsFavoriteQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsFavoriteQuestions({userId})")
-        .Select(x => new NewsFavoriteQuestionDto { NewsFavoriteQuestionDb = x, Priority = x.AnsweredFollowTo }).OrderBy(x => x.NewsFavoriteQuestionDb.UserId)
+        .Select(x => new NewsFavoriteQuestionDto { NewsFavoriteQuestionDb = x, Priority = x.AnsweredFollowingsCount }).OrderBy(x => x.NewsFavoriteQuestionDb.UserId)
         .ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
@@ -40,7 +40,7 @@ namespace QuestionsData.Repositories
         .Select(x => new NewsCommentedQuestionDto
         {
           NewsCommentedQuestionDb = x,
-          Priority = x.CommentCount * x.AnsweredFollowTo * 2
+          Priority = x.CommentsCount * x.AnsweredFollowingsCount * 2
         }).OrderBy(x => x.NewsCommentedQuestionDb.UserId).ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
@@ -69,21 +69,21 @@ namespace QuestionsData.Repositories
             SecondOption = t.SecondOption,
             OriginalBackgroundUrl = t.OriginalBackgroundUrl,
             QuestionType = t.QuestionType,
-            QuestionAddDate = t.QuestionAddDate,
+            AddedDate = t.AddedDate,
             UserId = t.UserId,
             Login = t.Login,
             OriginalAvatarUrl = t.OriginalAvatarUrl,
             LikesCount = t.LikesCount,
             DislikesCount = t.DislikesCount,
-            YourFeedback = t.YourFeedback,
-            YourAnswer = t.YourAnswer,
+            YourFeedbackType = t.YourFeedbackType,
+            YourAnswerType = t.YourAnswerType,
             InFavorites = t.InFavorites,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
             FirstAnswersCount = t.FirstAnswersCount,
             SecondAnswersCount = t.SecondAnswersCount,
 
-            Priority = t.AnsweredFollowTo * 7,
+            Priority = t.AnsweredFollowingsCount * 7,
 
             RecommendedUsers = new List<RecommendedUserDto>()
           });

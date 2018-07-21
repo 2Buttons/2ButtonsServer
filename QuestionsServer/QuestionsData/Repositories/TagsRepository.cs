@@ -41,7 +41,7 @@ namespace QuestionsData.Repositories
 
     public async Task<List<TagEntity>> GetTags(int offset, int count)
     {
-      return await _db.TagEntities.OrderBy(x => x.TagText).Skip(offset).Take(count).ToListAsync();
+      return await _db.TagEntities.OrderBy(x => x.Text).Skip(offset).Take(count).ToListAsync();
     }
 
     public async Task<List<TagEntity>> GetPopularTags(int offset, int count)

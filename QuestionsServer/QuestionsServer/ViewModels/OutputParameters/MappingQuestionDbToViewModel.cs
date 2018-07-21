@@ -48,11 +48,11 @@ namespace QuestionsServer.ViewModels.OutputParameters
 
       viewModel.CommentedUser = new NewsUserViewModel
       {
-        UserId = dto.NewsCommentedQuestionDb.CommentUserId,
-        Login = dto.NewsCommentedQuestionDb.CommentUserLogin,
-        SexType = dto.NewsCommentedQuestionDb.CommentUserSexType
+        UserId = dto.NewsCommentedQuestionDb.CommentedUserId,
+        Login = dto.NewsCommentedQuestionDb.CommentedUserLogin,
+        SexType = dto.NewsCommentedQuestionDb.CommentedUserSexType
       };
-      viewModel.UserCommentsCount = dto.NewsCommentedQuestionDb.CommentCount;
+      viewModel.UserCommentsCount = dto.NewsCommentedQuestionDb.CommentedUserCommentsCount;
 
       viewModel.Priority = dto.Priority;
       viewModel.NewsType = CommonLibraries.NewsType.Commented;
@@ -224,7 +224,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
           },
         BackgroundUrl = MediaConverter.ToFullBackgroundurlUrl(dbEntity.OriginalBackgroundUrl, backgroundSizeType),
         QuestionType = dbEntity.QuestionType,
-        QuestionAddDate = dbEntity.QuestionAddDate,
+        QuestionAddDate = dbEntity.AddedDate,
         Author = new AuthorViewModel
         {
           UserId = dbEntity.UserId,
@@ -235,8 +235,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
        
         LikesCount = dbEntity.LikesCount,
         DislikesCount = dbEntity.DislikesCount,
-        YourFeedbackType = dbEntity.YourFeedback,
-        YourAnswerType = dbEntity.YourAnswer,
+        YourFeedbackType = dbEntity.YourFeedbackType,
+        YourAnswerType = dbEntity.YourAnswerType,
         IsInFavorites = dbEntity.InFavorites,
         IsSaved = dbEntity.IsSaved,
         CommentsCount = dbEntity.CommentsCount,
@@ -252,7 +252,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return dbTags.Select(tag => new TagViewModel
       {
         TagId = tag.TagId,
-        TagText = tag.TagText
+        TagText = tag.Text
         // Position = tag.Position
       }).ToList();
     }
@@ -277,10 +277,10 @@ namespace QuestionsServer.ViewModels.OutputParameters
         UserId = c.UserId,
         Login = c.Login,
         SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(c.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
-        Text = c.Comment,
-        LikesCount = c.Likes,
-        DislikesCount = c.Dislikes,
-        YourFeedbackType = c.YourFeedback,
+        Text = c.Text,
+        LikesCount = c.LikesCount,
+        DislikesCount = c.DislikesCount,
+        YourFeedbackType = c.YourFeedbackType,
         PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
         AddDate = c.CommentAddDate
       }).ToList();
@@ -296,8 +296,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
         SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(v.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
         Age = v.BirthDate.Age(),
         SexType = v.SexType,
-        IsHeFollowed = v.HeFollowed,
-        IsYouFollowed = v.YouFollowed
+        IsHeFollowed = v.IsHeFollowed,
+        IsYouFollowed = v.IsYouFollowed
       }).ToList();
     }
   }

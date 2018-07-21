@@ -2,11 +2,12 @@
 
 namespace QuestionsData.Queries
 {
-    public partial class TagDb
-    {
-        [Key]
-        public int TagId { get; set; }
-        public string TagText { get; set; }
-        public int Position { get; set; }
-    }
+  public class TagDb
+  {
+    [Key]
+    public int TagId { get; set; }
+
+    public string Text { get; set; }
+    public int Position { get; set; }
+  }
 }

@@ -7,6 +7,6 @@ namespace QuestionsData.Queries.Moderators
         [Key]
         public int ComplaintId { get; set; }
         public int QuestionId { get; set; }
-        public int ComplaintCount { get; set; }
+        public int ComplaintsCount { get; set; }
     }
 }

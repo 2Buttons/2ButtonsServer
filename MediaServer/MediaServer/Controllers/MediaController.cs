@@ -68,7 +68,7 @@ namespace MediaServer.Controllers
       return !urls.Any() ? new ResponseResult((int)HttpStatusCode.NotFound) : new OkResponseResult(new { Urls = urls });
     }
 
-    [HttpPost("upload/avatar/link")]
+    [HttpPost("upload/avatar/url")]
     public IActionResult UploadUserAvatarViaUrl([FromBody] UploadAvatarViaUrlViewModel avatar)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -80,7 +80,7 @@ namespace MediaServer.Controllers
         : new OkResponseResult(new UrlViewModel {Url = url});
     }
 
-    [HttpPost("upload/background/link")]
+    [HttpPost("upload/background/url")]
     public IActionResult UploadQuestionBackgroundViaUrl([FromBody] UploadBackgroundViaUrlViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -118,7 +118,7 @@ namespace MediaServer.Controllers
         : new OkResponseResult(new UrlViewModel {Url = url});
     }
 
-    [HttpPost("upload/default/link")]
+    [HttpPost("upload/default/url")]
     public IActionResult UploadDefaultViaUrl([FromBody] UploadDefaultViaUrlViewModel @default)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);

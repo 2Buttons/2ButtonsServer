@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestionsData.Entities
 {
-  [Table("Option")]
+  [Table("Options")]
   public class OptionEntity
   {
     [Key]
     public int OptionId { get; set; }
 
     public int QuestionId { get; set; }
-    public string OptionText { get; set; }
+    public string Text { get; set; }
     public int Position { get; set; }
-    public int Answers { get; set; }
+    public int AnswersCount { get; set; }
   }
 }

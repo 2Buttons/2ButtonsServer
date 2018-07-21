@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestionsData.Entities
 {
-  [Table("City")]
+  [Table("Cities")]
   public class CityEntity
   {
     [Key]
     public int CityId { get; set; }
 
     public string Name { get; set; }
-    public int People { get; set; }
+    public int Inhabitants { get; set; }
   }
 }

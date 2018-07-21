@@ -3,13 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestionsData.Entities
 {
-  [Table("Follow")]
+  [Table("Followers")]
   public class FollowEntity
   {
-    [Column("FollowerId")]
     [Key]
-    public int UserdId { get; set; }
+    public int FollowerId { get; set; }
 
-    public int FollowToId { get; set; }
+    public int FollowingId { get; set; }
   }
 }

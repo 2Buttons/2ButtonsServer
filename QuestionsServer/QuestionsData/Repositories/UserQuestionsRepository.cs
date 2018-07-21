@@ -49,7 +49,7 @@ namespace QuestionsData.Repositories
 
       return await _db.UserAnsweredQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getUserAnsweredQuestions({userId}, {pageUserId}, {isAnonimus})")
-        .OrderByDescending(x => x.QuestionAddDate).Skip(offset).Take(count).ToListAsync();
+        .OrderByDescending(x => x.AddedDate).Skip(offset).Take(count).ToListAsync();
     }
 
     public async Task<List<UserFavoriteQuestionDb>> GetUserFavoriteQuestions(int userId, int pageUserId, int offset,
@@ -85,14 +85,14 @@ namespace QuestionsData.Repositories
             SecondOption = t.SecondOption,
             OriginalBackgroundUrl = t.OriginalBackgroundUrl,
             QuestionType = t.QuestionType,
-            QuestionAddDate = t.QuestionAddDate,
+            AddedDate = t.AddedDate,
             UserId = t.UserId,
             Login = t.Login,
             OriginalAvatarUrl = t.OriginalAvatarUrl,
             LikesCount = t.LikesCount,
             DislikesCount = t.DislikesCount,
-            YourFeedback = t.YourFeedback,
-            YourAnswer = t.YourAnswer,
+            YourFeedbackType = t.YourFeedbackType,
+            YourAnswerType = t.YourAnswerType,
             InFavorites = t.InFavorites,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
@@ -107,7 +107,7 @@ namespace QuestionsData.Repositories
         if (question != null && question.Comments.All(x => x.CommentId != t.CommentId))
         {
           question.Comments
-            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentAddDate, DislikesCount = t.CommentDislikes, LikesCount = t.CommentLikes, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedback, Text = t.Text});
+            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentAddDate, DislikesCount = t.CommentDislikes, LikesCount = t.CommentLikes, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedback, Text = t.CommentText});
         }
       }
 
@@ -162,14 +162,14 @@ namespace QuestionsData.Repositories
             SecondOption = t.SecondOption,
             OriginalBackgroundUrl = t.OriginalBackgroundUrl,
             QuestionType = t.QuestionType,
-            QuestionAddDate = t.QuestionAddDate,
+            AddedDate = t.AddedDate,
             UserId = t.UserId,
             Login = t.Login,
             OriginalAvatarUrl = t.OriginalAvatarUrl,
             LikesCount = t.LikesCount,
             DislikesCount = t.DislikesCount,
-            YourFeedback = t.YourFeedback,
-            YourAnswer = t.YourAnswer,
+            YourFeedbackType = t.YourFeedbackType,
+            YourAnswerType = t.YourAnswerType,
             InFavorites = t.InFavorites,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,

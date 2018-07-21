@@ -16,7 +16,7 @@ namespace MonitoringData.Entities
     public int GetsQuestionsUserCommented { get; set; } = 0;
     public int GetsQuestionsPersonalAsked { get; set; } = 0;
     public int GetsQuestionsPersonalRecommended { get; set; } = 0;
-    public int GetsQuestionsPersonalChosen { get; set; } = 0;
+    public int GetsQuestionsPersonalSelected { get; set; } = 0;
     public int GetsQuestionsPersonalLiked { get; set; } = 0;
     public int GetsQuestionsPersonalSaved { get; set; } = 0;
     public int GetsQuestionsPersonalDayTop { get; set; } = 0;

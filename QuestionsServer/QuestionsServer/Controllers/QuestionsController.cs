@@ -156,7 +156,7 @@ namespace QuestionsServer.Controllers
       }
 
       var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
-        question.IsAnonymity ? 1 : 0, question.AudienceType, question.QuestionType, question.FirstOption,
+        question.IsAnonymous ? 1 : 0, question.AudienceType, question.QuestionType, question.FirstOption,
         question.SecondOption);
 
       var badAddedTags = new List<string>();

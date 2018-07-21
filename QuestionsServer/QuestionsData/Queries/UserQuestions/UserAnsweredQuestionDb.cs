@@ -1,7 +1,6 @@
 ﻿namespace QuestionsData.Queries.UserQuestions
 {
-    public partial class UserAnsweredQuestionDb : QuestionBaseDb
-    {
-        
-    }
+  public class UserAnsweredQuestionDb : QuestionBaseDb
+  {
+  }
 }

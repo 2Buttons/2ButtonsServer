@@ -48,7 +48,7 @@ namespace QuestionsServer.Controllers
       var tagsEntities = new List<TagEntity>();
       foreach (var tag in tags.Tags)
       {
-        tagsEntities.Add(new TagEntity {TagText = tag.Trim()});
+        tagsEntities.Add(new TagEntity {Text = tag.Trim()});
       }
       var result = await _mainDb.Tags.AddTags(tagsEntities);
       return new OkResponseResult("Tags were added", result);

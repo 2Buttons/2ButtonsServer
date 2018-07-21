@@ -5,7 +5,7 @@ using CommonLibraries;
 
 namespace QuestionsData.Entities
 {
-  [Table("User")]
+  [Table("Users")]
   public class UserEntity
   {
     [Key]
@@ -13,14 +13,10 @@ namespace QuestionsData.Entities
 
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
-
-   [Column("sex")]
     public SexType SexType { get; set; }
-
     public int CityId { get; set; }
     public string Description { get; set; }
     public DateTime? LastNotsSeenDate { get; set; }
-    [Column("FullAvatarUrl")]
     public string OriginalAvatarUrl{ get; set; }
   }
 }

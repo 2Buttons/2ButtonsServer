@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibraries;
+﻿using CommonLibraries;
 
 namespace QuestionsData.Queries.NewsQuestions
 {
@@ -7,7 +6,6 @@ namespace QuestionsData.Queries.NewsQuestions
   {
     public int FavoriteAddedUserId { get; set; }
     public string FavoriteAddedUserLogin { get; set; }
-    [Column("favoriteAddedUserSex")]
     public SexType FavoriteAddedSexType { get; set; }
   }
 }

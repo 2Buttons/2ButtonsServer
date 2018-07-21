@@ -52,9 +52,9 @@ namespace QuestionsData.Repositories
         u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a)).Where(predicate);
       var votersCount = await questions.GroupBy(x=>x.Item2.AnswerType).Select(x=> new {Type = x.Key, Count = x.Count()}).ToListAsync();
 
-      var friendIds = _db.FollowEntities.Where(x => x.UserdId == userId )
-        .Join(_db.FollowEntities, x => x.FollowToId, y => y.UserdId,
-          (x, y) => new {UserId = x.UserdId, FollowingId = x.FollowToId, FollowingToMeId = y.FollowToId})
+      var friendIds = _db.FollowEntities.Where(x => x.FollowerId == userId )
+        .Join(_db.FollowEntities, x => x.FollowingId, y => y.FollowerId,
+          (x, y) => new {UserId = x.FollowerId, FollowingId = x.FollowingId, FollowingToMeId = y.FollowingId})
         .Where(x=>x.UserId == x.FollowingToMeId).Select(x => x.FollowingId)
         .ToList();
 
@@ -103,8 +103,8 @@ namespace QuestionsData.Repositories
 
       var voters = await _db.AnswerEntities.Where(x => x.QuestionId == questionId)
         .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a))
-        .Where(predicate).Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowEntities.Any(x=>x.UserdId== userId && x.FollowToId == f.Item1.UserId), isHeFollowed  = _db.FollowEntities.Any(x => x.UserdId == f.Item1.UserId && x.FollowToId == userId) })
-        .OrderByDescending(x=>x.f.Item2.AnswerDate).Skip(offset).Take(count).ToListAsync();
+        .Where(predicate).Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowEntities.Any(x=>x.FollowerId== userId && x.FollowingId == f.Item1.UserId), isHeFollowed  = _db.FollowEntities.Any(x => x.FollowerId == f.Item1.UserId && x.FollowingId == userId) })
+        .OrderByDescending(x=>x.f.Item2.AnsweredDate).Skip(offset).Take(count).ToListAsync();
 
       var firstUsers = new List<VoterUserDto>();
       var secondUsers = new List<VoterUserDto>();

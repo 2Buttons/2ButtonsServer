@@ -5,22 +5,16 @@ using CommonLibraries;
 
 namespace QuestionsData.Entities
 {
-  [Table("Anwser")]
+  [Table("Answers")]
   public class AnswerEntity
   {
     [Key]
     public int UserId { get; set; }
 
     public int QuestionId { get; set; }
-
-    [Column("anwser")]
     public AnswerType AnswerType { get; set; }
-
-    public int Liked { get; set; }
-    [Column("anwserDate")]
-    public DateTime AnswerDate { get; set; }
-
-    [Column("deleted")]
-    public int IsDeleted { get; set; }
+    public bool IsLiked { get; set; }
+    public DateTime AnsweredDate { get; set; }
+    public bool IsDeleted { get; set; }
   }
 }

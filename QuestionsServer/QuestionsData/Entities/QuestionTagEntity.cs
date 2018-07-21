@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestionsData.Entities
 {
-  [Table("QuestionTag")]
+  [Table("QuestionTags")]
   public class QuestionTagEntity
   {
     [Key]

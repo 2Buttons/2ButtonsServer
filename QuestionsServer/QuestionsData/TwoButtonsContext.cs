@@ -7,12 +7,8 @@ using QuestionsData.Queries.UserQuestions;
 
 namespace QuestionsData
 {
-  public partial class TwoButtonsContext : DbContext
+  public class TwoButtonsContext : DbContext
   {
-    public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options) { }
-
-    
-
     public virtual DbSet<UserEntity> UserEntities { get; set; }
     public virtual DbSet<CityEntity> CityEntities { get; set; }
     public virtual DbSet<AnswerEntity> AnswerEntities { get; set; }
@@ -22,10 +18,10 @@ namespace QuestionsData
     public virtual DbSet<QuestionTagEntity> QuestionTagEntities { get; set; }
     public virtual DbSet<TagEntity> TagEntities { get; set; }
     public virtual DbSet<RecommendedQuestionEntity> RecommendedQuestionEntities { get; set; }
-    
 
     //for functions and procedures
     public virtual DbQuery<QuestionDb> QuestionDb { get; set; }
+
     public virtual DbQuery<QuestionIdDb> QuestionIdDb { get; set; }
     public virtual DbQuery<ComplaintDb> ComplaintDb { get; set; }
     public virtual DbQuery<TagDb> TagDb { get; set; }
@@ -36,7 +32,6 @@ namespace QuestionsData
     public virtual DbQuery<UserAskedQuestionDb> UserAskedQuestionsDb { get; set; }
     public virtual DbQuery<UserCommentedQuestionDb> UserCommentedQuestionsDb { get; set; }
     public virtual DbQuery<UserFavoriteQuestionDb> UserFavoriteQuestionsDb { get; set; }
-    
 
     public virtual DbQuery<NewsAnsweredQuestionDb> NewsAnsweredQuestionsDb { get; set; }
     public virtual DbQuery<NewsAskedQuestionDb> NewsAskedQuestionsDb { get; set; }
@@ -55,15 +50,16 @@ namespace QuestionsData
     public virtual DbQuery<QuestionIdQuery> QuestionIdQueries { get; set; }
     public virtual DbQuery<PhotoDb> PhotoDb { get; set; }
 
+    public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)
+    {
+    }
+    //}
+    //    }
+    //        optionsBuilder.UseSqlServer(@"Server=DESKTOP-T41QO6T\SQLEXPRESS;database=TwoButtons;Trusted_Connection=True;");
+    //    {
+    //    if (!optionsBuilder.IsConfigured)
+    //{
 
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    if (!optionsBuilder.IsConfigured)
-    //    {
-    //        optionsBuilder.UseSqlServer(@"Server=DESKTOP-T41QO6T\SQLEXPRESS;database=TwoButtons;Trusted_Connection=True;");
-    //    }
-    //}
-
-
   }
 }

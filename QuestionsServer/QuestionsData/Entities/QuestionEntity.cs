@@ -4,32 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestionsData.Entities
 {
-  [Table("Question")]
+  [Table("Questions")]
   public class QuestionEntity
   {
     [Key]
     public int QuestionId { get; set; }
 
     public int UserId { get; set; }
-    public string Condition { get; set; }
-
-    [Column("anonymity")]
-    public int IsAnonymity { get; set; }
-
-    [Column("audience")]
-    public int IsAudience { get; set; }
-
+    public string Text { get; set; }
+    public int IsAnonymous { get; set; }
     public int QuestionType { get; set; }
-    public DateTime QuestionAddDate { get; set; }
-
-    [Column("backbroundImageUrl")]
+    public DateTime AddedDate { get; set; }
     public string OriginalBackgroundUrl{ get; set; }
-
-    public int Answers { get; set; }
-    public int Likes { get; set; }
-    public int Dislikes { get; set; }
-
-    [Column("deleted")]
-    public int IsDeleted { get; set; }
+    public int AnswersCount { get; set; }
+    public int LikesCount { get; set; }
+    public int DislikesCount { get; set; }
+    public bool IsDeleted { get; set; }
   }
 }

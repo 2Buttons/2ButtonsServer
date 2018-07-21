@@ -17,7 +17,8 @@ namespace QuestionsData
 
     public CommentsRepository Comments => _commentsRepository ?? (_commentsRepository = new CommentsRepository(_db));
 
-    public ComplaintsRepository Complaints => _moderatorRepository ??(_moderatorRepository = new ComplaintsRepository(_db));
+    public ComplaintsRepository Complaints => _moderatorRepository ??
+                                              (_moderatorRepository = new ComplaintsRepository(_db));
 
     public NewsQuestionsRepository News => _newsRepository ?? (_newsRepository = new NewsQuestionsRepository());
 
@@ -25,14 +26,13 @@ namespace QuestionsData
 
     public TagsRepository Tags => _tagsRepository ?? (_tagsRepository = new TagsRepository(_db));
 
-    public UserQuestionsRepository UserQuestions => _userQuestionsRepository ??(_userQuestionsRepository = new UserQuestionsRepository(_db));
-
+    public UserQuestionsRepository UserQuestions => _userQuestionsRepository ??
+                                                    (_userQuestionsRepository = new UserQuestionsRepository(_db));
 
     public QuestionsUnitOfWork(TwoButtonsContext db, DbContextOptions<TwoButtonsContext> dbOptions)
     {
       _db = db;
     }
-
 
     #region IDisposable
 
@@ -42,8 +42,7 @@ namespace QuestionsData
     {
       if (!_disposed)
       {
-        if (disposing)
-          _db.Dispose();
+        if (disposing) _db.Dispose();
         _disposed = true;
       }
     }

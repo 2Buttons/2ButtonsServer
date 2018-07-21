@@ -1,6 +1,6 @@
 ﻿namespace QuestionsData.Queries
 {
-    public class QuestionDb:QuestionBaseDb
-    {
-    }
+  public class QuestionDb : QuestionBaseDb
+  {
+  }
 }

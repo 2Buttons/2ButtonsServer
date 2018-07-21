@@ -18,7 +18,7 @@ namespace QuestionsServer.Extensions
           return x => x.FirstAnswersCount+x.SecondAnswersCount;
         case SortType.DateTime:
         default:
-          return x => x.QuestionAddDate;
+          return x => x.AddedDate;
       }
     }
 
