@@ -24,12 +24,12 @@ namespace AuthorizationData.Main.Repositories
     public async Task<bool> AddUserInfoAsync(UserInfoDb user)
     {
       var returnsCode = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
-      return await _contextMain.Database.ExecuteSqlCommandAsync( $"addUser {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginaltAvatarLink}, {null}, {returnsCode} OUT") > 0;
+      return await _contextMain.Database.ExecuteSqlCommandAsync( $"addUser {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginaltAvatarUrl}, {returnsCode} OUT") > 0;
     }
 
     public async Task<bool> UpdateUserInfoAsync(UserInfoDb user)
     {
-      return await _contextMain.Database.ExecuteSqlCommandAsync( $"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginaltAvatarLink}, {null}") > 0;
+      return await _contextMain.Database.ExecuteSqlCommandAsync( $"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginaltAvatarUrl}") > 0;
     }
 
     public async Task<UserInfoDb> GetUserInfoAsync(int userId)

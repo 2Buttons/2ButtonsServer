@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AuthorizationServer.Infrastructure.Services;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
+using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
@@ -49,7 +50,7 @@ namespace AuthorizationServer.Controllers
       var token = await _commonAuthService.GetAccessTokenAsync(userDto);
 
       var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
-      var result = new {Token = token, User = userInfo };
+      var result = new {Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
       return new OkResponseResult(result);
     }
 
@@ -68,7 +69,7 @@ namespace AuthorizationServer.Controllers
       var token = await _commonAuthService.GetAccessTokenAsync(userDto);
 
       var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
-      var result = new { Token = token, User = userInfo };
+      var result = new { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
       return new OkResponseResult(result);
     }
   }

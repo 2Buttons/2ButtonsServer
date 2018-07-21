@@ -65,7 +65,7 @@ namespace AuthorizationServer.Infrastructure.Services
         SexType = user.SexType,
         City = user.City,
         Description = user.Description,
-        OriginaltAvatarLink =( await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
+        OriginaltAvatarUrl =( await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
@@ -169,7 +169,7 @@ namespace AuthorizationServer.Infrastructure.Services
     //  var callbackUrl = $"https://2buttons.ru";
 
     //  new EmailSender().SednNoReply(email, _localizer["SubjectEmailConfirmed"],
-    //    _localizer["BodyEmailConfirmed"] + $": <a href='{callbackUrl}'>" + "2 Buttons" + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //    _localizer["BodyEmailConfirmed"] + $": <a href='{callbackUrl}'>" + "2 Buttons" + "</a> " + _localizer["IfUrlDoesNotWork"] + $": {callbackUrl}.");
     //}
 
     //public async Task<bool> SendResetPassword(string email)
@@ -187,7 +187,7 @@ namespace AuthorizationServer.Infrastructure.Services
     //  var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
 
     //  new EmailSender().SednNoReply(email, _localizer["SubjectResetPassword"],
-    //    _localizer["BodyResetPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ResetPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //    _localizer["BodyResetPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ResetPasswordUrl"] + "</a> " + _localizer["IfUrlDoesNotWork"] + $": {callbackUrl}.");
     //}
 
     //private async Task SendForgotPasswordConfirmation(int userId, RoleType role, string email)
@@ -196,7 +196,7 @@ namespace AuthorizationServer.Infrastructure.Services
     //  var callbackUrl = $"http://localhost:6001/forgotPassword.html?token={emailToken}";
 
     //  new EmailSender().SednNoReply(email, _localizer["SubjectForgotPassword"],
-    //    _localizer["BodyForgotPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ForgotPasswordLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //    _localizer["BodyForgotPassword"] + $": <a href='{callbackUrl}'>" + _localizer["ForgotPasswordUrl"] + "</a> " + _localizer["IfUrlDoesNotWork"] + $": {callbackUrl}.");
     //}
 
     //private async Task SendConfirmedEmail(int userId, RoleType role, string email)
@@ -204,7 +204,7 @@ namespace AuthorizationServer.Infrastructure.Services
     //  var emailToken = await _emailJwtService.GenerateJwtAsync(userId, role);
     //  var callbackUrl = $"http://localhost:6001/auth/confirm/email?userId={userId}&token={emailToken}";
     //  new EmailSender().SednNoReply(email, _localizer["SubjectConfirmEmail"],
-    //    _localizer["BodyConfirmEmail"] + $": <a href='{callbackUrl}'>" + _localizer["ConfirmEmailLink"] + "</a> " + _localizer["IfLinkDoesNotWork"] + $": {callbackUrl}.");
+    //    _localizer["BodyConfirmEmail"] + $": <a href='{callbackUrl}'>" + _localizer["ConfirmEmailUrl"] + "</a> " + _localizer["IfUrlDoesNotWork"] + $": {callbackUrl}.");
     //}
 
     public void Dispose()

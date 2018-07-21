@@ -9,14 +9,13 @@ namespace AuthorizationData.Main.Entities
   {
     [Key]
     public int UserId { get; set; }
+
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
     [Column("Sex")]
     public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-    [Column("fullAvatarLink")]
-    public string OriginaltAvatarLink { get; set; }
-   // public string SmallAvatarLink { get; set; }
+    public string OriginaltAvatarUrl { get; set; }
   }
 }

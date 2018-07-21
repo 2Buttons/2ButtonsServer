@@ -10,8 +10,8 @@ using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Main.Entities;
 using AuthorizationServer.Infrastructure.Services;
-using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
+using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UserRegistrationViewModel = AuthorizationServer.ViewModels.InputParameters.UserRegistrationViewModel;
 
 namespace AuthorizationServer.Controllers
 {
@@ -43,7 +44,7 @@ namespace AuthorizationServer.Controllers
 
       if (user.Phone.IsNullOrEmpty() && user.Email.IsNullOrEmpty())
       {
-        ModelState.AddModelError("Contacts", "Phone and email are null or emty");
+        ModelState.AddModelError("Contacts", "Phone and email are null or empty");
         return new BadResponseResult(ModelState);
       }
 
@@ -73,7 +74,7 @@ namespace AuthorizationServer.Controllers
           var user = await _internalAuthService.GetUserByCredentils(credentials);
           var token = await _commonAuthService.GetAccessTokenAsync(user);
           var userInfo = await _commonAuthService.GetUserInfo(user.UserId);
-          var result = new { Token = token, User = userInfo };
+          var result = new { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
           return new OkResponseResult(result);
         default:
           ModelState.AddModelError("GrantType", "Sorry, we can not find such grant type.");

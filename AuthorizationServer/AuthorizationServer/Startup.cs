@@ -127,7 +127,7 @@ namespace AuthorizationServer
       {
         //app.UseDeveloperExceptionPage();
         //app.UseDatabaseErrorPage();
-        //app.UseBrowserLink();
+        //app.UseBrowserUrl();
       }
 
       
