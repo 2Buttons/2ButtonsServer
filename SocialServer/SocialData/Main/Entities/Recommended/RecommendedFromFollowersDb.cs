@@ -10,7 +10,7 @@ namespace SocialData.Main.Entities.Recommended
     [Key]
     public int UserId { get; set; }
     public string Login { get; set; }
-    public string OriginalAvatarLink { get; set; }
+    public string OriginalAvatarUrl { get; set; }
     public DateTime BirthDate { get; set; }
     [Column("Sex")]
     public SexType SexType { get; set; }

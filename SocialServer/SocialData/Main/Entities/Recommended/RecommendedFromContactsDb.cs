@@ -11,7 +11,7 @@ namespace SocialData.Main.Entities.Recommended
     public int UserId { get; set; }
 
     public string Login { get; set; }
-    public string AvatarLink { get; set; }
+    public string AvatarUrl { get; set; }
     public DateTime BirthDate { get; set; }
 
     [Column("Sex")]

@@ -115,7 +115,7 @@ namespace SocialServer.Infrastructure
           Position = i,
           UserId = item.UserId,
           Login = item.Login,
-          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarLink, AvatarSizeType.Small),
+          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl, AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType
         });
@@ -139,7 +139,7 @@ namespace SocialServer.Infrastructure
           Position = 0,
           UserId = item.UserId,
           Login = item.Login,
-          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarLink,  AvatarSizeType.Small),
+          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl,  AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType,
           CommonFollowsTo = item.CommonFollowsTo
@@ -151,7 +151,7 @@ namespace SocialServer.Infrastructure
           Position = 0,
           UserId = item.UserId,
           Login = item.Login,
-          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarLink, AvatarSizeType.Small),
+          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl, AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType,
           CommonFollowsTo = item.CommonFollowsTo
