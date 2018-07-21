@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using CommonLibraries.MediaFolders.Configurations;
+using CommonTypes;
 
 namespace CommonLibraries.MediaFolders
 {

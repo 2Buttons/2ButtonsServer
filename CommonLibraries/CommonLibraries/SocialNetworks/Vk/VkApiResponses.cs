@@ -1,5 +1,6 @@
 ﻿using System;
 using CommonLibraries.Extensions;
+using CommonTypes;
 using Newtonsoft.Json;
 
 namespace CommonLibraries.SocialNetworks.Vk

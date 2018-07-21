@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using CommonTypes;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;

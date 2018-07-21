@@ -2,6 +2,7 @@
 using System.Globalization;
 using CommonLibraries.Extensions;
 using CommonLibraries.SocialNetworks.Vk;
+using CommonTypes;
 using Newtonsoft.Json;
 
 namespace CommonLibraries.SocialNetworks.Facebook
