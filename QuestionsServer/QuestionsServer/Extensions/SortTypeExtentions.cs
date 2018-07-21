@@ -14,7 +14,7 @@ namespace QuestionsServer.Extensions
       {
         case SortType.Raiting:
           return x => x.LikesCount-x.DislikesCount;
-        case SortType.AnswersAmount:
+        case SortType.AnswersCount:
           return x => x.FirstAnswersCount+x.SecondAnswersCount;
         case SortType.DateTime:
         default:
@@ -29,7 +29,7 @@ namespace QuestionsServer.Extensions
       switch (type)
       {
         case SortType.Raiting:
-        case SortType.AnswersAmount:
+        case SortType.AnswersCount:
           return typeof(int);
         case SortType.DateTime:
         default:

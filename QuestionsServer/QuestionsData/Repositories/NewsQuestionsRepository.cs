@@ -40,7 +40,7 @@ namespace QuestionsData.Repositories
         .Select(x => new NewsCommentedQuestionDto
         {
           NewsCommentedQuestionDb = x,
-          Priority = x.CommentsCount * x.AnsweredFollowTo * 2
+          Priority = x.CommentCount * x.AnsweredFollowTo * 2
         }).OrderBy(x => x.NewsCommentedQuestionDb.UserId).ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
@@ -67,12 +67,12 @@ namespace QuestionsData.Repositories
             Condition = t.Condition,
             FirstOption = t.FirstOption,
             SecondOption = t.SecondOption,
-            BackgroundImageUrl = t.BackgroundImageUrl,
+            OriginalBackgroundUrl = t.OriginalBackgroundUrl,
             QuestionType = t.QuestionType,
             QuestionAddDate = t.QuestionAddDate,
             UserId = t.UserId,
             Login = t.Login,
-            SmallAvatarUrl = t.SmallAvatarUrl,
+            OriginalAvatarUrl = t.OriginalAvatarUrl,
             LikesCount = t.LikesCount,
             DislikesCount = t.DislikesCount,
             YourFeedback = t.YourFeedback,

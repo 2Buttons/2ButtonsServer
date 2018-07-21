@@ -9,6 +9,6 @@ namespace QuestionsData.Queries.NewsQuestions
     public string CommentUserLogin { get; set; }
     [Column("commentUserSex")]
     public SexType CommentUserSexType { get; set; }
-    public int CommentsAmount { get; set; }
+    public int CommentCount { get; set; }
   }
 }

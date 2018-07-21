@@ -2,7 +2,7 @@
 
 namespace MediaServer.ViewModel
 {
-  public class UploadDefaultViaLinkViewModel
+  public class UploadDefaultViaUrlViewModel
   {
     [Required]
     public string Url { get; set; }

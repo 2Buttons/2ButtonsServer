@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using MediaServer.Infrastructure.Services;
 using MediaServer.ViewModel;
@@ -68,11 +69,11 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("upload/avatar/link")]
-    public IActionResult UploadUserAvatarViaLink([FromBody] UploadAvatarViaLinkViewModel avatar)
+    public IActionResult UploadUserAvatarViaUrl([FromBody] UploadAvatarViaUrlViewModel avatar)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (_mediaService.IsAlreadyDownloaded(avatar.Url))
-        return new OkResponseResult(new UrlViewModel {Url = new Uri(avatar.Url).LocalPath});
+        return new OkResponseResult(new UrlViewModel { Url = new Uri(MediaConverter.ToFullAvatarUrl(avatar.Url, AvatarSizeType.Original)).LocalPath });
       var url = _mediaService.UploadAvatar(avatar.Url, avatar.AvatarType).FirstOrDefault(x => x.Size == AvatarSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int) HttpStatusCode.NotModified)
@@ -80,12 +81,13 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("upload/background/link")]
-    public IActionResult UploadQuestionBackgroundViaLink([FromBody] UploadBackgroundViaLinkViewModel background)
+    public IActionResult UploadQuestionBackgroundViaUrl([FromBody] UploadBackgroundViaUrlViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       if (_mediaService.IsAlreadyDownloaded(background.Url))
-        return new OkResponseResult(new UrlViewModel {Url = new Uri(background.Url).LocalPath});
+        return new OkResponseResult(new UrlViewModel {Url = new Uri(MediaConverter.ToFullBackgroundurlUrl(background.Url, BackgroundSizeType.Original)).LocalPath});
+      
 
       var url = _mediaService.UploadBackground(background.Url, background.BackgroundType)
         .FirstOrDefault(x => x.Size == BackgroundSizeType.Original)?.Url;
@@ -117,14 +119,14 @@ namespace MediaServer.Controllers
     }
 
     [HttpPost("upload/default/link")]
-    public IActionResult UploadDefaultViaLink([FromBody] UploadDefaultViaLinkViewModel background)
+    public IActionResult UploadDefaultViaUrl([FromBody] UploadDefaultViaUrlViewModel @default)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (_mediaService.IsAlreadyDownloaded(background.Url))
-        return new OkResponseResult(new UrlViewModel { Url = new Uri(background.Url).LocalPath });
+      if (_mediaService.IsAlreadyDownloaded(@default.Url))
+        return new OkResponseResult(new UrlViewModel { Url = new Uri(MediaConverter.ToFullAvatarUrl(@default.Url, AvatarSizeType.Original)).LocalPath });
 
-      var url = _mediaService.UploadDefault(background.Url)
+      var url = _mediaService.UploadDefault(@default.Url)
         .FirstOrDefault(x => x.Size == DefaultSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int)HttpStatusCode.NotModified)

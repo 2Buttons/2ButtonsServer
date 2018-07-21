@@ -83,12 +83,12 @@ namespace QuestionsData.Repositories
             Condition = t.Condition,
             FirstOption = t.FirstOption,
             SecondOption = t.SecondOption,
-            BackgroundImageUrl = t.BackgroundImageUrl,
+            OriginalBackgroundUrl = t.OriginalBackgroundUrl,
             QuestionType = t.QuestionType,
             QuestionAddDate = t.QuestionAddDate,
             UserId = t.UserId,
             Login = t.Login,
-            SmallAvatarUrl = t.SmallAvatarUrl,
+            OriginalAvatarUrl = t.OriginalAvatarUrl,
             LikesCount = t.LikesCount,
             DislikesCount = t.DislikesCount,
             YourFeedback = t.YourFeedback,
@@ -107,7 +107,7 @@ namespace QuestionsData.Repositories
         if (question != null && question.Comments.All(x => x.CommentId != t.CommentId))
         {
           question.Comments
-            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentAddDate, DislikesAmount = t.CommentDislikes, LikesAmount = t.CommentLikes, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedback, Text = t.Text});
+            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentAddDate, DislikesCount = t.CommentDislikes, LikesCount = t.CommentLikes, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedback, Text = t.Text});
         }
       }
 
@@ -160,12 +160,12 @@ namespace QuestionsData.Repositories
             Condition = t.Condition,
             FirstOption = t.FirstOption,
             SecondOption = t.SecondOption,
-            BackgroundImageUrl = t.BackgroundImageUrl,
+            OriginalBackgroundUrl = t.OriginalBackgroundUrl,
             QuestionType = t.QuestionType,
             QuestionAddDate = t.QuestionAddDate,
             UserId = t.UserId,
             Login = t.Login,
-            SmallAvatarUrl = t.SmallAvatarUrl,
+            OriginalAvatarUrl = t.OriginalAvatarUrl,
             LikesCount = t.LikesCount,
             DislikesCount = t.DislikesCount,
             YourFeedback = t.YourFeedback,

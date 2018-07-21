@@ -10,8 +10,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
         public string Login { get; set; }
         public string SmallAvatarUrl { get; set; }
         public string Text { get; set; }
-        public int LikesAmount { get; set; }
-        public int DislikesAmount { get; set; }
+        public int LikesCount { get; set; }
+        public int DislikesCount { get; set; }
         public QuestionFeedbackType YourFeedbackType { get; set; }
         public int PreviousCommentId { get; set; }
         public DateTime AddDate { get; set; }

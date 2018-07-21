@@ -16,12 +16,12 @@ namespace QuestionsData.DTO
     public string Login { get; set; }
     public SexType SexType { get; set; }
     public string SmallAvatarUrl { get; set; }
-    public int LikesAmount { get; set; }
-    public int DislikesAmount { get; set; }
+    public int LikesCount { get; set; }
+    public int DislikesCount { get; set; }
     public FeedbackType YourFeedbackType { get; set; }
     public AnswerType YourAnswerType { get; set; }
     public bool IsInFavorites { get; set; }
     public bool IsSaved { get; set; }
-    public int CommentsAmount { get; set; }
+    public int CommentsCount { get; set; }
   }
 }

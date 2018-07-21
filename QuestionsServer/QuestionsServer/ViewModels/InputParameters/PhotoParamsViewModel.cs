@@ -4,7 +4,7 @@ namespace QuestionsServer.ViewModels.InputParameters
 {
     public class PhotoParamsViewModel
     {
-        public int PhotosAmount { get; set; } = 100;
+        public int PhotosCount { get; set; } = 100;
 
         public int MinAge { get; set; } = 0;
 

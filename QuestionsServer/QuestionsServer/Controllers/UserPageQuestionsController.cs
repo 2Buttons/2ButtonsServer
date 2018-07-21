@@ -47,7 +47,7 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos));
+        result.Add(question.MapToUserAskedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
 
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
@@ -69,7 +69,7 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos));
+        result.Add(question.MapToUserAnsweredQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAnswered);
@@ -91,7 +91,7 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos));
+        result.Add(question.MapToUserFavoriteQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserFavorite);
@@ -113,7 +113,7 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos));
+        result.Add(question.MapToUserCommentedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserCommented);
@@ -123,16 +123,16 @@ namespace QuestionsServer.Controllers
     private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
-      var photosAmount = 100;
+      var photosCount = 100;
       var minAge = 0;
       var maxAge = 100;
       var sex = 0;
       var city = string.Empty;
 
       //var tagsTask = _mainDb.Tags.GetTags(questionId);
-      //var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+      //var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
       //  minAge.WhenBorned(), sex, city);
-      //var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+      //var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
       //  minAge.WhenBorned(), sex, city);
 
       //Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
@@ -142,9 +142,9 @@ namespace QuestionsServer.Controllers
 
 
       tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
-      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
     }
   }

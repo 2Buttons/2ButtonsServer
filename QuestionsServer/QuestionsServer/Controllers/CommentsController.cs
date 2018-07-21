@@ -51,7 +51,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetComments([FromBody] GetCommentsViewModel commentsVm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.Amount);
+      var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.Count);
       await _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
       return new OkResponseResult(comments);
     }

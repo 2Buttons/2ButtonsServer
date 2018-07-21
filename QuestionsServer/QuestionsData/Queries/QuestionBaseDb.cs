@@ -13,7 +13,7 @@ namespace QuestionsData.Queries
     public string Condition { get; set; }
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }
-    public string BackgroundImageUrl { get; set; }
+    public string OriginalBackgroundUrl { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
     public int UserId { get; set; }

@@ -59,8 +59,8 @@ namespace QuestionsData.Repositories
         .ToList();
 
       var votersFriends =  friendIds.Join(questions, a=>a, b=>b.Item1.UserId, (a,b)=> b).ToList();//.Where(x=>x.Follow.(x => x.Item2.AnswerType).Select(x => new { Type = x.Key, Count = x.Count() }).ToListAsync();
-      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  SexType = x.Item1.SexType, SmallAvatarUrl = x.Item1.SmallAvatarUrl}).ToList();
-      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, SexType = x.Item1.SexType, SmallAvatarUrl = x.Item1.SmallAvatarUrl }).ToList();
+      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  SexType = x.Item1.SexType, OriginalAvatarUrl = x.Item1.OriginalAvatarUrl }).ToList();
+      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, SexType = x.Item1.SexType, OriginalAvatarUrl = x.Item1.OriginalAvatarUrl }).ToList();
       //var countFirstAnswerType = voters.Count(x => x.Item2.AnswerType == AnswerType.First);
       //var countSecondAnswerType = voters.Count - countFirstAnswerType;
 
@@ -83,7 +83,7 @@ namespace QuestionsData.Repositories
 
     public async Task<List<string>> GetCustomQuestionBackgrounds(int userId)
     {
-      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.BackgroundImageUrl).Distinct().ToListAsync();
+      return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.OriginalBackgroundUrl).Distinct().ToListAsync();
     }
 
     public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(int userId, int questionId, int minAge, int maxAge,
@@ -119,8 +119,8 @@ namespace QuestionsData.Repositories
           City = voter.s.Name,
           Login = voter.f.Item1.Login,
           SexType = voter.f.Item1.SexType,
-          
-          SmallAvatarUrl = voter.f.Item1.SmallAvatarUrl
+
+          OriginalAvatarUrl = voter.f.Item1.OriginalAvatarUrl
         };
 
         switch (voter.f.Item2.AnswerType)

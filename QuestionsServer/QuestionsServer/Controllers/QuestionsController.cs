@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -27,6 +28,7 @@ namespace QuestionsServer.Controllers
     private readonly ConnectionsHub _hub;
     private readonly ILogger<QuestionsController> _logger;
     private readonly QuestionsUnitOfWork _mainDb;
+    private static Random _random = new Random();
 
     public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger, ConnectionsHub hub)
     {
@@ -41,34 +43,19 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Questions Server");
     }
 
-    [Authorize]
-    [HttpPost("{questionId:int}")]
-    public async Task<IActionResult> GetQuestion(int qiestionId)
-    {
-      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-
-      var question = await _mainDb.Questions.FindQuestion(userId, qiestionId);
-
-      GetTagsAndPhotos(userId, qiestionId, out var tags, out var firstPhotos, out var secondPhotos, out var comments);
-
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
-
-      return new OkResponseResult(result);
-    }
 
     [HttpPost("get")]
-    public async Task<IActionResult> GetQuestion([FromBody] QuestionIdViewModel inputQuestion)
+    public async Task<IActionResult> GetQuestion([FromBody] GetQuestion getQuestion)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var question = await _mainDb.Questions.FindQuestion(inputQuestion.UserId, inputQuestion.QuestionId);
+      var question = await _mainDb.Questions.FindQuestion(getQuestion.UserId, getQuestion.QuestionId);
 
-      GetTagsAndPhotos(inputQuestion.UserId, inputQuestion.QuestionId, out var tags, out var firstPhotos,
+      GetTagsAndPhotos(getQuestion.UserId, getQuestion.QuestionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
 
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
-      await _hub.Monitoring.UpdateUrlMonitoring(inputQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments, getQuestion.BackgroundSizeType);
+      await _hub.Monitoring.UpdateUrlMonitoring(getQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
       return new OkResponseResult(result);
     }
 
@@ -95,9 +82,9 @@ namespace QuestionsServer.Controllers
     }
 
     [HttpPost("get/backgrounds/standard")]
-    public async Task<IActionResult> GetStandardQuestionBackgrounds()
+    public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetStandardBackgroundUrlsViewModel vm)
     {
-      var result = await _hub.Media.GetStandardBackgroundsUrl();
+      var result = await _hub.Media.GetStandardBackgroundsUrl(vm.BackgroundSizeType);
       return new OkResponseResult("Standard backgrounds", result);
     }
 
@@ -123,7 +110,7 @@ namespace QuestionsServer.Controllers
       GetTagsAndPhotos(getQuestionByCommentId.UserId, questionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
 
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments);
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments, getQuestionByCommentId.BackgroundSizeType);
 
       return new OkResponseResult(result);
     }
@@ -131,19 +118,19 @@ namespace QuestionsServer.Controllers
     private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos, out IEnumerable<CommentDb> comments)
     {
-      var photosAmount = 100;
-      var commentsAmount = 500;
+      var photosCount = 100;
+      var commentsCount = 500;
       var minAge = 0;
       var maxAge = 100;
       var sex = 0;
       var city = string.Empty;
 
       tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
-      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosAmount, maxAge.WhenBorned(),
+      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosAmount, maxAge.WhenBorned(),
+      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      comments = _mainDb.Comments.GetComments(userId, questionId, commentsAmount).GetAwaiter().GetResult();
+      comments = _mainDb.Comments.GetComments(userId, questionId, commentsCount).GetAwaiter().GetResult();
     }
 
     [HttpPost("add")]
@@ -151,15 +138,24 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var backgroundUrl = _hub.Media.StandardBackground();
-      if (!question.BackgroundImageUrl.IsNullOrEmpty())
-      {
-        var externalUrl = await _hub.Media.UploadBackgroundUrl(question.BackgroundImageUrl);
+      string externalUrl;
 
-        if (!externalUrl.IsNullOrEmpty()) backgroundUrl = externalUrl;
+      if (!question.BackgroundUrl.IsNullOrEmpty())
+      {
+
+        if (MediaConverter.IsStandardBackground(question.BackgroundUrl))
+          externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Standard, question.BackgroundUrl);
+        else externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Custom, question.BackgroundUrl);
+
+      }
+      else
+      {
+        var urls = await _hub.Media.GetStandardBackgroundsUrl(BackgroundSizeType.Original);
+
+        externalUrl = urls[_random.Next(urls.Count)];
       }
 
-      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, backgroundUrl,
+      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
         question.IsAnonymity ? 1 : 0, question.AudienceType, question.QuestionType, question.FirstOption,
         question.SecondOption);
 
@@ -179,7 +175,7 @@ namespace QuestionsServer.Controllers
       {
         if (!await _mainDb.UserQuestions.AddRecommendedQuestion(id, question.UserId,
               questionId))
-          _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id,
+          await _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id,
             questionId, DateTime.UtcNow);
         else notFoundIds.Add(id);
       }
@@ -226,8 +222,8 @@ namespace QuestionsServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       if (await _mainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites))
-        return new OkResponseResult((object) "Question's favourites was updated.");
-      return new ResponseResult((int) HttpStatusCode.NotModified, "Question's favourites was not updated.");
+        return new OkResponseResult((object) "Question's favorites was updated.");
+      return new ResponseResult((int) HttpStatusCode.NotModified, "Question's favorites was not updated.");
     }
 
     [HttpPost("update/answer")]
@@ -275,10 +271,14 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var url = await _hub.Media.UploadBackgroundUrl(background.Url);
+      string url;
+      if(MediaConverter.IsStandardBackground(background.Url))
+       url = await _hub.Media.UploadBackgroundUrl( BackgroundType.Standard, background.Url);
+      else
+        url = await _hub.Media.UploadBackgroundUrl( BackgroundType.Custom, background.Url);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url))
         return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
-      return new OkResponseResult("Background was updated", new {Url = url});
+      return new OkResponseResult("Background was updated", new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType)});
     }
 
     [HttpPost("update/background/file")]
@@ -286,10 +286,10 @@ namespace QuestionsServer.Controllers
       [FromBody] UploadQuestionBackgroundViaFileViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      var url = await _hub.Media.UploadBackgroundFile(background.File);
+      var url = await _hub.Media.UploadBackgroundFile(BackgroundType.Custom, background.File);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url))
         return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
-      return new OkResponseResult("Background was updated", new {Url = url});
+      return new OkResponseResult("Background was updated", new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType) });
     }
 
     [HttpPost("voters")]

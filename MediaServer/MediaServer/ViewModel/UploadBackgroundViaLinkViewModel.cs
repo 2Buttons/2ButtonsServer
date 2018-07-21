@@ -4,7 +4,7 @@ using CommonLibraries.Validation;
 
 namespace MediaServer.ViewModel
 {
-  public class UploadBackgroundViaLinkViewModel
+  public class UploadBackgroundViaUrlViewModel
   {
     public BackgroundType BackgroundType { get; set; } = BackgroundType.Custom;
     [Required]

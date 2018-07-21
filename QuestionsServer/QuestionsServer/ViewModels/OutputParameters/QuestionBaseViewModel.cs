@@ -10,17 +10,17 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public int QuestionId { get; set; }
     public string Condition { get; set; }
     public List<Option> Options { get; set; }
-    public string BackgroundImageUrl { get; set; }
+    public string BackgroundUrl { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
     public AuthorViewModel Author { get; set; }
-    public int LikesAmount { get; set; }
-    public int DislikesAmount { get; set; }
+    public int LikesCount { get; set; }
+    public int DislikesCount { get; set; }
     public FeedbackType YourFeedbackType { get; set; }
     public AnswerType YourAnswerType { get; set; }
     public bool IsInFavorites { get; set; }
     public bool IsSaved { get; set; }
-    public int CommentsAmount { get; set; }
+    public int CommentsCount { get; set; }
 
     public List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
 

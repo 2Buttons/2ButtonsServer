@@ -17,11 +17,16 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public string FirstOption { get; set; }
     [Required]
     public string SecondOption { get; set; }
-    public string BackgroundImageUrl { get; set; } = null;
+    public string BackgroundUrl { get; set; } = null;
 
     public List<string> Tags { get; set; } = new List<string>();
 
     public List<int> RecommendedToIds { get; set; } = new List<int>();
+  }
+
+  public class GetStandardBackgroundUrlsViewModel
+  {
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
   }
 
   public class GetQuestionFilteredStatistics : QuestionIdViewModel
@@ -48,19 +53,29 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     [Required]
     [IdValidation(nameof(CommentId))]
     public int CommentId { get; set; }
+
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
   }
 
   public class UploadQuestionBackgroundViaUrlViewModel : QuestionIdViewModel
   {
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
     [Required]
     public string Url { get; set; }
   }
 
   public class UploadQuestionBackgroundViaFileViewModel : QuestionIdViewModel
   {
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
     [Required]
     public IFormFile File { get; set; }
   }
+
+  public class GetQuestion : QuestionIdViewModel
+  {
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
+  }
+
 
 
   public class UpdateQuestionFavoriteViewModel : QuestionIdViewModel
