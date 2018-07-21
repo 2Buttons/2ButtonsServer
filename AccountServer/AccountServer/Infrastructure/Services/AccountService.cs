@@ -16,6 +16,7 @@ using System.Linq;
 using System.Security.Claims;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
+using CommonLibraries.MediaFolders;
 
 namespace AccountServer.Infrastructure.Services
 {
@@ -72,8 +73,8 @@ namespace AccountServer.Infrastructure.Services
         SexType = user.SexType == SexType.Both ? oldUser.SexType : user.SexType,
         City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
         Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description,
-        LargeAvatarLink = user.LargeAvatarLink.IsNullOrEmpty() ? oldUser.LargeAvatarLink : user.LargeAvatarLink,
-        SmallAvatarLink = user.SmallAvatarLink.IsNullOrEmpty() ? oldUser.SmallAvatarLink : user.SmallAvatarLink
+        LargeAvatarLink = user.LargeAvatarLink.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarLink, AvatarSizeType.Large) : user.LargeAvatarLink,
+        SmallAvatarLink = user.SmallAvatarLink.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarLink, AvatarSizeType.Small) : user.SmallAvatarLink
       };
 
       return await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
@@ -111,13 +112,9 @@ namespace AccountServer.Infrastructure.Services
 
       var userInfo = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
 
-      if (userInfo.SmallAvatarLink.IsNullOrEmpty() || userInfo.SmallAvatarLink.ToLower().Contains("/st") && !user.SmallPhotoUrl.IsNullOrEmpty())
+      if (userInfo.OriginalAvatarLink.IsNullOrEmpty() || MediaConverter.IsStandardBackground(userInfo.OriginalAvatarLink) && !user.OriginalPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.SmallAvatarLink = await (_hub.Media.UploadAvatarUrl(AvatarSizeType.Small, user.SmallPhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.Small);
-      }
-      if (userInfo.LargeAvatarLink.IsNullOrEmpty() || userInfo.LargeAvatarLink.ToLower().Contains("/st") && !user.LargePhotoUrl.IsNullOrEmpty())
-      {
-        userInfo.LargeAvatarLink = (await _hub.Media.UploadAvatarUrl(AvatarSizeType.Large, user.LargePhotoUrl)) ?? _hub.Media.StandardAvatar(AvatarSizeType.Large);
+        userInfo.OriginalAvatarLink = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
       }
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
@@ -128,8 +125,8 @@ namespace AccountServer.Infrastructure.Services
         SexType = userInfo.SexType,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargeAvatarLink = userInfo.LargeAvatarLink,
-        SmallAvatarLink = userInfo.SmallAvatarLink,
+        LargeAvatarLink = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarLink, AvatarSizeType.Large),
+        SmallAvatarLink = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarLink, AvatarSizeType.Small)
       };
 
       try
@@ -143,16 +140,22 @@ namespace AccountServer.Infrastructure.Services
       return true;
     }
 
+
+    private async Task<string> UploadAvatarUrlOrGetStandard(string avatarUrl)
+    {
+      return await _hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
+    }
+
     public async Task<(bool isUpdated, string url)> UpdateAvatarViaLink(int userId, AvatarSizeType avatarSize, string newAvatarUrl)
     {
-      var url = await _hub.Media.UploadAvatarUrl(avatarSize, newAvatarUrl);
+      var url = await _hub.Media.UploadAvatarUrl( AvatarType.Custom, newAvatarUrl);
       if (url.IsNullOrEmpty()) return (false, null);
       return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
     }
 
     public async Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarSizeType avatarSize, IFormFile file)
     {
-      var url = await _hub.Media.UploadAvatarFile(avatarSize, file);
+      var url = await _hub.Media.UploadAvatarFile(AvatarType.Custom, file);
       if (url.IsNullOrEmpty()) return (false, null);
       return (await _db.UsersInfo.UpdateUserLargeAvatar(userId, url), url);
     }

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BodyConfirmEmail" xml:space="preserve">
-    <value>Bitte bestätigen Sie die Registrierung, indem Sie auf die Links klicken</value>
+    <value>Bitte bestätigen Sie die Registrierung, indem Sie auf die Urls klicken</value>
   </data>
   <data name="BodyEmailConfirmed" xml:space="preserve">
-    <value>Ihre Mail wurde erfolgreich bestätigt. Sie können die Site weiterhin über den Link verwenden</value>
+    <value>Ihre Mail wurde erfolgreich bestätigt. Sie können die Site weiterhin über den Url verwenden</value>
   </data>
   <data name="BodyForgotPassword" xml:space="preserve">
-    <value>Bitte klicken Sie auf den Link, um Ihr Passwort zurückzusetzen</value>
+    <value>Bitte klicken Sie auf den Url, um Ihr Passwort zurückzusetzen</value>
   </data>
   <data name="BodyResetPassword" xml:space="preserve">
-    <value>Ihr Passwort wurde erfolgreich geändert. Wenn Sie dies nicht getan haben, folgen Sie dem Link</value>
+    <value>Ihr Passwort wurde erfolgreich geändert. Wenn Sie dies nicht getan haben, folgen Sie dem Url</value>
   </data>
-  <data name="ConfirmEmailLink" xml:space="preserve">
+  <data name="ConfirmEmailUrl" xml:space="preserve">
     <value>E-Mail bestätigen</value>
   </data>
-  <data name="ForgotPasswordLink" xml:space="preserve">
+  <data name="ForgotPasswordUrl" xml:space="preserve">
     <value>Passwort zurücksetzen</value>
   </data>
-  <data name="IfLinkDoesNotWork" xml:space="preserve">
-    <value>Wenn der Link nicht geöffnet wird, folgen Sie bitte diesem Link</value>
+  <data name="IfUrlDoesNotWork" xml:space="preserve">
+    <value>Wenn der Url nicht geöffnet wird, folgen Sie bitte diesem Url</value>
   </data>
-  <data name="ResetPasswordLink" xml:space="preserve">
+  <data name="ResetPasswordUrl" xml:space="preserve">
     <value>Passwortänderung rückgängig machen</value>
   </data>
   <data name="SubjectConfirmEmail" xml:space="preserve">

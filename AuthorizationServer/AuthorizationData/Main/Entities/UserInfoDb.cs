@@ -15,8 +15,8 @@ namespace AuthorizationData.Main.Entities
     public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-    [Column("FullAvatarLink")]
-    public string LargeAvatarLink { get; set; }
-    public string SmallAvatarLink { get; set; }
+    [Column("fullAvatarLink")]
+    public string OriginaltAvatarLink { get; set; }
+   // public string SmallAvatarLink { get; set; }
   }
 }

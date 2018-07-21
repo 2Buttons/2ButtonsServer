@@ -108,13 +108,18 @@ namespace AuthorizationServer.Infrastructure.Services
     {
       if (!await AddUserSocialAsync(userId, socialType, socialUserData)) return false;
       var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId);
-      if (userInfo.LargeAvatarLink.IsNullOrEmpty() ||  MediaConverter.IsStandardBackground(userInfo.LargeAvatarLink) && !socialUserData.OriginalPhotoUrl.IsNullOrEmpty())
+      if (userInfo.OriginaltAvatarLink.IsNullOrEmpty() ||  MediaConverter.IsStandardBackground(userInfo.OriginaltAvatarLink) && !socialUserData.OriginalPhotoUrl.IsNullOrEmpty())
       {
-        userInfo.LargeAvatarLink = await _hub.Media.UploadAvatarUrl(AvatarType.Custom, socialUserData.OriginalPhotoUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
+        userInfo.OriginaltAvatarLink = await UploadAvatarUrlOrGetStandard(socialUserData.OriginalPhotoUrl);
       }
 
       await _db.UsersInfo.UpdateUserInfoAsync(userInfo);
       return true;
+    }
+
+    private async Task<string> UploadAvatarUrlOrGetStandard(string avatarUrl)
+    {
+      return await _hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
     }
 
     private async Task<UserDto> RegisterViaExternalSocial(NormalizedSocialUserData user, SocialType socialType)
@@ -125,23 +130,10 @@ namespace AuthorizationServer.Infrastructure.Services
       var isAdded = await _db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
-      var fullLink = _hub.Media.StandardAvatar(AvatarSizeType.Large);
-      if (!user.LargePhotoUrl.IsNullOrEmpty())
-      {
-        var url = await _hub.Media.UploadAvatarUrl(AvatarSizeType.Large, user.LargePhotoUrl);
-        if (!url.IsNullOrEmpty())
-          fullLink = url;
-      }
+      var fullLink = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
 
-      var smallLink = _hub.Media.StandardAvatar(AvatarSizeType.Small);
-      if (!user.SmallPhotoUrl.IsNullOrEmpty())
-      {
-        var url = await _hub.Media.UploadAvatarUrl(AvatarSizeType.Small, user.SmallPhotoUrl);
-        if (!url.IsNullOrEmpty())
-          smallLink = url;
-      }
-     // = !user.LargePhotoUrl.IsNullOrEmpty() ? (await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl)).IsNullOrEmpty() :  MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
-     // var smallLink = !user.SmallPhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) :  MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
+      // = !user.LargePhotoUrl.IsNullOrEmpty() ? (await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.LargeAvatar, user.LargePhotoUrl)).IsNullOrEmpty() :  MediaServerHelper.StandardAvatar(AvatarSizeType.LargeAvatar);
+      // var smallLink = !user.SmallPhotoUrl.IsNullOrEmpty() ? await MediaServerHelper.UploadAvatarUrl(AvatarSizeType.SmallAvatar, user.SmallPhotoUrl) :  MediaServerHelper.StandardAvatar(AvatarSizeType.SmallAvatar);
 
       var userInfo = new UserInfoDb
       {
@@ -150,8 +142,7 @@ namespace AuthorizationServer.Infrastructure.Services
         BirthDate = user.BirthDate,
         SexType = user.SexType,
         City = user.City,
-        LargeAvatarLink = fullLink,
-        SmallAvatarLink = smallLink
+        OriginaltAvatarLink = fullLink
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))

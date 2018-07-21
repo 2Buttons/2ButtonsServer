@@ -19,8 +19,7 @@ namespace AccountServer.ViewModels
         SexType =  dbEntity.SexType,
         City = dbEntity.City,
         Description = dbEntity.Description,
-        LargeAvatarLink = dbEntity.LargeAvatarLink,
-        SmallAvatarLink = dbEntity.SmallAvatarLink,
+        LargeAvatarLink = dbEntity.OriginalAvatarLink,
         IsYouFollowed = dbEntity.YouFollowed,
         IsHeFollowed = dbEntity.HeFollowed,
 

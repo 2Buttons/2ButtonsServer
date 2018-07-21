@@ -129,16 +129,16 @@
   <data name="BodyResetPassword" xml:space="preserve">
     <value>Ваш пароль был успешно изменён. Если вы этого не делали перейдите по ссылке</value>
   </data>
-  <data name="ConfirmEmailLink" xml:space="preserve">
+  <data name="ConfirmEmailUrl" xml:space="preserve">
     <value>Подтвердить пароль</value>
   </data>
-  <data name="ForgotPasswordLink" xml:space="preserve">
+  <data name="ForgotPasswordUrl" xml:space="preserve">
     <value>Сбросить пароль</value>
   </data>
-  <data name="IfLinkDoesNotWork" xml:space="preserve">
+  <data name="IfUrlDoesNotWork" xml:space="preserve">
     <value>Если ссылка не открывается, перейдите по данной ссылки</value>
   </data>
-  <data name="ResetPasswordLink" xml:space="preserve">
+  <data name="ResetPasswordUrl" xml:space="preserve">
     <value>Отменить изменение пароля</value>
   </data>
   <data name="SubjectConfirmEmail" xml:space="preserve">

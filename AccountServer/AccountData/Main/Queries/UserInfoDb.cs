@@ -17,8 +17,8 @@ namespace AccountData.Main.Queries
     public string Description { get; set; }
 
     [Column("fullAvatarLink")]
-    public string LargeAvatarLink { get; set; }
-    public string SmallAvatarLink { get; set; }
+    public string OriginalAvatarLink { get; set; }
+    //public string SmallAvatarLink { get; set; }
     public bool YouFollowed { get; set; }
     public bool HeFollowed { get; set; }
 
