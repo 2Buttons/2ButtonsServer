@@ -1,5 +1,4 @@
-﻿using AccountData.Main.Entities;
-using AccountData.Main.Queries;
+﻿using AccountData.Main.Queries;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;

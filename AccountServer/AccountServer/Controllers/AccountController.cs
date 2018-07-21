@@ -1,20 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AccountData;
 using AccountData.DTO;
 using AccountServer.Infrastructure.Services;
-using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
-using AccountServer.ViewModels.OutputParameters.User;
-using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AccountServer.Controllers
 {
@@ -42,9 +36,9 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
 
-      var result = await _account.GetCityAndBirthdate(userPage.UserId);
+      var (city, birthdate) = await _account.GetCityAndBirthdate(userPage.UserId);
 
-      return new OkResponseResult(new {UserId = userPage.UserId, City = result.city, BirthDate = result.birthdate});
+      return new OkResponseResult(new { UserId = userPage.UserId, City = city, BirthDate = birthdate });
     }
 
 
@@ -73,11 +67,19 @@ namespace AccountServer.Controllers
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> GetUserInfoAuth([FromBody] UpdateUserInfoDto user)
+    public async Task<IActionResult> GetUserInfoAuth([FromBody] UpdateUserInfoViewModel user)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
-      if (await _account.UpdateUserInfoAsync(user))
+      if (await _account.UpdateUserInfoAsync(new UpdateUserInfoDto
+      {
+        BirthDate = user.BirthDate,
+        City = user.City,
+        Description = user.Description,
+        Login = user.Login,
+        SexType = user.SexType,
+        UserId = user.UserId
+      }))
         return new OkResponseResult();
       return new ResponseResult((int)HttpStatusCode.NotModified);
     }

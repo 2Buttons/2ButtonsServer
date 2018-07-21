@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using AuthorizationData.Account;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
-using AuthorizationData.Main;
-using AuthorizationData.Main.Entities;
-
-using CommonTypes;
+using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthorizationData.Account.Repostirories

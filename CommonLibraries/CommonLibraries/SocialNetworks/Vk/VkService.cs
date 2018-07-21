@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CommonLibraries.Extensions;
-using CommonLibraries.Response;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 

@@ -12,7 +12,6 @@ using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
-using CommonTypes;
 
 namespace AuthorizationServer.Infrastructure.Services
 {

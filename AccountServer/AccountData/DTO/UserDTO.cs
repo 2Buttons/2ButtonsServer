@@ -2,7 +2,7 @@
 
 namespace AccountData.DTO
 {
-    public class UserDto
+  public class UserDto
     {
       public int UserId { get; set; }
       public int AccessFailedCount { get; set; }

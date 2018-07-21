@@ -13,10 +13,8 @@ using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
-using CommonLibraries.EmailManager;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
-using CommonTypes;
 using Microsoft.Extensions.Localization;
 
 namespace AuthorizationServer.Infrastructure.Services

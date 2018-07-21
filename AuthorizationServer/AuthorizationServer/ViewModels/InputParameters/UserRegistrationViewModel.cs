@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
-using CommonTypes;
 
 namespace AuthorizationServer.ViewModels.InputParameters
 {
@@ -13,7 +12,7 @@ namespace AuthorizationServer.ViewModels.InputParameters
     [Required]
     public string Password { get; set; }
 
-    [Compare("Password", ErrorMessage = "Пароли не совпадают")]
+    [Compare("Password", ErrorMessage = "Passwords are not similar.")]
     public string ConfirmPassword { get; set; }
 
     [Required]

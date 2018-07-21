@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AuthorizationServer.Models;
 using CommonLibraries;
 using CommonLibraries.Extensions;
-using CommonTypes;
 using Microsoft.Extensions.Options;
 
 namespace AuthorizationServer.Infrastructure.Jwt

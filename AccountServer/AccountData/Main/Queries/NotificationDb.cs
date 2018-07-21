@@ -4,7 +4,7 @@ using CommonLibraries;
 
 namespace AccountData.Main.Queries
 {
-    public class NotificationDb
+  public class NotificationDb
     {
         [Key]
         public int UserId { get; set; }

@@ -6,7 +6,6 @@ using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.Response;
-using CommonTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

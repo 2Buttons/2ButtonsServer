@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using AccountData.Account.Entities;
 using AccountData.DTO;
 using CommonLibraries;
-using CommonLibraries.Exceptions.ApiExceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Account.Repostirories
@@ -60,17 +57,16 @@ namespace AccountData.Account.Repostirories
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<UserDto> FindUserByEmail(string email)
+    public async Task<UserDto> GetUserByEmail(string email)
     {
-      var user = await _context.UsersDb.AsNoTracking()
-        .FirstOrDefaultAsync(x => x.Email == email) ?? throw new NotFoundException("User not found");
-      return user.ToUserDto();
+      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
+      return user?.ToUserDto();
     }
 
-    public async Task<UserDto> FindUserByUserId(int userId)
+    public async Task<UserDto> GetUserByUserId(int userId)
     {
-      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId) ?? throw new NotFoundException("User not found");
-      return user.ToUserDto();
+      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+      return user?.ToUserDto();
     }
 
 

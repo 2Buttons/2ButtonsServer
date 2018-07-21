@@ -1,21 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Security.Claims;
+﻿using System.Net;
 using System.Threading.Tasks;
-using AccountData;
-using AccountData.DTO;
 using AccountData.Main.Entities;
 using AccountServer.Infrastructure.Services;
-using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
-using AccountServer.ViewModels.OutputParameters.User;
-using CommonLibraries;
-using CommonLibraries.Extensions;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AccountServer.Controllers
 {

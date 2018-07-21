@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AccountData.DTO;
 using AccountData.Main.Entities;
 using AccountData.Main.Queries;
-using CommonLibraries.Exceptions.ApiExceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Main.Repositories
@@ -17,19 +16,32 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
-    public async Task<UserInfoDb> FindUserInfoAsync(int userId, int userPageId)
+    public async Task<UserInfoDb> GetUserInfoAsync(int userId, int userPageId)
     {
-
       var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
-        .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
-
+        .FirstOrDefaultAsync();
+      if (user == null) return null;
       if (userId != userPageId && user.YouFollowed) await UpdateVisitsAsync(userId, userPageId);
       return user;
     }
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.LargeAvatarUrl}, {user.SmallAvatarUrl}") > 0;
+      var isExist = _db.CityEntities.Any(x => x.Name == user.City);
+      if (isExist) return true;
+      _db.CityEntities.Add(new CityEntity {Name = user.City, People = 1});
+      await _db.SaveChangesAsync();
+
+      var oldUserData = await _db.UserInfoDb.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+
+      oldUserData.Login = user.Login;
+      oldUserData.BirthDate = user.BirthDate;
+      oldUserData.SexType = user.SexType;
+      oldUserData.Description = user.Description;
+      oldUserData.OriginalAvatarUrl = user.OriginalAvatarUrl;
+      oldUserData.City = user.City;
+
+      return await _db.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> UpdateUserLargeAvatar(int userId, string fullAvatarUrl)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AccountData.Main.Entities;
 using AccountData.Main.Queries;
 using Microsoft.EntityFrameworkCore;
 

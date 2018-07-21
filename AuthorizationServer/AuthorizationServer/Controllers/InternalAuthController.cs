@@ -1,24 +1,12 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Net;
 using System.Threading.Tasks;
-using AuthorizationData;
-using AuthorizationData.Account.DTO;
-using AuthorizationData.Account.Entities;
-using AuthorizationData.Main.Entities;
 using AuthorizationServer.Infrastructure.Services;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
-using CommonTypes;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserRegistrationViewModel = AuthorizationServer.ViewModels.InputParameters.UserRegistrationViewModel;
 

@@ -6,14 +6,13 @@ using AccountData.Account.Entities;
 using AccountData.DTO;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.OutputParameters.User;
-using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
-using System.Security.Claims;
+using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.MediaFolders;
@@ -37,13 +36,13 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId)
     {
-      var userInfoTask = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
+      var userInfoTask = await _db.UsersInfo.GetUserInfoAsync(userId, userId)?? throw new NotFoundException("User not found");
       return (userInfoTask.City, userInfoTask.BirthDate);
     }
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
     {
-      var userInfoTask = _db.UsersInfo.FindUserInfoAsync(userId, userPageId);
+      var userInfoTask = _db.UsersInfo.GetUserInfoAsync(userId, userPageId) ?? throw new NotFoundException("User not found");
       var userStatisticsTask = _db.UsersInfo.GetUserStatisticsAsync(userPageId);
       var userContactsTask = _db.Users.GetUserSocialsAsync(userPageId);
 
@@ -62,7 +61,7 @@ namespace AccountServer.Infrastructure.Services
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
-      var oldUser = await _db.UsersInfo.FindUserInfoAsync(user.UserId, user.UserId);
+      var oldUser = await _db.UsersInfo.GetUserInfoAsync(user.UserId, user.UserId) ?? throw new NotFoundException("User not found");
       if (oldUser == null) throw new NotFoundException("This user does not exist");
 
       var updateUser = new UpdateUserInfoDto()
@@ -72,9 +71,8 @@ namespace AccountServer.Infrastructure.Services
         BirthDate = user.BirthDate.Year<1900 ? oldUser.BirthDate : user.BirthDate,
         SexType = user.SexType == SexType.Both ? oldUser.SexType : user.SexType,
         City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
-        Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description,
-        LargeAvatarUrl = user.LargeAvatarUrl.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarUrl, AvatarSizeType.Large) : user.LargeAvatarUrl,
-        SmallAvatarUrl = user.SmallAvatarUrl.IsNullOrEmpty() ? MediaConverter.ToFullAvatarUrl(oldUser.OriginalAvatarUrl, AvatarSizeType.Small) : user.SmallAvatarUrl
+         OriginalAvatarUrl = user.OriginalAvatarUrl,
+        Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description
       };
 
       return await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
@@ -110,12 +108,15 @@ namespace AccountServer.Infrastructure.Services
 
       if (!await _db.Users.AddUserSocialAsync(social)) return false;
 
-      var userInfo = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
+      var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId, userId) ?? throw new NotFoundException("User not found");
 
       if (userInfo.OriginalAvatarUrl.IsNullOrEmpty() || MediaConverter.IsStandardBackground(userInfo.OriginalAvatarUrl) && !user.OriginalPhotoUrl.IsNullOrEmpty())
       {
         userInfo.OriginalAvatarUrl = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
       }
+
+
+     
 
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
       {
@@ -125,8 +126,6 @@ namespace AccountServer.Infrastructure.Services
         SexType = userInfo.SexType,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small)
       };
 
       try

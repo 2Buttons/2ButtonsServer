@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CommonLibraries.EmailManager
+﻿namespace CommonLibraries.EmailManager
 {
   public class EmailOptions
   {

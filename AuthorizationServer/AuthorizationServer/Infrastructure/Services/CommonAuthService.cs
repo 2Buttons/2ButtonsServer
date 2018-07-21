@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthorizationData;
@@ -11,12 +9,7 @@ using AuthorizationData.Account.Entities;
 using AuthorizationData.Main.Entities;
 using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Models;
-using AuthorizationServer.ViewModels.InputParameters;
-using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
-using CommonLibraries.Extensions;
-using CommonLibraries.Response;
-using CommonTypes;
 
 namespace AuthorizationServer.Infrastructure.Services
 {

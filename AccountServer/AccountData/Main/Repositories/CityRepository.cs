@@ -21,6 +21,7 @@ namespace AccountData.Main.Repositories
       return await _db.SaveChangesAsync() > 0;
     }
 
+  
     public async Task<CityEntity> FindCity(int cityId)
     {
       return await _db.CityEntities.FirstOrDefaultAsync(x=>x.CityId == cityId);

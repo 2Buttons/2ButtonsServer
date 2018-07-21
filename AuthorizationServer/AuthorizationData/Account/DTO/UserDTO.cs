@@ -1,8 +1,8 @@
-﻿using CommonTypes;
+﻿using CommonLibraries;
 
 namespace AuthorizationData.Account.DTO
 {
-    public class UserDto
+  public class UserDto
     {
       public int UserId { get; set; }
       public int AccessFailedCount { get; set; }

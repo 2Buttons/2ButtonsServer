@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AuthorizationServer.Models;
 using CommonLibraries;
-using CommonTypes;
 
 namespace AuthorizationServer.Infrastructure.Jwt
 {

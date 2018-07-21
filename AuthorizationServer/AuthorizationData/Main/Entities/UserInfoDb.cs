@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonTypes;
+using CommonLibraries;
 
 namespace AuthorizationData.Main.Entities
 {
