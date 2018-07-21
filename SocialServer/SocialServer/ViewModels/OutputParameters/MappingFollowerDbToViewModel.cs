@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using SocialData.Main.Entities.Followers;
 
 namespace SocialServer.ViewModels.OutputParameters
@@ -13,7 +14,7 @@ namespace SocialServer.ViewModels.OutputParameters
         {
           UserId = f.UserId,
           Login = f.Login,
-          SmallAvatarLink = f.SmallAvatarLink,
+          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarLink, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
           IsYouFollowed = f.YouFollowed,
@@ -28,7 +29,7 @@ namespace SocialServer.ViewModels.OutputParameters
         {
           UserId = f.UserId,
           Login = f.Login,
-          SmallAvatarLink = f.SmallAvatarLink,
+          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarLink, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
           VisitsAmount = f.Visits,

@@ -62,7 +62,7 @@ namespace SocialServer.Controllers
       if (!await _socialDb.Followers.AddFollow(vm.UserId, vm.FollowToId))
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not connect you to this user.",
           new {IsFollowed = false});
-      _hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowToId, DateTime.UtcNow);
+      await _hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowToId, DateTime.UtcNow);
       return new OkResponseResult("Now you follow", new {IsFollowed = true});
     }
 

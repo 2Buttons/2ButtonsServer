@@ -9,6 +9,6 @@ namespace SocialData.Main.Entities
 
     public bool Followed { get; set; }
     public string Login { get; set; }
-    public string SmallAvatarLink { get; set; }
+    public string SmallAvatarUrl { get; set; }
   }
 }

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.Extensions.Options;
@@ -114,7 +115,7 @@ namespace SocialServer.Infrastructure
           Position = i,
           UserId = item.UserId,
           Login = item.Login,
-          SmallAvatarLink = item.SmallAvatarLink,
+          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarLink, AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType
         });
@@ -138,7 +139,7 @@ namespace SocialServer.Infrastructure
           Position = 0,
           UserId = item.UserId,
           Login = item.Login,
-          SmallAvatarLink = item.SmallAvatarLink,
+          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarLink,  AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType,
           CommonFollowsTo = item.CommonFollowsTo
@@ -150,7 +151,7 @@ namespace SocialServer.Infrastructure
           Position = 0,
           UserId = item.UserId,
           Login = item.Login,
-          SmallAvatarLink = item.SmallAvatarLink,
+          SmallAvatarLink = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarLink, AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType,
           CommonFollowsTo = item.CommonFollowsTo
