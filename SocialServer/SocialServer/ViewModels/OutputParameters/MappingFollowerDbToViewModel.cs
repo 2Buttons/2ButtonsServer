@@ -32,7 +32,7 @@ namespace SocialServer.ViewModels.OutputParameters
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
-          VisitsAmount = f.Visits,
+          VisitsCount = f.Visits,
           IsYouFollowed = f.YouFollowed,
           IsHeFollowed = f.HeFollowed
         })

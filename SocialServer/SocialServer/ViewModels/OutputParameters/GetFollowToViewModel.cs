@@ -2,6 +2,6 @@
 {
   public class GetFollowToViewModel :GetFollowerViewModel
   {
-    public int VisitsAmount { get; set; }
+    public int VisitsCount { get; set; }
   }
 }

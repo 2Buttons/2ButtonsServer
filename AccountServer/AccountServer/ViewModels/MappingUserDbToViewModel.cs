@@ -24,12 +24,12 @@ namespace AccountServer.ViewModels
         IsYouFollowed = dbEntity.YouFollowed,
         IsHeFollowed = dbEntity.HeFollowed,
 
-        AskedQuestionsAmount = dbEntity.AskedQuestions,
-        AnswersAmount = dbEntity.Answers,
-        FollowersAmount = dbEntity.Followers,
-        FollowedAmount = dbEntity.Followed,
-        FavoritesAmount = dbEntity.Favorites,
-        CommentsAmount = dbEntity.Comments,
+        AskedQuestionsCount = dbEntity.AskedQuestions,
+        AnswersCount = dbEntity.Answers,
+        FollowersCount = dbEntity.Followers,
+        FollowedCount = dbEntity.Followed,
+        FavoritesCount = dbEntity.Favorites,
+        CommentsCount = dbEntity.Comments,
       };
       return viewModel;
     }

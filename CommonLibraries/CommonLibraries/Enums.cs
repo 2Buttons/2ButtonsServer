@@ -169,7 +169,7 @@
   {
     DateTime = 0,
     Raiting = 1,
-    AnswersAmount = 2
+    AnswersCount = 2
   }
 
   public enum LanguageType
