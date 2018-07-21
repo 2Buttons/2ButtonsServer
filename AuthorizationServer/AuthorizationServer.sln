@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationData", "Author
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationServer", "AuthorizationServer\AuthorizationServer.csproj", "{349FB6F9-65E6-496D-9836-12D9129D519B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonTypes", "..\CommonLibraries\CommonTypes\CommonTypes.csproj", "{0ABC22B1-BF00-41F5-9502-56BC7BF1BBEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{349FB6F9-65E6-496D-9836-12D9129D519B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{349FB6F9-65E6-496D-9836-12D9129D519B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{349FB6F9-65E6-496D-9836-12D9129D519B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ABC22B1-BF00-41F5-9502-56BC7BF1BBEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ABC22B1-BF00-41F5-9502-56BC7BF1BBEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ABC22B1-BF00-41F5-9502-56BC7BF1BBEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ABC22B1-BF00-41F5-9502-56BC7BF1BBEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

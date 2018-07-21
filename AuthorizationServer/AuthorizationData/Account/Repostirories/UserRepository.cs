@@ -9,7 +9,8 @@ using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
 using AuthorizationData.Main;
 using AuthorizationData.Main.Entities;
-using CommonLibraries;
+
+using CommonTypes;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthorizationData.Account.Repostirories

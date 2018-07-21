@@ -1,4 +1,5 @@
 ﻿using CommonLibraries;
+using CommonTypes;
 
 namespace AuthorizationServer.Models
 {

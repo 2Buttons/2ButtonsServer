@@ -16,6 +16,7 @@ using CommonLibraries.ConnectionServices;
 using CommonLibraries.EmailManager;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
+using CommonTypes;
 using Microsoft.Extensions.Localization;
 
 namespace AuthorizationServer.Infrastructure.Services

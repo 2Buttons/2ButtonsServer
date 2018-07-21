@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CommonLibraries\CommonLibraries\CommonLibraries.csproj" />
+    <ProjectReference Include="..\..\CommonLibraries\CommonTypes\CommonTypes.csproj" />
     <ProjectReference Include="..\AuthorizationData\AuthorizationData.csproj" />
   </ItemGroup>
 

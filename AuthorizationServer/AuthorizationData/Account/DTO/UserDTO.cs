@@ -1,4 +1,4 @@
-﻿using CommonLibraries;
+﻿using CommonTypes;
 
 namespace AuthorizationData.Account.DTO
 {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CommonLibraries;
+using CommonTypes;
 
 namespace AuthorizationServer.ViewModels.InputParameters.Auth
 {

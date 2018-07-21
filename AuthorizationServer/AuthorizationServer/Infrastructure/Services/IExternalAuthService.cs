@@ -4,6 +4,7 @@ using AuthorizationData.Account.DTO;
 using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.SocialNetworks;
+using CommonTypes;
 
 namespace AuthorizationServer.Infrastructure.Services
 {

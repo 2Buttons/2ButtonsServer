@@ -3,7 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
-using CommonLibraries;
+
+using CommonTypes;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthorizationData.Account.Repostirories

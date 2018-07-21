@@ -16,6 +16,7 @@ using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.Extensions;
 using CommonLibraries.Response;
+using CommonTypes;
 
 namespace AuthorizationServer.Infrastructure.Services
 {

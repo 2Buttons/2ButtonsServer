@@ -1,5 +1,6 @@
 ﻿using System;
 using CommonLibraries;
+using CommonTypes;
 using Newtonsoft.Json;
 
 namespace AuthorizationServer.ViewModels.OutputParameters.User

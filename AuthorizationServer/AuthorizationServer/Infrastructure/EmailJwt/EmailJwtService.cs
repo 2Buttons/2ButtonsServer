@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.Extensions;
+using CommonTypes;
 using Microsoft.Extensions.Options;
 
 namespace AuthorizationServer.Infrastructure.EmailJwt

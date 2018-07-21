@@ -1,12 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibraries;
+using CommonTypes;
 
 namespace AuthorizationData.Account.Entities
 {
   [Table("Users")]
-  public partial class UserDb
+  public class UserDb
   {
     [Key]
     public int UserId { get; set; }
