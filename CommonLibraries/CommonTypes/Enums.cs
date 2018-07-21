@@ -1,4 +1,4 @@
-﻿namespace CommonLibraries
+﻿namespace CommonTypes
 {
   public enum UrlMonitoringType // Каждые 10 новые области
   {
@@ -40,7 +40,7 @@
     Recommended
   }
 
-  public enum AvatarSizeType 
+  public enum AvatarSizeType
   {
     Original = 0,
     Small = 1,
@@ -77,8 +77,7 @@
     None = 0,
     Default = 1,
     Avatar = 2,
-    Background =3,
-
+    Background = 3
   }
 
   public enum ApplicationType
@@ -188,6 +187,6 @@
   public enum AudienceType
   {
     All = 0,
-    Followers = 1,
+    Followers = 1
   }
 }
