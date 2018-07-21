@@ -81,7 +81,7 @@ namespace NotificationsServer.Services
     private async Task PushNotification(int sendToId, Notification notification)
     {
       await _notificationManager.AddNotification(new NotificationPair {SendToId = sendToId, Notification = notification});
-      _hub.Monitoring.UpdateUrlMonitoring(sendToId, UrlMonitoringType.GetsNotifications);
+      await _hub.Monitoring.UpdateUrlMonitoring(sendToId, UrlMonitoringType.GetsNotifications);
     }
   }
 }

@@ -12,7 +12,7 @@ namespace SocialData.Main
     public virtual DbSet<FollowToDb> FolloToDb { get; set; }
     public virtual DbSet<NewFollowersDb> NewFollowersDb { get; set; }
 
-    public virtual DbSet<RecommendedFromContactsDb> RecommendedFromContactsDb { get; set; }
+    //public virtual DbSet<RecommendedFromContactsDb> RecommendedFromContactsDb { get; set; }
     public virtual DbSet<RecommendedStrangersDb> RecommendedStrangersDb { get; set; }
 
     public virtual DbSet<RecommendedFromFollowsDb> RecommendedFromFollowsDb { get; set; }

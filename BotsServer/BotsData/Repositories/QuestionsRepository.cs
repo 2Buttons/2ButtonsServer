@@ -28,7 +28,7 @@ namespace BotsData.Repositories
         (x, y) => new QuestionDto
         {QuestionId  = x.QuestionId,
          UserId = x.UserId,
-         BackgroundImageLink = x.BackgroundImageLink,
+         OriginalBackgroundUrl = x.OriginalBackgroundUrl,
            AudienceType = x.AudienceType,
             Condition = x.Condition,
              DislikesAmount = x.Dislikes,
@@ -50,7 +50,7 @@ namespace BotsData.Repositories
         {
           QuestionId = x.QuestionId,
           UserId = x.UserId,
-          BackgroundImageLink = x.BackgroundImageLink,
+          OriginalBackgroundUrl = x.OriginalBackgroundUrl,
           AudienceType = x.AudienceType,
           Condition = x.Condition,
           DislikesAmount = x.Dislikes,
@@ -71,7 +71,7 @@ namespace BotsData.Repositories
         {
           QuestionId = x.QuestionId,
           UserId = x.UserId,
-          BackgroundImageLink = x.BackgroundImageLink,
+          OriginalBackgroundUrl = x.OriginalBackgroundUrl,
           AudienceType = x.AudienceType,
           Condition = x.Condition,
           DislikesAmount = x.Dislikes,

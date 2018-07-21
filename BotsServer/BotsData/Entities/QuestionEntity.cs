@@ -22,8 +22,7 @@ namespace BotsData.Entities
 
     public DateTime QuestionAddDate { get; set; }
 
-    [Column("backbroundImageLink")]
-    public string BackgroundImageLink { get; set; }
+    public string OriginalBackgroundUrl{ get; set; }
 
     public int Likes { get; set; }
     public int Dislikes { get; set; }
