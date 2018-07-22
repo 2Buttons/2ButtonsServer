@@ -23,7 +23,7 @@ namespace NotificationsServer.Controllers
     public async Task<IActionResult> NotifyFollow([FromBody] FollowNotification notification)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      await _notificationsMessageHandler.PushFolloweNotification(notification);
+      await _notificationsMessageHandler.PushFollowedNotification(notification);
       return new OkResponseResult();
     }
 

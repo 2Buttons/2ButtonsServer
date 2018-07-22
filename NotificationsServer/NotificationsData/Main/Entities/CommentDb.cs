@@ -5,16 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace NotificationsData.Main.Entities
 {
 
-  [Table("Comment")]
+  [Table("Comments")]
   public class CommentDb
   {
     [Key]
     public int CommentId { get; set; }
 
     public int UserId { get; set; }
-    public string Comment { get; set; }
+    public string Text { get; set; }
     public int? PreviousCommentId { get; set; }
-    public int? Deleted { get; set; }
-    public DateTime CommentAddDate { get; set; }
+    public bool? IsDeleted { get; set; }
+    public DateTime CommentedDate { get; set; }
   }
 }

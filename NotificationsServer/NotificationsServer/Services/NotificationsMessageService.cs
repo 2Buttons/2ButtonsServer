@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
+using CommonLibraries.MediaFolders;
 using NotificationsData;
 using NotificationsServer.Models;
 using NotificationsServer.ViewModels.Input;
@@ -23,7 +24,7 @@ namespace NotificationsServer.Services
       // _webSocketManager = webSocketManager;
     }
 
-    public async Task<bool> PushFolloweNotification(FollowNotification followNotification)
+    public async Task<bool> PushFollowedNotification(FollowNotification followNotification)
     {
       var info = await _db.UsersInfo.FindUserInfoAsync(followNotification.NotifierId);
       if (info == null) return false;
@@ -31,12 +32,12 @@ namespace NotificationsServer.Services
       {
         UserId = followNotification.NotifierId,
         Login = info.Login,
-        SmallAvatarLink = info.SmallAvatarLink,
+        SmallAvatarLink = MediaConverter.ToFullAvatarUrl(info.OriginalAvatarUrl, AvatarSizeType.Small),
         ActionType = ActionType.Follow,
         EmmiterId = followNotification.NotifierId,
         ActionDate = followNotification.FollowedDate
       };
-      await PushNotification(followNotification.FollowToId, notification);
+      await PushNotification(followNotification.FollowingId, notification);
       return true;
     }
 
@@ -49,7 +50,7 @@ namespace NotificationsServer.Services
       {
         UserId = recommendedQuestionNotification.NotifierId,
         Login = info.Login,
-        SmallAvatarLink = info.SmallAvatarLink,
+        SmallAvatarLink = MediaConverter.ToFullAvatarUrl(info.OriginalAvatarUrl, AvatarSizeType.Small),
         ActionType = ActionType.Follow,
         EmmiterId = recommendedQuestionNotification.QuestionId,
         ActionDate = recommendedQuestionNotification.RecommendedDate
@@ -69,7 +70,7 @@ namespace NotificationsServer.Services
       {
         UserId = commentNotification.NotifierId,
         Login = info.Login,
-        SmallAvatarLink = info.SmallAvatarLink,
+        SmallAvatarLink = MediaConverter.ToFullAvatarUrl(info.OriginalAvatarUrl, AvatarSizeType.Small),
         ActionType = ActionType.Follow,
         EmmiterId = commentNotification.CommentId,
         ActionDate = commentNotification.CommentedDate

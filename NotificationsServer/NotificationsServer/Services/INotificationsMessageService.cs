@@ -6,7 +6,7 @@ namespace NotificationsServer.Services
   public interface INotificationsMessageService
   {
     Task<bool> CommentNotification(CommentNotification commentNotification);
-    Task<bool> PushFolloweNotification(FollowNotification followNotification);
+    Task<bool> PushFollowedNotification(FollowNotification followNotification);
     Task<bool> PushRecommendedQuestionsNotification(RecommendedQuestionNotification recommendedQuestionNotification);
   }
 }
