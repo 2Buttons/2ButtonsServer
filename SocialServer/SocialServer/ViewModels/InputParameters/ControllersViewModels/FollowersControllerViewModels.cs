@@ -13,6 +13,6 @@ namespace SocialServer.ViewModels.InputParameters.ControllersViewModels
     [IdValidation]
     public int UserId { get; set; }
     [IdValidation]
-    public int FollowToId { get; set; }
+    public int FollowingId { get; set; }
   }
 }

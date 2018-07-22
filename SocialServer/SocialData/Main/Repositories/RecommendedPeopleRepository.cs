@@ -28,7 +28,7 @@ namespace SocialData.Main.Repositories
     public async Task<List<RecommendedFromFollowersDb>> GetRecommendedFromFollowers(int userId, int offset, int count)
     {
       return await _db.RecommendedFromFollowersDb.AsNoTracking()
-        .FromSql($"select * from dbo.[getRecommendedFromFollowers]({userId})").OrderByDescending(x => x.CommonFollowsTo)
+        .FromSql($"select * from dbo.[getRecommendedFromFollowers]({userId})").OrderByDescending(x => x.CommonFollowingsCount)
         .Skip(offset).Take(count).ToListAsync();
     }
 
@@ -42,7 +42,7 @@ namespace SocialData.Main.Repositories
     public async Task<List<RecommendedFromFollowsDb>> GetRecommendedFromFollows(int userId, int offset, int count)
     {
       return await _db.RecommendedFromFollowsDb.AsNoTracking()
-        .FromSql($"select * from dbo.getRecommendedFromFollows({userId})").OrderByDescending(x => x.CommonFollowsTo)
+        .FromSql($"select * from dbo.getRecommendedFromFollows({userId})").OrderByDescending(x => x.CommonFollowingsCount)
         .Skip(offset).Take(count).ToListAsync();
     }
 

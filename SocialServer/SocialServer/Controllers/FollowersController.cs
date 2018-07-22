@@ -13,7 +13,7 @@ namespace SocialServer.Controllers
 {
   [Produces("application/json")]
   [EnableCors("AllowAllOrigin")]
-  [Route("social/followers")]
+  [Route("social")]
   public class FollowersController : Controller //Represent user's followers or people who user are follow to
   {
     private readonly ConnectionsHub _hub;
@@ -32,7 +32,7 @@ namespace SocialServer.Controllers
       return new OkResponseResult("Social Server");
     }
 
-    [HttpPost]
+    [HttpPost("followers")]
     public async Task<IActionResult> GetFollowers([FromBody] FollowerViewModel vm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -43,7 +43,7 @@ namespace SocialServer.Controllers
       // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
-    [HttpPost("to")]
+    [HttpPost("followings")]
     public async Task<IActionResult> GetFollowTo([FromBody] FollowerViewModel vm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
@@ -59,10 +59,10 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (!await _socialDb.Followers.AddFollow(vm.UserId, vm.FollowToId))
+      if (!await _socialDb.Followers.AddFollow(vm.UserId, vm.FollowingId))
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not connect you to this user.",
           new {IsFollowed = false});
-      await _hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowToId, DateTime.UtcNow);
+      await _hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowingId, DateTime.UtcNow);
       return new OkResponseResult("Now you follow", new {IsFollowed = true});
     }
 
@@ -71,7 +71,7 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await _socialDb.Followers.DeleteFollow(vm.UserId, vm.FollowToId))
+      if (await _socialDb.Followers.DeleteFollow(vm.UserId, vm.FollowingId))
         return new OkResponseResult("Now you unfollow", new {IsFollowed = false});
       return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not disconnect you to this user.",
         new {IsFollowed = true});

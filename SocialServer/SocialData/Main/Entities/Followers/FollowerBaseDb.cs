@@ -13,9 +13,8 @@ namespace SocialData.Main.Entities.Followers
     public string Login { get; set; }
     public string OriginalAvatarUrl { get; set; }
     public DateTime BirthDate { get; set; }
-    [Column("Sex")]
     public SexType SexType { get; set; }
-    public bool YouFollowed { get; set; }
-    public bool HeFollowed { get; set; }
+    public bool IsYouFollowed { get; set; }
+    public bool IsHeFollowed { get; set; }
   }
 }

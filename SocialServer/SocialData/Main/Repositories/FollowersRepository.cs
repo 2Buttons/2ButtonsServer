@@ -42,7 +42,7 @@ namespace SocialData.Main.Repositories
       try
       {
         return await _db.FolloToDb.AsNoTracking()
-           .FromSql($"select * from dbo.getFollowTo({userId}, {userPageId}, {searchedLogin})")
+           .FromSql($"select * from dbo.getFollowings({userId}, {userPageId}, {searchedLogin})")
            .Skip(offset).Take(count)
            .ToListAsync();
       }
@@ -60,8 +60,8 @@ namespace SocialData.Main.Repositories
       {
 
         return await _db.FolloToDb.AsNoTracking()
-          .FromSql($"select * from dbo.getFollowTo({userId}, {userId}, {searchedLogin})")
-          .OrderBy(x => x.Visits).Skip(offset).Take(count)
+          .FromSql($"select * from dbo.getFollowings({userId}, {userId}, {searchedLogin})")
+          .OrderBy(x => x.VisitsCount).Skip(offset).Take(count)
           .ToListAsync();
       }
       catch (Exception e)

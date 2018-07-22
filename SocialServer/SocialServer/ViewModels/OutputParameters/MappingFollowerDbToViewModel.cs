@@ -17,8 +17,8 @@ namespace SocialServer.ViewModels.OutputParameters
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
-          IsYouFollowed = f.YouFollowed,
-          IsHeFollowed = f.HeFollowed
+          IsYouFollowed = f.IsYouFollowed,
+          IsHeFollowed = f.IsHeFollowed
         })
         .ToList();
     }
@@ -32,9 +32,9 @@ namespace SocialServer.ViewModels.OutputParameters
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
-          VisitsCount = f.Visits,
-          IsYouFollowed = f.YouFollowed,
-          IsHeFollowed = f.HeFollowed
+          VisitsCount = f.VisitsCount,
+          IsYouFollowed = f.IsYouFollowed,
+          IsHeFollowed = f.IsHeFollowed
         })
         .ToList();
     }

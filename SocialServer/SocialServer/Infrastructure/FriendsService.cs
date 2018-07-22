@@ -58,7 +58,7 @@ namespace SocialServer.Infrastructure
       var sameFollows = await _socialDb.RecommendedPeople.GetRecommendedFromFollows(user.UserId, partOffset, partCount);
       //return new BadResponseResult("Something goes wrong with follows as you ))) .");
 
-      Parallel.ForEach(followers, x => { x.CommonFollowsTo = (int)(x.CommonFollowsTo * 1.5); });
+      Parallel.ForEach(followers, x => { x.CommonFollowingsCount = (int)(x.CommonFollowingsCount * 1.5); });
 
 
       var friendsCount = user.PageParams.Count * 60 / 100;
@@ -142,7 +142,7 @@ namespace SocialServer.Infrastructure
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl,  AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType,
-          CommonFollowsTo = item.CommonFollowsTo
+          CommonFollowsTo = item.CommonFollowingsCount
         });
 
       foreach (var item in recommendedFromFollows)
@@ -154,7 +154,7 @@ namespace SocialServer.Infrastructure
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl, AvatarSizeType.Small),
           BirthDate = item.BirthDate,
           SexType = item.SexType,
-          CommonFollowsTo = item.CommonFollowsTo
+          CommonFollowsTo = item.CommonFollowingsCount
         });
 
       var mainList = new List<RecommendedUserViewModel>(followersLength + followsLength);

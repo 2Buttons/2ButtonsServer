@@ -5,6 +5,6 @@ namespace SocialData.Main.Entities.Followers
 {
   public partial class FollowToDb : FollowerBaseDb
   {
-    public int Visits{ get; set; }
+    public int VisitsCount{ get; set; }
   }
 }
