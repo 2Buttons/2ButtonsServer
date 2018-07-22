@@ -81,6 +81,14 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Question Statistic -> Users", result);
     }
 
+    [HttpPost("get/background")]
+    public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetQuestionBackground vm)
+    {
+      var result = await  _mainDb.Questions.GetBackground(vm.QuestionId);
+      var url = MediaConverter.ToFullBackgroundurlUrl(result, vm.BackgroundSizeType);
+      return new OkResponseResult("Background URL", new {Url = url});
+    }
+
     [HttpPost("get/backgrounds/standard")]
     public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetStandardBackgroundUrlsViewModel vm)
     {

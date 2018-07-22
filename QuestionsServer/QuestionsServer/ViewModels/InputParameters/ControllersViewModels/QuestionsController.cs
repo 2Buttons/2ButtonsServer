@@ -24,6 +24,14 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public List<int> RecommendedToIds { get; set; } = new List<int>();
   }
 
+  public class GetQuestionBackground 
+  {
+    [IdValidation(nameof(QuestionId))]
+    public int QuestionId { get; set; }
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
+  }
+
+
   public class GetStandardBackgroundUrlsViewModel
   {
     public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;

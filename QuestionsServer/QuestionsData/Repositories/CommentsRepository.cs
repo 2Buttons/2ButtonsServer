@@ -39,7 +39,7 @@ namespace QuestionsData.Repositories
     public async Task<List<CommentDb>> GetComments(int userId, int questionId, int offset, int count)
     {
       return await _db.CommentDb.AsNoTracking()
-               .FromSql($"select * from dbo.getComments({userId}, {questionId})").Skip(offset).Take(count).ToListAsync() ??
+               .FromSql($"select * from dbo.getComments({userId}, {questionId})").OrderByDescending(x=>x.CommentedDate).Skip(offset).Take(count).ToListAsync() ??
              new List<CommentDb>();
     }
   }

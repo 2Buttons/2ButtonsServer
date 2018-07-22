@@ -32,6 +32,12 @@ namespace QuestionsData.Repositories
       return result;
     }
 
+    public async Task<string> GetBackground(int questionId)
+    {
+      var result = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
+      return result?.OriginalBackgroundUrl;
+    }
+
     public async Task<List<QuestionStatisticDto>> GetQuestionStatistic(int userId, int questionId, int minAge, int maxAge,
       SexType sexType, string city)
     {
