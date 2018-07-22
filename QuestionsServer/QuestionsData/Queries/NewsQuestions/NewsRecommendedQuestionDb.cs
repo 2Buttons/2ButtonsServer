@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibraries;
+﻿using CommonLibraries;
 
 namespace QuestionsData.Queries.NewsQuestions
 {

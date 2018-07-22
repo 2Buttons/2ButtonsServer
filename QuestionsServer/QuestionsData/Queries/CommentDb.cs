@@ -14,6 +14,6 @@ namespace QuestionsData.Queries
     public int DislikesCount { get; set; }
     public QuestionFeedbackType YourFeedbackType { get; set; }
     public int? PreviousCommentId { get; set; }
-    public DateTime CommentAddDate { get; set; }
+    public DateTime CommentedDate { get; set; }
   }
 }

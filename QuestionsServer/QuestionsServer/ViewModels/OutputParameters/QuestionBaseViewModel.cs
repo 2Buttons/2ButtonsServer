@@ -24,8 +24,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
 
     public List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
 
-    public List<PhotoViewModel> FirstPhotos { get; set; } = new List<PhotoViewModel>();
-    public List<PhotoViewModel> SecondPhotos { get; set; } = new List<PhotoViewModel>();
+    public List<List<PhotoViewModel>> Photos { get; set; } = new List<List<PhotoViewModel>>();
+   // public List<PhotoViewModel> SecondPhotos { get; set; } = new List<PhotoViewModel>();
 
 
   }

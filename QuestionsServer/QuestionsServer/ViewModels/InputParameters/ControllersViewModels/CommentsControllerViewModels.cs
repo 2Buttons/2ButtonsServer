@@ -23,6 +23,6 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 
   public class GetCommentsViewModel : QuestionIdViewModel
   {
-    public int Count { get; set; } = 10000;
+    public PageParams PageParams { get; set; } = new PageParams();
   }
 }

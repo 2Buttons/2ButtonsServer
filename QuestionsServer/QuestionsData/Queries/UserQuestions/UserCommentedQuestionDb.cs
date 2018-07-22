@@ -6,10 +6,10 @@ namespace QuestionsData.Queries.UserQuestions
   {
     public int CommentId { get; set; }
     public string CommentText { get; set; }
-    public int CommentLikes { get; set; }
-    public int CommentDislikes { get; set; }
-    public int YourCommentFeedback { get; set; }
+    public int CommentLikesCount { get; set; }
+    public int CommentDislikesCount { get; set; }
+    public int YourCommentFeedbackType { get; set; }
     public int? PreviousCommentId { get; set; }
-    public DateTime CommentAddDate { get; set; }
+    public DateTime CommentedDate { get; set; }
   }
 }

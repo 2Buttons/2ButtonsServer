@@ -6,6 +6,6 @@ namespace QuestionsData.Queries.NewsQuestions
   {
     public int FavoriteAddedUserId { get; set; }
     public string FavoriteAddedUserLogin { get; set; }
-    public SexType FavoriteAddedSexType { get; set; }
+    public SexType FavoriteAddedUserSexType { get; set; }
   }
 }

@@ -1,7 +1,6 @@
 ﻿namespace QuestionsData.Queries.UserQuestions
 {
-    public class TopQuestionDb : QuestionBaseDb
-    {
-
-    }
+  public class TopQuestionDb : QuestionBaseDb
+  {
+  }
 }

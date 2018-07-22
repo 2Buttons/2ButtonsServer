@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace QuestionsData.Repositories
       var commentedId = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
 
        await _db.Database.ExecuteSqlCommandAsync(
-        $"addComment {userId}, {questionId}, {comment}, {commentedTime}, {previousCommentId}, {commentedId} OUT");
+        $"addComment {userId}, {questionId}, {comment}, {previousCommentId}, {commentedTime}, {commentedId} OUT");
       return (int) commentedId.Value;
     }
 
@@ -35,10 +36,10 @@ namespace QuestionsData.Repositories
       return await _db.Database.ExecuteSqlCommandAsync($"updateCommentFeedback {userId}, {commentId}, {feedback}") > 0;
     }
 
-    public async Task<List<CommentDb>> GetComments(int userId, int questionId, int count)
+    public async Task<List<CommentDb>> GetComments(int userId, int questionId, int offset, int count)
     {
       return await _db.CommentDb.AsNoTracking()
-               .FromSql($"select * from dbo.getComments({userId}, {questionId}, {1}, {count})").ToListAsync() ??
+               .FromSql($"select * from dbo.getComments({userId}, {questionId})").Skip(offset).Take(count).ToListAsync() ??
              new List<CommentDb>();
     }
   }

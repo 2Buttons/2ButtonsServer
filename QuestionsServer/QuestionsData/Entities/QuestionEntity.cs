@@ -11,7 +11,7 @@ namespace QuestionsData.Entities
     public int QuestionId { get; set; }
 
     public int UserId { get; set; }
-    public string Text { get; set; }
+    public string Condition { get; set; }
     public int IsAnonymous { get; set; }
     public int QuestionType { get; set; }
     public DateTime AddedDate { get; set; }

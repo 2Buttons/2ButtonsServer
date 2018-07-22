@@ -130,7 +130,7 @@ namespace QuestionsServer.Controllers
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
       secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      comments = _mainDb.Comments.GetComments(userId, questionId, commentsCount).GetAwaiter().GetResult();
+      comments = _mainDb.Comments.GetComments(userId, questionId, 0, commentsCount).GetAwaiter().GetResult();
     }
 
     [HttpPost("add")]
@@ -152,11 +152,11 @@ namespace QuestionsServer.Controllers
       {
         var urls = await _hub.Media.GetStandardBackgroundsUrl(BackgroundSizeType.Original);
 
-        externalUrl = urls[_random.Next(urls.Count)];
+        externalUrl = urls.Count < 1 ? null : urls[_random.Next(urls.Count)];
       }
 
       var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
-        question.IsAnonymous ? 1 : 0, question.AudienceType, question.QuestionType, question.FirstOption,
+        question.IsAnonymous , question.AudienceType, question.QuestionType, question.FirstOption,
         question.SecondOption);
 
       var badAddedTags = new List<string>();
@@ -265,7 +265,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int) HttpStatusCode.Created, (object) "Recommended Question was added.");
     }
 
-    [HttpPost("update/background/link")]
+    [HttpPost("update/background/url")]
     public async Task<IActionResult> UpdateBackgroundViaUrl(
       [FromBody] UploadQuestionBackgroundViaUrlViewModel background)
     {

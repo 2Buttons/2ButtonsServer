@@ -77,7 +77,7 @@ namespace QuestionsData.Repositories
             DislikesCount = t.DislikesCount,
             YourFeedbackType = t.YourFeedbackType,
             YourAnswerType = t.YourAnswerType,
-            InFavorites = t.InFavorites,
+            IsInFavorites = t.IsInFavorites,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
             FirstAnswersCount = t.FirstAnswersCount,

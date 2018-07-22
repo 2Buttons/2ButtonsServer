@@ -93,7 +93,7 @@ namespace QuestionsData.Repositories
             DislikesCount = t.DislikesCount,
             YourFeedbackType = t.YourFeedbackType,
             YourAnswerType = t.YourAnswerType,
-            InFavorites = t.InFavorites,
+            IsInFavorites = t.IsInFavorites,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
             FirstAnswersCount = t.FirstAnswersCount,
@@ -107,7 +107,7 @@ namespace QuestionsData.Repositories
         if (question != null && question.Comments.All(x => x.CommentId != t.CommentId))
         {
           question.Comments
-            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentAddDate, DislikesCount = t.CommentDislikes, LikesCount = t.CommentLikes, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedback, Text = t.CommentText});
+            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentedDate, DislikesCount = t.CommentDislikesCount, LikesCount = t.CommentLikesCount, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedbackType, Text = t.CommentText});
         }
       }
 
@@ -170,7 +170,7 @@ namespace QuestionsData.Repositories
             DislikesCount = t.DislikesCount,
             YourFeedbackType = t.YourFeedbackType,
             YourAnswerType = t.YourAnswerType,
-            InFavorites = t.InFavorites,
+            IsInFavorites = t.IsInFavorites,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
             FirstAnswersCount = t.FirstAnswersCount,
