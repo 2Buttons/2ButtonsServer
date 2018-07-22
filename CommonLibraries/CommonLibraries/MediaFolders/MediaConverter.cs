@@ -90,6 +90,8 @@ namespace CommonLibraries.MediaFolders
 
         default: throw new Exception($"There is no such default size {defaultSize}");
       }
+
+
     }
   }
 }

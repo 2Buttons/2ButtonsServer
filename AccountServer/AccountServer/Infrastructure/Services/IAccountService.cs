@@ -11,6 +11,7 @@ namespace AccountServer.Infrastructure.Services
   {
     Task<bool> AddUserSocialAsync(int userId, string code, SocialType socialType);
     Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId);
+    Task<string> GetUserAvatar(int userId, AvatarSizeType avatarSizeType);
     Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId);
     Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarType avatarType, IFormFile file);
     Task<(bool isUpdated, string url)> UpdateAvatarViaUrl(int userId, AvatarType avatarType, string newAvatarUrl);

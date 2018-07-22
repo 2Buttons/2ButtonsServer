@@ -21,6 +21,15 @@ namespace AccountServer.Controllers
       _account = accountService;
     }
 
+    [HttpPost]
+    public async Task<IActionResult> UpdateAvatarViaFile([FromBody]GetUserAvatar avatar)
+    {
+      if (!ModelState.IsValid)
+        return new BadResponseResult(ModelState);
+      var url = await _account.GetUserAvatar(avatar.UserId, avatar.AvatarSizeType);
+      return new OkResponseResult("Avatar URL", new { Url = url });
+    }
+
     [HttpPost("update/file")]
     public async Task<IActionResult> UpdateAvatarViaUrl(UpdateAvatarFileViewModel avatar)
     {

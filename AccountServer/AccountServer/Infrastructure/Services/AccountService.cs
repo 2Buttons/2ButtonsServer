@@ -34,6 +34,13 @@ namespace AccountServer.Infrastructure.Services
       _fbService = fbService;
     }
 
+
+    public async Task<string> GetUserAvatar(int userId, AvatarSizeType avatarSizeType)
+    {
+      var avatar = await _db.UsersInfo.GetUserAvatar(userId);
+      return MediaConverter.ToFullAvatarUrl(avatar, avatarSizeType);
+    }
+
     public async Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId)
     {
       var userInfoTask = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
