@@ -26,9 +26,7 @@ namespace MonitoringServer.Controllers
     {
       var monitoring = new UrlMonitoringDb {UserId = urlMonitoring.UserId};
       var result = await _db.Monitorings.AddUserMonitoring(monitoring);
-      return result
-        ? new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add monitoring")
-        : new OkResponseResult(new {IsAdded = result});
+      return result ? new OkResponseResult(new { IsAdded = result }) : new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not add monitoring");
     }
 
     [HttpPost("update")]
@@ -40,9 +38,7 @@ namespace MonitoringServer.Controllers
           return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add monitoring");
       }
       var result = await _db.Monitorings.UpdateUserMonitoring(urlMonitoring.UserId, urlMonitoring.UrlMonitoringType);
-      return result
-        ? new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add monitoring")
-        : new OkResponseResult(new {IsAdded = result});
+      return result ? new OkResponseResult(new {IsAdded = result}) : new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not add monitoring");
     }
   }
 }

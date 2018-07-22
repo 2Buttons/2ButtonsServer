@@ -101,7 +101,7 @@ namespace MonitoringData.Repositories
           userMonitoring.GetsComments++;
           break;
       }
-      _db.UrlMonitoringsDb.Update(userMonitoring);
+      
       return await _db.SaveChangesAsync() > 0;
     }
 
