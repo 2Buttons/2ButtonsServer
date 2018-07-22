@@ -118,10 +118,10 @@ namespace AuthorizationServer.Infrastructure.Services
     {
       if (!await AddUserSocialAsync(userId, socialType, socialUserData)) return false;
       var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId);
-      if (userInfo.OriginaltAvatarUrl.IsNullOrEmpty() ||
-          MediaConverter.IsStandardBackground(userInfo.OriginaltAvatarUrl) &&
+      if (userInfo.OriginalAvatarUrl.IsNullOrEmpty() ||
+          MediaConverter.IsStandardBackground(userInfo.OriginalAvatarUrl) &&
           !socialUserData.OriginalPhotoUrl.IsNullOrEmpty())
-        userInfo.OriginaltAvatarUrl = await UploadAvatarUrlOrGetStandard(socialUserData.OriginalPhotoUrl);
+        userInfo.OriginalAvatarUrl = await UploadAvatarUrlOrGetStandard(socialUserData.OriginalPhotoUrl);
 
       await _db.UsersInfo.UpdateUserInfoAsync(userInfo);
       return true;
@@ -150,7 +150,7 @@ namespace AuthorizationServer.Infrastructure.Services
         BirthDate = user.BirthDate,
         SexType = user.SexType,
         City = user.City,
-        OriginaltAvatarUrl = fullUrl
+        OriginalAvatarUrl = fullUrl
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))

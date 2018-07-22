@@ -43,8 +43,8 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
         BirthDate = userInfo.BirthDate,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargetAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginaltAvatarUrl, AvatarSizeType.Large),
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginaltAvatarUrl, AvatarSizeType.Small),
+        LargetAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
+        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small),
         Login = userInfo.Login,
         SexType = userInfo.SexType,
         UserId = userInfo.UserId
