@@ -11,8 +11,9 @@ namespace AccountServer.ViewModels.InputParameters
     [IdValidation(nameof(UserId))]
     public int UserId { get; set; }
 
-    [Required]
-    public AvatarSizeType Size { get; set; }
+    public AvatarType AvatarType { get; set; } = AvatarType.Custom;
+
+    public AvatarSizeType AvatarSizeType { get; set; } = AvatarSizeType.Original;
 
     [Required]
     public string Url { get; set; }
@@ -24,8 +25,9 @@ namespace AccountServer.ViewModels.InputParameters
     [IdValidation(nameof(UserId))]
     public int UserId { get; set; }
 
-    [Required]
-    public AvatarSizeType Size { get; set; }
+    public AvatarType AvatarType { get; set; } = AvatarType.Custom;
+
+    public AvatarSizeType AvatarSizeType { get; set; } = AvatarSizeType.Original;
 
     [Required]
     public IFormFile File { get; set; }

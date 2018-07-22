@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using AccountData.Main.Entities;
 using AccountServer.Infrastructure.Services;
@@ -24,12 +25,12 @@ namespace AccountServer.Controllers
 
    
     [HttpPost("add")]
-    public async Task<IActionResult> GetUser([FromBody]FeedbackViewModel feedback)
+    public async Task<IActionResult> AddFeedback([FromBody]FeedbackViewModel feedback)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
 
-      FeedbackEntity feedbackDb = new FeedbackEntity {UserId = feedback.UserId, Type = feedback.Type, Text = feedback.Text};
+      FeedbackEntity feedbackDb = new FeedbackEntity {UserId = feedback.UserId, FeedbackType = feedback.FeedbackType, Text = feedback.Text, AddedDate = DateTime.UtcNow};
       if (!await _feedbackService.AddFeedback(feedbackDb))
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not add your feedback.");
       return new OkResponseResult("We add your feedback.");
@@ -37,11 +38,11 @@ namespace AccountServer.Controllers
 
     [Authorize]
     [HttpPost("addAuth")]
-    public async Task<IActionResult> GetUserInfoAuth([FromBody] FeedbackViewModel feedback)
+    public async Task<IActionResult> AddFeedbackAuth([FromBody] FeedbackViewModel feedback)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
-      FeedbackEntity feedbackDb = new FeedbackEntity { UserId = feedback.UserId, Type = feedback.Type, Text = feedback.Text };
+      FeedbackEntity feedbackDb = new FeedbackEntity { UserId = feedback.UserId, FeedbackType = feedback.FeedbackType, Text = feedback.Text };
       if (!await _feedbackService.AddFeedback(feedbackDb))
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not add your feedback.");
       return new OkResponseResult("We add your feedback.");

@@ -21,7 +21,7 @@ namespace AccountData.Main.Repositories
     {
       var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
         .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
-      if (userId != userPageId && user.YouFollowed) await UpdateVisitsAsync(userId, userPageId);
+      if (userId != userPageId && user.IsYouFollowed) await UpdateVisitsAsync(userId, userPageId);
       return user;
     }
 
@@ -29,7 +29,7 @@ namespace AccountData.Main.Repositories
     {
       var isExist = _db.CityEntities.Any(x => x.Name == user.City);
       if (isExist) return true;
-      _db.CityEntities.Add(new CityEntity {Name = user.City, People = 1});
+      _db.CityEntities.Add(new CityEntity {Name = user.City, Inhabitants = 1});
       await _db.SaveChangesAsync();
 
       var oldUserData = await _db.UserInfoDb.FirstOrDefaultAsync(x => x.UserId == user.UserId);
@@ -44,15 +44,14 @@ namespace AccountData.Main.Repositories
       return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> UpdateUserLargeAvatar(int userId, string fullAvatarUrl)
+    public async Task<bool> UpdateUserOriginalAvatar(int userId, string originalAvatarUrl)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserFullAvatar {userId}, {fullAvatarUrl}") > 0;
+      var user = _db.UserInfoEntities.FirstOrDefault(x => x.UserId == userId);
+      if (user == null) return false;
+      user.OriginalAvatarUrl = originalAvatarUrl;
+      return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> UpdateUserSmallAvatar(int userId, string smallAvatar)
-    {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateUserSmallAvatar {userId}, {smallAvatar}") > 0;
-    }
 
     public async Task<UserStatisticsDb> GetUserStatisticsAsync(int userId)
     {

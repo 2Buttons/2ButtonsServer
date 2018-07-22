@@ -11,7 +11,7 @@ namespace AccountServer.ViewModels.InputParameters
     public int UserId { get; set; }
 
     [Required]
-    public FeedbackType Type { get; set; }
+    public FeedbackType FeedbackType { get; set; }
 
     [Required]
     public string Text { get; set; }

@@ -2,6 +2,7 @@
 using System.Linq;
 using AccountData.Main.Queries;
 using AccountServer.ViewModels.OutputParameters;
+using CommonLibraries.MediaFolders;
 
 namespace AccountServer.ViewModels
 {
@@ -13,8 +14,8 @@ namespace AccountServer.ViewModels
           {
             UserId = n.UserId,
             Login = n.Login,
-            SmallAvatarUrl = n.SmallAvatarUrl,
-            Action = n.Action,  /*1 - follow, 2 - recommend, 3 - answer*/
+            SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(n.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+            ActionType = n.ActionType,  /*1 - follow, 2 - recommend, 3 - answer*/
             EmmiterId = n.EmmiterId,
             ActionDate = n.ActionDate
           }

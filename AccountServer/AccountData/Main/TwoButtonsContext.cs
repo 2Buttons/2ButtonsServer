@@ -10,6 +10,7 @@ namespace AccountData.Main
     public virtual DbQuery<UserStatisticsDb> UserStatisticsDb { get; set; }
     public virtual DbQuery<NotificationDb> NotificationsDb { get; set; }
 
+    public virtual DbSet<UserInfoEntity>  UserInfoEntities { get; set; }
     public virtual DbSet<FeedbackEntity> FeedbackEntities { get; set; }
     public virtual DbSet<CityEntity> CityEntities { get; set; }
 

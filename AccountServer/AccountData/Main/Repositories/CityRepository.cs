@@ -29,12 +29,12 @@ namespace AccountData.Main.Repositories
 
     public async Task<List<CityEntity>> FindCityies(string pattern, int offset, int count)
     {
-      return await _db.CityEntities.Where(x => x.Name.Contains(pattern)).OrderByDescending(x=>x.People).Skip(offset).Take(count).ToListAsync();
+      return await _db.CityEntities.Where(x => x.Name.Contains(pattern)).OrderByDescending(x=>x.Inhabitants).Skip(offset).Take(count).ToListAsync();
     }
 
     public async Task<List<CityEntity>> GetPopularCity(int offset, int count)
     {
-      return await _db.CityEntities.OrderByDescending(x => x.People).Skip(offset).Take(count).ToListAsync();
+      return await _db.CityEntities.OrderByDescending(x => x.Inhabitants).Skip(offset).Take(count).ToListAsync();
     }
   }
 }

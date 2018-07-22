@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AccountServer.Infrastructure.Services;
 using AccountServer.ViewModels.InputParameters;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -21,23 +22,23 @@ namespace AccountServer.Controllers
     }
 
     [HttpPost("update/file")]
-    public async Task<IActionResult> UpdateAvatarViaUrl([FromBody]UpdateAvatarFileViewModel avatar)
+    public async Task<IActionResult> UpdateAvatarViaUrl(UpdateAvatarFileViewModel avatar)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var (isUpdated, url) = await _account.UpdateAvatarViaFile(avatar.UserId, avatar.Size, avatar.File);
-      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
+      var (isUpdated, url) = await _account.UpdateAvatarViaFile(avatar.UserId, avatar.AvatarType, avatar.File);
+      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = MediaConverter.ToFullAvatarUrl(url, avatar.AvatarSizeType) });
     }
 
-    [HttpPost("update/link")]
+    [HttpPost("update/url")]
     public async Task<IActionResult> UpdateAvatarViaFile([FromBody]UpdateAvatarUrlViewModel avatar)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var (isUpdated, url) = await _account.UpdateAvatarViaUrl(avatar.UserId, avatar.Size, avatar.Url);
-      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
+      var (isUpdated, url) = await _account.UpdateAvatarViaUrl(avatar.UserId, avatar.AvatarType, avatar.Url);
+      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = MediaConverter.ToFullAvatarUrl(url, avatar.AvatarSizeType) });
     }
 
   }

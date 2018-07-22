@@ -21,15 +21,15 @@ namespace AccountServer.ViewModels
         Description = dbEntity.Description,
         LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Large),
         SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small),
-        IsYouFollowed = dbEntity.YouFollowed,
-        IsHeFollowed = dbEntity.HeFollowed,
+        IsYouFollowed = dbEntity.IsYouFollowed,
+        IsHeFollowed = dbEntity.IsHeFollowed,
 
-        AskedQuestionsCount = dbEntity.AskedQuestions,
-        AnswersCount = dbEntity.Answers,
-        FollowersCount = dbEntity.Followers,
-        FollowedCount = dbEntity.Followed,
-        FavoritesCount = dbEntity.Favorites,
-        CommentsCount = dbEntity.Comments,
+        AskedQuestionsCount = dbEntity.AskedQuestionsCount,
+        AnswersCount = dbEntity.AnswersCount,
+        FollowersCount = dbEntity.FollowersCount,
+        FollowedCount = dbEntity.FollowedCount,
+        FavoritesCount = dbEntity.FavoritesCount,
+        CommentsCount = dbEntity.CommentsCount,
       };
       return viewModel;
     }

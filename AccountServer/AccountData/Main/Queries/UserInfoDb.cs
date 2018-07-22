@@ -11,22 +11,18 @@ namespace AccountData.Main.Queries
 
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }
-    [Column("Sex")]
     public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-
-    [Column("fullAvatarUrl")]
     public string OriginalAvatarUrl { get; set; }
-    //public string SmallAvatarUrl { get; set; }
-    public bool YouFollowed { get; set; }
-    public bool HeFollowed { get; set; }
+    public bool IsYouFollowed { get; set; }
+    public bool IsHeFollowed { get; set; }
 
-    public int AskedQuestions { get; set; }
-    public int Answers { get; set; }
-    public int Followers { get; set; }
-    public int Followed { get; set; }
-    public int Favorites { get; set; }
-    public int Comments { get; set; }
+    public int AskedQuestionsCount { get; set; }
+    public int AnswersCount { get; set; }
+    public int FollowersCount { get; set; }
+    public int FollowedCount { get; set; }
+    public int FavoritesCount { get; set; }
+    public int CommentsCount { get; set; }
   }
 }
