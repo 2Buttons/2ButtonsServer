@@ -4,6 +4,6 @@ namespace MediaServer.ViewModel
 {
   public class GetStandardAvatarsViewModel
   {
-    public AvatarSizeType SizeType { get; set; } = AvatarSizeType.Original;
+    public AvatarSizeType AvatarSizeType { get; set; } = AvatarSizeType.Original;
   }
 }

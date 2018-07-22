@@ -17,6 +17,12 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
+    public async Task<string> GetUserAvatar(int userId)
+    {
+      var user = await _db.UserInfoEntities.FirstOrDefaultAsync(x=>x.UserId == userId);
+      return user?.OriginalAvatarUrl;
+    }
+
     public async Task<UserInfoDb> FindUserInfoAsync(int userId, int userPageId)
     {
       var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")

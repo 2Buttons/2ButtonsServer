@@ -4,7 +4,7 @@ namespace MediaServer.ViewModel
 {
   public class GetDefaultsViewModel
   {
-    public DefaultSizeType SizeType { get; set; } = DefaultSizeType.Original;
+    public DefaultSizeType DefaultSizeType { get; set; } = DefaultSizeType.Original;
     public string Pattern { get; set; }
   }
 }

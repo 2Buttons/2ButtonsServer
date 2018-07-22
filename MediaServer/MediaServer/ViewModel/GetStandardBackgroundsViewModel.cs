@@ -4,6 +4,6 @@ namespace MediaServer.ViewModel
 {
   public class GetStandardBackgroundsViewModel
   {
-    public BackgroundSizeType SizeType { get; set; } = BackgroundSizeType.Original;
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
   }
 }

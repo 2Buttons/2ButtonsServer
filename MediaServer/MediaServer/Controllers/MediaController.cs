@@ -48,7 +48,7 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var urls = _mediaService.GetStandardAvatarUrls(size.SizeType);
+      var urls = _mediaService.GetStandardAvatarUrls(size.AvatarSizeType);
       return !urls.Any()
         ? new ResponseResult((int) HttpStatusCode.NotFound)
         : new OkResponseResult(new {Urls = urls});
@@ -57,14 +57,14 @@ namespace MediaServer.Controllers
     [HttpPost("standards/background")]
     public IActionResult GetStandardBackgrounds([FromBody] GetStandardBackgroundsViewModel size)
     {
-      var urls = _mediaService.GetStandardBackgroundUrls(size.SizeType);
+      var urls = _mediaService.GetStandardBackgroundUrls(size.BackgroundSizeType);
       return !urls.Any() ? new ResponseResult((int) HttpStatusCode.NotFound) : new OkResponseResult(new {Urls = urls});
     }
 
     [HttpPost("defaults")]
     public IActionResult GetStandardBackgrounds([FromBody] GetDefaultsViewModel size)
     {
-      var urls = _mediaService.GetStandardDefaultUrls(size.SizeType, size.Pattern);
+      var urls = _mediaService.GetStandardDefaultUrls(size.DefaultSizeType, size.Pattern);
       return !urls.Any() ? new ResponseResult((int)HttpStatusCode.NotFound) : new OkResponseResult(new { Urls = urls });
     }
 
