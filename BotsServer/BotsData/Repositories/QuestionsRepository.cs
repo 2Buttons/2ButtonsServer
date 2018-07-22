@@ -31,11 +31,11 @@ namespace BotsData.Repositories
          OriginalBackgroundUrl = x.OriginalBackgroundUrl,
            AudienceType = x.AudienceType,
             Condition = x.Condition,
-             DislikesAmount = x.Dislikes,
-             LikesAmount = x.Likes,
-              QuestionAddDate = x.QuestionAddDate,
+             DislikesAmount = x.DislikesCount,
+             LikesAmount = x.LikesCount,
+              QuestionAddDate = x.AddedDate,
                QuestionType = x.QuestionType,
-          Options = y.Select(o => new OptionDto {Text = o.OptionText, Voters = o.Answers})
+          Options = y.Select(o => new OptionDto {Text = o.Text, Voters = o.AnswersCount })
         }).ToListAsync();
 
       return result;
@@ -53,11 +53,11 @@ namespace BotsData.Repositories
           OriginalBackgroundUrl = x.OriginalBackgroundUrl,
           AudienceType = x.AudienceType,
           Condition = x.Condition,
-          DislikesAmount = x.Dislikes,
-          LikesAmount = x.Likes,
-          QuestionAddDate = x.QuestionAddDate,
+          DislikesAmount = x.DislikesCount,
+          LikesAmount = x.LikesCount,
+          QuestionAddDate = x.AddedDate,
           QuestionType = x.QuestionType,
-          Options = y.Select(o => new OptionDto { Text = o.OptionText, Voters = o.Answers })
+          Options = y.Select(o => new OptionDto { Text = o.Text, Voters = o.AnswersCount })
         }).ToListAsync();
 
       return result;
@@ -74,11 +74,11 @@ namespace BotsData.Repositories
           OriginalBackgroundUrl = x.OriginalBackgroundUrl,
           AudienceType = x.AudienceType,
           Condition = x.Condition,
-          DislikesAmount = x.Dislikes,
-          LikesAmount = x.Likes,
-          QuestionAddDate = x.QuestionAddDate,
+          DislikesAmount = x.DislikesCount,
+          LikesAmount = x.LikesCount,
+          QuestionAddDate = x.AddedDate,
           QuestionType = x.QuestionType,
-          Options = y.Select(o => new OptionDto { Text = o.OptionText, Voters = o.Answers })
+          Options = y.Select(o => new OptionDto { Text = o.Text, Voters = o.AnswersCount })
         }).ToListAsync();
 
       return result;

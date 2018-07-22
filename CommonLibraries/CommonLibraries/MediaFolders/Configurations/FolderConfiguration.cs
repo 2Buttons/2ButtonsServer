@@ -68,7 +68,7 @@ namespace CommonLibraries.MediaFolders.Configurations
       while (currentFolder != null)
       {
 
-        paths.Add(currentFolder.FolderName.Substring(0, 2) + currentFolder.HashName);
+        paths.Add(currentFolder.HashName);
         currentFolder = currentFolder.RootFolder;
       }
       paths.Reverse();

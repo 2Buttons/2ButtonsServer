@@ -107,8 +107,8 @@ namespace BotsServer.Jobs
         QuestionId = job.QuestionId,
         UserId = job.BotId,
         AnsweredDate = answered,
-        IsDeleted = 0,
-        IsLiked = 0
+        IsDeleted = false,
+        IsLiked = false
 
       };
 

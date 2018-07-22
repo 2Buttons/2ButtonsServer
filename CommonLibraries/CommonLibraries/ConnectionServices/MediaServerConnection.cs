@@ -18,12 +18,16 @@ namespace CommonLibraries.ConnectionServices
     private readonly ILogger<MediaServerConnection> _logger;
     private readonly string _standardAvatarUrl;
     private readonly string _standardBackgroundUrl;
+    private readonly string _standardDefaultUrl;
+
     private readonly string _uploadedAvaterFile;
-
     private readonly string _uploadedAvaterUrl;
-    private readonly string _uploadedBackgroundFile;
 
+    private readonly string _uploadedBackgroundFile;
     private readonly string _uploadedBackgroundUrl;
+
+    private readonly string _uploadedDefaultFile;
+    private readonly string _uploadedDefaultUrl;
 
     public MediaServerConnection(IOptions<ServersSettings> mediaOptions, ILogger<MediaServerConnection> logger)
     {
@@ -37,9 +41,9 @@ namespace CommonLibraries.ConnectionServices
       _uploadedBackgroundFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/background/file";
       _standardBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/standards/background/";
 
-      _uploadedBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/url";
-      _uploadedBackgroundFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/file";
-      _standardBackgroundUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/default";
+      _uploadedDefaultUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/url";
+      _uploadedDefaultFile = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/upload/default/file";
+      _standardDefaultUrl = $"http://localhost:{mediaOptions.Value["Media"].Port}/media/default";
     }
 
 
@@ -84,7 +88,7 @@ namespace CommonLibraries.ConnectionServices
       {
         _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
         var body = JsonConvert.SerializeObject(new { size = (int)defaultSize, pattern = pattern });
-        var result = (await MediaServerConnect(_standardBackgroundUrl, body)).Urls;
+        var result = (await MediaServerConnect(_standardDefaultUrl, body)).Urls;
         _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
         return result;
       }
@@ -179,15 +183,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
+        _logger.LogInformation($"{nameof(UploadDefaultUrl)}.Start");
         var body = JsonConvert.SerializeObject(new {  url = imageUrl });
-        var result = (await MediaServerConnect(_uploadedBackgroundUrl, body)).Url;
-        _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
+        var result = (await MediaServerConnect(_uploadedDefaultUrl, body)).Url;
+        _logger.LogInformation($"{nameof(UploadDefaultUrl)}.Start");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadBackgroundUrl)}");
+        _logger.LogError(ex, $"{nameof(UploadDefaultUrl)}");
       }
       return string.Empty;
     }
@@ -196,15 +200,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
-        var result = (await MediaServerConnect(_uploadedBackgroundFile, file, new List<KeyValuePair<string, string>>()))
+        _logger.LogInformation($"{nameof(UploadDefaultFile)}.Start");
+        var result = (await MediaServerConnect(_uploadedDefaultFile, file, new List<KeyValuePair<string, string>>()))
           .Url;
-        _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
+        _logger.LogInformation($"{nameof(UploadDefaultFile)}.Start");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadBackgroundFile)}");
+        _logger.LogError(ex, $"{nameof(UploadDefaultFile)}");
       }
       return string.Empty;
     }

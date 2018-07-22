@@ -5,7 +5,7 @@ using CommonLibraries;
 
 namespace BotsData.Entities
 {
-  [Table("Question")]
+  [Table("Questions")]
   public class QuestionEntity
   {
     [Key]
@@ -13,21 +13,12 @@ namespace BotsData.Entities
 
     public int UserId { get; set; }
     public string Condition { get; set; }
-
-    [Column("anonymity")]
     public QuestionType QuestionType { get; set; }
-
-    [Column("audience")]
     public AudienceType AudienceType { get; set; }
-
-    public DateTime QuestionAddDate { get; set; }
-
+    public DateTime AddedDate { get; set; }
     public string OriginalBackgroundUrl{ get; set; }
-
-    public int Likes { get; set; }
-    public int Dislikes { get; set; }
-
-    [Column("deleted")]
+    public int LikesCount { get; set; }
+    public int DislikesCount { get; set; }
     public bool IsDeleted { get; set; }
   }
 }
