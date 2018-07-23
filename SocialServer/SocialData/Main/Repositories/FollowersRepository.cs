@@ -43,7 +43,7 @@ namespace SocialData.Main.Repositories
       {
         return await _db.FolloToDb.AsNoTracking()
            .FromSql($"select * from dbo.getFollowings({userId}, {userPageId}, {searchedLogin})")
-           .Skip(offset).Take(count)
+           .OrderByDescending(x=>x.VisitsCount).Skip(offset).Take(count)
            .ToListAsync();
       }
       catch (Exception e)
