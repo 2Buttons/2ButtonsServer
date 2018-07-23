@@ -30,7 +30,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (comment.PreviousCommentId == 0) comment.PreviousCommentId = null;
-      var commentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.CommentText,
+      var commentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.Text,
         comment.PreviousCommentId);
       if (commentId < 0)
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");

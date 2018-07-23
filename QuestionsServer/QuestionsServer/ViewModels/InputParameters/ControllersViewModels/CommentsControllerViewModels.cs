@@ -7,7 +7,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
   public class AddCommentViewModel : QuestionIdViewModel
   {
     [Required]
-    public string CommentText { get; set; }
+    public string Text { get; set; }
 
     public int? PreviousCommentId { get; set; } = null;
   }

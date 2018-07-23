@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
 using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,10 +24,10 @@ namespace QuestionsServer.Controllers
   [Route("questions")]
   public class QuestionsController : Controller //Controller for a Question
   {
+    private static readonly Random _random = new Random();
     private readonly ConnectionsHub _hub;
     private readonly ILogger<QuestionsController> _logger;
     private readonly QuestionsUnitOfWork _mainDb;
-    private static Random _random = new Random();
 
     public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger, ConnectionsHub hub)
     {
@@ -43,6 +42,82 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult("Questions Server");
     }
 
+    [HttpPost("add")]
+    public async Task<IActionResult> AddQuestion([FromBody] AddQuestionViewModel question)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      string externalUrl;
+
+      if (!question.BackgroundUrl.IsNullOrEmpty())
+      {
+        if (MediaConverter.IsStandardBackground(question.BackgroundUrl))
+          externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Standard, question.BackgroundUrl);
+        else externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Custom, question.BackgroundUrl);
+      }
+      else
+      {
+        var urls = await _hub.Media.GetStandardBackgroundsUrl(BackgroundSizeType.Original);
+
+        externalUrl = urls.Count < 1 ? null : urls[_random.Next(urls.Count)];
+      }
+
+      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
+        question.IsAnonymous, question.AudienceType, question.QuestionType, question.FirstOption,
+        question.SecondOption);
+
+      var badAddedTags = new List<string>();
+
+      for (var i = 0; i < question.Tags.Count; i++)
+      {
+        var tag = question.Tags[i];
+        if (!await _mainDb.Tags.AddTag(questionId, tag, i)) badAddedTags.Add(tag);
+      }
+
+      var notFoundIds = new List<int>();
+
+      // var validIds = await _mainDb.UserQuestions.CheckIdsValid(question.RecommendedToIds);
+
+      if (question.RecommendedToIds == null) question.RecommendedToIds = new List<int>();
+      if (question.Tags == null) question.Tags = new List<string>();
+      foreach (var id in question.RecommendedToIds)
+        if (!await _mainDb.UserQuestions.AddRecommendedQuestion(id, question.UserId, questionId))
+          await _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id, questionId, DateTime.UtcNow);
+        else notFoundIds.Add(id);
+
+      if (badAddedTags.Count != 0)
+        return new ResponseResult((int)HttpStatusCode.InternalServerError, "Not all tags were inserted.",
+          new { NotAddedTags = badAddedTags });
+      return new OkResponseResult(questionId);
+    }
+
+    [HttpPost("add/recommended")]
+    public async Task<IActionResult> AddRecommendedQuestion(
+      [FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      if (recommendedQuestion.UsersToId.Count < 1)
+      {
+        ModelState.AddModelError("UsersToId", "UsersToId is required and has to be more than 0");
+        return new BadResponseResult(ModelState);
+      }
+
+      var notFoundIds = new List<int>();
+
+      // var validIds = await _mainDb.UserQuestions.CheckIdsValid(recommendedQuestion.UsersToId);
+
+      foreach (var id in recommendedQuestion.UsersToId)
+        if (await _mainDb.UserQuestions.AddRecommendedQuestion(id, recommendedQuestion.UserFromId,
+          recommendedQuestion.QuestionId))
+          await _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
+            recommendedQuestion.QuestionId, DateTime.UtcNow);
+        else notFoundIds.Add(id);
+
+      if (notFoundIds.Count > 0)
+        return new ResponseResult((int)HttpStatusCode.NotModified, "Not all ids were found.",
+          new { NotFoundIds = notFoundIds });
+      return new ResponseResult((int)HttpStatusCode.Created, (object)"Recommended Question was added.");
+    }
 
     [HttpPost("get")]
     public async Task<IActionResult> GetQuestion([FromBody] GetQuestion getQuestion)
@@ -54,7 +129,8 @@ namespace QuestionsServer.Controllers
       GetTagsAndPhotos(getQuestion.UserId, getQuestion.QuestionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
 
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments, getQuestion.BackgroundSizeType);
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments,
+        getQuestion.BackgroundSizeType);
       await _hub.Monitoring.UpdateUrlMonitoring(getQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
       return new OkResponseResult(result);
     }
@@ -84,7 +160,7 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/background")]
     public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetQuestionBackground vm)
     {
-      var result = await  _mainDb.Questions.GetBackground(vm.QuestionId);
+      var result = await _mainDb.Questions.GetBackground(vm.QuestionId);
       var url = MediaConverter.ToFullBackgroundurlUrl(result, vm.BackgroundSizeType);
       return new OkResponseResult("Background URL", new {Url = url});
     }
@@ -97,12 +173,11 @@ namespace QuestionsServer.Controllers
     }
 
     [HttpPost("get/backgrounds/custom")]
-    public async Task<IActionResult> GetCustomQuestionBackgrounds([FromBody] UserIdViewModel user)
+    public async Task<IActionResult> GetCustomQuestionBackgrounds([FromBody] GetCustomBackgroundUrlsViewModel user)
     {
       var result = await _mainDb.Questions.GetCustomQuestionBackgrounds(user.UserId);
-      return new OkResponseResult("Custom backgrounds", result);
+      return new OkResponseResult("Custom backgrounds", result.Select(x=>MediaConverter.ToFullBackgroundurlUrl(x,user.BackgroundSizeType)).ToList());
     }
-
 
     [HttpPost("getByCommentId")]
     public async Task<IActionResult> GetQuestion([FromBody] GetQuestionByCommentId getQuestionByCommentId)
@@ -118,7 +193,8 @@ namespace QuestionsServer.Controllers
       GetTagsAndPhotos(getQuestionByCommentId.UserId, questionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
 
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments, getQuestionByCommentId.BackgroundSizeType);
+      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments,
+        getQuestionByCommentId.BackgroundSizeType);
 
       return new OkResponseResult(result);
     }
@@ -139,59 +215,6 @@ namespace QuestionsServer.Controllers
       secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
       comments = _mainDb.Comments.GetComments(userId, questionId, 0, commentsCount).GetAwaiter().GetResult();
-    }
-
-    [HttpPost("add")]
-    public async Task<IActionResult> AddQuestion([FromBody] AddQuestionViewModel question)
-    {
-      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
-      string externalUrl;
-
-      if (!question.BackgroundUrl.IsNullOrEmpty())
-      {
-
-        if (MediaConverter.IsStandardBackground(question.BackgroundUrl))
-          externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Standard, question.BackgroundUrl);
-        else externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Custom, question.BackgroundUrl);
-
-      }
-      else
-      {
-        var urls = await _hub.Media.GetStandardBackgroundsUrl(BackgroundSizeType.Original);
-
-        externalUrl = urls.Count < 1 ? null : urls[_random.Next(urls.Count)];
-      }
-
-      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
-        question.IsAnonymous , question.AudienceType, question.QuestionType, question.FirstOption,
-        question.SecondOption);
-
-      var badAddedTags = new List<string>();
-
-      for (var i = 0; i < question.Tags.Count; i++)
-      {
-        var tag = question.Tags[i];
-        if (!await _mainDb.Tags.AddTag(questionId, tag, i)) badAddedTags.Add(tag);
-      }
-
-      var notFoundIds = new List<int>();
-
-     // var validIds = await _mainDb.UserQuestions.CheckIdsValid(question.RecommendedToIds);
-
-      foreach (var id in question.RecommendedToIds)
-      {
-        if (!await _mainDb.UserQuestions.AddRecommendedQuestion(id, question.UserId,
-              questionId))
-          await _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id,
-            questionId, DateTime.UtcNow);
-        else notFoundIds.Add(id);
-      }
-
-      if (badAddedTags.Count != 0)
-        return new ResponseResult((int) HttpStatusCode.InternalServerError, "Not all tags were inserted.",
-          new {NotAddedTags = badAddedTags});
-      return new OkResponseResult(questionId);
     }
 
     [HttpPost("delete")]
@@ -243,36 +266,7 @@ namespace QuestionsServer.Controllers
       return new ResponseResult((int) HttpStatusCode.NotModified, "Question's answer was not updated.");
     }
 
-    [HttpPost("add/recommended")]
-    public async Task<IActionResult> AddRecommendedQuestion(
-      [FromBody] AddRecommendedQuestionViewModel recommendedQuestion)
-    {
-      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      if (recommendedQuestion.UsersToId.Count < 1)
-      {
-        ModelState.AddModelError("UsersToId", "UsersToId is required and has to be more than 0");
-        return new BadResponseResult(ModelState);
-      }
-
-      var notFoundIds = new List<int>();
-
-     // var validIds = await _mainDb.UserQuestions.CheckIdsValid(recommendedQuestion.UsersToId);
-
-      foreach (var id in recommendedQuestion.UsersToId)
-      {
-        if (await _mainDb.UserQuestions.AddRecommendedQuestion(id, recommendedQuestion.UserFromId,
-          recommendedQuestion.QuestionId))
-          await _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
-            recommendedQuestion.QuestionId, DateTime.UtcNow);
-        else notFoundIds.Add(id);
-      }
-
-      if (notFoundIds.Count > 0)
-        return new ResponseResult((int) HttpStatusCode.NotModified, "Not all ids were found.",
-          new {NotFoundIds = notFoundIds});
-      return new ResponseResult((int) HttpStatusCode.Created, (object) "Recommended Question was added.");
-    }
-
+    
     [HttpPost("update/background/url")]
     public async Task<IActionResult> UpdateBackgroundViaUrl(
       [FromBody] UploadQuestionBackgroundViaUrlViewModel background)
@@ -280,13 +274,13 @@ namespace QuestionsServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       string url;
-      if(MediaConverter.IsStandardBackground(background.Url))
-       url = await _hub.Media.UploadBackgroundUrl( BackgroundType.Standard, background.Url);
-      else
-        url = await _hub.Media.UploadBackgroundUrl( BackgroundType.Custom, background.Url);
+      if (MediaConverter.IsStandardBackground(background.Url))
+        url = await _hub.Media.UploadBackgroundUrl(BackgroundType.Standard, background.Url);
+      else url = await _hub.Media.UploadBackgroundUrl(BackgroundType.Custom, background.Url);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url))
         return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
-      return new OkResponseResult("Background was updated", new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType)});
+      return new OkResponseResult("Background was updated",
+        new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType)});
     }
 
     [HttpPost("update/background/file")]
@@ -297,7 +291,8 @@ namespace QuestionsServer.Controllers
       var url = await _hub.Media.UploadBackgroundFile(BackgroundType.Custom, background.File);
       if (!await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url))
         return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
-      return new OkResponseResult("Background was updated", new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType) });
+      return new OkResponseResult("Background was updated",
+        new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType)});
     }
 
     [HttpPost("voters")]
@@ -311,7 +306,5 @@ namespace QuestionsServer.Controllers
 
       return new OkResponseResult(answeredList.MapAnsweredListDbToViewModel());
     }
-
-
   }
 }

@@ -37,6 +37,11 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
   }
 
+  public class GetCustomBackgroundUrlsViewModel : UserIdViewModel
+  {
+    public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
+  }
+
   public class GetQuestionFilteredStatistics : QuestionIdViewModel
   {
     public int MinAge { get; set; } = 0;
