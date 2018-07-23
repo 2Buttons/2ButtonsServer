@@ -10,7 +10,6 @@ using CommonLibraries.Extensions;
 using DataGenerator.Data;
 using DataGenerator.Data.Reader.Objects;
 using DataGenerator.ScriptsGenerators;
-using DataGenerator.ScriptsGenerators.Entities;
 using Newtonsoft.Json;
 
 namespace DataGenerator
@@ -47,26 +46,31 @@ namespace DataGenerator
 
       // manager.PreprocessData();
       //manager.CreateScripts();
-      //BagsManager bags = new BagsManager();
-      //bags.CombineUsers();
-      //bags.SaveBags();
+      BagsManager bags = new BagsManager();
+      bags.CombineUsers();
+     // bags.SaveBags();
+
+
+
+      //List<string> backgrounds = new List<string>();
+      //backgrounds.Add()
 
 
       //using (var sr = new StreamReader(@"E:\Projects\2Buttons\Project\Data\Scripts\Users.sql", Encoding.UTF8))
-     // {
+      // {
 
-        var usersStat = new List<StatisticsEntity>();
-      for (int i = 100; i <= 1099; i++)
-      {
-        usersStat.Add(new StatisticsEntity {UserId = i});
-      }
-        var script = new StatisticsGenerator().GetInsertionLine(usersStat);
+      //  var usersStat = new List<StatisticsEntity>();
+      //for (int i = 100; i <= 1099; i++)
+      //{
+      //  usersStat.Add(new StatisticsEntity {UserId = i});
+      //}
+      //  var script = new StatisticsGenerator().GetInsertionLine(usersStat);
 
-        using (var sw = new StreamWriter(@"E:\Projects\2Buttons\Project\Data\Scripts\Statistics.sql", false, Encoding.UTF8))
-        {
-          sw.WriteLine(script);
-        }
-     // }
+      //  using (var sw = new StreamWriter(@"E:\Projects\2Buttons\Project\Data\Scripts\Statistics.sql", false, Encoding.UTF8))
+      //  {
+      //    sw.WriteLine(script);
+      //  }
+      // }
 
       //List<City> cities;
 

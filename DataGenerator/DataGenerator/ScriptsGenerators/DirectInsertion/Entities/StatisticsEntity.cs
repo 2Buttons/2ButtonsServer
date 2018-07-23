@@ -1,4 +1,4 @@
-﻿namespace DataGenerator.ScriptsGenerators.Entities
+﻿namespace DataGenerator.ScriptsGenerators.DirectInsertion.Entities
 {
   public class StatisticsEntity
   {

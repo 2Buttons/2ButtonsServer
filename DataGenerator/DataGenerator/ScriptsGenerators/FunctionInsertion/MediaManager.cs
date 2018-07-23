@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using CommonLibraries;
 using CommonLibraries.Extensions;
-using DataGenerator.ScriptsGenerators.Entities;
 
-namespace DataGenerator.ScriptsGenerators
+namespace DataGenerator.ScriptsGenerators.FunctionInsertion
 {
   public class MediaManager
   {
@@ -34,7 +31,7 @@ namespace DataGenerator.ScriptsGenerators
     {
       var random = new Random();
       var backgrounds = Directory.GetFiles(backgroundFolder).ToList();
-      var imageType = BackgroundType.Background.ToString().GetMd5Hash();
+      var imageType = "";// BackgroundType.Background.ToString().GetMd5Hash();
 
       foreach (var t in questions)
       {
@@ -53,32 +50,32 @@ namespace DataGenerator.ScriptsGenerators
     {
       foreach (var t in users)
       {
-        var smallAvatar = AvatarSizeType.SmallAvatar.ToString().GetMd5Hash();
-        var largeAvatar = AvatarSizeType.LargeAvatar.ToString().GetMd5Hash();
-        var smallName = CreateUniqueName(t.SmallAvatarLink);
-        var largeName = CreateUniqueName(t.OriginalAvatarUrl);
+        //var smallAvatar = AvatarSizeType.SmallAvatar.ToString().GetMd5Hash();
+        //var largeAvatar = AvatarSizeType.LargeAvatar.ToString().GetMd5Hash();
+        //var smallName = CreateUniqueName(t.SmallAvatarLink);
+        //var largeName = CreateUniqueName(t.OriginalAvatarUrl);
 
-        var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
-        var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
-        //try
-        //{
-        //  new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
-        //}
-        //catch (Exception ex)
-        //{
-        //  Console.WriteLine(t.SmallAvatarLink);
-        //}
-        //try
-        //{
-        //  new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
-        //}
-        //catch (Exception ex)
-        //{
-        //  Console.WriteLine(t.LargeAvatarLink);
-        //}
+        //var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
+        //var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
+        ////try
+        ////{
+        ////  new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
+        ////}
+        ////catch (Exception ex)
+        ////{
+        ////  Console.WriteLine(t.SmallAvatarLink);
+        ////}
+        ////try
+        ////{
+        ////  new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
+        ////}
+        ////catch (Exception ex)
+        ////{
+        ////  Console.WriteLine(t.LargeAvatarLink);
+        ////}
 
-        t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
-        t.OriginalAvatarUrl = "/" + largeAvatar + "/" + largeName;
+        //t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
+        //t.OriginalAvatarUrl = "/" + largeAvatar + "/" + largeName;
       }
     }
 

@@ -6,10 +6,9 @@ using System.Text;
 using CommonLibraries;
 using DataGenerator.Data;
 using DataGenerator.Data.Reader.Objects;
-using DataGenerator.ScriptsGenerators.Entities;
-using Microsoft.Extensions.Options;
+using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
 
-namespace DataGenerator.ScriptsGenerators
+namespace DataGenerator.ScriptsGenerators.DirectInsertion
 {
   public class GeneratingManager
   {
@@ -41,7 +40,7 @@ namespace DataGenerator.ScriptsGenerators
         {
           UserId = x.UserId,
           OriginalAvatarUrl = x.LargePhoto,
-          SmallAvatarLink = x.SmallPhoto
+          //SmallAvatarLink = x.SmallPhoto
         }).ToList();
       _mediaManager.SetAvatars(userEntities, @"E:\Projects\2Buttons\Project\Data\Media\");
 
@@ -164,7 +163,7 @@ namespace DataGenerator.ScriptsGenerators
           LikesCount = 0,
           QuestionAddDate = RandomDay(),
           QuestionType = QuestionType.Opened,
-          Shows = 0,
+          //Shows = 0,
           UserId = 0
         });
         _mediaManager.SetStandardsBackground(_questions, @"E:\Projects\2Buttons\Project\MediaData\standards\", @"E:\Projects\2Buttons\Project\Data\Media\");
@@ -200,7 +199,7 @@ namespace DataGenerator.ScriptsGenerators
           SexType = t.Sex,
           LastNotsSeenDate = DateTime.Now,
           OriginalAvatarUrl = t.LargePhoto,
-          SmallAvatarLink = t.SmallPhoto
+          //SmallAvatarLink = t.SmallPhoto
         };
         _userInfos.Add(userInfo);
       }
@@ -250,7 +249,7 @@ namespace DataGenerator.ScriptsGenerators
             IsLiked = false
           });
           _options.First(x => x.QuestionId == _questions[questionIndex].QuestionId && x.Position == answer).AnswersCount++;
-          _questions[questionIndex].Shows++;
+         // _questions[questionIndex].Shows++;
           if (_random.Next(100) % 5 == 0) _questions[questionIndex].LikesCount++;
         }
       }

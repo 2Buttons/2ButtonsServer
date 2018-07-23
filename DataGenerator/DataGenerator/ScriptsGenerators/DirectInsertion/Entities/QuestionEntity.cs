@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonLibraries;
 
-namespace DataGenerator.ScriptsGenerators.Entities
+namespace DataGenerator.ScriptsGenerators.DirectInsertion.Entities
 {
   public class QuestionEntity
   {

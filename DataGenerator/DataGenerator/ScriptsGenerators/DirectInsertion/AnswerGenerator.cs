@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DataGenerator.ScriptsGenerators.Entities;
 
-namespace DataGenerator.ScriptsGenerators
+namespace DataGenerator.ScriptsGenerators.DirectInsertion
 {
   public class AnswerGenerator
   {

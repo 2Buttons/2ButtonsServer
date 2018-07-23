@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DataGenerator.ScriptsGenerators.Entities;
+using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
 
-namespace DataGenerator.ScriptsGenerators
+namespace DataGenerator.ScriptsGenerators.DirectInsertion
 {
   public class FollowGenerator
   {

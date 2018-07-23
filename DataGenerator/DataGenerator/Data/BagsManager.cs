@@ -84,7 +84,7 @@ namespace DataGenerator.Data
     private void SaveCitiesBag()
     {
       //var mainCities = _reader.ReadMainCities(FilesUrl + MainCitiesFile);
-      
+
       //var files = Directory.GetFiles(FilesUrl).Where(x => x.Contains("Users")).ToList();
       //var citiesArray = new List<List<City>>();
       //foreach (var file in files)
@@ -93,7 +93,7 @@ namespace DataGenerator.Data
       //}
 
       //Parallel.For(0, files.Count, (i) =>
-      
+
       //{
       //  citiesArray[i] = _reader.ReadCities(files[i]).Select(x => new City { CityId = x.CityId, Title = x.Title.Replace("'", "''") })
       //    .Distinct(new City()).ToList();

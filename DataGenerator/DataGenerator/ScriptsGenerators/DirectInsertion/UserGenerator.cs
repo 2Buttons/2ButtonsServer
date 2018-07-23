@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DataGenerator.ScriptsGenerators.Entities;
 
-namespace DataGenerator.ScriptsGenerators
+namespace DataGenerator.ScriptsGenerators.DirectInsertion
 {
   public class UserGenerator
   {
@@ -97,6 +97,37 @@ namespace DataGenerator.ScriptsGenerators
         result.Append(GetInsertionLineUsersAccount(usersIter));
         result.Append(GetGo());
         result.Append(SwitchIdentityInsertAccount(false));
+        result.Append(GetGo());
+      }
+      return result.ToString();
+    }
+
+
+    private string GetInserionLineAccountAddUser(UserInfoEntityAddUSer user)
+    {
+      return
+        $"EXECUTE [dbo].[addUser] {user.UserId}, N'{user.Login}', '{user.BirthDate:u}', { (int)user.SexType}, { user.City}, N'{user.Description}',  N'{user.OriginalAvatarUrl}')";
+    }
+
+    private string GetInsertionLineUsersAccountAddUser(IList<UserInfoEntityAddUSer> users)
+    {
+      var result = new StringBuilder();
+      for (var i = 0; i < users.Count - 1; i++)
+        result.Append(GetInserionLineAccountAddUser(users[i]) + "," + Environment.NewLine);
+      result.Append(GetInserionLineAccountAddUser(users[users.Count - 1]));
+      return result.ToString();
+    }
+
+    public string GetInsertionLineAccountAddUser(IList<UserInfoEntityAddUSer> users)
+    {
+      var result = new StringBuilder();
+      var times = users.Count < 1000 ? 1 : users.Count / 1000;
+      for (var i = 0; i < times; i++)
+      {
+        var usersIter = users.Skip(i * 1000).Take(1000).ToList();
+        result.Append(GetUsingLineAccountDb());
+        result.Append(GetGo());
+        result.Append(GetInsertionLineUsersAccountAddUser(usersIter));
         result.Append(GetGo());
       }
       return result.ToString();
