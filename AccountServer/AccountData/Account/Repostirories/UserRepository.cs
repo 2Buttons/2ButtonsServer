@@ -41,7 +41,7 @@ namespace AccountData.Account.Repostirories
       if (user == null) return false;
 
       user.Email = email;
-      user.EmailConfirmed = emailConfirmed;
+      user.IsEmailConfirmed = emailConfirmed;
       _context.Entry(user).State = EntityState.Modified;
       return await _context.SaveChangesAsync() > 0;
     }

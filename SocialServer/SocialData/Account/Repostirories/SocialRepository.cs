@@ -36,13 +36,13 @@ namespace SocialData.Account.Repostirories
     public async Task<List<int>> GetUserIdsFromVkIds(IEnumerable<int> vkIds)
     {
       return await _context.SocialsDb.Where(x => x.SocialType == SocialType.Vk)
-               .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.ExternalId).ToListAsync() ?? new List<int>();
+               .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.InternalId).ToListAsync() ?? new List<int>();
     }
 
-    public async Task<List<int>> GetUserIdsFromFbIds(IEnumerable<int> fbIds)
+    public async Task<List<long>> GetUserIdsFromFbIds(IEnumerable<int> fbIds)
     {
         return await _context.SocialsDb.Where(x => x.SocialType == SocialType.Facebook)
-          .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.ExternalId).ToListAsync() ?? new List<int>(); 
+          .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.ExternalId).ToListAsync() ?? new List<long>(); 
 
       /*
         foreach (var fbId in fbIds)

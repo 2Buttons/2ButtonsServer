@@ -13,7 +13,7 @@ namespace AuthorizationData.Account.DTO
         Email = userDb.Email,
         EmailConfirmed = userDb.EmailConfirmed,
         PhoneNumber = userDb.PhoneNumber,
-        PhoneNumberConfirmed = userDb.PhoneNumberConfirmed,
+        PhoneNumberConfirmed = userDb.IsPhoneNumberConfirmed,
         RoleType = userDb.RoleType,
         TwoFactorEnabled = userDb.TwoFactorEnabled,
       };

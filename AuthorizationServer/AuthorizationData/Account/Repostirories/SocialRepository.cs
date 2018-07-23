@@ -29,11 +29,11 @@ namespace AuthorizationData.Account.Repostirories
         UserId = o.UserId,
         AccessFailedCount = o.AccessFailedCount,
         Email = o.Email,
-        EmailConfirmed = o.EmailConfirmed,
+        EmailConfirmed = o.IsEmailConfirmed,
         PhoneNumber = o.PhoneNumber,
-        PhoneNumberConfirmed = o.PhoneNumberConfirmed,
+        PhoneNumberConfirmed = o.IsPhoneNumberConfirmed,
         RoleType = o.RoleType,
-        TwoFactorEnabled = o.TwoFactorEnabled
+        TwoFactorEnabled = o.IsTwoFactorAuthenticationEnabled
       }).LastOrDefaultAsync();
     }
 
@@ -53,11 +53,11 @@ namespace AuthorizationData.Account.Repostirories
         UserId = o.UserId,
         AccessFailedCount = o.AccessFailedCount,
         Email = o.Email,
-        EmailConfirmed = o.EmailConfirmed,
+        EmailConfirmed = o.IsEmailConfirmed,
         PhoneNumber = o.PhoneNumber,
-        PhoneNumberConfirmed = o.PhoneNumberConfirmed,
+        PhoneNumberConfirmed = o.IsPhoneNumberConfirmed,
         RoleType = o.RoleType,
-        TwoFactorEnabled = o.TwoFactorEnabled
+        TwoFactorEnabled = o.IsTwoFactorAuthenticationEnabled
       }).FirstOrDefaultAsync();
     }
 

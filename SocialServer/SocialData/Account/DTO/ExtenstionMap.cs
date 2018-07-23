@@ -11,11 +11,11 @@ namespace SocialData.Account.DTO
         UserId = userDb.UserId,
         AccessFailedCount = userDb.AccessFailedCount,
         Email = userDb.Email,
-        EmailConfirmed = userDb.EmailConfirmed,
+        EmailConfirmed = userDb.IsEmailConfirmed,
         PhoneNumber = userDb.PhoneNumber,
-        PhoneNumberConfirmed = userDb.PhoneNumberConfirmed,
+        PhoneNumberConfirmed = userDb.IsPhoneNumberConfirmed,
         RoleType = userDb.RoleType,
-        TwoFactorEnabled = userDb.TwoFactorEnabled,
+        TwoFactorEnabled = userDb.IsTwoFactorAuthenticationEnabled,
       };
     }
   }

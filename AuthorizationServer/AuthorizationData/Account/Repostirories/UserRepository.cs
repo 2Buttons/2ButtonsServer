@@ -31,7 +31,7 @@ namespace AuthorizationData.Account.Repostirories
     {
       var user = await _contextAccount.UsersDb.FindAsync(userId);
       if (user == null) return false;
-      user.EmailConfirmed = true;
+      user.IsEmailConfirmed = true;
       _contextAccount.Entry(user).State = EntityState.Modified;
       return await _contextAccount.SaveChangesAsync() > 0;
     }
@@ -45,7 +45,7 @@ namespace AuthorizationData.Account.Repostirories
     public async Task<bool> ResetPasswordAsync(string email, string passwordHash)
     {
       var user = await _contextAccount.UsersDb.FirstOrDefaultAsync(x=>x.Email == email);
-      if (user == null || !user.EmailConfirmed) return false;
+      if (user == null || !user.IsEmailConfirmed) return false;
 
       user.PasswordHash = passwordHash;
       _contextAccount.Entry(user).State = EntityState.Modified;
@@ -89,7 +89,7 @@ namespace AuthorizationData.Account.Repostirories
       if (user == null) return false;
 
       user.Email = email;
-      user.EmailConfirmed = emailConfirmed;
+      user.IsEmailConfirmed = emailConfirmed;
       _contextAccount.Entry(user).State = EntityState.Modified;
       return await _contextAccount.SaveChangesAsync() > 0;
     }

@@ -11,10 +11,10 @@ namespace SocialData.Account.Entities
     public int SocialId { get; set; }
     public SocialType SocialType { get; set; }
     public int InternalId { get; set; }
-    public int ExternalId { get; set; }
+    public long ExternalId { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string ExternalToken { get; set; }
-    public int ExpiresIn { get; set; }
+    public long ExpiresIn { get; set; }
   }
 }
