@@ -7,7 +7,7 @@ namespace QuestionsData.Entities
   public class QuestionTagEntity
   {
     [Key]
-    public long QuestionId { get; set; }
+    public int QuestionId { get; set; }
     public int TagId { get; set; }
   }
 }

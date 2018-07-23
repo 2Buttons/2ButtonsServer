@@ -62,7 +62,7 @@ namespace CommonLibraries.SocialNetworks.Vk
     private SexType _vkSexType;
 
     [JsonProperty("id")]
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     [JsonProperty("first_name")]
     public string FirstName { get; set; }

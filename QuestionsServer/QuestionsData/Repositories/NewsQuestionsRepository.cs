@@ -10,14 +10,14 @@ namespace QuestionsData.Repositories
   public class NewsQuestionsRepository
   {
 
-    public List<NewsAskedQuestionDto> GetNewsAskedQuestions(TwoButtonsContext context, long userId)
+    public List<NewsAskedQuestionDto> GetNewsAskedQuestions(TwoButtonsContext context, int userId)
     {
       return context.NewsAskedQuestionsDb.AsNoTracking().FromSql($"select * from dbo.getNewsAskedQuestions({userId})")
         .Select(x => new NewsAskedQuestionDto { NewsAskedQuestionDb = x, Priority = x.AnsweredFollowingsCount * 4 }).OrderBy(x => x.NewsAskedQuestionDb.UserId)
         .ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
-    public List<NewsAnsweredQuestionDto> GetNewsAnsweredQuestions(TwoButtonsContext context, long userId)
+    public List<NewsAnsweredQuestionDto> GetNewsAnsweredQuestions(TwoButtonsContext context, int userId)
     {
       return context.NewsAnsweredQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsAnsweredQuestions({userId})")
@@ -25,7 +25,7 @@ namespace QuestionsData.Repositories
         .ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
-    public List<NewsFavoriteQuestionDto> GetNewsFavoriteQuestions(TwoButtonsContext context, long userId)
+    public List<NewsFavoriteQuestionDto> GetNewsFavoriteQuestions(TwoButtonsContext context, int userId)
     {
       return context.NewsFavoriteQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsFavoriteQuestions({userId})")
@@ -33,7 +33,7 @@ namespace QuestionsData.Repositories
         .ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
-    public List<NewsCommentedQuestionDto> GetNewsCommentedQuestions(TwoButtonsContext context, long userId)
+    public List<NewsCommentedQuestionDto> GetNewsCommentedQuestions(TwoButtonsContext context, int userId)
     {
       return context.NewsCommentedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsCommentedQuestions({userId})")
@@ -44,7 +44,7 @@ namespace QuestionsData.Repositories
         }).OrderBy(x => x.NewsCommentedQuestionDb.UserId).ThenByDescending(x => x.Priority).ToListAsync().GetAwaiter().GetResult();
     }
 
-    public List<NewsRecommendedQuestionDto> GetNewsRecommendedQuestions(TwoButtonsContext context, long userId)
+    public List<NewsRecommendedQuestionDto> GetNewsRecommendedQuestions(TwoButtonsContext context, int userId)
     {
       var questions = context.NewsRecommendedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsRecommendedQuestions({userId})").ToList();
@@ -102,7 +102,7 @@ namespace QuestionsData.Repositories
     }
 
     /*
-    public List<NewsRecommendedQuestionDto> GetNewsRecommendedQuestions(TwoButtonsContext context, long userId)
+    public List<NewsRecommendedQuestionDto> GetNewsRecommendedQuestions(TwoButtonsContext context, int userId)
     {
       var  questions =  context.NewsRecommendedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNewsRecommendedQuestions({userId})").ToListAsync();

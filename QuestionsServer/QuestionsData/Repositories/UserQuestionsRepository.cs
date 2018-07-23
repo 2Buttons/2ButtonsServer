@@ -22,7 +22,7 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, long questionId)
+    public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, int questionId)
     {
       if (_db.UserEntities.All(x => x.UserId != userToId)) return false;
 
@@ -32,7 +32,7 @@ namespace QuestionsData.Repositories
                $"addRecommendedQuestion {userToId}, {userFromId}, {questionId}, {recommendedDate}") > 0;
     }
 
-    public async Task<List<UserAskedQuestionDb>> GetUserAskedQuestions(long userId, int pageUserId, int offset,
+    public async Task<List<UserAskedQuestionDb>> GetUserAskedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<UserAskedQuestionDb, object>> predicate)
     {
       var isAnonimus = 0;
@@ -42,7 +42,7 @@ namespace QuestionsData.Repositories
         .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<UserAnsweredQuestionDb>> GetUserAnsweredQuestions(long userId, int pageUserId, int offset,
+    public async Task<List<UserAnsweredQuestionDb>> GetUserAnsweredQuestions(int userId, int pageUserId, int offset,
       int count)
     {
       var isAnonimus = userId == pageUserId ? 1 : 0;
@@ -52,7 +52,7 @@ namespace QuestionsData.Repositories
         .OrderByDescending(x => x.AddedDate).Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<UserFavoriteQuestionDb>> GetUserFavoriteQuestions(long userId, int pageUserId, int offset,
+    public async Task<List<UserFavoriteQuestionDb>> GetUserFavoriteQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<UserFavoriteQuestionDb, object>> predicate)
     {
       var isAnonimus = 0;
@@ -62,7 +62,7 @@ namespace QuestionsData.Repositories
         .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<UserCommentedQuestionDto>> GetUserCommentedQuestions(long userId, int pageUserId, int offset,
+    public async Task<List<UserCommentedQuestionDto>> GetUserCommentedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<UserCommentedQuestionDb, object>> predicate)
     {
       var questions =  await _db.UserCommentedQuestionsDb.AsNoTracking()
@@ -116,7 +116,7 @@ namespace QuestionsData.Repositories
 
     }
 
-    public async Task<List<TopQuestionDb>> GeTopQuestions(long userId, bool isOnlyNew, int offset, int count,
+    public async Task<List<TopQuestionDb>> GeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
       DateTime topAfterDate, Expression<Func<TopQuestionDb, object>> predicate)
     {
       return await _db.TopQuestionsDb.AsNoTracking()
@@ -124,7 +124,7 @@ namespace QuestionsData.Repositories
         .Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<AskedQuestionDb>> GetAskedQuestions(long userId, int pageUserId, int offset, int count,
+    public async Task<List<AskedQuestionDb>> GetAskedQuestions(int userId, int pageUserId, int offset, int count,
       Expression<Func<AskedQuestionDb, object>> predicate)
     {
       var isAnonimus = 1;
@@ -134,7 +134,7 @@ namespace QuestionsData.Repositories
         .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<RecommendedQuestionDb>> GetRecommendedQuestions(long userId, int pageUserId, int offset,
+    public async Task<List<RecommendedQuestionDb>> GetRecommendedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<RecommendedQuestionDb, object>> predicate)
     {
       return await _db.RecommendedQuestionsDb.AsNoTracking()
@@ -142,7 +142,7 @@ namespace QuestionsData.Repositories
         .Take(count).ToListAsync();
     }
 
-    public async Task<List<RecommendedQuestionDto>> GetRecommendedQuestions(long userId,int offset,
+    public async Task<List<RecommendedQuestionDto>> GetRecommendedQuestions(int userId,int offset,
       int count, Expression<Func<RecommendedQuestionDb, object>> predicate)
     {
 
@@ -188,7 +188,7 @@ namespace QuestionsData.Repositories
      
     }
 
-    public async Task<List<SelectedQuestionDb>> GetSelectedQuestions(long userId, int pageUserId, int offset, int count)
+    public async Task<List<SelectedQuestionDb>> GetSelectedQuestions(int userId, int pageUserId, int offset, int count)
     {
       return await _db.SelectedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getNotAnsweredQuestions({userId})")
@@ -198,14 +198,14 @@ namespace QuestionsData.Repositories
         .Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<LikedQuestionDb>> GetLikedQuestions(long userId, int offset, int count,
+    public async Task<List<LikedQuestionDb>> GetLikedQuestions(int userId, int offset, int count,
       Expression<Func<LikedQuestionDb, object>> predicate)
     {
       return await _db.LikedQuestionsDb.AsNoTracking().FromSql($"select * from dbo.getUserLikedQuestions({userId})")
         .OrderByDescending(predicate).Skip(offset).Take(count).ToListAsync();
     }
 
-    public async Task<List<SavedQuestionDb>> GetSavedQuestions(long userId, int offset, int count,
+    public async Task<List<SavedQuestionDb>> GetSavedQuestions(int userId, int offset, int count,
       Expression<Func<SavedQuestionDb, object>> predicate)
     {
       var isAnonimus = 1;

@@ -16,7 +16,7 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<bool> AddTag(long questionId, string tagText, int position)
+    public async Task<bool> AddTag(int questionId, string tagText, int position)
     {
       return await _db.Database.ExecuteSqlCommandAsync($"addTag {questionId}, {tagText}, {position}") > 0;
     }
@@ -27,12 +27,12 @@ namespace QuestionsData.Repositories
       return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<TagDb>> GetTags(long questionId)
+    public async Task<List<TagDb>> GetTags(int questionId)
     {
       return _db.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
     }
 
-    public List<TagDb> GetTags(TwoButtonsContext context, long questionId)
+    public List<TagDb> GetTags(TwoButtonsContext context, int questionId)
     {
       return context.TagDb.AsNoTracking().FromSql($"select * from dbo.getTags({questionId})").ToList();
     }

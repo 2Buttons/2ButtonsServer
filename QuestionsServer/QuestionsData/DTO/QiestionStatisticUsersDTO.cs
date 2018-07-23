@@ -17,7 +17,7 @@ namespace QuestionsData.DTO
 
   public class VoterUserDto
   {
-    public long UserId { get; set; }
+    public int UserId { get; set; }
     public string Login { get; set; }
     public SexType SexType { get; set; }
     public int Age { get; set; }

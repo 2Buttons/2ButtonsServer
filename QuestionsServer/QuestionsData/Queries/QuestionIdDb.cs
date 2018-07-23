@@ -5,6 +5,6 @@ namespace QuestionsData.Queries
   public class QuestionIdDb
   {
     [Key]
-    public long QuestionId { get; set; }
+    public int QuestionId { get; set; }
   }
 }

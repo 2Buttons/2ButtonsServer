@@ -4,6 +4,6 @@ namespace QuestionsServer.ViewModels.InputParameters
 {
   public class UserIdViewModel
   {
-    public long UserId { get; set; }
+    public int UserId { get; set; }
   }
 }

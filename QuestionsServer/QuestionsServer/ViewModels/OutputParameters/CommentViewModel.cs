@@ -6,7 +6,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public class CommentViewModel
     {
         public int CommentId { get; set; }
-        public long UserId { get; set; }
+        public int UserId { get; set; }
         public string Login { get; set; }
         public string SmallAvatarUrl { get; set; }
         public string Text { get; set; }

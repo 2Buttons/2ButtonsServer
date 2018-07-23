@@ -7,7 +7,7 @@ namespace QuestionsData.Queries
   public class PhotoDb
   {
     [Key]
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     public string Login { get; set; }
     public SexType SexType { get; set; }

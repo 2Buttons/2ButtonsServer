@@ -5,8 +5,8 @@ namespace QuestionsData.Queries
   public class RecommendedUserQuestionQuery
   {
     [Key]
-    public long QuestionId { get; set; }
+    public int QuestionId { get; set; }
 
-    public long UserId { get; set; }
+    public int UserId { get; set; }
   }
 }

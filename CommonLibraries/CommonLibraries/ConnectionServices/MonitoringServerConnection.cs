@@ -22,7 +22,7 @@ namespace CommonLibraries.ConnectionServices
       _updateMonitoringServerUrl = $"http://localhost:{mediaOptions.Value["Monitoring"].Port}/monitoring/update";
     }
 
-    public Task AddUrlMonitoring(long userId)
+    public Task AddUrlMonitoring(int userId)
     {
       _logger.LogInformation($"{nameof(AddUrlMonitoring)}.Sart");
       var body = JsonConvert.SerializeObject(new {userId});
@@ -32,7 +32,7 @@ namespace CommonLibraries.ConnectionServices
       return result;
     }
 
-    public Task UpdateUrlMonitoring(long userId, UrlMonitoringType monitoringType)
+    public Task UpdateUrlMonitoring(int userId, UrlMonitoringType monitoringType)
     {
       _logger.LogInformation($"{nameof(UpdateUrlMonitoring)}.Sart");
       var body = JsonConvert.SerializeObject(new { userId, UrlMonitoringType = monitoringType });

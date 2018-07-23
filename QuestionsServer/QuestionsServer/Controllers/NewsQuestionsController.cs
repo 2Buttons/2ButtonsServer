@@ -156,7 +156,7 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
-    private List<NewsAskedQuestionViewModel> GetNewsAskedQuestionsAsync(TwoButtonsContext context, long userId, BackgroundSizeType backgroundSizeType)
+    private List<NewsAskedQuestionViewModel> GetNewsAskedQuestionsAsync(TwoButtonsContext context, int userId, BackgroundSizeType backgroundSizeType)
     {
       var userAskedQuestions = _mainDb.News.GetNewsAskedQuestions(context, userId);
       //return new List<NewsAskedQuestionViewModel>();
@@ -173,7 +173,7 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestionsAsync(TwoButtonsContext context, long userId, BackgroundSizeType backgroundSizeType)
+    private List<NewsAnsweredQuestionViewModel> GetNewsAnsweredQuestionsAsync(TwoButtonsContext context, int userId, BackgroundSizeType backgroundSizeType)
     {
       var userAnsweredQuestions = _mainDb.News.GetNewsAnsweredQuestions(context, userId);
       //return new List<NewsAnsweredQuestionViewModel>();
@@ -188,7 +188,7 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestionsAsync(TwoButtonsContext context, long userId, BackgroundSizeType backgroundSizeType)
+    private List<NewsFavoriteQuestionViewModel> GetNewsFavoriteQuestionsAsync(TwoButtonsContext context, int userId, BackgroundSizeType backgroundSizeType)
     {
       var userFavoriteQuestions = _mainDb.News.GetNewsFavoriteQuestions(context, userId);
       //return new List<NewsFavoriteQuestionViewModel>();
@@ -205,7 +205,7 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(TwoButtonsContext context, long userId, BackgroundSizeType backgroundSizeType)
+    private List<NewsCommentedQuestionViewModel> GetNewsCommentedQuestions(TwoButtonsContext context, int userId, BackgroundSizeType backgroundSizeType)
     {
       var userCommentedQuestions = _mainDb.News.GetNewsCommentedQuestions(context, userId);
       //return new List<NewsCommentedQuestionViewModel>();
@@ -221,7 +221,7 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(TwoButtonsContext context, long userId, BackgroundSizeType backgroundSizeType)
+    private List<NewsRecommendedQuestionViewModel> TryGetNewsRecommendedQuestions(TwoButtonsContext context, int userId, BackgroundSizeType backgroundSizeType)
     {
       var newsRecommendedQuestions =
          _mainDb.News.GetNewsRecommendedQuestions(context, userId);
@@ -239,7 +239,7 @@ namespace QuestionsServer.Controllers
     }
 
 
-    private void GetTagsAndPhotos(TwoButtonsContext context, long userId, long questionId, out IEnumerable<TagDb> tags,
+    private void GetTagsAndPhotos(TwoButtonsContext context, int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
       var photosCount = 100;

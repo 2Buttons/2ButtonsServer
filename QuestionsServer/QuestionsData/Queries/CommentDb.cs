@@ -6,7 +6,7 @@ namespace QuestionsData.Queries
   public class CommentDb
   {
     public int CommentId { get; set; }
-    public long UserId { get; set; }
+    public int UserId { get; set; }
     public string Login { get; set; }
     public string OriginalAvatarUrl { get; set; }
     public string Text { get; set; }

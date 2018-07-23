@@ -4,7 +4,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
 {
     public class AnsweredListViewModel
     {
-      public long UserId { get; set; }
+      public int UserId { get; set; }
       public string Login { get; set; }
       public string SmallAvatarUrl { get; set; }
       public int Age { get; set; }

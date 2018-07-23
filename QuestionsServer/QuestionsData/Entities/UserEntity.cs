@@ -9,7 +9,7 @@ namespace QuestionsData.Entities
   public class UserEntity
   {
     [Key]
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     public string Login { get; set; }
     public DateTime BirthDate { get; set; }

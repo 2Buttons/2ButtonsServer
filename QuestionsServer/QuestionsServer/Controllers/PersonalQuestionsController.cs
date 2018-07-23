@@ -183,7 +183,7 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
-    private void GetTagsAndPhotos(long userId, long questionId, out IEnumerable<TagDb> tags,
+    private void GetTagsAndPhotos(int userId, int questionId, out IEnumerable<TagDb> tags,
       out IEnumerable<PhotoDb> firstPhotos, out IEnumerable<PhotoDb> secondPhotos)
     {
       var photosCount = 100;
