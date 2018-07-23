@@ -27,7 +27,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
   public class GetQuestionBackground 
   {
     [IdValidation(nameof(QuestionId))]
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
     public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
   }
 
@@ -115,7 +115,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     [IdValidation]
     public int UserFromId { get; set; }
     [IdValidation]
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
   }
 
 

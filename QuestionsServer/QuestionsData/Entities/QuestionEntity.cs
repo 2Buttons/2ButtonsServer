@@ -9,9 +9,9 @@ namespace QuestionsData.Entities
   public class QuestionEntity
   {
     [Key]
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
 
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     public string Condition { get; set; }
     public bool IsAnonymous { get; set; }
     public QuestionType QuestionType { get; set; }

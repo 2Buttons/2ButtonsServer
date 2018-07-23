@@ -16,7 +16,7 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<bool> AddComplaint(int userId, int questionId, ComplaintType complaintType)
+    public async Task<bool> AddComplaint(long userId, long questionId, ComplaintType complaintType)
     {
       var complainttAddDate = DateTime.UtcNow;
 

@@ -11,7 +11,7 @@ namespace QuestionsData.DTO
 
   public class RecommendedToUserDto
   {
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     public string Login { get; set; }
     //public string SmallAvatarUrl { get; set; }
   }

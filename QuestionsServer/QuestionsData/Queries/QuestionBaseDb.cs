@@ -7,7 +7,7 @@ namespace QuestionsData.Queries
   public class QuestionBaseDb
   {
     [Key]
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
 
     public string Condition { get; set; }
     public string FirstOption { get; set; }
@@ -15,7 +15,7 @@ namespace QuestionsData.Queries
     public string OriginalBackgroundUrl { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime AddedDate { get; set; }
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     public string Login { get; set; }
     public SexType SexType { get; set; }
     public string OriginalAvatarUrl { get; set; }

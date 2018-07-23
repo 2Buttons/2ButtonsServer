@@ -7,7 +7,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
 {
   public class QuestionBaseViewModel
   {
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
     public string Condition { get; set; }
     public List<Option> Options { get; set; }
     public string BackgroundUrl { get; set; }

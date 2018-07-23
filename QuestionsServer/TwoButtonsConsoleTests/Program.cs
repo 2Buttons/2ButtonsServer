@@ -12,7 +12,7 @@ namespace TwoButtonsConsoleTests
         static void Main(string[] args)
         {
             //AddWrapper addWrapper = new AddWrapper();
-            //if (addWrapper.TryAddUser("", "testAdd5", 1525, 235, 15, "testPhone5", "", "", out int userId))
+            //if (addWrapper.TryAddUser("", "testAdd5", 1525, 235, 15, "testPhone5", "", "", out long userId))
             //    Console.WriteLine(userId);
 
             List<int> p = new List<int>();
@@ -25,7 +25,7 @@ namespace TwoButtonsConsoleTests
             {
                 //var user = db.UserDb.FirstOrDefault();
                 //Console.WriteLine(user?.Login);
-                //if (AccountWrapper.TryGetIdentification(db, "govjad", "1", out int userId))
+                //if (AccountWrapper.TryGetIdentification(db, "govjad", "1", out long userId))
                 //    Console.WriteLine(userId);
             }
 

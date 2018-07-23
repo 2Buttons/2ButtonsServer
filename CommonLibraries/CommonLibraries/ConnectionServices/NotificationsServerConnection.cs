@@ -41,7 +41,7 @@ namespace CommonLibraries.ConnectionServices
       return result;
     }
 
-    public   Task SendCommentNotification(int notifierId, int questionId, int commentId,
+    public   Task SendCommentNotification(int notifierId, long questionId, int commentId,
       DateTime commentedDate)
     {
       _logger.LogInformation($"{nameof(SendCommentNotification)}.Start");
@@ -58,7 +58,7 @@ namespace CommonLibraries.ConnectionServices
       return result;
     }
 
-    public  Task SendRecommendQuestionNotification(int notifierId, int userToId, int questionId,
+    public  Task SendRecommendQuestionNotification(int notifierId, int userToId, long questionId,
       DateTime recommendedDate)
     {
       _logger.LogInformation($"{nameof(SendRecommendQuestionNotification)}.Start");

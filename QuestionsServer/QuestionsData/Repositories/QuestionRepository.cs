@@ -24,7 +24,7 @@ namespace QuestionsData.Repositories
       _db = db;
     }
 
-    public async Task<QuestionDb> FindQuestion(int userId, int questionId)
+    public async Task<QuestionDb> FindQuestion(long userId, long questionId)
     {
       var result = await _db.QuestionDb.AsNoTracking().FromSql($"select * from dbo.getQuestion({userId}, {questionId})")
         .FirstOrDefaultAsync();
@@ -32,13 +32,13 @@ namespace QuestionsData.Repositories
       return result;
     }
 
-    public async Task<string> GetBackground(int questionId)
+    public async Task<string> GetBackground(long questionId)
     {
       var result = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
       return result?.OriginalBackgroundUrl;
     }
 
-    public async Task<List<QuestionStatisticDto>> GetQuestionStatistic(int userId, int questionId, int minAge, int maxAge,
+    public async Task<List<QuestionStatisticDto>> GetQuestionStatistic(long userId, long questionId, int minAge, int maxAge,
       SexType sexType, string city)
     {
      
@@ -87,12 +87,12 @@ namespace QuestionsData.Repositories
       };
     }
 
-    public async Task<List<string>> GetCustomQuestionBackgrounds(int userId)
+    public async Task<List<string>> GetCustomQuestionBackgrounds(long userId)
     {
       return await _db.QuestionEntities.Where(x => x.UserId == userId).Select(x => x.OriginalBackgroundUrl).Distinct().ToListAsync();
     }
 
-    public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(int userId, int questionId, int minAge, int maxAge,
+    public async Task<QiestionStatisticUsersDto> GetQuestionStatistiсUsers(long userId, long questionId, int minAge, int maxAge,
       SexType sexType, string city, int offset, int count)
     {
       var cityId = city.IsNullOrEmpty() ? -1 : _db.CityEntities.FirstOrDefault(x => x.Name == city)?.CityId ?? -1;
@@ -150,7 +150,7 @@ namespace QuestionsData.Repositories
              ?.QuestionId ?? -1;
     }
 
-    public async Task<int> AddQuestion(int userId, string condition, string originalBackgroundUrl, bool isAnonymous,
+    public async Task<int> AddQuestion(long userId, string condition, string originalBackgroundUrl, bool isAnonymous,
       AudienceType audienceType, QuestionType questionType, string firstOption, string secondOption)
     {
       var questionAddDate = DateTime.UtcNow;
@@ -162,18 +162,18 @@ namespace QuestionsData.Repositories
       return (int) questionIdDb.Value;
     }
 
-    public async Task<bool> DeleteQuestion(int questionId)
+    public async Task<bool> DeleteQuestion(long questionId)
     {
       return await _db.Database.ExecuteSqlCommandAsync($"deleteQuestion {questionId}") > 0;
     }
 
-    public async Task<bool> UpdateQuestionFeedback(int userId, int questionId, FeedbackType feedback)
+    public async Task<bool> UpdateQuestionFeedback(long userId, long questionId, FeedbackType feedback)
     {
       return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionFeedback {userId}, {questionId}, {feedback}") >
              0;
     }
 
-    public async Task<bool> UpdateSaved(int userId, int questionId, bool isInFavorites)
+    public async Task<bool> UpdateSaved(long userId, long questionId, bool isInFavorites)
     {
       var added = DateTime.Now;
 
@@ -181,7 +181,7 @@ namespace QuestionsData.Repositories
                $"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}") > 0;
     }
 
-    public async Task<bool> UpdateFavorites(int userId, int questionId, bool isInFavorites)
+    public async Task<bool> UpdateFavorites(long userId, long questionId, bool isInFavorites)
     {
       var added = DateTime.Now;
 
@@ -189,7 +189,7 @@ namespace QuestionsData.Repositories
                $"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}") > 0;
     }
 
-    public async Task<bool> UpdateAnswer(int userId, int questionId, AnswerType answerType)
+    public async Task<bool> UpdateAnswer(long userId, long questionId, AnswerType answerType)
     {
       var answered = DateTime.Now;
 
@@ -197,13 +197,13 @@ namespace QuestionsData.Repositories
                $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
 
-    public async Task<bool> UpdateQuestionBackgroundUrl(int questionId, string backgroundImageUrl)
+    public async Task<bool> UpdateQuestionBackgroundUrl(long questionId, string backgroundImageUrl)
     {
       return await _db.Database.ExecuteSqlCommandAsync(
                $"updateQuestionBackground {questionId}, {backgroundImageUrl}") > 0;
     }
 
-    public async Task<List<PhotoDb>> GetPhotos(int userId, int questionId, int answer, int count, DateTime bornAfter,
+    public async Task<List<PhotoDb>> GetPhotos(long userId, long questionId, int answer, int count, DateTime bornAfter,
       DateTime bornBefore, int sex, string city)
     {
       return _db.PhotoDb.AsNoTracking()
@@ -212,7 +212,7 @@ namespace QuestionsData.Repositories
         .ToList();
     }
 
-    public List<PhotoDb> GetPhotos(TwoButtonsContext context, int userId, int questionId, int answer, int count,
+    public List<PhotoDb> GetPhotos(TwoButtonsContext context, long userId, long questionId, int answer, int count,
       DateTime bornAfter, DateTime bornBefore, int sex, string city)
     {
       return context.PhotoDb.AsNoTracking()
@@ -221,7 +221,7 @@ namespace QuestionsData.Repositories
         .ToList();
     }
 
-    public async Task<List<AnsweredListDb>> GetVoters(int userId, int questionId, int offset, int count,
+    public async Task<List<AnsweredListDb>> GetVoters(long userId, long questionId, int offset, int count,
       AnswerType answerType, DateTime bornAfter, DateTime bornBefore, SexType sexType, string searchedLogin)
     {
       return await _db.AnsweredListDb.AsNoTracking()
@@ -230,7 +230,7 @@ namespace QuestionsData.Repositories
                .Skip(offset).Take(count).ToListAsync() ?? new List<AnsweredListDb>();
     }
 
-    public async Task<QuestionDb> SearchSimilarQuestion(int questionId)
+    public async Task<QuestionDb> SearchSimilarQuestion(long questionId)
     {
       var questionPattern = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
       if (questionPattern == null) return null;

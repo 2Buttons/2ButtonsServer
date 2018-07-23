@@ -9,9 +9,9 @@ namespace QuestionsData.Entities
   public class AnswerEntity
   {
     [Key]
-    public int UserId { get; set; }
+    public long UserId { get; set; }
 
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
     public AnswerType AnswerType { get; set; }
     public bool IsLiked { get; set; }
     public DateTime AnsweredDate { get; set; }

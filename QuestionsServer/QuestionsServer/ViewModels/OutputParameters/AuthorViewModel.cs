@@ -8,7 +8,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
 {
     public class AuthorViewModel
     {
-      public int UserId { get; set; }
+      public long UserId { get; set; }
       public string Login { get; set; }
       public SexType SexType { get; set; }
       public string SmallAvatarUrl { get; set; }
