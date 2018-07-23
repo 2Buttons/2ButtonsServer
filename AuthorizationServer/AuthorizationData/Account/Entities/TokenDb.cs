@@ -8,7 +8,7 @@ namespace AuthorizationData.Account.Entities
   public class TokenDb
   {
     [Key]
-    public int TokenId { get; set; }
+    public long TokenId { get; set; }
     public int UserId { get; set; } // именно юзер
     public long ExpiresIn{ get; set; }
     public string RefreshToken { get; set; }

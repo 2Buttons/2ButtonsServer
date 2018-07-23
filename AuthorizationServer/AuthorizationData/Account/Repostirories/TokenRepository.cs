@@ -37,7 +37,7 @@ namespace AuthorizationData.Account.Repostirories
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveTokenAsync(int tokenId)
+    public async Task<bool> RemoveTokenAsync(long tokenId)
     {
       var refreshToken = await _context.TokensDb.FindAsync(tokenId);
 
