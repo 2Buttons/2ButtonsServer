@@ -40,7 +40,7 @@ namespace DataGenerator.ScriptsGenerators
         users.Select(x => new UserInfoEntity
         {
           UserId = x.UserId,
-          LargeAvatarLink = x.LargePhoto,
+          OriginalAvatarUrl = x.LargePhoto,
           SmallAvatarLink = x.SmallPhoto
         }).ToList();
       _mediaManager.SetAvatars(userEntities, @"E:\Projects\2Buttons\Project\Data\Media\");
@@ -120,7 +120,7 @@ namespace DataGenerator.ScriptsGenerators
 
     private void ToEntitys(IEnumerable<City> cities)
     {
-      _cities = cities.Select(x => new CityEntity { CityId = x.CityId, Title = x.Title, People = 0 }).ToList();
+      _cities = cities.Select(x => new CityEntity { CityId = x.CityId, Name = x.Title, Inhabitants = 0 }).ToList();
     }
 
     private void ToEntitys(IList<Question> questions, int startIndex)
@@ -139,29 +139,29 @@ namespace DataGenerator.ScriptsGenerators
         {
           OptionId = t.QuestionId * 2 - 1,
           QuestionId = t.QuestionId,
-          OptionText = t.FirstOption,
+          Text = t.FirstOption,
           Position = 1,
-          Answers = 0,
+          AnswersCount = 0,
         });
 
         _options.Add(new OptionEntity
         {
           OptionId = t.QuestionId * 2,
           QuestionId = t.QuestionId,
-          OptionText = t.SecondOption,
+          Text = t.SecondOption,
           Position = 2,
-          Answers = 0,
+          AnswersCount = 0,
         });
         _questions.Add(new QuestionEntity
         {
           QuestionId = t.QuestionId,
           AudienceType = AudienceType.All,
-          BackgroundImageLink = "",
+          OriginalBackgroundUrl = "",
           Condition = t.Condition,
-          Dislikes = 0,
+          DislikesCount = 0,
           IsDeleted = false,
           IsAnonimoty = false,
-          Likes = 0,
+          LikesCount = 0,
           QuestionAddDate = RandomDay(),
           QuestionType = QuestionType.Opened,
           Shows = 0,
@@ -199,7 +199,7 @@ namespace DataGenerator.ScriptsGenerators
           Login = t.FirstName + " " + t.LastName,
           SexType = t.Sex,
           LastNotsSeenDate = DateTime.Now,
-          LargeAvatarLink = t.LargePhoto,
+          OriginalAvatarUrl = t.LargePhoto,
           SmallAvatarLink = t.SmallPhoto
         };
         _userInfos.Add(userInfo);
@@ -228,7 +228,7 @@ namespace DataGenerator.ScriptsGenerators
     {
       foreach (var city in _cities)
       {
-        city.People = _userInfos.Count(x => x.CityId == city.CityId);
+        city.Inhabitants = _userInfos.Count(x => x.CityId == city.CityId);
       }
     }
 
@@ -249,9 +249,9 @@ namespace DataGenerator.ScriptsGenerators
             AnswerType = (AnswerType) answer,
             IsLiked = false
           });
-          _options.First(x => x.QuestionId == _questions[questionIndex].QuestionId && x.Position == answer).Answers++;
+          _options.First(x => x.QuestionId == _questions[questionIndex].QuestionId && x.Position == answer).AnswersCount++;
           _questions[questionIndex].Shows++;
-          if (_random.Next(100) % 5 == 0) _questions[questionIndex].Likes++;
+          if (_random.Next(100) % 5 == 0) _questions[questionIndex].LikesCount++;
         }
       }
     }
@@ -264,7 +264,7 @@ namespace DataGenerator.ScriptsGenerators
         for (int i = 0; i < followersCount; i++)
         {
           var following = _users[_random.Next(_users.Count)];
-          if (_follows.Any(x => x.FollowerId == t.UserId && x.FollowingId == following.UserId))
+          if (_follows.Any(x => x.UserId == t.UserId && x.FollowingId == following.UserId))
           {
             i = i - 1;
             continue;
@@ -272,17 +272,17 @@ namespace DataGenerator.ScriptsGenerators
 
           _follows.Add(new FollowEntity
           {
-            FollowerId = t.UserId,
+            UserId = t.UserId,
             FollowingId = following.UserId,
-            FollowDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
-            Visits = _random.Next(100)
+            FollowedDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
+            VisitsCount = _random.Next(100)
           });
           _follows.Add(new FollowEntity
           {
-            FollowerId = following.UserId,
+            UserId = following.UserId,
             FollowingId = t.UserId,
-            FollowDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
-            Visits = _random.Next(100)
+            FollowedDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250))),
+            VisitsCount = _random.Next(100)
           });
 
         }

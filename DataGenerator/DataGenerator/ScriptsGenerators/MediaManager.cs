@@ -23,7 +23,7 @@ namespace DataGenerator.ScriptsGenerators
        // var newName = $"/{imageType}/" + uniqueName;
 
         var backgroundIndex = random.Next(0, backgrounds.Count <=1 ? 1 : backgrounds.Count);
-        t.BackgroundImageLink = "/standards/" + Path.GetFileName(backgrounds[backgroundIndex]);
+        t.OriginalBackgroundUrl = "/standards/" + Path.GetFileName(backgrounds[backgroundIndex]);
       //  t.BackgroundImageLink = newName;
         if (standardsBackgroundFolder != saveToFolder && !File.Exists(Path.Combine(saveToFolder, "standards", Path.GetFileName(backgrounds[backgroundIndex])))) File.Copy(Path.Combine(backgrounds[backgroundIndex]), Path.Combine(saveToFolder, "standards", Path.GetFileName(backgrounds[backgroundIndex])));
 
@@ -44,7 +44,7 @@ namespace DataGenerator.ScriptsGenerators
         var uniqueName = CreateUniqueName(backgrounds[backgroundIndex]);
         var newName = $"/{imageType}/" + uniqueName;
 
-        t.BackgroundImageLink = newName;
+        t.OriginalBackgroundUrl = newName;
         if(backgroundFolder != saveToFolder && !File.Exists(Path.Combine(saveToFolder, imageType, uniqueName))) File.Move(Path.Combine(backgroundFolder, oldName), Path.Combine(saveToFolder, imageType, uniqueName));
       }
     }
@@ -56,7 +56,7 @@ namespace DataGenerator.ScriptsGenerators
         var smallAvatar = AvatarSizeType.SmallAvatar.ToString().GetMd5Hash();
         var largeAvatar = AvatarSizeType.LargeAvatar.ToString().GetMd5Hash();
         var smallName = CreateUniqueName(t.SmallAvatarLink);
-        var largeName = CreateUniqueName(t.LargeAvatarLink);
+        var largeName = CreateUniqueName(t.OriginalAvatarUrl);
 
         var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
         var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
@@ -78,7 +78,7 @@ namespace DataGenerator.ScriptsGenerators
         //}
 
         t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
-        t.LargeAvatarLink = "/" + largeAvatar + "/" + largeName;
+        t.OriginalAvatarUrl = "/" + largeAvatar + "/" + largeName;
       }
     }
 

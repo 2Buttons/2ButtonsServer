@@ -22,28 +22,28 @@ namespace DataGenerator.ScriptsGenerators
 
     private string SwitchIdentityInsert(bool isEnable)
     {
-      const string setIdLine = "SET IDENTITY_INSERT [dbo].[City]";
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Cities]";
       return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
     }
 
     private string GetInsertInit()
     {
-      return "INSERT INTO [dbo].[City] ([cityID], [name], [people]) VALUES" + Environment.NewLine;
+      return "INSERT INTO [dbo].[Cities] ([cityID], [name], [Inhabitants]) VALUES" + Environment.NewLine;
     }
 
     private string GetUpdatingInit()
     {
-      return "UPDATE [dbo].[City] SET" + Environment.NewLine;
+      return "UPDATE [dbo].[Cities] SET" + Environment.NewLine;
     }
 
     private string GetUpdatingSetLine(CityEntity city)
     {
-      return $"[name] = '{city.Title}',[people] {city.People}" + Environment.NewLine;
+      return $"[name] = '{city.Name}',[Inhabitants] {city.Inhabitants}" + Environment.NewLine;
     }
 
     private string GetUpdatingWhere(int cityId)
     {
-      return $"WHERE [dbo].[City].[CityId] = {cityId}" + Environment.NewLine;
+      return $"WHERE [dbo].[Cities].[CityId] = {cityId}" + Environment.NewLine;
     }
 
     private string GetUpdatingCityLine(CityEntity city)
@@ -53,7 +53,7 @@ namespace DataGenerator.ScriptsGenerators
 
     private string GetInsertionCityLine(CityEntity city)
     {
-      return $"({city.CityId}, N'{city.Title}', {city.People})";
+      return $"({city.CityId}, N'{city.Name}', {city.Inhabitants})";
     }
 
     private string GetInsertionCitiesLine(IList<CityEntity> cities)

@@ -3,7 +3,7 @@
   public class CityEntity
   {
     public int CityId { get; set; }
-    public string Title { get; set; }
-    public int People { get; set; }
+    public string Name { get; set; }
+    public int Inhabitants { get; set; }
   }
 }

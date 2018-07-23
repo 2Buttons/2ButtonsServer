@@ -22,15 +22,15 @@ namespace DataGenerator.ScriptsGenerators
 
     private string SwitchIdentityInsert(bool isEnable)
     {
-      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Question]";
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Questions]";
       return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
     }
 
     private string GetInsertInit()
     {
       return
-        "INSERT INTO [dbo].[Question] ([questionID], [userID], [condition], [anonymity], [audience], [questionType], [questionAddDate]," +
-        " [backbroundImageLink], [shows], [likes], [dislikes], [deleted]) VALUES" + Environment.NewLine;
+        "INSERT INTO [dbo].[Questions] ([questionID], [userID], [condition], [IsAnonymous], [AudienceType], [QuestionType][QuestionType]," +
+        " [QuestionType], [LikesCount], [DislikesCount], [AddedDate], [IsDeleted]) VALUES" + Environment.NewLine;
     }
 
     private string GetUpdatingInit()
@@ -42,7 +42,7 @@ namespace DataGenerator.ScriptsGenerators
     {
       var anonymyty = question.IsAnonimoty ? 1 : 0;
       return
-        $"({question.QuestionId}, {question.UserId}, N'{question.Condition}', {anonymyty}, {(int) question.AudienceType}, {(int) question.QuestionType}, '{question.QuestionAddDate:u}', N'{question.BackgroundImageLink}', {question.Shows}, {question.Likes}, {question.Dislikes}, {0})";
+        $"({question.QuestionId}, {question.UserId}, N'{question.Condition}', {anonymyty}, {(int) question.AudienceType}, {(int) question.QuestionType}, N'{question.OriginalBackgroundUrl}', {question.LikesCount}, {question.DislikesCount}, '{question.QuestionAddDate:u}', {0})";
     }
 
     private string GetInsertionQuestionsLine(IList<QuestionEntity> questions)
@@ -63,7 +63,7 @@ namespace DataGenerator.ScriptsGenerators
         var questionsIter = questions.Skip(i * 1000).Take(1000).ToList();
         result.Append(GetUsingDb());
         result.Append(GetGo());
-        result.Append("ALTER TABLE [dbo].[Question] NOCHECK CONSTRAINT FK_QUESTION_USER");
+        result.Append("ALTER TABLE [dbo].[Questions] NOCHECK CONSTRAINT FK_QUESTION_USER");
         result.Append(GetGo());
         result.Append(SwitchIdentityInsert(true));
         result.Append(GetGo());
@@ -72,7 +72,7 @@ namespace DataGenerator.ScriptsGenerators
         result.Append(GetGo());
         result.Append(SwitchIdentityInsert(false));
         result.Append(GetGo());
-        result.Append("ALTER TABLE [dbo].[Question] NOCHECK CONSTRAINT FK_QUESTION_USER");
+        result.Append("ALTER TABLE [dbo].[Questions] NOCHECK CONSTRAINT FK_QUESTION_USER");
         result.Append(GetGo());
       }
       return result.ToString();

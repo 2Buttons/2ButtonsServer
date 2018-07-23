@@ -12,10 +12,9 @@ namespace DataGenerator.ScriptsGenerators.Entities
     public AudienceType AudienceType { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
-    public string BackgroundImageLink { get; set; }
-    public int Shows { get; set; }
-    public int Likes { get; set; }
-    public int Dislikes { get; set; }
+    public string OriginalBackgroundUrl { get; set; }
+    public int LikesCount { get; set; }
+    public int DislikesCount { get; set; }
     public bool IsDeleted { get; set; }
   }
 }

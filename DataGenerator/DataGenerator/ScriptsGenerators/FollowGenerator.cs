@@ -22,19 +22,19 @@ namespace DataGenerator.ScriptsGenerators
 
     private string SwitchIdentityInsert(bool isEnable)
     {
-      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Follow]";
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Followers]";
       return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
     }
 
     private string GetInsertInit()
     {
-      return "INSERT INTO [dbo].[Follow] ([followerID], [followToID], [visits], [followDate], [deleted]) VALUES" +
+      return "INSERT INTO [dbo].[Followers] ([followerID], [followingID], [visitsCount], [followedDate], [isDeleted]) VALUES" +
              Environment.NewLine;
     }
 
     private string GetInsertionFollowLine(FollowEntity follow)
     {
-      return $"({follow.FollowerId}, {follow.FollowingId}, {follow.Visits}, '{follow.FollowDate:u}', 0)";
+      return $"({follow.UserId}, {follow.FollowingId}, {follow.VisitsCount}, '{follow.FollowedDate:u}', 0)";
     }
 
     private string GetInsertionFollowsLine(IList<FollowEntity> follows)

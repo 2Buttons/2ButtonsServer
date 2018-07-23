@@ -34,14 +34,14 @@ namespace DataGenerator.ScriptsGenerators
 
     private string SwitchIdentityInsertMain(bool isEnable)
     {
-      const string setIdLine = "SET IDENTITY_INSERT [dbo].[User]";
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Users]";
       return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
     }
 
     private string GetInsertionInitLineMain()
     {
-      return "INSERT INTO[dbo].[User] " + "([userID]," + "[login], " + "[birthDate], " + "[sex], " + "[cityID], " +
-             "[description], " + "[lastNotsSeenDate], " + "[fullAvatarLink], " + "[smallAvatarLink])" + "VALUES" +
+      return "INSERT INTO[dbo].[Users] " + "([userID]," + "[login], " + "[birthDate], " + "[sexType], " + "[cityID], " +
+             "[description], " + "[lastNotsSeenDate], " + "[OriginalAvatarUrl])" + "VALUES" +
              Environment.NewLine;
     }
 
@@ -61,7 +61,7 @@ namespace DataGenerator.ScriptsGenerators
     private string GetInserionLineMain(UserInfoEntity user)
     {
       return
-        $"({user.UserId}, N'{user.Login}', '{user.BirthDate:u}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', '{user.LastNotsSeenDate:u}', N'{user.LargeAvatarLink}', N'{user.SmallAvatarLink}')";
+        $"({user.UserId}, N'{user.Login}', '{user.BirthDate:u}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', '{user.LastNotsSeenDate:u}', N'{user.OriginalAvatarUrl}')";
     }
 
     private string GetInsertionLineUsersMain(IList<UserInfoEntity> users)
@@ -112,7 +112,7 @@ namespace DataGenerator.ScriptsGenerators
         
         result.Append(GetUsingLineMainDb());
         result.Append(GetGo());
-        result.Append("ALTER TABLE [dbo].[User] NOCHECK CONSTRAINT FK_USER_CITY");
+        result.Append("ALTER TABLE [dbo].[Users] NOCHECK CONSTRAINT FK_USER_CITY");
         result.Append(GetGo());
         result.Append(SwitchIdentityInsertMain(true));
         result.Append(GetGo());
@@ -121,7 +121,7 @@ namespace DataGenerator.ScriptsGenerators
         result.Append(GetGo());
         result.Append(SwitchIdentityInsertMain(false));
         result.Append(GetGo());
-        result.Append("ALTER TABLE [dbo].[User] WITH CHECK CHECK CONSTRAINT FK_USER_CITY");
+        result.Append("ALTER TABLE [dbo].[Users] WITH CHECK CHECK CONSTRAINT FK_USER_CITY");
         result.Append(GetGo());
       }
       return result.ToString();

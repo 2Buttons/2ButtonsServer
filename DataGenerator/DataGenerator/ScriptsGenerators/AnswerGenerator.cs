@@ -22,13 +22,13 @@ namespace DataGenerator.ScriptsGenerators
 
     private string SwitchIdentityInsert(bool isEnable)
     {
-      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Answer]";
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Answers]";
       return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
     }
 
     private string GetInsertInit()
     {
-      return "INSERT INTO[dbo].[Anwser] ([userID], [questionID], [anwser], [liked], [anwserDate], [deleted]) VALUES" +
+      return "INSERT INTO[dbo].[Answers] ([userID], [questionID], [answerType], [isLiked], [anwseredDate], [isDeleted]) VALUES" +
              Environment.NewLine;
     }
 
@@ -56,7 +56,7 @@ namespace DataGenerator.ScriptsGenerators
         var canswersIter = answers.Skip(i * 1000).Take(1000).ToList();
         result.Append(GetUsingDb());
         result.Append(GetGo());
-        //result.Append("ALTER TABLE [dbo].[Answer] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
+        //result.Append("ALTER TABLE [dbo].[Answers] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         //result.Append(GetGo());
         result.Append(SwitchIdentityInsert(true));
         result.Append(GetGo());
@@ -65,7 +65,7 @@ namespace DataGenerator.ScriptsGenerators
         result.Append(GetGo());
         result.Append(SwitchIdentityInsert(false));
         result.Append(GetGo());
-        //result.Append("ALTER TABLE [dbo].[Answer] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
+        //result.Append("ALTER TABLE [dbo].[Answers] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         //result.Append(GetGo());
       }
       return result.ToString();

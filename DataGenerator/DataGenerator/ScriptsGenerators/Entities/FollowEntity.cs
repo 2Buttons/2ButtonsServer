@@ -4,9 +4,9 @@ namespace DataGenerator.ScriptsGenerators.Entities
 {
   public class FollowEntity
   {
-    public int FollowerId { get; set; }
+    public int UserId { get; set; }
     public int FollowingId { get; set; }
-    public int Visits { get; set; }
-    public DateTime FollowDate { get; set; }
+    public int VisitsCount { get; set; }
+    public DateTime FollowedDate { get; set; }
   }
 }

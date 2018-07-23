@@ -22,19 +22,19 @@ namespace DataGenerator.ScriptsGenerators
 
     private string SwitchIdentityInsert(bool isEnable)
     {
-      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Option]";
+      const string setIdLine = "SET IDENTITY_INSERT [dbo].[Options]";
       return isEnable ? setIdLine + " ON" : setIdLine + " OFF";
     }
 
     private string GetInsertInit()
     {
-      return "INSERT INTO [dbo].[Option] ([optionID], [questionID], [optionText], [position], [answers]) VALUES" +
+      return "INSERT INTO [dbo].[Options] ([optionID], [questionID], [Text], [position], [AnswersCount]) VALUES" +
              Environment.NewLine;
     }
 
     private string GetInsertionOptionLine(OptionEntity option)
     {
-      return $"({option.OptionId}, {option.QuestionId}, N'{option.OptionText}', {option.Position}, {option.Answers})";
+      return $"({option.OptionId}, {option.QuestionId}, N'{option.Text}', {option.Position}, {option.AnswersCount})";
     }
 
     private string GetInsertionOptionsLine(IList<OptionEntity> options)
@@ -55,7 +55,7 @@ namespace DataGenerator.ScriptsGenerators
         var coptionsIter = options.Skip(i * 1000).Take(1000).ToList();
         result.Append(GetUsingDb());
         result.Append(GetGo());
-        result.Append("ALTER TABLE [dbo].[Option] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
+        result.Append("ALTER TABLE [dbo].[Options] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         result.Append(GetGo());
         result.Append(SwitchIdentityInsert(true));
         result.Append(GetGo());
@@ -64,7 +64,7 @@ namespace DataGenerator.ScriptsGenerators
         result.Append(GetGo());
         result.Append(SwitchIdentityInsert(false));
         result.Append(GetGo());
-        result.Append("ALTER TABLE [dbo].[Option] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
+        result.Append("ALTER TABLE [dbo].[Options] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         result.Append(GetGo());
       }
       return result.ToString();

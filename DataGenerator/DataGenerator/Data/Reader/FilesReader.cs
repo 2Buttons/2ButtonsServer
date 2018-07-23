@@ -114,7 +114,7 @@ namespace DataGenerator.Data.Reader
           {
             var json = sr.ReadToEnd().Replace("No", "").Replace("Name", "");
             var jsonUsers = JsonConvert.DeserializeObject<VkUserDataResponse>(json).Response.Items
-              .Where(x => x.Birthday.Age() >= 10 && x.Birthday.Age() <= 25  && !x.LargePhoto.Contains("deactivated") && x.City != null).OrderBy(x => x.Birthday.Age()).ToList();
+              .Where(x => x.Birthday.Age() >= 10 && x.Birthday.Age() <= 25  && !x.LargePhoto.Contains("deactivated") && x.City != null && !x.LargePhoto.Contains("camera")).OrderBy(x => x.Birthday.Age()).ToList();
             result.AddRange(jsonUsers);
           }
         using (var sw =
