@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.MediaFolders.Configurations;
 using MediaServer.Models;
 using Microsoft.AspNetCore.Http;
@@ -93,10 +96,10 @@ namespace MediaServer.Infrastructure.Services
 
       var pcPath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(), relativeFolder);
 
-      if(string.IsNullOrEmpty(pattern))
-      return Directory.GetFiles(pcPath)
-        .Select(x => _fileManager.ChangePcPathToWeb(Path.Combine(relativeFolder, Path.GetFileName(x)))).ToList();
-      return Directory.GetFiles(pcPath).Where(x=>x.Contains(pattern))
+      if (string.IsNullOrEmpty(pattern))
+        return Directory.GetFiles(pcPath)
+          .Select(x => _fileManager.ChangePcPathToWeb(Path.Combine(relativeFolder, Path.GetFileName(x)))).ToList();
+      return Directory.GetFiles(pcPath).Where(x => x.Contains(pattern))
         .Select(x => _fileManager.ChangePcPathToWeb(Path.Combine(relativeFolder, Path.GetFileName(x)))).ToList();
     }
 
@@ -141,7 +144,7 @@ namespace MediaServer.Infrastructure.Services
 
       saveMethod.Invoke(originalFilePath);
 
-      var smallImagePath = CreateRelativeAvatarPath(imageName, avatarType ,AvatarSizeType.Small);
+      var smallImagePath = CreateRelativeAvatarPath(imageName, avatarType, AvatarSizeType.Small);
       var largemagePath = CreateRelativeAvatarPath(imageName, avatarType, AvatarSizeType.Large);
 
       ResizeImage(originalFilePath, Path.Combine(_fileManager.GetAbsoluteMediaRootPath(), smallImagePath), 100, 100);
@@ -176,13 +179,13 @@ namespace MediaServer.Infrastructure.Services
 
     public List<SizedUrl<BackgroundSizeType>> UploadBackground(IFormFile file, BackgroundType backgroundType)
     {
-      return UploadBackground(file.FileName, backgroundType,  x =>
-      {
-        using (var fileStream = new FileStream(x, FileMode.Create))
-        {
-          file.CopyTo(fileStream);
-        }
-      });
+      return UploadBackground(file.FileName, backgroundType, x =>
+     {
+       using (var fileStream = new FileStream(x, FileMode.Create))
+       {
+         file.CopyTo(fileStream);
+       }
+     });
     }
 
     private List<SizedUrl<BackgroundSizeType>> UploadBackground(string fileName, BackgroundType backgroundType,
@@ -218,7 +221,7 @@ namespace MediaServer.Infrastructure.Services
     private List<SizedUrl<DefaultSizeType>> UploadDefault(string fileName, Action<string> saveMethod)
     {
       var imageName = _fileManager.CreateUniqueName(fileName);
-      var originalImagePath = CreateRelativeDefaulsPath(imageName,  DefaultSizeType.Original);
+      var originalImagePath = CreateRelativeDefaulsPath(imageName, DefaultSizeType.Original);
       var originalFilePath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(), originalImagePath);
 
       saveMethod.Invoke(originalFilePath);
@@ -285,7 +288,7 @@ namespace MediaServer.Infrastructure.Services
       return Path.Combine(relativeFolder, name + $"_{size.ToString().ToLower()}" + ext);
     }
 
-    public string CreateRelativeDefaulsPath(string imageName,  DefaultSizeType size)
+    public string CreateRelativeDefaulsPath(string imageName, DefaultSizeType size)
     {
       var name = Path.GetFileNameWithoutExtension(imageName);
       var ext = Path.GetExtension(imageName);
@@ -344,6 +347,113 @@ namespace MediaServer.Infrastructure.Services
       return uri.Host.Contains("media.2buttons.ru") && IsUrlValid(uri.AbsolutePath);
     }
 
+    public void CopyBackgrounds(string sourceFolder, BackgroundType backgroundType, BackgroundSizeType copyToNewSize)
+    {
+      if (string.IsNullOrEmpty(sourceFolder)) throw new Exception("SourceUrl is null or empty");
+      var fullSourcePath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(), sourceFolder);
+      var fullNewPath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(),
+        CreateBackgroundPath(backgroundType, copyToNewSize));
+
+      CommonLibraries.MediaFolders.Configurations.Size size;
+      switch (copyToNewSize)
+      {
+        case BackgroundSizeType.Original:
+          size = null;
+          break;
+        case BackgroundSizeType.Mobile:
+          size = new MobileBackgroundSizeFolder(null).Size;
+          break;
+        default:
+          throw new Exception("Such BackgrodunSizeType does not exist.");
+      }
+
+      var files = Directory.GetFiles(fullSourcePath);
+      foreach (var file in files)
+      {
+        var fileName = Path.GetFileNameWithoutExtension(file);
+        var ext = Path.GetExtension(file);
+
+        if (fileName.Contains("original")) fileName = fileName.Replace("original", copyToNewSize.ToString().ToLower());
+        else
+          fileName = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + "_" + copyToNewSize.ToString().ToLower();
+
+        var fullNewFilePath = Path.Combine(fullNewPath, fileName + ext);
+
+
+        if (!File.Exists(fullNewFilePath))
+        {
+          if (size == null) CopyFile(file, fullNewFilePath);
+          else ResizeImage(file, fullNewFilePath, size.Height, size.Width);
+        }
+      }
+
+
+    }
+
+
+    private string CreateBackgroundPath(BackgroundType backgroundType, BackgroundSizeType copyToNewSize)
+    {
+
+      return Path.Combine(GetHashFolderName("Background"), GetHashFolderName(backgroundType.ToString()),
+        GetHashFolderName(copyToNewSize.ToString()));
+    }
+
+    public void CopyAvatars(string sourceFolder, AvatarType backgroundType, AvatarSizeType copyToNewSize)
+    {
+      if (string.IsNullOrEmpty(sourceFolder)) throw new Exception("SourceUrl is null or empty");
+      var fullSourcePath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(), sourceFolder);
+      var fullNewPath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(),
+        CreateAvatarPath(backgroundType, copyToNewSize));
+
+      CommonLibraries.MediaFolders.Configurations.Size size;
+      switch (copyToNewSize)
+      {
+        case AvatarSizeType.Original:
+          size = null;
+          break;
+        case AvatarSizeType.Small:
+          size = new SmallAvatarSizeFolder(null).Size;
+          break;
+        case AvatarSizeType.Large:
+          size = new LargeAvatarSizeFolder(null).Size;
+          break;
+        default:
+          throw new Exception("Such AvatarSizeType does not exist.");
+      }
+
+      var files = Directory.GetFiles(fullSourcePath);
+      foreach (var file in files)
+      {
+        var fileName = Path.GetFileNameWithoutExtension(file);
+        var ext = Path.GetExtension(file);
+
+        if (fileName.Contains("original")) fileName = fileName.Replace("original", copyToNewSize.ToString().ToLower());
+        else fileName = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + "_" + copyToNewSize.ToString().ToLower();
+        var fullNewFilePath = Path.Combine(fullNewPath, fileName + ext);
+        if (!File.Exists(fullNewFilePath))
+        {
+          if (size == null) CopyFile(file, fullNewFilePath);
+          else
+            ResizeImage(file, fullNewFilePath, size.Height, size.Width);
+        }
+      }
+
+
+    }
+
+
+    private string CreateAvatarPath(AvatarType backgroundType, AvatarSizeType copyToNewSize)
+    {
+
+      return Path.Combine(GetHashFolderName("Avatar"), GetHashFolderName(backgroundType.ToString()),
+        GetHashFolderName(copyToNewSize.ToString()));
+    }
+
+    private string GetHashFolderName(string str)
+    {
+      return str.Substring(0, 2) + str.GetMd5HashString().Substring(0, 5);
+    }
+
 
     public void ResizeImage(string originalPath, string rezisePath, int height, int width)
     {
@@ -352,9 +462,17 @@ namespace MediaServer.Infrastructure.Services
         image.Mutate(x => x.Resize(new ResizeOptions
         {
           Mode = ResizeMode.Max,
-          Size = new Size {Height = height, Width = width}
+          Size = new Size { Height = height, Width = width }
         }));
         image.Save(rezisePath); // Automatic encoder selected based on extension.
+      }
+    }
+
+    public void CopyFile(string originalPath, string targetPath)
+    {
+      using (var image = Image.Load(originalPath))
+      {
+        image.Save(targetPath); // Automatic encoder selected based on extension.
       }
     }
   }

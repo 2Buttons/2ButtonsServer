@@ -143,5 +143,23 @@ namespace MediaServer.Controllers
         ? new ResponseResult((int)HttpStatusCode.NotModified)
         : new OkResponseResult(new UrlViewModel { Url = url });
     }
+
+    [HttpPost("copy/backgrounds")]
+    public IActionResult CopyBackgrounds([FromBody] CopyBackgrounds copyBackgrounds)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      _mediaService.CopyBackgrounds(copyBackgrounds.SourceFolder, copyBackgrounds.CopyToNewBackgroundType, copyBackgrounds.CopyToBackgroundSizeType);
+      return new OkResponseResult();
+    }
+
+    [HttpPost("copy/avatars")]
+    public IActionResult CopyAvatars([FromBody] CopyAvatars copyAvatars)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+      _mediaService.CopyAvatars(copyAvatars.SourceFolder, copyAvatars.CopyToNewAvatarType, copyAvatars.CopyToAvatarSizeType);
+      return new OkResponseResult();
+    }
   }
 }
