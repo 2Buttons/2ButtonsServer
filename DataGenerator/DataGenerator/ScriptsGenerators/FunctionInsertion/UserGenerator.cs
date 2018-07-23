@@ -22,8 +22,13 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
 
     private string GetInsertionUserLine(UserQuery user)
     {
+      var isEmailConfirmed = user.IsEmailConfirmed ? 1 : 0;
+      var isPhoneConfirmed = user.IsPhoneNumberConfirmed ? 1 : 0;
+      var isBot = user.IsBot ? 1 : 0;
+      var isTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled ? 1 : 0;
+
       return
-        $"EXECUTE [dbo].[addUser] {user.UserId}, {user.QuestionId}, {(int)user.UserType}, '{user.UseredDate:u}'";
+        $"EXECUTE [dbo].[addUserWithId] {user.UserId}, N'{user.Email}', {isEmailConfirmed}, N'{user.PasswordHash}', N'{user.PhoneNumber}', {isPhoneConfirmed}, {(int)user.RoleType}, {isTwoFactorAuthenticationEnabled}, {isBot}, '{user.RegistrationDate:u}'";
     }
 
     private string GetInsertionUsersLine(IList<UserQuery> users)

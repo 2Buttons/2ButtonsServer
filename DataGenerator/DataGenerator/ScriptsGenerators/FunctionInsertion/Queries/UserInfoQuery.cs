@@ -3,7 +3,7 @@ using CommonLibraries;
 
 namespace DataGenerator.ScriptsGenerators.FunctionInsertion.Queries
 {
-  public class UserInfoEntityAddUSer
+  public class UserInfoQuery
   {
     public int UserId { get; set; }
     public string Login { get; set; }

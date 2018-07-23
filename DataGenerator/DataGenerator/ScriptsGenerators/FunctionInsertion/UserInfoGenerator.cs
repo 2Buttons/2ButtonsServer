@@ -6,9 +6,9 @@ using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
 
 namespace DataGenerator.ScriptsGenerators.FunctionInsertion
 {
-  public class UserGenerator
+  public class UserInfoGenerator
   {
-    private readonly string _db = "TwoButtonsAccount";
+    private readonly string _db = "TwoButtons";
 
     private string GetUsingDb()
     {
@@ -20,31 +20,31 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
       return Environment.NewLine + "GO" + Environment.NewLine;
     }
 
-    private string GetInsertionUserLine(UserQuery user)
+    private string GetInsertionUserInfoLine(UserInfoQuery userInfo)
     {
       return
-        $"EXECUTE [dbo].[addUser] {user.UserId}, {user.QuestionId}, {(int)user.UserType}, '{user.UseredDate:u}'";
+        $"EXECUTE [dbo].[addUser] {userInfo.UserId}, N'{userInfo.Login}', '{userInfo.BirthDate:u}', {(int)userInfo.SexType}, N'{userInfo.City}', N'{userInfo.Description}', N'{userInfo.OriginalAvatarUrl}'";
     }
 
-    private string GetInsertionUsersLine(IList<UserQuery> users)
+    private string GetInsertionUserInfosLine(IList<UserInfoQuery> userInfos)
     {
       var result = new StringBuilder();
-      for (var i = 0; i < users.Count - 1; i++)
-        result.Append(GetInsertionUserLine(users[i]) + "," + Environment.NewLine);
-      result.Append(GetInsertionUserLine(users[users.Count - 1]));
+      for (var i = 0; i < userInfos.Count - 1; i++)
+        result.Append(GetInsertionUserInfoLine(userInfos[i]) + "," + Environment.NewLine);
+      result.Append(GetInsertionUserInfoLine(userInfos[userInfos.Count - 1]));
       return result.ToString();
     }
 
-    public string GetInsertionLine(IList<UserQuery> users)
+    public string GetInsertionLine(IList<UserInfoQuery> userInfos)
     {
       var result = new StringBuilder();
-      var times = users.Count < 1000 ? 1 : users.Count / 1000;
+      var times = userInfos.Count < 1000 ? 1 : userInfos.Count / 1000;
       for (var i = 0; i < times; i++)
       {
-        var usersIter = users.Skip(i * 1000).Take(1000).ToList();
+        var userInfosIter = userInfos.Skip(i * 1000).Take(1000).ToList();
         result.Append(GetUsingDb());
         result.Append(GetGo());
-        result.Append(GetInsertionUsersLine(usersIter));
+        result.Append(GetInsertionUserInfosLine(userInfosIter));
         result.Append(GetGo());
       }
       return result.ToString();
