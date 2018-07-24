@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CommonLibraries;
 using CommonLibraries.Extensions;
+using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
 
 namespace DataGenerator.ScriptsGenerators.FunctionInsertion
 {
@@ -50,32 +52,32 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
     {
       foreach (var t in users)
       {
-        //var smallAvatar = AvatarSizeType.SmallAvatar.ToString().GetMd5Hash();
-        //var largeAvatar = AvatarSizeType.LargeAvatar.ToString().GetMd5Hash();
-        //var smallName = CreateUniqueName(t.SmallAvatarLink);
-        //var largeName = CreateUniqueName(t.OriginalAvatarUrl);
+        var smallAvatar = AvatarSizeType.SmallAvatar.ToString().GetMd5Hash();
+        var largeAvatar = AvatarSizeType.LargeAvatar.ToString().GetMd5Hash();
+        var smallName = CreateUniqueName(t.SmallAvatarLink);
+        var largeName = CreateUniqueName(t.OriginalAvatarUrl);
 
-        //var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
-        //var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
-        ////try
-        ////{
-        ////  new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
-        ////}
-        ////catch (Exception ex)
-        ////{
-        ////  Console.WriteLine(t.SmallAvatarLink);
-        ////}
-        ////try
-        ////{
-        ////  new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
-        ////}
-        ////catch (Exception ex)
-        ////{
-        ////  Console.WriteLine(t.LargeAvatarLink);
-        ////}
+        var smallFilePath = Path.Combine(saveToFolder, smallAvatar, smallName);
+        var largeFilePath = Path.Combine(saveToFolder, largeAvatar, largeName);
+        //try
+        //{
+        //  new WebClient().DownloadFile(new Uri(t.SmallAvatarLink), smallFilePath);
+        //}
+        //catch (Exception ex)
+        //{
+        //  Console.WriteLine(t.SmallAvatarLink);
+        //}
+        //try
+        //{
+        //  new WebClient().DownloadFile(new Uri(t.LargeAvatarLink), largeFilePath);
+        //}
+        //catch (Exception ex)
+        //{
+        //  Console.WriteLine(t.LargeAvatarLink);
+        //}
 
-        //t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
-        //t.OriginalAvatarUrl = "/" + largeAvatar + "/" + largeName;
+        t.SmallAvatarLink = "/" + smallAvatar + "/" + smallName;
+        t.OriginalAvatarUrl = "/" + largeAvatar + "/" + largeName;
       }
     }
 
