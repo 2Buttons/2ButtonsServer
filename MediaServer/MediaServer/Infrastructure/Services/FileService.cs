@@ -191,9 +191,9 @@ namespace MediaServer.Infrastructure.Services
 
     public string CreateUniqueName(string imageName)
     {
-      var ext = Path.GetExtension(imageName).Substring(0, 4);
+      var ext = Path.GetExtension(imageName)?.Substring(0, 4);
       if (ext.IsNullOrEmpty()) ext = ".jpg";
-      return Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + ext;
+      return imageName.GetMd5HashString().Substring(0,5) + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 7) + ext;
     }
   }
 

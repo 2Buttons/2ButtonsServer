@@ -8,7 +8,7 @@ namespace CommonLibraries.MediaFolders
   public class MediaConverter
   {
     private static readonly FolderConfiguration FolderConfiguration = new FolderConfiguration();
-    public static string MediaUrl { get; } = "http://media.2buttons.ru/";
+    public static string MediaUrl { get; } = "https://media.2buttons.ru/";
 
     public static MediaType GetMediaUrlType(string shortOriginalUrl)
     {
