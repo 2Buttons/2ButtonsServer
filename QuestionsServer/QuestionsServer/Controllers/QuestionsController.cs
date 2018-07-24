@@ -169,7 +169,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetStandardBackgroundUrlsViewModel vm)
     {
       var result = await _hub.Media.GetStandardBackgroundsUrl(vm.BackgroundSizeType);
-      return new OkResponseResult("Standard backgrounds", result);
+      return new OkResponseResult("Standard backgrounds", result.Select(x => MediaConverter.ToFullBackgroundurlUrl(x, vm.BackgroundSizeType)));
     }
 
     [HttpPost("get/backgrounds/custom")]

@@ -28,6 +28,7 @@ namespace CommonLibraries.MediaFolders
     public static string ToFullBackgroundurlUrl(string shortOriginalUrl, BackgroundSizeType backgroundSize)
     {
       if (string.IsNullOrEmpty(shortOriginalUrl)) return null;
+      if (shortOriginalUrl.Contains(MediaUrl)) shortOriginalUrl = shortOriginalUrl.Replace(MediaUrl, "");
       var name = Path.GetFileName(shortOriginalUrl);
       shortOriginalUrl = Path.GetDirectoryName(string.Concat(shortOriginalUrl.SkipWhile(x => x == '/')));
 
@@ -47,6 +48,7 @@ namespace CommonLibraries.MediaFolders
     public static string ToFullAvatarUrl(string shortOriginalUrl, AvatarSizeType avatarSize)
     {
       if(string.IsNullOrEmpty(shortOriginalUrl)) return null;
+      if (shortOriginalUrl.Contains(MediaUrl)) shortOriginalUrl = shortOriginalUrl.Replace(MediaUrl, "");
       var name = Path.GetFileName(shortOriginalUrl);
       shortOriginalUrl = Path.GetDirectoryName(string.Concat(shortOriginalUrl.SkipWhile(x => x == '/')));
 
@@ -71,6 +73,7 @@ namespace CommonLibraries.MediaFolders
     public static string ToFullDefaultUrl(string shortOriginalUrl, DefaultSizeType defaultSize)
     {
       if (string.IsNullOrEmpty(shortOriginalUrl)) return null;
+      if (shortOriginalUrl.Contains(MediaUrl)) shortOriginalUrl = shortOriginalUrl.Replace(MediaUrl, "");
       var name = Path.GetFileName(shortOriginalUrl);
       shortOriginalUrl = Path.GetDirectoryName(string.Concat(shortOriginalUrl.SkipWhile(x => x == '/')));
 
