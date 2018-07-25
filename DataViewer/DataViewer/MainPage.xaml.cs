@@ -165,7 +165,7 @@ namespace DataViewer
 
     public string GetServerVersion()
     {
-      return "v0.12";
+      return "v0.13";
       //string path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
       //using (StreamReader sr = new System.IO.StreamReader(new FileStream(path, FileMode.Open)))
       //{

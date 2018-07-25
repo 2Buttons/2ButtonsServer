@@ -193,7 +193,7 @@ namespace MediaServer.Infrastructure.Services
     {
       var ext = Path.GetExtension(imageName)?.Substring(0, 4);
       if (ext.IsNullOrEmpty()) ext = ".jpg";
-      return imageName.GetMd5HashString().Substring(0,5) + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 7) + ext;
+      return imageName.GetMd5HashString().Substring(0,2) + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + ext;
     }
   }
 
