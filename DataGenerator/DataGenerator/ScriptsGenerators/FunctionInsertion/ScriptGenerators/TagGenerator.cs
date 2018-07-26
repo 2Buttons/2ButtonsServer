@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
 
-namespace DataGenerator.ScriptsGenerators.FunctionInsertion
+namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
 {
   public class TagGenerator
   {
@@ -30,7 +30,7 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
     {
       var result = new StringBuilder();
       for (var i = 0; i < tags.Count - 1; i++)
-        result.Append(GetInsertionTagLine(tags[i]) + "," + Environment.NewLine);
+        result.Append(GetInsertionTagLine(tags[i]) + ";" + Environment.NewLine);
       result.Append(GetInsertionTagLine(tags[tags.Count - 1]));
       return result.ToString();
     }

@@ -6,7 +6,7 @@ using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
 
 namespace DataGenerator.ScriptsGenerators.DirectInsertion
 {
-  public class FollowGenerator
+  public class FollowerGenerator
   {
     private readonly string _db = "TwoButtons";
 
@@ -34,7 +34,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
 
     private string GetInsertionFollowLine(FollowEntity follow)
     {
-      return $"({follow.UserId}, {follow.FollowingId}, {follow.VisitsCount}, '{follow.FollowedDate:u}', 0)";
+      return $"({follow.FollowerId}, {follow.FollowingId}, {follow.VisitsCount}, '{follow.FollowedDate:u}', 0)";
     }
 
     private string GetInsertionFollowsLine(IList<FollowEntity> follows)
@@ -57,13 +57,13 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
         result.Append(GetGo());
         //result.Append("ALTER TABLE [dbo].[Follow] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         //result.Append(GetGo());
-        result.Append(SwitchIdentityInsert(true));
-        result.Append(GetGo());
+       // result.Append(SwitchIdentityInsert(true));
+       // result.Append(GetGo());
         result.Append(GetInsertInit());
         result.Append(GetInsertionFollowsLine(cfollowsIter));
         result.Append(GetGo());
-        result.Append(SwitchIdentityInsert(false));
-        result.Append(GetGo());
+      //  result.Append(SwitchIdentityInsert(false));
+       // result.Append(GetGo());
         //result.Append("ALTER TABLE [dbo].[Follow] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         //result.Append(GetGo());
       }

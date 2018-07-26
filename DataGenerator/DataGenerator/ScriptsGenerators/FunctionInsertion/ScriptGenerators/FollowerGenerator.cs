@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
 
-namespace DataGenerator.ScriptsGenerators.FunctionInsertion
+namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
 {
   public class FollowerGenerator
   {
@@ -23,14 +23,14 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
     private string GetInsertionFollowerLine(FollowerQuery follower)
     {
       return
-        $"EXECUTE [dbo].[addFollow] {follower.FollowerId}, {follower.FollowerId}, '{follower.FollowedDate:u}'";
+        $"EXECUTE [dbo].[addFollow] {follower.FollowerId}, {follower.FollowingId}, '{follower.FollowedDate:u}'";
     }
 
     private string GetInsertionFollowersLine(IList<FollowerQuery> followers)
     {
       var result = new StringBuilder();
       for (var i = 0; i < followers.Count - 1; i++)
-        result.Append(GetInsertionFollowerLine(followers[i]) + "," + Environment.NewLine);
+        result.Append(GetInsertionFollowerLine(followers[i]) + ";" + Environment.NewLine);
       result.Append(GetInsertionFollowerLine(followers[followers.Count - 1]));
       return result.ToString();
     }

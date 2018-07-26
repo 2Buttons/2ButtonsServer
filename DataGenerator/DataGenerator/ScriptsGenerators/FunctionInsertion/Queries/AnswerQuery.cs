@@ -11,3 +11,4 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.Queries
     public DateTime AnsweredDate { get; set; }
   }
 }
+

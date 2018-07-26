@@ -3,22 +3,14 @@ using CommonLibraries;
 
 namespace DataGenerator.Data.Reader.Objects
 {
-  public class User
+  public class UserReader
   {
-    public int UserId { get; set; }
-
+    public int ExternalId { get; set; }
     public string FirstName { get; set; }
-
     public string LastName { get; set; }
-
-    public SexType Sex { get; set; }
-
+    public SexType SexType { get; set; }
     public DateTime Birthday { get; set; }
-
-    public City City { get; set; }
-
-    public string SmallPhoto { get; set; }
-
-    public string LargePhoto { get; set; }
+    public string City { get; set; }
+    public string VkOriginalAvatrUrl { get; set; }
   }
 }

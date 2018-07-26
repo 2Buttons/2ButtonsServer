@@ -11,9 +11,6 @@ namespace DataGenerator.Data.VkCrawler
 {
   public class VkService
   {
-    private const string AppId = "6469856";
-    private const string AppSecret = "Zcec8RyHjpvaVfvRxLvq";
-    private const string AppAccess = "8ca841528ca841528ca84152578ccaf9b288ca88ca84152d645d207a5fae99916d1944a";
     private static readonly HttpClient Client = new HttpClient();
 
     public async Task<List<VkUserData>> GetUsersFromGroup(int groupId, int count, string externalToken)
@@ -81,8 +78,6 @@ namespace DataGenerator.Data.VkCrawler
       {
         userInfoResponse = await Client.GetStringAsync(
           $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={0}&lang=0&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
-       
-          
 
         using (var sw = new StreamWriter(path, false, Encoding.UTF8))
         {
@@ -92,7 +87,7 @@ namespace DataGenerator.Data.VkCrawler
       }
       for (var i = 0; i < count / 1000; i++)
       {
-        path = folderPath + "VkUsers_" + groupId +$"_{i}_"+ ".txt";
+        path = folderPath + "VkUsers_" + groupId + $"_{i}_" + ".txt";
         var offset = i * 1000;
         userInfoResponse = await Client.GetStringAsync(
           $"https://api.vk.com/method/groups.getMembers?group_id={groupId}&offset={offset}&lang=0&sort=id_desc&fields=first_name,last_name,sex,bdate,city,photo_100,photo_max_orig&access_token={externalToken}&v=5.80");
@@ -102,9 +97,6 @@ namespace DataGenerator.Data.VkCrawler
         }
         Thread.Sleep(4000);
       }
-      
-      
-     
     }
 
     public async Task<string> GetJsonFromGroup(string groupId, int offset, string externalToken)

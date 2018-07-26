@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
 
-namespace DataGenerator.ScriptsGenerators.FunctionInsertion
+namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
 {
   public class UserInfoGenerator
   {
@@ -30,7 +30,7 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
     {
       var result = new StringBuilder();
       for (var i = 0; i < userInfos.Count - 1; i++)
-        result.Append(GetInsertionUserInfoLine(userInfos[i]) + "," + Environment.NewLine);
+        result.Append(GetInsertionUserInfoLine(userInfos[i]) + ";" + Environment.NewLine);
       result.Append(GetInsertionUserInfoLine(userInfos[userInfos.Count - 1]));
       return result.ToString();
     }

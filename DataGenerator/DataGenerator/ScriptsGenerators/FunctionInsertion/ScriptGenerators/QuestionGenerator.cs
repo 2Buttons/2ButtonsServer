@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
 
-namespace DataGenerator.ScriptsGenerators.FunctionInsertion
+namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
 {
   public class QuestionGenerator
   {
@@ -31,7 +31,7 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion
     {
       var result = new StringBuilder();
       for (var i = 0; i < questions.Count - 1; i++)
-        result.Append(GetInsertionQuestionLine(questions[i]) + "," + Environment.NewLine);
+        result.Append(GetInsertionQuestionLine(questions[i]) + ";" + Environment.NewLine);
       result.Append(GetInsertionQuestionLine(questions[questions.Count - 1]));
       return result.ToString();
     }

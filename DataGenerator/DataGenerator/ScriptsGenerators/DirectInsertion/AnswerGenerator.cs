@@ -28,7 +28,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
 
     private string GetInsertInit()
     {
-      return "INSERT INTO[dbo].[Answers] ([userID], [questionID], [answerType], [isLiked], [anwseredDate], [isDeleted]) VALUES" +
+      return "INSERT INTO[dbo].[Answers] ([userID], [questionID], [answerType], [isLiked], [answeredDate], [isDeleted]) VALUES" +
              Environment.NewLine;
     }
 
@@ -58,13 +58,13 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
         result.Append(GetGo());
         //result.Append("ALTER TABLE [dbo].[Answers] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         //result.Append(GetGo());
-        result.Append(SwitchIdentityInsert(true));
-        result.Append(GetGo());
+        //result.Append(SwitchIdentityInsert(true));
+        //result.Append(GetGo());
         result.Append(GetInsertInit());
         result.Append(GetInsertionAnswersLine(canswersIter));
         result.Append(GetGo());
-        result.Append(SwitchIdentityInsert(false));
-        result.Append(GetGo());
+        //result.Append(SwitchIdentityInsert(false));
+        //result.Append(GetGo());
         //result.Append("ALTER TABLE [dbo].[Answers] NOCHECK CONSTRAINT FK_OPTION_QUESTION");
         //result.Append(GetGo());
       }
