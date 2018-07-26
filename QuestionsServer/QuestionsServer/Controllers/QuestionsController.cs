@@ -67,6 +67,7 @@ namespace QuestionsServer.Controllers
         question.SecondOption);
 
       var badAddedTags = new List<string>();
+      question.Tags = question.Tags.Select(x=>x.Trim().ToUpper()).ToList();
 
       for (var i = 0; i < question.Tags.Count; i++)
       {

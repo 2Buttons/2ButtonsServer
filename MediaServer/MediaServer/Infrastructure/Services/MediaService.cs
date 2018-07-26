@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.Extensions;
-using CommonLibraries.MediaFolders;
 using CommonLibraries.MediaFolders.Configurations;
 using MediaServer.Models;
 using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Transforms;
-using Size = SixLabors.Primitives.Size;
 
 namespace MediaServer.Infrastructure.Services
 {
@@ -32,7 +29,6 @@ namespace MediaServer.Infrastructure.Services
     {
       return _fileManager.IsUrlValid(url);
     }
-
 
     public List<string> GetStandardBackgroundUrls(BackgroundSizeType size)
     {
@@ -105,7 +101,7 @@ namespace MediaServer.Infrastructure.Services
 
     public List<SizedUrl<AvatarSizeType>> UploadAvatar(string url, AvatarType avatarType)
     {
-      return UploadAvatar(url, avatarType, x => new WebClient().DownloadFile(new Uri(url), x));
+      return UploadAvatar(url, avatarType, x => new WebClient { Headers = new WebHeaderCollection { "User-Agent: Other" } }.DownloadFile(new Uri(url), x));
     }
 
     public List<SizedUrl<AvatarSizeType>> UploadAvatar(IFormFile file, AvatarType avatarType)
@@ -121,7 +117,7 @@ namespace MediaServer.Infrastructure.Services
 
     public List<SizedUrl<DefaultSizeType>> UploadDefault(string url)
     {
-      return UploadDefault(url, x => new WebClient().DownloadFile(new Uri(url), x));
+      return UploadDefault(url, x => new WebClient { Headers = new WebHeaderCollection { "User-Agent: Other" } }.DownloadFile(new Uri(url), x));
     }
 
     public List<SizedUrl<DefaultSizeType>> UploadDefault(IFormFile file)
@@ -162,11 +158,7 @@ namespace MediaServer.Infrastructure.Services
           Size = AvatarSizeType.Small,
           Url = _fileManager.ChangePcPathToWeb(smallImagePath)
         },
-        new SizedUrl<AvatarSizeType>
-        {
-          Size = AvatarSizeType.Large,
-          Url = _fileManager.ChangePcPathToWeb(largemagePath)
-        }
+        new SizedUrl<AvatarSizeType> {Size = AvatarSizeType.Large, Url = _fileManager.ChangePcPathToWeb(largemagePath)}
       };
 
       return result;
@@ -174,18 +166,18 @@ namespace MediaServer.Infrastructure.Services
 
     public List<SizedUrl<BackgroundSizeType>> UploadBackground(string url, BackgroundType backgroundType)
     {
-      return UploadBackground(url, backgroundType, x => new WebClient().DownloadFile(new Uri(url), x));
+      return UploadBackground(url, backgroundType, x => new WebClient { Headers = new WebHeaderCollection { "User-Agent: Other" } }.DownloadFile(new Uri(url), x));
     }
 
     public List<SizedUrl<BackgroundSizeType>> UploadBackground(IFormFile file, BackgroundType backgroundType)
     {
       return UploadBackground(file.FileName, backgroundType, x =>
-     {
-       using (var fileStream = new FileStream(x, FileMode.Create))
-       {
-         file.CopyTo(fileStream);
-       }
-     });
+      {
+        using (var fileStream = new FileStream(x, FileMode.Create))
+        {
+          file.CopyTo(fileStream);
+        }
+      });
     }
 
     private List<SizedUrl<BackgroundSizeType>> UploadBackground(string fileName, BackgroundType backgroundType,
@@ -309,7 +301,6 @@ namespace MediaServer.Infrastructure.Services
       return Path.Combine(relativeFolder, name + $"_{size.ToString().ToLower()}" + ext);
     }
 
-
     public string CreateRelativeBackgroundPath(string imageName, BackgroundType backgroundType, BackgroundSizeType size)
     {
       BackgroundSizeFolders backgroundSizeFolders;
@@ -354,7 +345,7 @@ namespace MediaServer.Infrastructure.Services
       var fullNewPath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(),
         CreateBackgroundPath(backgroundType, copyToNewSize));
 
-      CommonLibraries.MediaFolders.Configurations.Size size;
+      Size size;
       switch (copyToNewSize)
       {
         case BackgroundSizeType.Original:
@@ -363,8 +354,7 @@ namespace MediaServer.Infrastructure.Services
         case BackgroundSizeType.Mobile:
           size = new MobileBackgroundSizeFolder(null).Size;
           break;
-        default:
-          throw new Exception("Such BackgrodunSizeType does not exist.");
+        default: throw new Exception("Such BackgrodunSizeType does not exist.");
       }
 
       var files = Directory.GetFiles(fullSourcePath);
@@ -375,25 +365,19 @@ namespace MediaServer.Infrastructure.Services
 
         if (fileName.Contains("original")) fileName = fileName.Replace("original", copyToNewSize.ToString().ToLower());
         else
-          fileName = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + "_" + copyToNewSize.ToString().ToLower();
+          fileName = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + "_" +
+                     copyToNewSize.ToString().ToLower();
 
         var fullNewFilePath = Path.Combine(fullNewPath, fileName + ext);
 
-
         if (!File.Exists(fullNewFilePath))
-        {
           if (size == null) CopyFile(file, fullNewFilePath);
           else ResizeImage(file, fullNewFilePath, size.Height, size.Width);
-        }
       }
-
-
     }
-
 
     private string CreateBackgroundPath(BackgroundType backgroundType, BackgroundSizeType copyToNewSize)
     {
-
       return Path.Combine(GetHashFolderName("Background"), GetHashFolderName(backgroundType.ToString()),
         GetHashFolderName(copyToNewSize.ToString()));
     }
@@ -405,7 +389,7 @@ namespace MediaServer.Infrastructure.Services
       var fullNewPath = Path.Combine(_fileManager.GetAbsoluteMediaRootPath(),
         CreateAvatarPath(backgroundType, copyToNewSize));
 
-      CommonLibraries.MediaFolders.Configurations.Size size;
+      Size size;
       switch (copyToNewSize)
       {
         case AvatarSizeType.Original:
@@ -417,8 +401,7 @@ namespace MediaServer.Infrastructure.Services
         case AvatarSizeType.Large:
           size = new LargeAvatarSizeFolder(null).Size;
           break;
-        default:
-          throw new Exception("Such AvatarSizeType does not exist.");
+        default: throw new Exception("Such AvatarSizeType does not exist.");
       }
 
       var files = Directory.GetFiles(fullSourcePath);
@@ -428,23 +411,18 @@ namespace MediaServer.Infrastructure.Services
         var ext = Path.GetExtension(file);
 
         if (fileName.Contains("original")) fileName = fileName.Replace("original", copyToNewSize.ToString().ToLower());
-        else fileName = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + "_" + copyToNewSize.ToString().ToLower();
+        else
+          fileName = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10) + "_" +
+                     copyToNewSize.ToString().ToLower();
         var fullNewFilePath = Path.Combine(fullNewPath, fileName + ext);
         if (!File.Exists(fullNewFilePath))
-        {
           if (size == null) CopyFile(file, fullNewFilePath);
-          else
-            ResizeImage(file, fullNewFilePath, size.Height, size.Width);
-        }
+          else ResizeImage(file, fullNewFilePath, size.Height, size.Width);
       }
-
-
     }
-
 
     private string CreateAvatarPath(AvatarType backgroundType, AvatarSizeType copyToNewSize)
     {
-
       return Path.Combine(GetHashFolderName("Avatar"), GetHashFolderName(backgroundType.ToString()),
         GetHashFolderName(copyToNewSize.ToString()));
     }
@@ -454,7 +432,6 @@ namespace MediaServer.Infrastructure.Services
       return str.Substring(0, 2) + str.GetMd5HashString().Substring(0, 5);
     }
 
-
     public void ResizeImage(string originalPath, string rezisePath, int height, int width)
     {
       using (var image = Image.Load(originalPath))
@@ -462,7 +439,7 @@ namespace MediaServer.Infrastructure.Services
         image.Mutate(x => x.Resize(new ResizeOptions
         {
           Mode = ResizeMode.Max,
-          Size = new Size { Height = height, Width = width }
+          Size = new SixLabors.Primitives.Size { Height = height, Width = width }
         }));
         image.Save(rezisePath); // Automatic encoder selected based on extension.
       }

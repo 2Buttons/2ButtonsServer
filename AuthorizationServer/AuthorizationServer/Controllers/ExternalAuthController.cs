@@ -35,7 +35,7 @@ namespace AuthorizationServer.Controllers
         ModelState.AddModelError("State", "You are hacker! Your state is incorrect.");
         return new BadResponseResult(ModelState);
       }
-      if (!auth.Status || !auth.Error.IsNullOrEmpty())
+      if (!auth.Error.IsNullOrEmpty())
       {
         ModelState.AddModelError("ExternalError", "ExternalError: " + auth.Error + " " + auth.ErrorDescription);
         return new BadResponseResult(ModelState);

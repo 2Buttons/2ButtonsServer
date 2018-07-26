@@ -16,10 +16,6 @@ namespace AuthorizationServer.ViewModels.InputParameters.Auth
     [Required]
     public SocialType SocialType { get; set; }
 
-    [Required]
-    [JsonProperty("status")]
-    public bool Status { get; set; }
-
     [JsonProperty("code")]
     public string Code { get; set; }
 
