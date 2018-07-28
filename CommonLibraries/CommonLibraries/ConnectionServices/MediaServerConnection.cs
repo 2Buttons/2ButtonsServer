@@ -52,15 +52,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(GetStandardAvatarUrls)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(GetStandardAvatarUrls)}.Start");
         var body = JsonConvert.SerializeObject(new {size = (int) avatarSize});
         var result = (await MediaServerConnect(_standardAvatarUrl, body)).Urls;
-        _logger.LogInformation($"{nameof(GetStandardAvatarUrls)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(GetStandardAvatarUrls)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(GetStandardAvatarUrls)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(GetStandardAvatarUrls)}");
       }
       return new List<string>();
     }
@@ -69,15 +69,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(GetStandardBackgroundsUrl)}.Start");
         var body = JsonConvert.SerializeObject(new { size = (int)backgroundSize } );
         var result = (await MediaServerConnect(_standardBackgroundUrl, body)).Urls;
-        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(GetStandardBackgroundsUrl)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(GetStandardBackgroundsUrl)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(GetStandardBackgroundsUrl)}");
       }
       return new List<string>();
     }
@@ -86,15 +86,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(GetStandardDefaultsUrl)}.Start");
         var body = JsonConvert.SerializeObject(new { size = (int)defaultSize, pattern = pattern });
         var result = (await MediaServerConnect(_standardDefaultUrl, body)).Urls;
-        _logger.LogInformation($"{nameof(GetStandardBackgroundsUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(GetStandardDefaultsUrl)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(GetStandardBackgroundsUrl)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(GetStandardDefaultsUrl)}");
       }
       return new List<string>();
     }
@@ -104,19 +104,19 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadAvatarFile)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadAvatarFile)}.Start");
         var requestParams =
           new List<KeyValuePair<string, string>>
           {
             new KeyValuePair<string, string>("avatarType", ((int) avatarType).ToString())
           };
         var result = (await MediaServerConnect(_uploadedAvaterFile, file, requestParams)).Url;
-        _logger.LogInformation($"{nameof(UploadAvatarFile)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadAvatarFile)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadAvatarFile)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(UploadAvatarFile)}");
       }
       return string.Empty;
     }
@@ -125,15 +125,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadAvatarUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadAvatarUrl)}.Start");
         var body = JsonConvert.SerializeObject(new { avatarType = (int)avatarType, url = imageUrl});
         var result = (await MediaServerConnect(_uploadedAvaterUrl, body)).Url;
-        _logger.LogInformation($"{nameof(UploadAvatarUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadAvatarUrl)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadAvatarUrl)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(UploadAvatarUrl)}");
       }
       return string.Empty;
     }
@@ -143,15 +143,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadBackgroundUrl)}.Start");
         var body = JsonConvert.SerializeObject(new { backgroundType = (int)backgroundType, url = imageUrl});
         var result = (await MediaServerConnect(_uploadedBackgroundUrl, body)).Url;
-        _logger.LogInformation($"{nameof(UploadBackgroundUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadBackgroundUrl)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadBackgroundUrl)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(UploadBackgroundUrl)}");
       }
       return string.Empty;
     }
@@ -160,7 +160,7 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadBackgroundFile)}.Start");
         var requestParams =
           new List<KeyValuePair<string, string>>
           {
@@ -168,12 +168,12 @@ namespace CommonLibraries.ConnectionServices
           };
         var result = (await MediaServerConnect(_uploadedBackgroundFile, file, requestParams))
           .Url;
-        _logger.LogInformation($"{nameof(UploadBackgroundFile)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadBackgroundFile)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadBackgroundFile)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(UploadBackgroundFile)}");
       }
       return string.Empty;
     }
@@ -183,15 +183,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadDefaultUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadDefaultUrl)}.Start");
         var body = JsonConvert.SerializeObject(new {  url = imageUrl });
         var result = (await MediaServerConnect(_uploadedDefaultUrl, body)).Url;
-        _logger.LogInformation($"{nameof(UploadDefaultUrl)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadDefaultUrl)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadDefaultUrl)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(UploadDefaultUrl)}");
       }
       return string.Empty;
     }
@@ -200,15 +200,15 @@ namespace CommonLibraries.ConnectionServices
     {
       try
       {
-        _logger.LogInformation($"{nameof(UploadDefaultFile)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadDefaultFile)}.Start");
         var result = (await MediaServerConnect(_uploadedDefaultFile, file, new List<KeyValuePair<string, string>>()))
           .Url;
-        _logger.LogInformation($"{nameof(UploadDefaultFile)}.Start");
+        _logger.LogInformation($"{nameof(MediaServerConnection)}.{nameof(UploadDefaultFile)}.End");
         return result;
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, $"{nameof(UploadDefaultFile)}");
+        _logger.LogError(ex, $"{nameof(MediaServerConnection)}.{nameof(UploadDefaultFile)}");
       }
       return string.Empty;
     }

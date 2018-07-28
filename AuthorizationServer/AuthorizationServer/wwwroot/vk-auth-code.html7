@@ -27,8 +27,6 @@
 
 
 
-
-
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var json = JSON.stringify(message);
@@ -42,19 +40,11 @@
     console.log("Hello");
 
     console.log(myInit);
-
-    var xhr = new XMLHttpRequest();
-    var json = JSON.stringify(message);
-    xhr.open("POST", "http://localhost:11000/auth/externalLogin", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(json);
-
-
-    // fetch("https://api.2buttons.ru/v0.13/auth/externalLogin", myInit).then(function (response) {
-    //  console.log(response);
-    /*что-то сделать при успешном запросе*/
-    //window.close();
-    //  });
+    fetch("http://localhost:11000/auth/externalLogin", myInit).then(function (response) {
+      console.log(response);
+      /*что-то сделать при успешном запросе*/
+      window.close();
+    });
 
     function getParameterByName(name, url) {
       if (!url) url = window.location.href;

@@ -16,6 +16,7 @@ using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 namespace AuthorizationServer.Infrastructure.Services
 {
@@ -26,18 +27,21 @@ namespace AuthorizationServer.Infrastructure.Services
     private readonly IEmailJwtService _emailJwtService;
     private readonly IJwtService _jwtService;
     private readonly IStringLocalizer<InternalAuthService> _localizer;
+    private readonly ILogger<ExternalAuthService> _logger;
 
-    public InternalAuthService(ConnectionsHub hub, IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db, IStringLocalizer<InternalAuthService> localizer)
+    public InternalAuthService(ConnectionsHub hub, IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db, IStringLocalizer<InternalAuthService> localizer, ILogger<ExternalAuthService> logger)
     {
       _db = db;
       _hub = hub;
       _jwtService = jwtService;
       _emailJwtService = emailJwtService;
       _localizer = localizer;
+      _logger = logger;
     }
 
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
     {
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(RegisterAsync)}.Start");
       var isExistByPhone = !user.Phone.IsNullOrEmpty() && await _db.Users.IsUserExistByPhoneAsync(user.Phone);
       var isExistByEmail = !user.Email.IsNullOrEmpty() && await _db.Users.IsUserExistByEmailAsync(user.Email);
 
@@ -88,11 +92,13 @@ namespace AuthorizationServer.Infrastructure.Services
 
       if (!await _db.Tokens.AddTokenAsync(token))
         throw new Exception("Can not add token to database. You entered just as a guest.");
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(RegisterAsync)}.End");
       return jwtToken;
     }
 
     public async Task<UserDto> GetUserByCredentils(LoginViewModel credentials)
     {
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByCredentils)}.Start");
       var user = new UserDto {UserId = 0, RoleType = RoleType.Guest};
 
       if (credentials.GrantType == GrantType.Guest) return user;
@@ -111,29 +117,39 @@ namespace AuthorizationServer.Infrastructure.Services
       }
 
       user.RoleType = await _db.Users.GetUserRoleAsync(user.UserId);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByCredentils)}.End");
       return user;
     }
 
     public bool IsTokenValid(string token)
     {
-      return _emailJwtService.IsTokenValid(token);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.Start");
+      var result =  _emailJwtService.IsTokenValid(token);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.End");
+      return result;
     }
 
     public async Task<bool> TryConfirmEmail(int userId, string token)
     {
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.Start");
       var decodedToken = _emailJwtService.DecodeCode(token);
 
       var userTokenId = int.Parse(decodedToken.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)
                                     ?.Value ?? "0");
-      return userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
+      var result =  userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.End");
+      return result;
     }
 
     public async Task<bool> ResetPassword(string token, string email, string passwordHash)
     {
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(ResetPassword)}.Start");
       var user = await _db.Users.GetUserByInternalEmail(email);
       if (user == null || !user.EmailConfirmed)
         throw new NotFoundException("We can not find this email or email is not confirmed");
-      return await _db.Users.ResetPasswordAsync(email, passwordHash);
+      var result = await _db.Users.ResetPasswordAsync(email, passwordHash);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(ResetPassword)}.End");
+      return result;
     }
 
     //public async Task<bool> SendConfirmation(int userId)

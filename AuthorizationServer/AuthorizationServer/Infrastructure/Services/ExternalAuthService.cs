@@ -12,6 +12,7 @@ using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
+using Microsoft.Extensions.Logging;
 
 namespace AuthorizationServer.Infrastructure.Services
 {
@@ -21,14 +22,16 @@ namespace AuthorizationServer.Infrastructure.Services
     private readonly IFbService _fbService;
     private readonly ConnectionsHub _hub;
     private readonly IVkService _vkService;
+    private readonly ILogger<ExternalAuthService> _logger;
 
     public ExternalAuthService(AuthorizationUnitOfWork db, ConnectionsHub hub, IVkService vkService,
-      IFbService fbService)
+      IFbService fbService, ILogger<ExternalAuthService> logger)
     {
       _db = db;
       _hub = hub;
       _vkService = vkService;
       _fbService = fbService;
+      _logger = logger;
     }
 
     public void Dispose()
@@ -39,6 +42,7 @@ namespace AuthorizationServer.Infrastructure.Services
     public async Task<UserDto> GetUserViaExternalSocialNet(long externalUserId, string email, string externalToken,
       long expiresIn, SocialType socialType)
     {
+      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.Start Via email from mobile");
       NormalizedSocialUserData socialUserData;
       switch (socialType)
       {
@@ -54,20 +58,24 @@ namespace AuthorizationServer.Infrastructure.Services
         default: throw new Exception($"We do not support mobile logging via {socialType}.");
       }
 
-      return await ExternalUserProcessing(socialUserData, socialType);
+      var result =  await ExternalUserProcessing(socialUserData, socialType);
+      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.End Via email from mobile");
+      return result;
     }
 
     public async Task<UserDto> GetUserViaExternalSocialNet(string code, SocialType socialType, bool isTest = false)
     {
+      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.Start via code from web client");
       NormalizedSocialUserData socialUserData;
       switch (socialType)
       {
-        case SocialType.Facebook:
-          socialUserData = await _fbService.GetUserInfoAsync(code);
-          break;
+       
+          //socialUserData = await _fbService.GetUserInfoAsync(code);
+          //break;
         case SocialType.Vk:
           socialUserData = await _vkService.GetUserInfoAsync(code, isTest);
           break;
+        case SocialType.Facebook:
         case SocialType.Twiter:
         case SocialType.GooglePlus:
         case SocialType.Telegram:
@@ -75,12 +83,15 @@ namespace AuthorizationServer.Infrastructure.Services
         case SocialType.Nothing:
         default: throw new Exception($"We do not support logging via {socialType}.");
       }
-      return await ExternalUserProcessing(socialUserData, socialType);
+      var result =  await ExternalUserProcessing(socialUserData, socialType);
+      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.End via code from web client");
+      return result;
     }
 
     public async Task<bool> AddUserSocialAsync(int internalId, SocialType socialType,
       NormalizedSocialUserData socialUserData)
     {
+      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.Start");
       var social = new SocialDb
       {
         InternalId = internalId,
@@ -90,7 +101,9 @@ namespace AuthorizationServer.Infrastructure.Services
         ExternalToken = socialUserData.ExternalToken,
         ExpiresIn = socialUserData.ExpiresIn
       };
-      return await _db.Socials.AddUserSocialAsync(social);
+      var result =  await _db.Socials.AddUserSocialAsync(social);
+      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.End");
+      return result;
     }
 
     private async Task<UserDto> ExternalUserProcessing(NormalizedSocialUserData socialUserData, SocialType socialType)

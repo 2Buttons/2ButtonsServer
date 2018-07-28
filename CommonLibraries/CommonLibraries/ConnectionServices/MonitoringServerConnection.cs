@@ -24,20 +24,20 @@ namespace CommonLibraries.ConnectionServices
 
     public Task AddUrlMonitoring(int userId)
     {
-      _logger.LogInformation($"{nameof(AddUrlMonitoring)}.Sart");
+      _logger.LogInformation($"{nameof(MonitoringServerConnection)}.{nameof(AddUrlMonitoring)}.Sart");
       var body = JsonConvert.SerializeObject(new {userId});
       var result = Task.Factory.StartNew(() => MonitoringServerConnect(_addMonitoringServerUrl, body));
-      _logger.LogInformation($"{nameof(AddUrlMonitoring)}.End");
+      _logger.LogInformation($"{nameof(MonitoringServerConnection)}.{nameof(AddUrlMonitoring)}.End");
 
       return result;
     }
 
     public Task UpdateUrlMonitoring(int userId, UrlMonitoringType monitoringType)
     {
-      _logger.LogInformation($"{nameof(UpdateUrlMonitoring)}.Sart");
+      _logger.LogInformation($"{nameof(MonitoringServerConnection)}.{nameof(UpdateUrlMonitoring)}.Sart");
       var body = JsonConvert.SerializeObject(new { userId, UrlMonitoringType = monitoringType });
       var result =  Task.Factory.StartNew(()=> MonitoringServerConnect(_updateMonitoringServerUrl, body));
-      _logger.LogInformation($"{nameof(UpdateUrlMonitoring)}.End");
+      _logger.LogInformation($"{nameof(MonitoringServerConnection)}.{nameof(UpdateUrlMonitoring)}.End");
 
       return result;
     }

@@ -28,7 +28,7 @@ namespace CommonLibraries.ConnectionServices
 
     public  Task SendFollowNotification(int notifierId, int followToId, DateTime followedDate)
     {
-      _logger.LogInformation($"{nameof(SendFollowNotification)}.Start");
+      _logger.LogInformation($"{nameof(NotificationsServerConnection)}.{nameof(SendFollowNotification)}.Start");
       var body = JsonConvert.SerializeObject(new
       {
         NotifierId = notifierId,
@@ -37,14 +37,14 @@ namespace CommonLibraries.ConnectionServices
       });
 
       var result =  Task.Factory.StartNew(()=> NotificationsServerConnect(_followNotificationUrl, body));
-      _logger.LogInformation($"{nameof(SendFollowNotification)}.End");
+      _logger.LogInformation($"{nameof(NotificationsServerConnection)}.{nameof(SendFollowNotification)}.End");
       return result;
     }
 
     public   Task SendCommentNotification(int notifierId, int questionId, int commentId,
       DateTime commentedDate)
     {
-      _logger.LogInformation($"{nameof(SendCommentNotification)}.Start");
+      _logger.LogInformation($"{nameof(NotificationsServerConnection)}.{nameof(SendCommentNotification)}.Start");
       var body = JsonConvert.SerializeObject(new
       {
         NotifierId = notifierId,
@@ -54,14 +54,14 @@ namespace CommonLibraries.ConnectionServices
       });
 
       var result =  Task.Factory.StartNew(() => NotificationsServerConnect(_commentNotificationUrl, body));
-      _logger.LogInformation($"{nameof(SendCommentNotification)}.End");
+      _logger.LogInformation($"{nameof(NotificationsServerConnection)}.{nameof(SendCommentNotification)}.End");
       return result;
     }
 
     public  Task SendRecommendQuestionNotification(int notifierId, int userToId, int questionId,
       DateTime recommendedDate)
     {
-      _logger.LogInformation($"{nameof(SendRecommendQuestionNotification)}.Start");
+      _logger.LogInformation($"{nameof(NotificationsServerConnection)}.{nameof(SendRecommendQuestionNotification)}.Start");
       var body = JsonConvert.SerializeObject(new
       {
         NotifierId = notifierId,
@@ -71,7 +71,7 @@ namespace CommonLibraries.ConnectionServices
       });
 
       var result =  Task.Factory.StartNew(() => NotificationsServerConnect(_recommendQuestionNotificationUrl, body));
-      _logger.LogInformation($"{nameof(SendRecommendQuestionNotification)}.End");
+      _logger.LogInformation($"{nameof(NotificationsServerConnection)}.{nameof(SendRecommendQuestionNotification)}.End");
       return result;
     }
 
