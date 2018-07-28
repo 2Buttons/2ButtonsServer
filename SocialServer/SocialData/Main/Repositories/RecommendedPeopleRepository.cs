@@ -62,11 +62,6 @@ namespace SocialData.Main.Repositories
         .FromSql($"select * from dbo.getRecommendedFromUsersID(@NetworkIDTable)", networkIdTable).ToListAsync();
     }
 
-    //public async Task<List<RecommendedFromContactsDb>> GetRecommendedFromContacts(int userId, string searchedLogin)
-    //{
-    //  return await _db.RecommendedFromContactsDb.AsNoTracking()
-    //    .FromSql($"select * from dbo.getRecommendedFromContacts({userId}, {searchedLogin})").ToListAsync();
-    //}
 
     public async Task<List<RecommendedStrangersDb>> GetRecommendedStrangers(int userId, int offset, int count,
       string searchedLogin)

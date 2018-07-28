@@ -6,6 +6,7 @@ using CommonLibraries.ConnectionServices;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QuestionsData;
 using QuestionsServer.ViewModels.InputParameters.ControllersViewModels;
 
@@ -18,11 +19,13 @@ namespace QuestionsServer.Controllers
   {
     private readonly QuestionsUnitOfWork _mainDb;
     private readonly ConnectionsHub _hub;
+    private readonly ILogger<ComplaintsController> _logger;
 
-    public CommentsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub)
+    public CommentsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub, ILogger<ComplaintsController> logger)
     {
       _mainDb = mainDb;
       _hub = hub;
+      _logger = logger;
     }
 
     [HttpPost("add")]
@@ -42,17 +45,21 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      if (await _mainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
-        commentFeedback.FeedbackType)) return new OkResponseResult(new { IsFeedbackUpdated = true });
-      return new ResponseResult((int)HttpStatusCode.NotModified, new { IsFeedbackUpdated = false });
+      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.Start");
+      var result = await _mainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
+        commentFeedback.FeedbackType);
+      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.End");
+      return result ? new OkResponseResult(new { IsFeedbackUpdated = true }) : new ResponseResult((int)HttpStatusCode.NotModified, new { IsFeedbackUpdated = false });
     }
 
     [HttpPost]
     public async Task<IActionResult> GetComments([FromBody] GetCommentsViewModel commentsVm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.Start");
       var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.PageParams.Offset, commentsVm.PageParams.Count);
       await _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
+      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.End");
       return new OkResponseResult(comments);
     }
   }

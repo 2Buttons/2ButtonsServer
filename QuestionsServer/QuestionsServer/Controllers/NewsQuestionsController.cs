@@ -10,6 +10,7 @@ using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using QuestionsData;
 using QuestionsData.Entities;
 using QuestionsData.Queries;
@@ -30,12 +31,14 @@ namespace QuestionsServer.Controllers
     private readonly QuestionsUnitOfWork _mainDb;
     private readonly DbContextOptions<TwoButtonsContext> _dbOptions;
     private readonly ConnectionsHub _hub;
+    private readonly ILogger<NewsQuestionsController> _logger;
 
-    public NewsQuestionsController(QuestionsUnitOfWork mainDb, DbContextOptions<TwoButtonsContext> dbOptions, ConnectionsHub hub)
+    public NewsQuestionsController(QuestionsUnitOfWork mainDb, DbContextOptions<TwoButtonsContext> dbOptions, ConnectionsHub hub, ILogger<NewsQuestionsController> logger)
     {
       _mainDb = mainDb;
       _dbOptions = dbOptions;
       _hub = hub;
+      _logger = logger;
     }
 
 
@@ -43,10 +46,10 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetNews([FromBody] GetNewsViewModel newsVm)
     {
 
-      //TODO нормально вычислить сколько брать в бд. Возможно стоит сразу брать в процентах
 
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
+      _logger.LogInformation($"{nameof(NewsQuestionsController)}.{nameof(GetNews)}.Start");
       var userId = newsVm.UserId;
       var questionsOffset = newsVm.PageParams.Offset;
       var questionsCount = newsVm.PageParams.Count;
@@ -152,7 +155,7 @@ namespace QuestionsServer.Controllers
       };
 
       await _hub.Monitoring.UpdateUrlMonitoring(newsVm.UserId, UrlMonitoringType.GetsQuestionsNews);
-
+      _logger.LogInformation($"{nameof(NewsQuestionsController)}.{nameof(GetNews)}.End");
       return new OkResponseResult(result);
     }
 

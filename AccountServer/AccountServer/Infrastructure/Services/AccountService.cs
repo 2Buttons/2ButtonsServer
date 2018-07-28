@@ -16,6 +16,7 @@ using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.MediaFolders;
+using Microsoft.Extensions.Logging;
 
 namespace AccountServer.Infrastructure.Services
 {
@@ -25,30 +26,39 @@ namespace AccountServer.Infrastructure.Services
     private readonly IFbService _fbService;
     private readonly IVkService _vkService;
     private readonly ConnectionsHub _hub;
+    private readonly ILogger<AccountService> _logger;
 
-    public AccountService(AccountDataUnitOfWork accountDb, ConnectionsHub hub, IVkService vkService, IFbService fbService)
+    public AccountService(AccountDataUnitOfWork accountDb, ConnectionsHub hub, IVkService vkService, IFbService fbService, ILogger<AccountService> logger)
     {
       _db = accountDb;
       _hub = hub;
       _vkService = vkService;
       _fbService = fbService;
+      _logger = logger;
     }
 
 
     public async Task<string> GetUserAvatar(int userId, AvatarSizeType avatarSizeType)
     {
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(GetUserAvatar)}.Start");
       var avatar = await _db.UsersInfo.GetUserAvatar(userId);
-      return MediaConverter.ToFullAvatarUrl(avatar, avatarSizeType);
+      var result = MediaConverter.ToFullAvatarUrl(avatar, avatarSizeType);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(GetUserAvatar)}.End");
+      return result;
     }
 
     public async Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId)
     {
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(GetCityAndBirthdate)}.Start");
       var userInfoTask = await _db.UsersInfo.FindUserInfoAsync(userId, userId);
-      return (userInfoTask.City, userInfoTask.BirthDate);
+      var result = (userInfoTask.City, userInfoTask.BirthDate);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(GetCityAndBirthdate)}.End");
+      return result;
     }
 
     public async Task<UserInfoViewModel> GetUserAsync(int userId, int userPageId)
     {
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(GetUserAsync)}.Start");
       var userInfoTask = _db.UsersInfo.FindUserInfoAsync(userId, userPageId);
       var userStatisticsTask = _db.UsersInfo.GetUserStatisticsAsync(userPageId);
       var userContactsTask = _db.Users.GetUserSocialsAsync(userPageId);
@@ -63,30 +73,35 @@ namespace AccountServer.Infrastructure.Services
       user.Social = ConvertContactsDtoToViewModel(userContactsTask.Result);
       await _hub.Monitoring.UpdateUrlMonitoring(userId,
         userId != userPageId ? UrlMonitoringType.OpensUserPage : UrlMonitoringType.OpensPersonalPage);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(GetUserAsync)}.End");
       return user;
     }
 
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateUserInfoAsync)}.Start");
       var oldUser = await _db.UsersInfo.FindUserInfoAsync(user.UserId, user.UserId);
       if (oldUser == null) throw new NotFoundException("This user does not exist");
 
       var updateUser = new UpdateUserInfoDto()
       {
         UserId = user.UserId,
-        Login  = user.Login.IsNullOrEmpty() ? oldUser.Login : user.Login,
-        BirthDate = user.BirthDate.Year<1900 ? oldUser.BirthDate : user.BirthDate,
+        Login = user.Login.IsNullOrEmpty() ? oldUser.Login : user.Login,
+        BirthDate = user.BirthDate.Year < 1900 ? oldUser.BirthDate : user.BirthDate,
         SexType = user.SexType == SexType.Both ? oldUser.SexType : user.SexType,
         City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
-         OriginalAvatarUrl = user.OriginalAvatarUrl,
+        OriginalAvatarUrl = user.OriginalAvatarUrl,
         Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description
       };
 
-      return await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
+      var result = await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateUserInfoAsync)}.End");
+      return result;
     }
 
     public async Task<bool> AddUserSocialAsync(int userId, string code, SocialType socialType)
     {
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(AddUserSocialAsync)}.Start");
       NormalizedSocialUserData user;
       switch (socialType)
       {
@@ -122,9 +137,6 @@ namespace AccountServer.Infrastructure.Services
         userInfo.OriginalAvatarUrl = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
       }
 
-
-     
-
       UpdateUserInfoDto updateUser = new UpdateUserInfoDto
       {
         UserId = userInfo.UserId,
@@ -143,28 +155,37 @@ namespace AccountServer.Infrastructure.Services
       {
         Console.WriteLine(e);
       }
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(AddUserSocialAsync)}.End");
       return true;
     }
 
 
     private async Task<string> UploadAvatarUrlOrGetStandard(string avatarUrl)
     {
-      return await _hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UploadAvatarUrlOrGetStandard)}.Start ");
+      var result = await _hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ?? (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UploadAvatarUrlOrGetStandard)}.End ");
+      return result;
+
     }
 
     public async Task<(bool isUpdated, string url)> UpdateAvatarViaUrl(int userId, AvatarType avatarType, string newAvatarUrl)
     {
-      var url = await _hub.Media.UploadAvatarUrl( AvatarType.Custom, newAvatarUrl);
-      if (url.IsNullOrEmpty()) return (false, null);
-      return (await _db.UsersInfo.UpdateUserOriginalAvatar(userId, url), url);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateAvatarViaUrl)}.Start ");
+      var url = await _hub.Media.UploadAvatarUrl(AvatarType.Custom, newAvatarUrl);
+      var result = url.IsNullOrEmpty() ? (false, null) : (await _db.UsersInfo.UpdateUserOriginalAvatar(userId, url), url);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateAvatarViaUrl)}.End ");
+      return result;
     }
 
     public async Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarType avatarType,
       IFormFile file)
     {
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateAvatarViaFile)}.Start ");
       var url = await _hub.Media.UploadAvatarFile(AvatarType.Custom, file);
-      if (url.IsNullOrEmpty()) return (false, null);
-      return (await _db.UsersInfo.UpdateUserOriginalAvatar(userId, url), url);
+      var result = url.IsNullOrEmpty() ? (false, null) : (await _db.UsersInfo.UpdateUserOriginalAvatar(userId, url), url);
+      _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateAvatarViaFile)}.End ");
+      return result;
     }
 
     public void Dispose()

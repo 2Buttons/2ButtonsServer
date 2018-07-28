@@ -11,6 +11,7 @@ using BotsServer.ViewModels.Input;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BotsServer.Controllers
 {
@@ -20,12 +21,14 @@ namespace BotsServer.Controllers
   {
     private readonly BotsUnitOfWork _uow;
     private readonly BotsManager _botsManager;
-    private DbContextOptions<TwoButtonsContext> _dbOptions;
-    public BotsController(BotsUnitOfWork uow, BotsManager botsManager, DbContextOptions<TwoButtonsContext> dbOptions)
+    private readonly DbContextOptions<TwoButtonsContext> _dbOptions;
+    private readonly ILogger<BotsController> _logger;
+    public BotsController(BotsUnitOfWork uow, BotsManager botsManager, DbContextOptions<TwoButtonsContext> dbOptions, ILogger<BotsController> logger)
     {
       _uow = uow;
       _botsManager = botsManager;
       _dbOptions = dbOptions;
+      _logger = logger;
     }
 
     [HttpPost("questions")]
@@ -33,7 +36,9 @@ namespace BotsServer.Controllers
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetQuestions)}.Start");
       var result = await _uow.QuestionRepository.GetQuestions(vm.PageParams.Offset, vm.PageParams.Count);
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -42,7 +47,9 @@ namespace BotsServer.Controllers
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetQuestionsByPattern)}.Start");
       var result = await _uow.QuestionRepository.GetQuestionsByPattern(vm.Pattern, vm.PageParams.Offset, vm.PageParams.Count);
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetQuestionsByPattern)}.End");
       return new OkResponseResult(result);
     }
 
@@ -51,7 +58,9 @@ namespace BotsServer.Controllers
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetQuestionsById)}.Start");
       var result = await _uow.QuestionRepository.GetQuestionById(vm.QuestionId);
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetQuestionsById)}.End");
       return new OkResponseResult(result);
     }
 
@@ -61,7 +70,9 @@ namespace BotsServer.Controllers
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetBotsCount)}.Start");
       var result = _uow.BotsRepository.GetBotsCount();
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(GetBotsCount)}.End");
       return new OkResponseResult(result);
     }
 
@@ -70,7 +81,9 @@ namespace BotsServer.Controllers
     {
       if (vm.Code != "MySecretCode!123974_QQ")
         return new ResponseResult((int)HttpStatusCode.Forbidden, message: "You are hacker man)");
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(Magic)}.Start");
       await _botsManager.CreateTimer(_uow, _dbOptions,vm);
+      _logger.LogInformation($"{nameof(BotsController)}.{nameof(Magic)}.End");
       return new OkResponseResult();
     }
 

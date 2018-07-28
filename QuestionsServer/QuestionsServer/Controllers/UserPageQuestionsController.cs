@@ -6,6 +6,7 @@ using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QuestionsData;
 using QuestionsData.DTO;
 using QuestionsData.Entities;
@@ -25,11 +26,13 @@ namespace QuestionsServer.Controllers
   {
     private readonly QuestionsUnitOfWork _mainDb;
     private readonly ConnectionsHub _hub;
+    private readonly ILogger<UserPageQuestionsController> _logger;
 
-    public UserPageQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub)
+    public UserPageQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub, ILogger<UserPageQuestionsController> logger)
     {
       _mainDb = mainDb;
       _hub = hub;
+      _logger = logger;
     }
 
     //[Authorize(Roles ="Guest,  User")]
@@ -37,7 +40,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetUserAskedQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserAskedQuestions)}.Start");
       var userAskedQuestions = await _mainDb.UserQuestions.GetUserAskedQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserAskedQuestionDb>());
@@ -52,6 +55,7 @@ namespace QuestionsServer.Controllers
 
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAsked);
+      _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserAskedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -59,7 +63,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetUserAnsweredQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserAnsweredQuestions)}.Start");
       var userAnsweredQuestions = await _mainDb.UserQuestions.GetUserAnsweredQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
 
@@ -73,6 +77,7 @@ namespace QuestionsServer.Controllers
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserAnswered);
+        _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserAnsweredQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -80,7 +85,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetUserFavoriteQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+        _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserFavoriteQuestions)}.Start");
       var userFavoriteQuestions = await _mainDb.UserQuestions.GetUserFavoriteQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserFavoriteQuestionDb>());
@@ -95,6 +100,7 @@ namespace QuestionsServer.Controllers
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserFavorite);
+        _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserFavoriteQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -102,7 +108,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetUserCommentedQuestions([FromBody] UserQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+        _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserCommentedQuestions)}.Start");
       var userCommentedQuestions = await _mainDb.UserQuestions.GetUserCommentedQuestions(userQuestions.UserId,
         userQuestions.UserPageId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<UserCommentedQuestionDb>());
@@ -117,6 +123,7 @@ namespace QuestionsServer.Controllers
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         CommonLibraries.UrlMonitoringType.GetsQuestionsUserCommented);
+        _logger.LogInformation($"{nameof(UserPageQuestionsController)}.{nameof(GetUserCommentedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -128,18 +135,6 @@ namespace QuestionsServer.Controllers
       var maxAge = 100;
       var sex = 0;
       var city = string.Empty;
-
-      //var tagsTask = _mainDb.Tags.GetTags(questionId);
-      //var firstPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
-      //  minAge.WhenBorned(), sex, city);
-      //var secondPhotosTask = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
-      //  minAge.WhenBorned(), sex, city);
-
-      //Task.WhenAll(tagsTask, firstPhotosTask, secondPhotosTask);
-      //tags = tagsTask.Result;
-      //firstPhotos = firstPhotosTask.Result;
-      //secondPhotos = secondPhotosTask.Result;
-
 
       tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
       firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),

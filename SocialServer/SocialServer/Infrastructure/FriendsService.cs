@@ -8,6 +8,7 @@ using CommonLibraries.Extensions;
 using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SocialData;
@@ -26,20 +27,22 @@ namespace SocialServer.Infrastructure
 
     private readonly VkAuthSettings _vkAuthSettings;
     private readonly FacebookAuthSettings _fbAuthSettings;
+    private readonly ILogger<FriendsService> _logger;
 
     public FriendsService(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
       IOptions<VkAuthSettings> vkAuthSettingsAccessor, IOptions<JwtSettings> jwtOptions,
-      SocialDataUnitOfWork socialDb)
+      SocialDataUnitOfWork socialDb, ILogger<FriendsService> logger)
     {
       _fbAuthSettings = fbAuthSettingsAccessor.Value;
       _vkAuthSettings = vkAuthSettingsAccessor.Value;
-
+      _logger = logger;
       _socialDb = socialDb;
     }
 
 
     public async Task<RecommendedUsers> GetRecommendedUsers(GetRecommendedUsers user)
     {
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.Start");
       var vkFriends = await GetFriendsFromVk(user.UserId);
      // var fbFriends = GetFriendsFromFb(user.UserId);
 
@@ -72,12 +75,13 @@ namespace SocialServer.Infrastructure
 
       result.Followers = followersOut.Take(followersCount / 2).ToList();
       result.CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList();
-
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.End");
       return result;
     }
 
     private async Task<List<int>> GetFriendsFromVk(int userId)
     {
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetFriendsFromVk)}.Start");
       var user = await _socialDb.Users.FindUserByUserId(userId);
       if(user == null || user.VkId == 0) return new List<int>();
 
@@ -85,7 +89,9 @@ namespace SocialServer.Infrastructure
         $"https://api.vk.com/method/friends.get?user_id={user.VkId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
-      return await _socialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
+      var result =  await _socialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetFriendsFromVk)}.End");
+      return result;
     }
 
     private async Task<List<int>> GetFriendsFromFb(int userId)
@@ -104,6 +110,7 @@ namespace SocialServer.Infrastructure
     private List<RecommendedUserViewModel> MakeSocialNetFriends(
       IEnumerable<RecommendedFromUsersIdDb> recommendedStrangers, int count)
     {
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.Start");
       var result = new List<RecommendedUserViewModel>();
 
       var randomFriends = recommendedStrangers.PickRandom(count);
@@ -120,6 +127,7 @@ namespace SocialServer.Infrastructure
           SexType = item.SexType
         });
       }
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.End");
       return result;
     }
 
@@ -127,6 +135,7 @@ namespace SocialServer.Infrastructure
       IEnumerable<RecommendedFromFollowsDb> recommendedFromFollows,
       out List<RecommendedUserViewModel> followers, out List<RecommendedUserViewModel> follows)
     {
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.Start");
       var followersLength = recommendedFromFollowers.Count();
       var followsLength = recommendedFromFollows.Count();
 
@@ -167,6 +176,7 @@ namespace SocialServer.Infrastructure
       {
         mainList[i].Position = i;
       }
+      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.End");
     }
 
   }

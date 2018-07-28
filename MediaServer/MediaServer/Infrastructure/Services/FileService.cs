@@ -5,6 +5,7 @@ using System.Linq;
 using CommonLibraries.Extensions;
 using CommonLibraries.MediaFolders.Configurations;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MediaServer.Infrastructure.Services
@@ -12,16 +13,17 @@ namespace MediaServer.Infrastructure.Services
   public class FileService
   {
     private readonly FolderConfiguration _folderConfiguration;
-
+    private readonly ILogger<FileService> _logger;
     public MediaSettings MediaOptions { get; }
     public IHostingEnvironment AppEnvironment { get; }
 
     public FileService(IHostingEnvironment appEnvironment, IOptions<MediaSettings> mediaOptions,
-      FolderConfiguration folderConfiguration)
+      FolderConfiguration folderConfiguration, ILogger<FileService> logger)
     {
       MediaOptions = mediaOptions.Value;
       AppEnvironment = appEnvironment;
       _folderConfiguration = folderConfiguration;
+      _logger = logger;
       InitConfiguration();
     }
 
@@ -78,6 +80,7 @@ namespace MediaServer.Infrastructure.Services
 
     public void CreateFolders(FolderConfiguration config, string mediaFolder)
     {
+      _logger.LogInformation($"{nameof(FileService)}.{nameof(CreateFolders)}.Start");
       IList<string> paths = new List<string>();
       var type = config.GetType();
 
@@ -89,15 +92,18 @@ namespace MediaServer.Infrastructure.Services
         GetSubFolder(baseFolder, paths);
       }
       foreach (var path in paths) Directory.CreateDirectory(Path.Combine(mediaFolder, path));
+      _logger.LogInformation($"{nameof(FileService)}.{nameof(CreateFolders)}.End");
     }
 
     public void GetSubFolder(BaseFolder folder, IList<string> paths)
     {
+      _logger.LogInformation($"{nameof(FileService)}.{nameof(GetSubFolder)}.Start");
       paths.Add(folder.GetFullHashPath());
       var type = folder.GetType();
       var properties = type.GetProperties()
         .Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(FolderAttribute))).ToList();
       foreach (var property in properties) GetSubFolder((BaseFolder) property.GetValue(folder), paths);
+      _logger.LogInformation($"{nameof(FileService)}.{nameof(GetSubFolder)}.End");
     }
 
     public string CreateUniqueName(string imageName)

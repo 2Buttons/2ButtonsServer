@@ -7,6 +7,7 @@ using CommonLibraries.Extensions;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QuestionsData;
 using QuestionsData.Queries;
 using QuestionsData.Queries.UserQuestions;
@@ -25,18 +26,20 @@ namespace QuestionsServer.Controllers
   {
     private readonly QuestionsUnitOfWork _mainDb;
     private readonly ConnectionsHub _hub;
+    private readonly ILogger<PersonalQuestionsController> _logger;
 
-    public PersonalQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub)
+    public PersonalQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub, ILogger<PersonalQuestionsController> logger)
     {
       _mainDb = mainDb;
       _hub = hub;
+      _logger = logger;
     }
 
     [HttpPost("asked")]
     public async Task<IActionResult> GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetAskedQuestions)}.Start");
       var userASkedQuestions = await _mainDb.UserQuestions.GetAskedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<AskedQuestionDb>());
@@ -51,6 +54,7 @@ namespace QuestionsServer.Controllers
       }
 
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetAskedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -58,7 +62,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetRecommendedQustions)}.Start");
       var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
 
@@ -72,6 +76,7 @@ namespace QuestionsServer.Controllers
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         UrlMonitoringType.GetsQuestionsPersonalRecommended);
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetRecommendedQustions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -79,7 +84,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetChosenQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetChosenQustions)}.Start");
       var chosenQuestions = await _mainDb.UserQuestions.GetSelectedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
 
@@ -92,6 +97,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetChosenQustions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -99,7 +105,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetLikedQuestions)}.Start");
       var userAnsweredQuestions = await _mainDb.UserQuestions.GetLikedQuestions(userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<LikedQuestionDb>());
@@ -113,6 +119,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetLikedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -120,7 +127,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetSavedQuestions)}.Start");
       var userFavoriteQuestions = await _mainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<SavedQuestionDb>());
@@ -134,6 +141,7 @@ namespace QuestionsServer.Controllers
         result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
       }
       await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetSavedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -141,7 +149,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetTopQuestions([FromBody] TopDayQuestions questions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.End");
       var dateTime = questions.DeltaUnixTime == 0
         ? DateTime.MinValue
         : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
@@ -179,7 +187,7 @@ namespace QuestionsServer.Controllers
             UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
           break;
       }
-
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.End");
       return new OkResponseResult(result);
     }
 
