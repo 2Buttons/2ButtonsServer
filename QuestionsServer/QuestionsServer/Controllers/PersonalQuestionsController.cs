@@ -149,7 +149,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetTopQuestions([FromBody] TopDayQuestions questions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.End");
+      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.Start");
       var dateTime = questions.DeltaUnixTime == 0
         ? DateTime.MinValue
         : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);

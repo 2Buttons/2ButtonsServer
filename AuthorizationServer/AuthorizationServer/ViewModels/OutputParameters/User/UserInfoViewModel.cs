@@ -13,7 +13,7 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
     public SexType SexType { get; set; }
     public string City { get; set; }
     public string Description { get; set; }
-    public string LargetAvatarUrl { get; set; }
+    public string LargeAvatarUrl { get; set; }
     public string SmallAvatarUrl { get; set; }
 
     //public int UserId { get; set; }
@@ -43,7 +43,7 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
         BirthDate = userInfo.BirthDate,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargetAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
+        LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
         SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small),
         Login = userInfo.Login,
         SexType = userInfo.SexType,
