@@ -41,9 +41,14 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
     private string GetInsertionAnswersLine(IList<AnswerEntity> answers)
     {
       var result = new StringBuilder();
-      for (var i = 0; i < answers.Count - 1; i++)
-        result.Append(GetInsertionAnswerLine(answers[i]) + "," + Environment.NewLine);
-      result.Append(GetInsertionAnswerLine(answers[answers.Count - 1]));
+      foreach (var entity in answers)
+      {
+        result.Append(GetInsertInit() + Environment.NewLine + GetInsertionAnswerLine(entity) + GetGo());
+      }
+
+      //for (var i = 0; i < answers.Count - 1; i++)
+      //  result.Append(GetInsertionAnswerLine(answers[i]) + "," + Environment.NewLine);
+      //result.Append(GetInsertionAnswerLine(answers[answers.Count - 1]));
       return result.ToString();
     }
 

@@ -155,9 +155,24 @@ namespace QuestionsServer.Controllers
       [FromBody] GetQuestionFilteredStatistics statistics)
     {
       _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatisticsUsers)}.Start");
-      var result = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.UserId, statistics.QuestionId,
+      var resultDto = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.UserId, statistics.QuestionId,
         statistics.MinAge, statistics.MaxAge, statistics.SexType, statistics.City, statistics.PageParams.Offset,
         statistics.PageParams.Count);
+      var result = new QuestionStatisticUserViewModel() {Voters = new List<List<VoterUserViewModel>>()};
+      foreach (var item in resultDto.Voters)
+      {
+        result.Voters.Add(item.Select(x => new VoterUserViewModel
+        {
+          Age = x.Age,
+          City = x.City,
+          IsHeFollowed = x.IsHeFollowed,
+          IsYouFollowed = x.IsYouFollowed,
+          Login = x.Login,
+          SexType = x.SexType,
+          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(x.OriginalAvatarUrl, AvatarSizeType.Small),
+          UserId = x.UserId
+        }).ToList());
+      }
       _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatisticsUsers)}.End");
       return new OkResponseResult("Question Statistic -> Users", result);
     }
