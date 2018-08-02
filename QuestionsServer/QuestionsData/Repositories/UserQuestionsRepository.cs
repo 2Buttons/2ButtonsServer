@@ -121,7 +121,7 @@ namespace QuestionsData.Repositories
       DateTime topAfterDate, Expression<Func<TopQuestionDb, object>> predicate)
     {
       return await _db.TopQuestionsDb.AsNoTracking()
-        .FromSql($"select * from dbo.[getTopModified]({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(predicate)
+        .FromSql($"select * from dbo.[getTop]({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(predicate)
         .Skip(offset).Take(count).ToListAsync();
     }
 

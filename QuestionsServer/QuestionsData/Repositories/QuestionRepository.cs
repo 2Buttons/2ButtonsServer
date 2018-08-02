@@ -208,7 +208,7 @@ namespace QuestionsData.Repositories
     {
       return _db.PhotoDb.AsNoTracking()
         .FromSql(
-          $"select * from dbo.[getPhotosModified]({userId}, {questionId}, {answer}, {count}, {bornAfter}, {bornBefore},  {sex}, {city})")
+          $"select * from dbo.[getPhotos]({userId}, {questionId}, {answer}, {count}, {bornAfter}, {bornBefore},  {sex}, {city})")
         .ToList();
     }
 

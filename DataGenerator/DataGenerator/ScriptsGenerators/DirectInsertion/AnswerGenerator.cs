@@ -43,7 +43,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
       var result = new StringBuilder();
       foreach (var entity in answers)
       {
-        result.Append(GetInsertInit() + Environment.NewLine + GetInsertionAnswerLine(entity) + GetGo());
+        result.Append(GetInsertInit() + GetInsertionAnswerLine(entity) + GetGo());
       }
 
       //for (var i = 0; i < answers.Count - 1; i++)
@@ -65,7 +65,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
         //result.Append(GetGo());
         //result.Append(SwitchIdentityInsert(true));
         //result.Append(GetGo());
-        result.Append(GetInsertInit());
+      //  result.Append(GetInsertInit());
         result.Append(GetInsertionAnswersLine(canswersIter));
         result.Append(GetGo());
         //result.Append(SwitchIdentityInsert(false));
