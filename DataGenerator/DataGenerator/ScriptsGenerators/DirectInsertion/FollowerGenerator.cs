@@ -40,9 +40,10 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
     private string GetInsertionFollowsLine(IList<FollowEntity> follows)
     {
       var result = new StringBuilder();
-      for (var i = 0; i < follows.Count - 1; i++)
-        result.Append(GetInsertionFollowLine(follows[i]) + "," + Environment.NewLine);
-      result.Append(GetInsertionFollowLine(follows[follows.Count - 1]));
+      foreach (var entity in follows)
+      {
+        result.Append(GetInsertInit() + GetInsertionFollowLine(entity) + GetGo());
+      }
       return result.ToString();
     }
 
@@ -59,7 +60,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
         //result.Append(GetGo());
        // result.Append(SwitchIdentityInsert(true));
        // result.Append(GetGo());
-        result.Append(GetInsertInit());
+        //result.Append(GetInsertInit());
         result.Append(GetInsertionFollowsLine(cfollowsIter));
         result.Append(GetGo());
       //  result.Append(SwitchIdentityInsert(false));
