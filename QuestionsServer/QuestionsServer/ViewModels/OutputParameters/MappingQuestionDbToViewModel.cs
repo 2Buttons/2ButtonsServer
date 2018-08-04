@@ -251,7 +251,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return dbTags.Select(tag => new TagViewModel
       {
         TagId = tag.TagId,
-        TagText = tag.Text
+        Text = tag.Text
         // Position = tag.Position
       }).ToList();
     }
@@ -281,7 +281,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         DislikesCount = c.DislikesCount,
         YourFeedbackType = c.YourFeedbackType,
         PreviousCommentId = c.PreviousCommentId.GetValueOrDefault(0),
-        AddDate = c.CommentedDate
+        CommentedDate = c.CommentedDate
       }).ToList();
     }
 

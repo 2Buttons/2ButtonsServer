@@ -3,7 +3,7 @@
     //public partial class TagViewModel
     //{
     //    public int TagId { get; set; }
-    //    public string TagText { get; set; }
+    //    public string Text { get; set; }
     //    public int Position { get; set; }
     //}
 }

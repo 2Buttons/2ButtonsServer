@@ -4,6 +4,7 @@ using CommonLibraries;
 
 namespace AccountData.Main.Queries
 {
+  [Table("Users")]
   public class UserInfoDb
   {
   

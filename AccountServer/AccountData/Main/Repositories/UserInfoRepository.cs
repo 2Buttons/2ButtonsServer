@@ -19,7 +19,7 @@ namespace AccountData.Main.Repositories
 
     public async Task<string> GetUserAvatar(int userId)
     {
-      var user = await _db.UserInfoEntities.FirstOrDefaultAsync(x=>x.UserId == userId);
+      var user = await _db.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == userId);
       return user?.OriginalAvatarUrl;
     }
 
@@ -31,21 +31,21 @@ namespace AccountData.Main.Repositories
       return user;
     }
 
-    public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
+    public async Task<UserInfoEntity> FindUserInfo(int userId)
     {
-      var isExist = _db.CityEntities.Any(x => x.Name == user.City);
-      if (isExist) return true;
-      _db.CityEntities.Add(new CityEntity {Name = user.City, Inhabitants = 1});
-      await _db.SaveChangesAsync();
+      return await _db.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == userId);
+    }
 
-      var oldUserData = await _db.UserInfoDb.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+    public async Task<bool> UpdateUserInfoAsync(UserInfoEntity user)
+    {
+      var oldUserData = await _db.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == user.UserId);
 
       oldUserData.Login = user.Login;
       oldUserData.BirthDate = user.BirthDate;
       oldUserData.SexType = user.SexType;
       oldUserData.Description = user.Description;
       oldUserData.OriginalAvatarUrl = user.OriginalAvatarUrl;
-      oldUserData.City = user.City;
+      oldUserData.CityId = user.CityId;
 
       return await _db.SaveChangesAsync() > 0;
     }

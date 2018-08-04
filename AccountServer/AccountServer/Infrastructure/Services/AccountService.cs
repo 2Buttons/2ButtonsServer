@@ -12,6 +12,7 @@ using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using AccountData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
@@ -80,17 +81,17 @@ namespace AccountServer.Infrastructure.Services
     public async Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user)
     {
       _logger.LogInformation($"{nameof(AccountService)}.{nameof(UpdateUserInfoAsync)}.Start");
-      var oldUser = await _db.UsersInfo.FindUserInfoAsync(user.UserId, user.UserId);
+      var oldUser = await _db.UsersInfo.FindUserInfo(user.UserId);
       if (oldUser == null) throw new NotFoundException("This user does not exist");
 
-      var updateUser = new UpdateUserInfoDto()
+      var updateUser = new UserInfoEntity()
       {
         UserId = user.UserId,
         Login = user.Login.IsNullOrEmpty() ? oldUser.Login : user.Login,
         BirthDate = user.BirthDate.Year < 1900 ? oldUser.BirthDate : user.BirthDate,
         SexType = user.SexType == SexType.Both ? oldUser.SexType : user.SexType,
-        City = user.Login.IsNullOrEmpty() ? oldUser.City : user.City,
-        OriginalAvatarUrl = user.OriginalAvatarUrl,
+        CityId = user.City.IsNullOrEmpty() ? oldUser.CityId : (await _db.Cities.GetOrCreateCity(user.City)).CityId,
+        OriginalAvatarUrl = oldUser.OriginalAvatarUrl,
         Description = user.Description.IsNullOrEmpty() ? oldUser.Description : user.Description
       };
 
@@ -149,11 +150,11 @@ namespace AccountServer.Infrastructure.Services
 
       try
       {
-        await _db.UsersInfo.UpdateUserInfoAsync(updateUser);
+        await UpdateUserInfoAsync(updateUser);
       }
       catch (Exception e)
       {
-        Console.WriteLine(e);
+        _logger.LogError(e,$"{nameof(AccountService)}.{nameof(AddUserSocialAsync)} Error");
       }
       _logger.LogInformation($"{nameof(AccountService)}.{nameof(AddUserSocialAsync)}.End");
       return true;

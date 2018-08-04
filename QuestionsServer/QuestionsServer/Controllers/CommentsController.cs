@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QuestionsData;
 using QuestionsServer.ViewModels.InputParameters.ControllersViewModels;
+using QuestionsServer.ViewModels.OutputParameters;
 
 namespace QuestionsServer.Controllers
 {
@@ -36,9 +39,11 @@ namespace QuestionsServer.Controllers
       var commentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.Text,
         comment.PreviousCommentId);
       if (commentId < 0)
-        return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not create comment");
-      if (comment.PreviousCommentId > 0) await _hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
-      return new ResponseResult((int)HttpStatusCode.Created, new { CommentId = commentId });
+        return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not create comment");
+      if (comment.PreviousCommentId > 0)
+        await _hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId,
+          DateTime.UtcNow);
+      return new ResponseResult((int) HttpStatusCode.Created, new {CommentId = commentId});
     }
 
     [HttpPost("update/feedback")]
@@ -49,7 +54,9 @@ namespace QuestionsServer.Controllers
       var result = await _mainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
         commentFeedback.FeedbackType);
       _logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.End");
-      return result ? new OkResponseResult(new { IsFeedbackUpdated = true }) : new ResponseResult((int)HttpStatusCode.NotModified, new { IsFeedbackUpdated = false });
+      return result
+        ? new OkResponseResult(new {IsFeedbackUpdated = true})
+        : new ResponseResult((int) HttpStatusCode.NotModified, new {IsFeedbackUpdated = false});
     }
 
     [HttpPost]
@@ -57,10 +64,23 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       _logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.Start");
-      var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId, commentsVm.PageParams.Offset, commentsVm.PageParams.Count);
+      var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId,
+        commentsVm.PageParams.Offset, commentsVm.PageParams.Count);
       await _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
       _logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.End");
-      return new OkResponseResult(comments);
+      return new OkResponseResult(comments.Select(x => new CommentViewModel
+      {
+        CommentId = x.CommentId,
+        DislikesCount = x.DislikesCount,
+        LikesCount = x.LikesCount,
+        Login = x.Login,
+        PreviousCommentId = x.PreviousCommentId,
+        Text = x.Text,
+        UserId = x.UserId,
+        YourFeedbackType = x.YourFeedbackType,
+        CommentedDate = x.CommentedDate,
+        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(x.OriginalAvatarUrl, AvatarSizeType.Small)
+      }).ToList());
     }
   }
 }
