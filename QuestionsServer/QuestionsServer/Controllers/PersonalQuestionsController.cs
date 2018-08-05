@@ -155,8 +155,7 @@ namespace QuestionsServer.Controllers
         : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
       var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
-        questions.PageParams.Offset, questions.PageParams.Count, dateTime,
-        questions.SortType.ToPredicate<TopQuestionDb>());
+        questions.PageParams.Offset, questions.PageParams.Count, dateTime);
 
       var result = new List<TopQuestionsViewModel>();
 

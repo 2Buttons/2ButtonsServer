@@ -118,10 +118,10 @@ namespace QuestionsData.Repositories
 
 
     public async Task<List<TopQuestionDb>> GeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
-      DateTime topAfterDate, Expression<Func<TopQuestionDb, object>> predicate)
+      DateTime topAfterDate)
     {
       return await _db.TopQuestionsDb.AsNoTracking()
-        .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(predicate)
+        .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x=>x.LikesCount)
         .Skip(offset).Take(count).ToListAsync();
     }
 

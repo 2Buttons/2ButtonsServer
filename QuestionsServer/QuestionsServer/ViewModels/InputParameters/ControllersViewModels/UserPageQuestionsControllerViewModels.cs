@@ -21,7 +21,6 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public BackgroundSizeType BackgroundSizeType { get; set; } = BackgroundSizeType.Original;
     public int DeltaUnixTime { get; set; } = 24 * 60 * 60;
     public bool IsOnlyNew { get; set; } = true;
-    public SortType SortType { get; set; } = SortType.DateTime;
     public PageParams PageParams { get; set; } = new PageParams();
   }
 
