@@ -150,6 +150,24 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
+    public static TopQuestionsViewModel MapToTopQuestionsViewModelMod(this QuestionDto dbEntity,
+      IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
+    {
+      var viewModel = QuestionDbToViewModel<TopQuestionsViewModel>(new QuestionBaseDb
+      { QuestionId = dbEntity.QuestionId,
+       OriginalAvatarUrl = dbEntity.OriginalAvatarUrl,
+        IsInFavorites= dbEntity.IsInFavorites,
+         IsSaved = dbEntity.IsSaved,
+           CommentsCount = dbEntity.CommentsCount,
+            AddedDate = dbEntity.QuestionAddDate,
+             Condition = dbEntity.Condition,
+              DislikesCount = dbEntity.DislikesCount,
+              // FirstOption = dbEntity.Options.FirstOrDefault(x=>x.)
+      }, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      return viewModel;
+    }
+
+
     public static AskedQuestionsViewModel MapToAskedQuestionsViewModel(this AskedQuestionDb dbEntity,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {

@@ -154,8 +154,11 @@ namespace QuestionsServer.Controllers
         ? DateTime.MinValue
         : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
-        questions.PageParams.Offset, questions.PageParams.Count, dateTime);
+      var topQuestions = await _mainDb.UserQuestions.GeTopQuestionsMod(questions.UserId, questions.IsOnlyNew,
+          questions.PageParams.Offset, questions.PageParams.Count, dateTime);
+
+      //var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
+      //  questions.PageParams.Offset, questions.PageParams.Count, dateTime);
 
       var result = new List<TopQuestionsViewModel>();
 
@@ -163,7 +166,7 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(questions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToTopQuestionsViewModel(tags, firstPhotos, secondPhotos, questions.BackgroundSizeType));
+        result.Add(question.MapToTopQuestionsViewModelMod(tags, firstPhotos, secondPhotos, questions.BackgroundSizeType));
       }
 
       const int unixDay = 24 * 60 * 60;
