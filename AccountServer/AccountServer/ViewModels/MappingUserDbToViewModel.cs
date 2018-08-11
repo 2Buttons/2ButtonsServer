@@ -9,7 +9,7 @@ namespace AccountServer.ViewModels
   public static class MappingUserDbToViewModel
   {
     public static UserInfoViewModel MapToUserInfoViewModel(
-      this UserInfoDb dbEntity)
+      this UserInfoDb dbEntity, MediaConverter mediaConverter)
     {
       var viewModel = new UserInfoViewModel
       {
@@ -19,8 +19,8 @@ namespace AccountServer.ViewModels
         SexType =  dbEntity.SexType,
         City = dbEntity.City,
         Description = dbEntity.Description,
-        LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Large),
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small),
+        LargeAvatarUrl = mediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Large),
+        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small),
         IsYouFollowed = dbEntity.IsYouFollowed,
         IsHeFollowed = dbEntity.IsHeFollowed,
 

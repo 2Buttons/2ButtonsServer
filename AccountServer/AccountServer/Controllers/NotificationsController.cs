@@ -2,6 +2,7 @@
 using AccountData;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.InputParameters;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace AccountServer.Controllers
   [Produces("application/json")]
   public class NotificationsController : Controller //To get user's posts
   {
-    private readonly AccountDataUnitOfWork _db;
+    private AccountDataUnitOfWork Db { get; }
+    private MediaConverter MediaConverter { get; }
 
-    public NotificationsController(AccountDataUnitOfWork db)
+    public NotificationsController(AccountDataUnitOfWork db, MediaConverter mediaConverter)
     {
-      _db = db;
+      Db = db;
+      MediaConverter = mediaConverter;
     }
 
     [HttpPost("account/notifications")]
@@ -25,8 +28,8 @@ namespace AccountServer.Controllers
       if(!ModelState.IsValid)
         return new BadResponseResult(ModelState);
      
-      var notifications = await _db.Notifications.GetNotifications(userId.UserId);
-      return new OkResponseResult(notifications.MapNotificationDbToViewModel());
+      var notifications = await Db.Notifications.GetNotifications(userId.UserId);
+      return new OkResponseResult(notifications.MapNotificationDbToViewModel(MediaConverter));
     }
   }
 }

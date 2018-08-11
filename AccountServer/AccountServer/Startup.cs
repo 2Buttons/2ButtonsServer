@@ -6,6 +6,7 @@ using AccountServer.Infrastructure.Services;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,6 +52,8 @@ namespace AccountServer
 
       services.AddOptions();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
+      services.Configure<MediaConverterSettings>(Configuration.GetSection("MediaConverterSettings"));
+      services.AddSingleton<MediaConverter>();
       var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtSettings));
       var secretKey = jwtAppSettingOptions["SecretKey"];
       var issuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];

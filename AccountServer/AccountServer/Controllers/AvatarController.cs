@@ -36,8 +36,8 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var (isUpdated, url) = await _account.UpdateAvatarViaFile(avatar.UserId, avatar.AvatarType, avatar.File);
-      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = MediaConverter.ToFullAvatarUrl(url, avatar.AvatarSizeType) });
+      var (isUpdated, url) = await _account.UpdateAvatarViaFile(avatar.UserId, avatar.AvatarType, avatar.AvatarSizeType, avatar.File);
+      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
     }
 
     [HttpPost("update/url")]
@@ -46,8 +46,8 @@ namespace AccountServer.Controllers
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
       //var userId = int.Parse(User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value);
-      var (isUpdated, url) = await _account.UpdateAvatarViaUrl(avatar.UserId, avatar.AvatarType, avatar.Url);
-      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = MediaConverter.ToFullAvatarUrl(url, avatar.AvatarSizeType) });
+      var (isUpdated, url) = await _account.UpdateAvatarViaUrl(avatar.UserId, avatar.AvatarType, avatar.AvatarSizeType, avatar.Url);
+      return !isUpdated ? new ResponseResult((int)HttpStatusCode.NotModified) : new OkResponseResult("Avatar was updated", new { Url = url });
     }
 
   }
