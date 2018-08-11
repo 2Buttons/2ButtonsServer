@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthorizationServer.Models;
+using AuthorizationServer.ViewModels.OutputParameters;
 using CommonLibraries;
 using CommonLibraries.Extensions;
 using Microsoft.Extensions.Logging;
