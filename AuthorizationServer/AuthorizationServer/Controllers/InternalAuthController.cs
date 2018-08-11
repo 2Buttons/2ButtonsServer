@@ -4,6 +4,7 @@ using AuthorizationData.Account.DTO;
 using AuthorizationServer.Infrastructure.Services;
 using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
+using AuthorizationServer.ViewModels.OutputParameters;
 using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
@@ -75,9 +76,7 @@ namespace AuthorizationServer.Controllers
           return new BadResponseResult(ModelState);
       }
 
-      var token = await _commonAuthService.GetAccessTokenAsync(user);
-      var userInfo = await _commonAuthService.GetUserInfo(user.UserId);
-      var result = new { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
+      var result = await _commonAuthService.Login(user);
       return new OkResponseResult(result);
 
 

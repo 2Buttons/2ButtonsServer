@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AuthorizationServer.Models;
+using AuthorizationServer.ViewModels.OutputParameters;
 using CommonLibraries;
 
 namespace AuthorizationServer.Infrastructure.Jwt

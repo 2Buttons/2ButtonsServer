@@ -4,6 +4,7 @@ using AuthorizationData.Account.DTO;
 using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.InputParameters;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
+using AuthorizationServer.ViewModels.OutputParameters;
 
 namespace AuthorizationServer.Infrastructure.Services
 {

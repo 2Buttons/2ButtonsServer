@@ -10,7 +10,6 @@ using AuthorizationServer.Infrastructure.EmailJwt;
 using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.InputParameters;
-using AuthorizationServer.ViewModels.InputParameters.Auth;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions.ApiExceptions;
@@ -22,28 +21,28 @@ namespace AuthorizationServer.Infrastructure.Services
 {
   public class InternalAuthService : IInternalAuthService
   {
-    private readonly AuthorizationUnitOfWork _db;
-    private readonly ConnectionsHub _hub;
-    private readonly IEmailJwtService _emailJwtService;
-    private readonly IJwtService _jwtService;
-    private readonly IStringLocalizer<InternalAuthService> _localizer;
-    private readonly ILogger<ExternalAuthService> _logger;
+    private  AuthorizationUnitOfWork Db { get; }
+    private  ConnectionsHub Hub { get; }
+    private  IEmailJwtService EmailJwtService { get; }
+    private  IJwtService JwtService { get; }
+    private  IStringLocalizer<InternalAuthService> Localizer { get; }
+    private  ILogger<ExternalAuthService> Logger { get; }
 
     public InternalAuthService(ConnectionsHub hub, IJwtService jwtService, IEmailJwtService emailJwtService, AuthorizationUnitOfWork db, IStringLocalizer<InternalAuthService> localizer, ILogger<ExternalAuthService> logger)
     {
-      _db = db;
-      _hub = hub;
-      _jwtService = jwtService;
-      _emailJwtService = emailJwtService;
-      _localizer = localizer;
-      _logger = logger;
+      Db = db;
+      Hub = hub;
+      JwtService = jwtService;
+      EmailJwtService = emailJwtService;
+      Localizer = localizer;
+      Logger = logger;
     }
 
     public async Task<Token> RegisterAsync(UserRegistrationViewModel user)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(RegisterAsync)}.Start");
-      var isExistByPhone = !user.Phone.IsNullOrEmpty() && await _db.Users.IsUserExistByPhoneAsync(user.Phone);
-      var isExistByEmail = !user.Email.IsNullOrEmpty() && await _db.Users.IsUserExistByEmailAsync(user.Email);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(RegisterAsync)}.Start");
+      var isExistByPhone = !user.Phone.IsNullOrEmpty() && await Db.Users.IsUserExistByPhoneAsync(user.Phone);
+      var isExistByEmail = !user.Email.IsNullOrEmpty() && await Db.Users.IsUserExistByEmailAsync(user.Email);
 
       if (isExistByEmail || isExistByPhone) throw new Exception("You have already registered.");
 
@@ -57,7 +56,7 @@ namespace AuthorizationServer.Infrastructure.Services
         PasswordHash = user.Password.GetMd5HashString(),
         RegistrationDate = DateTime.UtcNow
       };
-      var isAdded = await _db.Users.AddUserAsync(userDb);
+      var isAdded = await Db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
       var userInfo = new UserInfoDb
@@ -68,18 +67,18 @@ namespace AuthorizationServer.Infrastructure.Services
         SexType = user.SexType,
         City = user.City,
         Description = user.Description,
-        OriginalAvatarUrl = (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
+        OriginalAvatarUrl = (await Hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
       };
 
-      if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
+      if (!await Db.UsersInfo.AddUserInfoAsync(userInfo))
       {
-        await _db.Users.RemoveUserAsync(userDb.UserId);
+        await Db.Users.RemoveUserAsync(userDb.UserId);
         throw new Exception("We are not able to add your information. Please, tell us about it.");
       }
 
-      await _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
+      await Hub.Monitoring.AddUrlMonitoring(userDb.UserId);
 
-      var jwtToken = await _jwtService.GenerateJwtAsync(userDb.UserId, role);
+      var jwtToken = await JwtService.GenerateJwtAsync(userDb.UserId, role);
 
       var token = new TokenDb
       {
@@ -90,56 +89,56 @@ namespace AuthorizationServer.Infrastructure.Services
 
       // SendConfirmedEmail(userDb.UserId, role, userDb.Email);
 
-      if (!await _db.Tokens.AddTokenAsync(token))
+      if (!await Db.Tokens.AddTokenAsync(token))
         throw new Exception("Can not add token to database. You entered just as a guest.");
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(RegisterAsync)}.End");
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(RegisterAsync)}.End");
       return jwtToken;
     }
 
     public async Task<UserDto> GetUserByPhone(string phone, string password)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByPhone)}.Start");
-      var user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(phone, password);
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByPhone)}.End");
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByPhone)}.Start");
+      var user = await Db.Users.GetUserByInernalPhoneAndPasswordAsync(phone, password);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByPhone)}.End");
       return user;
     }
 
     public async Task<UserDto> GetUserByEmail(string email, string password)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByEmail)}.Start");
-      var user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(email, password);
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByEmail)}.End");
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByEmail)}.Start");
+      var user = await Db.Users.GetUserByInternalEmailAndPasswordAsync(email, password);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByEmail)}.End");
       return user;
     }
 
     public bool IsTokenValid(string token)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.Start");
-      var result = _emailJwtService.IsTokenValid(token);
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.End");
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.Start");
+      var result = EmailJwtService.IsTokenValid(token);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.End");
       return result;
     }
 
     public async Task<bool> TryConfirmEmail(int userId, string token)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.Start");
-      var decodedToken = _emailJwtService.DecodeCode(token);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.Start");
+      var decodedToken = EmailJwtService.DecodeCode(token);
 
       var userTokenId = int.Parse(decodedToken.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)
                                     ?.Value ?? "0");
-      var result = userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.End");
+      var result = userId == userTokenId && userId != 0 && await Db.Users.ConfirmEmail(userId);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.End");
       return result;
     }
 
     public async Task<bool> ResetPassword(string token, string email, string passwordHash)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(ResetPassword)}.Start");
-      var user = await _db.Users.GetUserByInternalEmail(email);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(ResetPassword)}.Start");
+      var user = await Db.Users.GetUserByInternalEmail(email);
       if (user == null || !user.EmailConfirmed)
         throw new NotFoundException("We can not find this email or email is not confirmed");
-      var result = await _db.Users.ResetPasswordAsync(email, passwordHash);
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(ResetPassword)}.End");
+      var result = await Db.Users.ResetPasswordAsync(email, passwordHash);
+      Logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(ResetPassword)}.End");
       return result;
     }
 
@@ -215,7 +214,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
     public void Dispose()
     {
-      _db.Dispose();
+      Db.Dispose();
     }
   }
 }

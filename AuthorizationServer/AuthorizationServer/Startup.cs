@@ -8,6 +8,7 @@ using AuthorizationServer.Infrastructure.Services;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.SocialNetworks.Facebook;
 using CommonLibraries.SocialNetworks.Vk;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,6 +50,7 @@ namespace AuthorizationServer
       services.AddOptions();
       services.AddConnectionsHub();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
+      services.Configure<MediaConverterSettings>(Configuration.GetSection("MediaConverterSettings"));
 
       services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
       services.Configure<VkAuthSettings>(Configuration.GetSection(nameof(VkAuthSettings)));
@@ -94,6 +96,7 @@ namespace AuthorizationServer
       services.AddTransient<IInternalAuthService, InternalAuthService>();
       services.AddTransient<IExternalAuthService, ExternalAuthService>();
       services.AddTransient<AuthorizationUnitOfWork>();
+      services.AddSingleton<MediaConverter>();
 
       services.AddAuthentication(options =>
       {

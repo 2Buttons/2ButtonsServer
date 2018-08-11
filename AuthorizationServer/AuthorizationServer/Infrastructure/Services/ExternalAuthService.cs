@@ -18,36 +18,38 @@ namespace AuthorizationServer.Infrastructure.Services
 {
   public class ExternalAuthService : IExternalAuthService
   {
-    private readonly AuthorizationUnitOfWork _db;
-    private readonly IFbService _fbService;
-    private readonly ConnectionsHub _hub;
-    private readonly IVkService _vkService;
-    private readonly ILogger<ExternalAuthService> _logger;
+    private  AuthorizationUnitOfWork Db { get; }
+    private  IFbService FbService { get; }
+    private  ConnectionsHub Hub { get; }
+    private  IVkService VkService { get; }
+    private  ILogger<ExternalAuthService> Logger { get; }
+    private MediaConverter MediaConverter { get; }
 
     public ExternalAuthService(AuthorizationUnitOfWork db, ConnectionsHub hub, IVkService vkService,
-      IFbService fbService, ILogger<ExternalAuthService> logger)
+      IFbService fbService, ILogger<ExternalAuthService> logger, MediaConverter  mediaConverter)
     {
-      _db = db;
-      _hub = hub;
-      _vkService = vkService;
-      _fbService = fbService;
-      _logger = logger;
+      Db = db;
+      Hub = hub;
+      VkService = vkService;
+      FbService = fbService;
+      Logger = logger;
+      MediaConverter = mediaConverter;
     }
 
     public void Dispose()
     {
-      _db.Dispose();
+      Db.Dispose();
     }
 
     public async Task<UserDto> GetUserViaExternalSocialNet(long externalUserId, string email, string externalToken,
       long expiresIn, SocialType socialType)
     {
-      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.Start Via email from mobile");
+      Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.Start Via email from mobile");
       NormalizedSocialUserData socialUserData;
       switch (socialType)
       {
         case SocialType.Vk:
-          socialUserData = await _vkService.GetUserInfoAsync(externalUserId, email, externalToken, expiresIn);
+          socialUserData = await VkService.GetUserInfoAsync(externalUserId, email, externalToken, expiresIn);
           break;
         case SocialType.Facebook:
         case SocialType.Twiter:
@@ -59,13 +61,13 @@ namespace AuthorizationServer.Infrastructure.Services
       }
 
       var result =  await ExternalUserProcessing(socialUserData, socialType);
-      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.End Via email from mobile");
+      Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.End Via email from mobile");
       return result;
     }
 
     public async Task<UserDto> GetUserViaExternalSocialNet(string code, SocialType socialType, bool isTest = false)
     {
-      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.Start via code from web client");
+      Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.Start via code from web client");
       NormalizedSocialUserData socialUserData;
       switch (socialType)
       {
@@ -73,7 +75,7 @@ namespace AuthorizationServer.Infrastructure.Services
           //socialUserData = await _fbService.GetUserInfoAsync(code);
           //break;
         case SocialType.Vk:
-          socialUserData = await _vkService.GetUserInfoAsync(code, isTest);
+          socialUserData = await VkService.GetUserInfoAsync(code, isTest);
           break;
         case SocialType.Facebook:
         case SocialType.Twiter:
@@ -84,14 +86,14 @@ namespace AuthorizationServer.Infrastructure.Services
         default: throw new Exception($"We do not support logging via {socialType}.");
       }
       var result =  await ExternalUserProcessing(socialUserData, socialType);
-      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.End via code from web client");
+      Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(GetUserViaExternalSocialNet)}.End via code from web client");
       return result;
     }
 
     public async Task<bool> AddUserSocialAsync(int internalId, SocialType socialType,
       NormalizedSocialUserData socialUserData)
     {
-      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.Start");
+      Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.Start");
       var social = new SocialDb
       {
         InternalId = internalId,
@@ -101,18 +103,18 @@ namespace AuthorizationServer.Infrastructure.Services
         ExternalToken = socialUserData.ExternalToken,
         ExpiresIn = socialUserData.ExpiresIn
       };
-      var result =  await _db.Socials.AddUserSocialAsync(social);
-      _logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.End");
+      var result =  await Db.Socials.AddUserSocialAsync(social);
+      Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.End");
       return result;
     }
 
     private async Task<UserDto> ExternalUserProcessing(NormalizedSocialUserData socialUserData, SocialType socialType)
     {
-      var user = await _db.Socials.FindUserByExternalUserIdAsync(socialUserData.ExternalId, socialType);
+      var user = await Db.Socials.FindUserByExternalUserIdAsync(socialUserData.ExternalId, socialType);
       if (user != null)
       {
         if (socialUserData.ExpiresIn == 0)
-          await _db.Socials.UpdateExternalAccessToken(socialUserData.ExternalId, socialType,
+          await Db.Socials.UpdateExternalAccessToken(socialUserData.ExternalId, socialType,
             socialUserData.ExternalToken, socialUserData.ExpiresIn);
         return user;
       }
@@ -130,20 +132,20 @@ namespace AuthorizationServer.Infrastructure.Services
       NormalizedSocialUserData socialUserData)
     {
       if (!await AddUserSocialAsync(userId, socialType, socialUserData)) return false;
-      var userInfo = await _db.UsersInfo.GetUserInfoAsync(userId);
+      var userInfo = await Db.UsersInfo.GetUserInfoAsync(userId);
       if (userInfo.OriginalAvatarUrl.IsNullOrEmpty() ||
           MediaConverter.IsStandardBackground(userInfo.OriginalAvatarUrl) &&
           !socialUserData.OriginalPhotoUrl.IsNullOrEmpty())
         userInfo.OriginalAvatarUrl = await UploadAvatarUrlOrGetStandard(socialUserData.OriginalPhotoUrl);
 
-      await _db.UsersInfo.UpdateUserInfoAsync(userInfo);
+      await Db.UsersInfo.UpdateUserInfoAsync(userInfo);
       return true;
     }
 
     private async Task<string> UploadAvatarUrlOrGetStandard(string avatarUrl)
     {
-      return await _hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ??
-             (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
+      return await Hub.Media.UploadAvatarUrl(AvatarType.Custom, avatarUrl) ??
+             (await Hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault();
     }
 
     private async Task<UserDto> RegisterViaExternalSocial(NormalizedSocialUserData user, SocialType socialType)
@@ -151,7 +153,7 @@ namespace AuthorizationServer.Infrastructure.Services
       const RoleType role = RoleType.User;
 
       var userDb = new UserDb {Email = user.ExternalEmail, RoleType = role, RegistrationDate = DateTime.UtcNow};
-      var isAdded = await _db.Users.AddUserAsync(userDb);
+      var isAdded = await Db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
       var fullUrl = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
@@ -166,19 +168,19 @@ namespace AuthorizationServer.Infrastructure.Services
         OriginalAvatarUrl = fullUrl
       };
 
-      if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
+      if (!await Db.UsersInfo.AddUserInfoAsync(userInfo))
       {
-        await _db.Users.RemoveUserAsync(userDb.UserId);
+        await Db.Users.RemoveUserAsync(userDb.UserId);
         throw new Exception("We are not able to add your information. Please, tell us about it.");
       }
 
       if (!await AddUserSocialAsync(userDb.UserId, socialType, user))
       {
-        await _db.Users.RemoveUserAsync(userDb.UserId);
+        await Db.Users.RemoveUserAsync(userDb.UserId);
         throw new Exception("We are not able to add your social information. Please, tell us about it.");
       }
 
-      await _hub.Monitoring.AddUrlMonitoring(userDb.UserId);
+      await Hub.Monitoring.AddUrlMonitoring(userDb.UserId);
 
       return new UserDto {UserId = userDb.UserId, RoleType = userDb.RoleType};
     }
@@ -186,9 +188,9 @@ namespace AuthorizationServer.Infrastructure.Services
     private async Task<UserDto> FindUserByEmail(string email)
     {
       if (email.IsNullOrEmpty()) return null;
-      var user = await _db.Users.GetUserByInternalEmail(email);
+      var user = await Db.Users.GetUserByInternalEmail(email);
       if (user != null) return user;
-      return await _db.Socials.FindUserByExternalEmaildAsync(email);
+      return await Db.Socials.FindUserByExternalEmaildAsync(email);
     }
   }
 }

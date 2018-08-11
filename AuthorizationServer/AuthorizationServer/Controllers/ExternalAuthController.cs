@@ -3,6 +3,7 @@ using AuthorizationServer.Infrastructure.Services;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -47,10 +48,7 @@ namespace AuthorizationServer.Controllers
       }
 
       var userDto = await _externalAuthService.GetUserViaExternalSocialNet(auth.Code, auth.SocialType, auth.IsTest);
-      var token = await _commonAuthService.GetAccessTokenAsync(userDto);
-
-      var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
-      var result = new {Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
+      var result = await _commonAuthService.Login(userDto);
       return new OkResponseResult(result);
     }
 
@@ -63,13 +61,8 @@ namespace AuthorizationServer.Controllers
         ModelState.AddModelError("State", "You are hacker! Your state is incorrect.");
         return new BadResponseResult(ModelState);
       }
- 
-
       var userDto = await _externalAuthService.GetUserViaExternalSocialNet(auth.ExternalUserId,auth.Email,auth.AccessToken,auth.ExpiresIn, auth.SocialType);
-      var token = await _commonAuthService.GetAccessTokenAsync(userDto);
-
-      var userInfo = await _commonAuthService.GetUserInfo(userDto.UserId);
-      var result = new { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
+      var result = await _commonAuthService.Login(userDto);
       return new OkResponseResult(result);
     }
   }

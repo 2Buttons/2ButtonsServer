@@ -36,15 +36,15 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
     //public UserStatisticsViewModel UserStatistics { get; set; } = new UserStatisticsViewModel();
     //public List<UserContactsViewModel> Social { get; set; } = new List<UserContactsViewModel>();
 
-    public static UserInfoViewModel CreateFromUserInfoDb(UserInfoDb userInfo)
+    public static UserInfoViewModel CreateFromUserInfoDb(UserInfoDb userInfo, MediaConverter mediaConverter)
     {
       return new UserInfoViewModel
       {
         BirthDate = userInfo.BirthDate,
         City = userInfo.City,
         Description = userInfo.Description,
-        LargeAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small),
+        LargeAvatarUrl = mediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
+        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small),
         Login = userInfo.Login,
         SexType = userInfo.SexType,
         UserId = userInfo.UserId
