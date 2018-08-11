@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Mime;
 using CommonLibraries;
 using CommonLibraries.Exceptions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.MediaFolders.Configurations;
 using MediaServer.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,6 +42,8 @@ namespace MediaServer
       services.AddOptions();
       services.Configure<MediaSettings>(Configuration.GetSection("MediaData"));
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
+      services.Configure<MediaConverterSettings>(Configuration.GetSection("MediaConverterSettings"));
+      services.AddSingleton<MediaConverter>();
 
       services.AddMvc();
       services.AddCors(options =>

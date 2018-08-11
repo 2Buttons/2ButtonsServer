@@ -2,15 +2,21 @@
 using System.IO;
 using System.Linq;
 using CommonLibraries.MediaFolders.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace CommonLibraries.MediaFolders
 {
   public class MediaConverter
   {
-    private static readonly FolderConfiguration FolderConfiguration = new FolderConfiguration();
-    public static string MediaUrl { get; } = "https://media.2buttons.ru/";
+    private FolderConfiguration FolderConfiguration { get; } = new FolderConfiguration();
+    private string MediaUrl { get; }
 
-    public static MediaType GetMediaUrlType(string shortOriginalUrl)
+    public MediaConverter(IOptions<MediaConverterSettings> options)
+    {
+      MediaUrl = options.Value.MediaConverterUrl;
+    }
+
+    public MediaType GetMediaUrlType(string shortOriginalUrl)
     {
       shortOriginalUrl = string.Concat(shortOriginalUrl.SkipWhile(x => x == '/'));
       var fragments = shortOriginalUrl.Split('/');
@@ -20,19 +26,20 @@ namespace CommonLibraries.MediaFolders
       return MediaType.None;
     }
 
-    public static bool IsStandardBackground(string shortOriginalUrl)
+    public bool IsStandardBackground(string shortOriginalUrl)
     {
       return shortOriginalUrl.Contains(new StandardBackgroundFolder(null).HashName);
     }
 
-    public static string ToFullBackgroundurlUrl(string shortOriginalUrl, BackgroundSizeType backgroundSize)
+    public string ToFullBackgroundurlUrl(string shortOriginalUrl, BackgroundSizeType backgroundSize)
     {
       if (string.IsNullOrEmpty(shortOriginalUrl)) return null;
       if (shortOriginalUrl.Contains(MediaUrl)) shortOriginalUrl = shortOriginalUrl.Replace(MediaUrl, "");
       var name = Path.GetFileName(shortOriginalUrl);
       shortOriginalUrl = Path.GetDirectoryName(string.Concat(shortOriginalUrl.SkipWhile(x => x == '/')));
 
-      if (backgroundSize == BackgroundSizeType.Original) return MediaUrl + shortOriginalUrl.Replace("\\", "/") + '/' + name;
+      if (backgroundSize == BackgroundSizeType.Original)
+        return MediaUrl + shortOriginalUrl.Replace("\\", "/") + '/' + name;
 
       name = name.Replace("original", backgroundSize.ToString().ToLower());
 
@@ -45,9 +52,9 @@ namespace CommonLibraries.MediaFolders
       }
     }
 
-    public static string ToFullAvatarUrl(string shortOriginalUrl, AvatarSizeType avatarSize)
+    public string ToFullAvatarUrl(string shortOriginalUrl, AvatarSizeType avatarSize)
     {
-      if(string.IsNullOrEmpty(shortOriginalUrl)) return null;
+      if (string.IsNullOrEmpty(shortOriginalUrl)) return null;
       if (shortOriginalUrl.Contains(MediaUrl)) shortOriginalUrl = shortOriginalUrl.Replace(MediaUrl, "");
       var name = Path.GetFileName(shortOriginalUrl);
       shortOriginalUrl = Path.GetDirectoryName(string.Concat(shortOriginalUrl.SkipWhile(x => x == '/')));
@@ -60,17 +67,19 @@ namespace CommonLibraries.MediaFolders
       {
         case AvatarSizeType.Small:
           return MediaUrl + shortOriginalUrl.Replace("\\", "/")
-                   .Replace(new OriginalSizeFolder(null).HashName, new SmallAvatarSizeFolder(null).HashName) + '/' + name;
+                   .Replace(new OriginalSizeFolder(null).HashName, new SmallAvatarSizeFolder(null).HashName) + '/' +
+                 name;
 
         case AvatarSizeType.Large:
           return MediaUrl + shortOriginalUrl.Replace("\\", "/")
-                   .Replace(new OriginalSizeFolder(null).HashName, new LargeAvatarSizeFolder(null).HashName) + '/' + name;
+                   .Replace(new OriginalSizeFolder(null).HashName, new LargeAvatarSizeFolder(null).HashName) + '/' +
+                 name;
 
         default: throw new Exception($"There is no such avatar size {avatarSize}");
       }
     }
 
-    public static string ToFullDefaultUrl(string shortOriginalUrl, DefaultSizeType defaultSize)
+    public string ToFullDefaultUrl(string shortOriginalUrl, DefaultSizeType defaultSize)
     {
       if (string.IsNullOrEmpty(shortOriginalUrl)) return null;
       if (shortOriginalUrl.Contains(MediaUrl)) shortOriginalUrl = shortOriginalUrl.Replace(MediaUrl, "");
@@ -93,8 +102,6 @@ namespace CommonLibraries.MediaFolders
 
         default: throw new Exception($"There is no such default size {defaultSize}");
       }
-
-
     }
   }
 }

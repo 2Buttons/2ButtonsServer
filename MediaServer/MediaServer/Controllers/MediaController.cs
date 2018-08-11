@@ -17,11 +17,13 @@ namespace MediaServer.Controllers
   [Route("media")]
   public class MediaController : Controller
   {
-    private readonly MediaService _mediaService;
+    private MediaService MediaService { get; }
+    private MediaConverter MediaConverter { get; }
 
-    public MediaController(MediaService mediaService)
+    public MediaController(MediaService mediaService, MediaConverter mediaConverter)
     {
-      _mediaService = mediaService;
+      MediaService = mediaService;
+      MediaConverter = mediaConverter;
     }
 
     [HttpGet("server")]
@@ -40,7 +42,7 @@ namespace MediaServer.Controllers
         return new BadResponseResult(ModelState);
       }
 
-      return new OkResponseResult(new {IsValid = _mediaService.IsUrlValid(url.Url)});
+      return new OkResponseResult(new {IsValid = MediaService.IsUrlValid(url.Url)});
     }
 
     [HttpPost("standards/avatar")]
@@ -48,7 +50,7 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var urls = _mediaService.GetStandardAvatarUrls(size.AvatarSizeType);
+      var urls = MediaService.GetStandardAvatarUrls(size.AvatarSizeType);
       return !urls.Any()
         ? new ResponseResult((int) HttpStatusCode.NotFound)
         : new OkResponseResult(new {Urls = urls});
@@ -57,14 +59,14 @@ namespace MediaServer.Controllers
     [HttpPost("standards/background")]
     public IActionResult GetStandardBackgrounds([FromBody] GetStandardBackgroundsViewModel size)
     {
-      var urls = _mediaService.GetStandardBackgroundUrls(size.BackgroundSizeType);
+      var urls = MediaService.GetStandardBackgroundUrls(size.BackgroundSizeType);
       return !urls.Any() ? new ResponseResult((int) HttpStatusCode.NotFound) : new OkResponseResult(new {Urls = urls});
     }
 
     [HttpPost("defaults")]
     public IActionResult GetStandardBackgrounds([FromBody] GetDefaultsViewModel size)
     {
-      var urls = _mediaService.GetStandardDefaultUrls(size.DefaultSizeType, size.Pattern);
+      var urls = MediaService.GetStandardDefaultUrls(size.DefaultSizeType, size.Pattern);
       return !urls.Any() ? new ResponseResult((int)HttpStatusCode.NotFound) : new OkResponseResult(new { Urls = urls });
     }
 
@@ -72,9 +74,9 @@ namespace MediaServer.Controllers
     public IActionResult UploadUserAvatarViaUrl([FromBody] UploadAvatarViaUrlViewModel avatar)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      if (_mediaService.IsAlreadyDownloaded(avatar.Url))
+      if (MediaService.IsAlreadyDownloaded(avatar.Url))
         return new OkResponseResult(new UrlViewModel { Url = new Uri(MediaConverter.ToFullAvatarUrl(avatar.Url, AvatarSizeType.Original)).LocalPath });
-      var url = _mediaService.UploadAvatar(avatar.Url, avatar.AvatarType).FirstOrDefault(x => x.Size == AvatarSizeType.Original)?.Url;
+      var url = MediaService.UploadAvatar(avatar.Url, avatar.AvatarType).FirstOrDefault(x => x.Size == AvatarSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int) HttpStatusCode.NotModified)
         : new OkResponseResult(new UrlViewModel {Url = url});
@@ -85,11 +87,11 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (_mediaService.IsAlreadyDownloaded(background.Url))
+      if (MediaService.IsAlreadyDownloaded(background.Url))
         return new OkResponseResult(new UrlViewModel {Url = new Uri(MediaConverter.ToFullBackgroundurlUrl(background.Url, BackgroundSizeType.Original)).LocalPath});
       
 
-      var url = _mediaService.UploadBackground(background.Url, background.BackgroundType)
+      var url = MediaService.UploadBackground(background.Url, background.BackgroundType)
         .FirstOrDefault(x => x.Size == BackgroundSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int) HttpStatusCode.NotModified)
@@ -101,7 +103,7 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var url = _mediaService.UploadAvatar(avatar.File, avatar.AvatarType).FirstOrDefault(x => x.Size == AvatarSizeType.Original)?.Url;
+      var url = MediaService.UploadAvatar(avatar.File, avatar.AvatarType).FirstOrDefault(x => x.Size == AvatarSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int) HttpStatusCode.NotModified)
         : new OkResponseResult(new UrlViewModel {Url = url});
@@ -111,7 +113,7 @@ namespace MediaServer.Controllers
     public IActionResult UploadBackground(UploadBackgroundViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      var url = _mediaService.UploadBackground(background.File, background.BackgroundType)
+      var url = MediaService.UploadBackground(background.File, background.BackgroundType)
         .FirstOrDefault(x => x.Size == BackgroundSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int) HttpStatusCode.NotModified)
@@ -123,10 +125,10 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (_mediaService.IsAlreadyDownloaded(@default.Url))
+      if (MediaService.IsAlreadyDownloaded(@default.Url))
         return new OkResponseResult(new UrlViewModel { Url = new Uri(MediaConverter.ToFullAvatarUrl(@default.Url, AvatarSizeType.Original)).LocalPath });
 
-      var url = _mediaService.UploadDefault(@default.Url)
+      var url = MediaService.UploadDefault(@default.Url)
         .FirstOrDefault(x => x.Size == DefaultSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int)HttpStatusCode.NotModified)
@@ -138,7 +140,7 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var url = _mediaService.UploadDefault(avatar.File).FirstOrDefault(x => x.Size == DefaultSizeType.Original)?.Url;
+      var url = MediaService.UploadDefault(avatar.File).FirstOrDefault(x => x.Size == DefaultSizeType.Original)?.Url;
       return url.IsNullOrEmpty()
         ? new ResponseResult((int)HttpStatusCode.NotModified)
         : new OkResponseResult(new UrlViewModel { Url = url });
@@ -149,7 +151,7 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      _mediaService.CopyBackgrounds(copyBackgrounds.SourceFolder, copyBackgrounds.CopyToNewBackgroundType, copyBackgrounds.CopyToBackgroundSizeType);
+      MediaService.CopyBackgrounds(copyBackgrounds.SourceFolder, copyBackgrounds.CopyToNewBackgroundType, copyBackgrounds.CopyToBackgroundSizeType);
       return new OkResponseResult();
     }
 
@@ -158,7 +160,7 @@ namespace MediaServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      _mediaService.CopyAvatars(copyAvatars.SourceFolder, copyAvatars.CopyToNewAvatarType, copyAvatars.CopyToAvatarSizeType);
+      MediaService.CopyAvatars(copyAvatars.SourceFolder, copyAvatars.CopyToNewAvatarType, copyAvatars.CopyToAvatarSizeType);
       return new OkResponseResult();
     }
   }
