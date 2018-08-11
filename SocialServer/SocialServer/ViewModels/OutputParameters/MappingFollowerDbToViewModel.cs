@@ -8,13 +8,13 @@ namespace SocialServer.ViewModels.OutputParameters
 {
   public static class MappingFollowerDbToViewModel
   {
-    public static List<GetFollowerViewModel> MapToUserContactsViewModel(this IEnumerable<FollowerDb> userContactsDb)
+    public static List<GetFollowerViewModel> MapToUserContactsViewModel(this IEnumerable<FollowerDb> userContactsDb, MediaConverter mediaConverter)
     {
       return userContactsDb.Select(f => new GetFollowerViewModel
         {
           UserId = f.UserId,
           Login = f.Login,
-          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+          SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
           IsYouFollowed = f.IsYouFollowed,
@@ -23,13 +23,13 @@ namespace SocialServer.ViewModels.OutputParameters
         .ToList();
     }
 
-    public static List<GetFollowToViewModel> MapToUserContactsViewModel(this IEnumerable<FollowToDb> userContactsDb)
+    public static List<GetFollowToViewModel> MapToUserContactsViewModel(this IEnumerable<FollowToDb> userContactsDb, MediaConverter mediaConverter)
     {
       return userContactsDb.Select(f => new GetFollowToViewModel
         {
           UserId = f.UserId,
           Login = f.Login,
-          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+          SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
           VisitsCount = f.VisitsCount,

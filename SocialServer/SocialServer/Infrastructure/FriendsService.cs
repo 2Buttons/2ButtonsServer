@@ -21,28 +21,30 @@ namespace SocialServer.Infrastructure
 {
   public class FriendsService : IFriendsService
   {
-    private static readonly HttpClient Client = new HttpClient();
+    private static  HttpClient Client { get; } = new HttpClient();
 
-    private readonly SocialDataUnitOfWork _socialDb;
+    private  SocialDataUnitOfWork SocialDb { get; }
 
-    private readonly VkAuthSettings _vkAuthSettings;
-    private readonly FacebookAuthSettings _fbAuthSettings;
-    private readonly ILogger<FriendsService> _logger;
+    private  VkAuthSettings VkAuthSettings { get; }
+    private  FacebookAuthSettings FbAuthSettings { get; }
+    private  ILogger<FriendsService> Logger { get; }
+    MediaConverter MediaConverter { get; }
 
     public FriendsService(IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
       IOptions<VkAuthSettings> vkAuthSettingsAccessor, IOptions<JwtSettings> jwtOptions,
-      SocialDataUnitOfWork socialDb, ILogger<FriendsService> logger)
+      SocialDataUnitOfWork socialDb, ILogger<FriendsService> logger, MediaConverter mediaConverter)
     {
-      _fbAuthSettings = fbAuthSettingsAccessor.Value;
-      _vkAuthSettings = vkAuthSettingsAccessor.Value;
-      _logger = logger;
-      _socialDb = socialDb;
+      FbAuthSettings = fbAuthSettingsAccessor.Value;
+      VkAuthSettings = vkAuthSettingsAccessor.Value;
+      Logger = logger;
+      SocialDb = socialDb;
+      MediaConverter = mediaConverter;
     }
 
 
     public async Task<RecommendedUsers> GetRecommendedUsers(GetRecommendedUsers user)
     {
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.Start");
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.Start");
       var vkFriends = await GetFriendsFromVk(user.UserId);
      // var fbFriends = GetFriendsFromFb(user.UserId);
 
@@ -50,15 +52,15 @@ namespace SocialServer.Infrastructure
       //vkFriends.AddRange();
       var friendsFromNetwroks = vkFriends.Distinct();
       var socialFriends =
-        await _socialDb.RecommendedPeople.GetRecommendedFromUsersId(friendsFromNetwroks);
+        await SocialDb.RecommendedPeople.GetRecommendedFromUsersId(friendsFromNetwroks);
       // return new BadResponseResult("Something goes wrong with social friends.");
 
       var partOffset = user.PageParams.Offset ;
       var partCount = user.PageParams.Count;
 
-      var followers = await _socialDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
+      var followers = await SocialDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
       // return new BadResponseResult("Something goes wrong with followers.");
-      var sameFollows = await _socialDb.RecommendedPeople.GetRecommendedFromFollows(user.UserId, partOffset, partCount);
+      var sameFollows = await SocialDb.RecommendedPeople.GetRecommendedFromFollows(user.UserId, partOffset, partCount);
       //return new BadResponseResult("Something goes wrong with follows as you ))) .");
 
       Parallel.ForEach(followers, x => { x.CommonFollowingsCount = (int)(x.CommonFollowingsCount * 1.5); });
@@ -75,28 +77,28 @@ namespace SocialServer.Infrastructure
 
       result.Followers = followersOut.Take(followersCount / 2).ToList();
       result.CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList();
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.End");
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.End");
       return result;
     }
 
     private async Task<List<int>> GetFriendsFromVk(int userId)
     {
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetFriendsFromVk)}.Start");
-      var user = await _socialDb.Users.FindUserByUserId(userId);
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetFriendsFromVk)}.Start");
+      var user = await SocialDb.Users.FindUserByUserId(userId);
       if(user == null || user.VkId == 0) return new List<int>();
 
       var vkFriendIdsResponse = await Client.GetStringAsync(
-        $"https://api.vk.com/method/friends.get?user_id={user.VkId}&count=5000&access_token={_vkAuthSettings.AppAccess}&v=5.74");
+        $"https://api.vk.com/method/friends.get?user_id={user.VkId}&count=5000&access_token={VkAuthSettings.AppAccess}&v=5.74");
       var vkFriendIds = JsonConvert.DeserializeObject<VkFriendIdsResponse>(vkFriendIdsResponse).Response.Items;
 
-      var result =  await _socialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetFriendsFromVk)}.End");
+      var result =  await SocialDb.Users.GetUserIdsFromVkIds(vkFriendIds);
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetFriendsFromVk)}.End");
       return result;
     }
 
     private async Task<List<int>> GetFriendsFromFb(int userId)
     {
-      var user = await _socialDb.Users.FindUserByUserId(userId);
+      var user = await SocialDb.Users.FindUserByUserId(userId);
       //if (user.FacebookId == 0)
         return new List<int>();
 
@@ -110,7 +112,7 @@ namespace SocialServer.Infrastructure
     private List<RecommendedUserViewModel> MakeSocialNetFriends(
       IEnumerable<RecommendedFromUsersIdDb> recommendedStrangers, int count)
     {
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.Start");
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.Start");
       var result = new List<RecommendedUserViewModel>();
 
       var randomFriends = recommendedStrangers.PickRandom(count);
@@ -127,7 +129,7 @@ namespace SocialServer.Infrastructure
           SexType = item.SexType
         });
       }
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.End");
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.End");
       return result;
     }
 
@@ -135,7 +137,7 @@ namespace SocialServer.Infrastructure
       IEnumerable<RecommendedFromFollowsDb> recommendedFromFollows,
       out List<RecommendedUserViewModel> followers, out List<RecommendedUserViewModel> follows)
     {
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.Start");
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.Start");
       var followersLength = recommendedFromFollowers.Count();
       var followsLength = recommendedFromFollows.Count();
 
@@ -176,7 +178,7 @@ namespace SocialServer.Infrastructure
       {
         mainList[i].Position = i;
       }
-      _logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.End");
+      Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.End");
     }
 
   }
