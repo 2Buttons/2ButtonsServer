@@ -16,7 +16,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
     public AuthorViewModel Author { get; set; }
     public int LikesCount { get; set; }
     public int DislikesCount { get; set; }
-    public FeedbackType YourFeedbackType { get; set; }
+    public QuestionFeedbackType YourFeedbackType { get; set; }
     public AnswerType YourAnswerType { get; set; }
     public bool IsInFavorites { get; set; }
     public bool IsSaved { get; set; }

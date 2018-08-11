@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Extensions;
+using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,23 +25,26 @@ namespace QuestionsServer.Controllers
   [Route("questions/personal")]
   public class PersonalQuestionsController : Controller //To get user's posts
   {
-    private readonly QuestionsUnitOfWork _mainDb;
-    private readonly ConnectionsHub _hub;
-    private readonly ILogger<PersonalQuestionsController> _logger;
+    private QuestionsUnitOfWork MainDb { get; }
+    private ConnectionsHub Hub { get; }
+    private ILogger<PersonalQuestionsController> Logger { get; }
+    private MediaConverter MediaConverter { get; }
 
-    public PersonalQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub, ILogger<PersonalQuestionsController> logger)
+    public PersonalQuestionsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub,
+      ILogger<PersonalQuestionsController> logger, MediaConverter mediaConverter)
     {
-      _mainDb = mainDb;
-      _hub = hub;
-      _logger = logger;
+      MainDb = mainDb;
+      Hub = hub;
+      Logger = logger;
+      MediaConverter = mediaConverter;
     }
 
     [HttpPost("asked")]
     public async Task<IActionResult> GetAskedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetAskedQuestions)}.Start");
-      var userASkedQuestions = await _mainDb.UserQuestions.GetAskedQuestions(userQuestions.UserId, userQuestions.UserId,
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetAskedQuestions)}.Start");
+      var userASkedQuestions = await MainDb.UserQuestions.GetAskedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<AskedQuestionDb>());
 
@@ -50,11 +54,12 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToAskedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
+        result.Add(question.MapToAskedQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
+          userQuestions.BackgroundSizeType));
       }
 
-      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetAskedQuestions)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalAsked);
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetAskedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -62,8 +67,9 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetRecommendedQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetRecommendedQustions)}.Start");
-      var recommendedQuestions = await _mainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId, userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetRecommendedQustions)}.Start");
+      var recommendedQuestions = await MainDb.UserQuestions.GetRecommendedQuestions(userQuestions.UserId,
+        userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<RecommendedQuestionDb>());
 
       var result = new List<RecommendedQuestionViewModel>();
@@ -72,11 +78,12 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToRecommendedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
+        result.Add(question.MapToRecommendedQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
+          userQuestions.BackgroundSizeType));
       }
-      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
+      await Hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId,
         UrlMonitoringType.GetsQuestionsPersonalRecommended);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetRecommendedQustions)}.End");
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetRecommendedQustions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -84,8 +91,8 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetChosenQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetChosenQustions)}.Start");
-      var chosenQuestions = await _mainDb.UserQuestions.GetSelectedQuestions(userQuestions.UserId, userQuestions.UserId,
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetChosenQustions)}.Start");
+      var chosenQuestions = await MainDb.UserQuestions.GetSelectedQuestions(userQuestions.UserId, userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count);
 
       var result = new List<SelectedQuestionsViewModel>();
@@ -94,10 +101,11 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToChosenQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
+        result.Add(question.MapToChosenQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
+          userQuestions.BackgroundSizeType));
       }
-      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetChosenQustions)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalChosen);
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetChosenQustions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -105,8 +113,8 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetLikedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetLikedQuestions)}.Start");
-      var userAnsweredQuestions = await _mainDb.UserQuestions.GetLikedQuestions(userQuestions.UserId,
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetLikedQuestions)}.Start");
+      var userAnsweredQuestions = await MainDb.UserQuestions.GetLikedQuestions(userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<LikedQuestionDb>());
 
@@ -116,10 +124,11 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToLikedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
+        result.Add(question.MapToLikedQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
+          userQuestions.BackgroundSizeType));
       }
-      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetLikedQuestions)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalLiked);
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetLikedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -127,8 +136,8 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetSavedQuestions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetSavedQuestions)}.Start");
-      var userFavoriteQuestions = await _mainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId,
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetSavedQuestions)}.Start");
+      var userFavoriteQuestions = await MainDb.UserQuestions.GetSavedQuestions(userQuestions.UserId,
         userQuestions.PageParams.Offset, userQuestions.PageParams.Count,
         userQuestions.SortType.ToPredicate<SavedQuestionDb>());
 
@@ -138,10 +147,11 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(userQuestions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToSavedQuestionsViewModel(tags, firstPhotos, secondPhotos, userQuestions.BackgroundSizeType));
+        result.Add(question.MapToSavedQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
+          userQuestions.BackgroundSizeType));
       }
-      await _hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetSavedQuestions)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(userQuestions.UserId, UrlMonitoringType.GetsQuestionsPersonalSaved);
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetSavedQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -149,13 +159,13 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetTopQuestions([FromBody] TopDayQuestions questions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.Start");
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.Start");
       var dateTime = questions.DeltaUnixTime == 0
         ? DateTime.MinValue
         : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      var topQuestions = await _mainDb.UserQuestions.GeTopQuestionsMod(questions.UserId, questions.IsOnlyNew,
-          questions.PageParams.Offset, questions.PageParams.Count, dateTime);
+      var topQuestions = await MainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
+        questions.PageParams.Offset, questions.PageParams.Count, dateTime);
 
       //var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
       //  questions.PageParams.Offset, questions.PageParams.Count, dateTime);
@@ -166,7 +176,8 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(questions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToTopQuestionsViewModelMod(tags, firstPhotos, secondPhotos, questions.BackgroundSizeType));
+        result.Add(question.MapToTopQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
+          questions.BackgroundSizeType));
       }
 
       const int unixDay = 24 * 60 * 60;
@@ -176,20 +187,19 @@ namespace QuestionsServer.Controllers
       switch (questions.DeltaUnixTime)
       {
         case unixDay:
-          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
+          await Hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalDayTop);
           break;
         case unixWeek:
-          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
+          await Hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalWeekTop);
           break;
         case unixMonth:
-          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
+          await Hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalMonthTop);
           break;
         default:
-          await _hub.Monitoring.UpdateUrlMonitoring(questions.UserId,
-            UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
+          await Hub.Monitoring.UpdateUrlMonitoring(questions.UserId, UrlMonitoringType.GetsQuestionsPersonalAllTimeTop);
           break;
       }
-      _logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.End");
+      Logger.LogInformation($"{nameof(PersonalQuestionsController)}.{nameof(GetTopQuestions)}.End");
       return new OkResponseResult(result);
     }
 
@@ -202,12 +212,11 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
-      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
+      tags = MainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
+      firstPhotos = MainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
+      secondPhotos = MainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
     }
-
   }
 }

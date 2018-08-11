@@ -65,7 +65,7 @@ namespace QuestionsData.Repositories
     public async Task<List<UserCommentedQuestionDto>> GetUserCommentedQuestions(int userId, int pageUserId, int offset,
       int count, Expression<Func<UserCommentedQuestionDb, object>> predicate)
     {
-      var questions =  await _db.UserCommentedQuestionsDb.AsNoTracking()
+      var questions = await _db.UserCommentedQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getUserCommentedQuestions({userId}, {pageUserId})").OrderByDescending(predicate)
         .Skip(offset).Take(count).ToListAsync();
 
@@ -107,7 +107,7 @@ namespace QuestionsData.Repositories
         if (question != null && question.Comments.All(x => x.CommentId != t.CommentId))
         {
           question.Comments
-            .Add(new  UserCommentQuestionDto {  CommentId = t.CommentId, AddDate = t.CommentedDate, DislikesCount = t.CommentDislikesCount, LikesCount = t.CommentLikesCount, PreviousCommentId = t.PreviousCommentId,  YourFeedbackType = (FeedbackType)t.YourCommentFeedbackType, Text = t.CommentText});
+            .Add(new UserCommentQuestionDto { CommentId = t.CommentId, AddDate = t.CommentedDate, DislikesCount = t.CommentDislikesCount, LikesCount = t.CommentLikesCount, PreviousCommentId = t.PreviousCommentId, YourFeedbackType = (FeedbackType)t.YourCommentFeedbackType, Text = t.CommentText });
         }
       }
 
@@ -121,10 +121,13 @@ namespace QuestionsData.Repositories
       DateTime topAfterDate)
     {
 
-     var result =  _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
-        .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new {Question = x, Author = y})
-        .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
-          (q, o) => new {Question = q, Options = o}).Skip(offset).Take(count)
+      var topQuestion = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
+         .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
+         .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
+           (q, o) => new { Question = q, Options = o }).Skip(offset).Take(count).OrderByDescending(x => x.Question.Question.LikesCount);
+
+
+      topQuestion
         .Join(
           _db.AnswerEntities.DefaultIfEmpty()
             .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
@@ -140,20 +143,65 @@ namespace QuestionsData.Repositories
           LikesCount = x.Question.Question.Question.Question.LikesCount,
           IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
           IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
-          Login = x.Question.Question.Question.Author.Login,
-          UserId = x.Question.Question.Question.Question.UserId,
+          Author =
+            new AuthorDto
+            {
+              Login = x.Question.Question.Question.Author.Login,
+              UserId = x.Question.Question.Question.Question.UserId,
+              SexType = x.Question.Question.Question.Author.SexType,
+              OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
+            },
+          OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
           Options =
             x.Question.Question.Options.Select(y => new OptionDto {Text = y.Text, Voters = y.AnswersCount}).ToList(),
-          OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
           QuestionType = x.Question.Question.Question.Question.QuestionType,
-          SexType = x.Question.Question.Question.Author.SexType,
-          OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
           YourAnswerType = x.Question.UserFeeling.AnswerType,
           YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
         }).ToList();
 
 
-      return result;
+        //.Join(
+        //  _db.AnswerEntities.DefaultIfEmpty()
+        //    .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
+        //  x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
+        //.GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
+        //  x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
+        //).OrderByDescending(x => x.LikesCount).ToList();
+
+
+      //var result = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
+      //  .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
+      //  .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
+      //    (q, o) => new { Question = q, Options = o }).Skip(offset).Take(count).OrderByDescending(x => x.LikesCount).ToList()
+      //  .Join(
+      //    _db.AnswerEntities.DefaultIfEmpty()
+      //      .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
+      //    x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
+      //  .GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
+      //    x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
+      //  .Select(x => new QuestionDto
+      //  {
+      //    QuestionId = x.Question.Question.Question.Question.QuestionId,
+      //    CommentsCount = 0, //TODO TODO
+      //    Condition = x.Question.Question.Question.Question.Condition,
+      //    DislikesCount = x.Question.Question.Question.Question.DislikesCount,
+      //    LikesCount = x.Question.Question.Question.Question.LikesCount,
+      //    IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
+      //    IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
+      //    Login = x.Question.Question.Question.Author.Login,
+      //    UserId = x.Question.Question.Question.Question.UserId,
+      //    Options =
+      //      x.Question.Question.Options.Select(y => new OptionDto { Text = y.Text, Voters = y.AnswersCount }).ToList(),
+      //    OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
+      //    QuestionType = x.Question.Question.Question.Question.QuestionType,
+      //    SexType = x.Question.Question.Question.Author.SexType,
+      //    OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
+      //    YourAnswerType = x.Question.UserFeeling.AnswerType,
+      //    YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
+      //  }).OrderByDescending(x => x.LikesCount).ToList();
+
+
+      return new List<QuestionDto>();
 
       //return await _db.TopQuestionsDb.AsNoTracking()
       //  .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x => x.LikesCount)
@@ -202,7 +250,7 @@ namespace QuestionsData.Repositories
         .Take(count).ToListAsync();
     }
 
-    public async Task<List<RecommendedQuestionDto>> GetRecommendedQuestions(int userId,int offset,
+    public async Task<List<RecommendedQuestionDto>> GetRecommendedQuestions(int userId, int offset,
       int count, Expression<Func<RecommendedQuestionDb, object>> predicate)
     {
 
@@ -213,8 +261,9 @@ namespace QuestionsData.Repositories
 
       foreach (RecommendedQuestionDb t in questions)
       {
-        if (result.Count == 0 || result.All(x=>x.QuestionId != t.QuestionId))
-        { result.Add(new RecommendedQuestionDto
+        if (result.Count == 0 || result.All(x => x.QuestionId != t.QuestionId))
+        {
+          result.Add(new RecommendedQuestionDto
           {
             QuestionId = t.QuestionId,
             Condition = t.Condition,
@@ -236,16 +285,16 @@ namespace QuestionsData.Repositories
             FirstAnswersCount = t.FirstAnswersCount,
             SecondAnswersCount = t.SecondAnswersCount,
           });
-       
+
         }
         var question = result.FirstOrDefault(x => x.QuestionId == t.QuestionId);
-        if(question!=null && question.RecommendedToUsers.All(x=>x.UserId != t.ToUserId)) question.RecommendedToUsers
-          .Add(new RecommendedToUserDto {UserId = t.ToUserId, Login = t.ToUserLogin});
+        if (question != null && question.RecommendedToUsers.All(x => x.UserId != t.ToUserId)) question.RecommendedToUsers
+               .Add(new RecommendedToUserDto { UserId = t.ToUserId, Login = t.ToUserLogin });
       }
 
       return result;
 
-     
+
     }
 
     public async Task<List<SelectedQuestionDb>> GetSelectedQuestions(int userId, int pageUserId, int offset, int count)

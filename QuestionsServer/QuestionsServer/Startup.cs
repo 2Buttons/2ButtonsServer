@@ -1,6 +1,7 @@
 ﻿using CommonLibraries;
 using CommonLibraries.ConnectionServices;
 using CommonLibraries.Exceptions;
+using CommonLibraries.MediaFolders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,8 @@ namespace QuestionsServer
       services.AddTransient<QuestionsUnitOfWork>();
       services.AddOptions();
       services.Configure<ServersSettings>(Configuration.GetSection("ServersSettings"));
+      services.Configure<MediaConverterSettings>(Configuration.GetSection("MediaConverterSettings"));
+      services.AddSingleton<MediaConverter>();
       services.AddConnectionsHub();
 
       

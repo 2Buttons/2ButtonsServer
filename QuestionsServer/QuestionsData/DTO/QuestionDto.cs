@@ -12,10 +12,7 @@ namespace QuestionsData.DTO
     public string OriginalBackgroundUrl { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime QuestionAddDate { get; set; }
-    public int UserId { get; set; }
-    public string Login { get; set; }
-    public SexType SexType { get; set; }
-    public string OriginalAvatarUrl { get; set; }
+    public AuthorDto Author { get; set; }
     public int LikesCount { get; set; }
     public int DislikesCount { get; set; }
     public QuestionFeedbackType YourFeedbackType { get; set; }
@@ -23,5 +20,13 @@ namespace QuestionsData.DTO
     public bool IsInFavorites { get; set; }
     public bool IsSaved { get; set; }
     public int CommentsCount { get; set; }
+  }
+
+  public class AuthorDto
+  {
+    public int UserId { get; set; }
+    public string Login { get; set; }
+    public SexType SexType { get; set; }
+    public string OriginalAvatarUrl { get; set; }
   }
 }

@@ -24,16 +24,19 @@ namespace QuestionsServer.Controllers
   [Route("questions")]
   public class QuestionsController : Controller //Controller for a Question
   {
-    private static readonly Random _random = new Random();
-    private readonly ConnectionsHub _hub;
-    private readonly ILogger<QuestionsController> _logger;
-    private readonly QuestionsUnitOfWork _mainDb;
+    private static Random Random { get; } = new Random();
+    private ConnectionsHub Hub { get; }
+    private ILogger<QuestionsController> Logger { get; }
+    private QuestionsUnitOfWork MainDb { get; }
+    private MediaConverter MediaConverter { get; }
 
-    public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger, ConnectionsHub hub)
+    public QuestionsController(QuestionsUnitOfWork mainDb, ILogger<QuestionsController> logger, ConnectionsHub hub,
+      MediaConverter mediaConverter)
     {
-      _mainDb = mainDb;
-      _logger = logger;
-      _hub = hub;
+      MainDb = mainDb;
+      Logger = logger;
+      Hub = hub;
+      MediaConverter = mediaConverter;
     }
 
     [HttpGet("server")]
@@ -46,23 +49,23 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> AddQuestion([FromBody] AddQuestionViewModel question)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddQuestion)}.Start");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddQuestion)}.Start");
       string externalUrl;
 
       if (!question.BackgroundUrl.IsNullOrEmpty())
       {
         if (MediaConverter.IsStandardBackground(question.BackgroundUrl))
-          externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Standard, question.BackgroundUrl);
-        else externalUrl = await _hub.Media.UploadBackgroundUrl(BackgroundType.Custom, question.BackgroundUrl);
+          externalUrl = await Hub.Media.UploadBackgroundUrl(BackgroundType.Standard, question.BackgroundUrl);
+        else externalUrl = await Hub.Media.UploadBackgroundUrl(BackgroundType.Custom, question.BackgroundUrl);
       }
       else
       {
-        var urls = await _hub.Media.GetStandardBackgroundsUrl(BackgroundSizeType.Original);
+        var urls = await Hub.Media.GetStandardBackgroundsUrl(BackgroundSizeType.Original);
 
-        externalUrl = urls.Count < 1 ? null : urls[_random.Next(urls.Count)];
+        externalUrl = urls.Count < 1 ? null : urls[Random.Next(urls.Count)];
       }
 
-      var questionId = await _mainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
+      var questionId = await MainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
         question.IsAnonymous, question.AudienceType, question.QuestionType, question.FirstOption,
         question.SecondOption);
 
@@ -72,7 +75,7 @@ namespace QuestionsServer.Controllers
       for (var i = 0; i < question.Tags.Count; i++)
       {
         var tag = question.Tags[i];
-        if (!await _mainDb.Tags.AddTag(questionId, tag, i)) badAddedTags.Add(tag);
+        if (!await MainDb.Tags.AddTag(questionId, tag, i)) badAddedTags.Add(tag);
       }
 
       var notFoundIds = new List<int>();
@@ -82,10 +85,10 @@ namespace QuestionsServer.Controllers
       if (question.RecommendedToIds == null) question.RecommendedToIds = new List<int>();
       if (question.Tags == null) question.Tags = new List<string>();
       foreach (var id in question.RecommendedToIds)
-        if (!await _mainDb.UserQuestions.AddRecommendedQuestion(id, question.UserId, questionId))
-          await _hub.Notifications.SendRecommendQuestionNotification(question.UserId, id, questionId, DateTime.UtcNow);
+        if (!await MainDb.UserQuestions.AddRecommendedQuestion(id, question.UserId, questionId))
+          await Hub.Notifications.SendRecommendQuestionNotification(question.UserId, id, questionId, DateTime.UtcNow);
         else notFoundIds.Add(id);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddQuestion)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddQuestion)}.End");
       if (badAddedTags.Count != 0)
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "Not all tags were inserted.",
           new {NotAddedTags = badAddedTags});
@@ -102,18 +105,18 @@ namespace QuestionsServer.Controllers
         ModelState.AddModelError("UsersToId", "UsersToId is required and has to be more than 0");
         return new BadResponseResult(ModelState);
       }
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddRecommendedQuestion)}.Start");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddRecommendedQuestion)}.Start");
       var notFoundIds = new List<int>();
 
       // var validIds = await _mainDb.UserQuestions.CheckIdsValid(recommendedQuestion.UsersToId);
 
       foreach (var id in recommendedQuestion.UsersToId)
-        if (await _mainDb.UserQuestions.AddRecommendedQuestion(id, recommendedQuestion.UserFromId,
+        if (await MainDb.UserQuestions.AddRecommendedQuestion(id, recommendedQuestion.UserFromId,
           recommendedQuestion.QuestionId))
-          await _hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
+          await Hub.Notifications.SendRecommendQuestionNotification(recommendedQuestion.UserFromId, id,
             recommendedQuestion.QuestionId, DateTime.UtcNow);
         else notFoundIds.Add(id);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddRecommendedQuestion)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(AddRecommendedQuestion)}.End");
       if (notFoundIds.Count > 0)
         return new ResponseResult((int) HttpStatusCode.NotModified, "Not all ids were found.",
           new {NotFoundIds = notFoundIds});
@@ -124,16 +127,16 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetQuestion([FromBody] GetQuestion getQuestion)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.Start");
-      var question = await _mainDb.Questions.FindQuestion(getQuestion.UserId, getQuestion.QuestionId);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.Start");
+      var question = await MainDb.Questions.FindQuestion(getQuestion.UserId, getQuestion.QuestionId);
 
       GetTagsAndPhotos(getQuestion.UserId, getQuestion.QuestionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
 
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments,
+      var result = question.MapToGetQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos, comments,
         getQuestion.BackgroundSizeType);
-      await _hub.Monitoring.UpdateUrlMonitoring(getQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(getQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.End");
       return new OkResponseResult(result);
     }
 
@@ -142,11 +145,11 @@ namespace QuestionsServer.Controllers
     {
       //TODO убрать
       if (statistics.UserId <= 0) return new BadResponseResult("UserId has to be more than 0");
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatistics)}.Start");
-      var result = await _mainDb.Questions.GetQuestionStatistic(statistics.UserId, statistics.QuestionId,
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatistics)}.Start");
+      var result = await MainDb.Questions.GetQuestionStatistic(statistics.UserId, statistics.QuestionId,
         statistics.MinAge, statistics.MaxAge, statistics.SexType, statistics.City);
-      await _hub.Monitoring.UpdateUrlMonitoring(statistics.UserId, UrlMonitoringType.FiltersQuestions);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatistics)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(statistics.UserId, UrlMonitoringType.FiltersQuestions);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatistics)}.End");
       return new OkResponseResult("Question Statistic", result);
     }
 
@@ -154,13 +157,12 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetQuestionFilteredStatisticsUsers(
       [FromBody] GetQuestionFilteredStatistics statistics)
     {
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatisticsUsers)}.Start");
-      var resultDto = await _mainDb.Questions.GetQuestionStatistiсUsers(statistics.UserId, statistics.QuestionId,
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatisticsUsers)}.Start");
+      var resultDto = await MainDb.Questions.GetQuestionStatistiсUsers(statistics.UserId, statistics.QuestionId,
         statistics.MinAge, statistics.MaxAge, statistics.SexType, statistics.City, statistics.PageParams.Offset,
         statistics.PageParams.Count);
-      var result = new QuestionStatisticUserViewModel() {Voters = new List<List<VoterUserViewModel>>()};
+      var result = new QuestionStatisticUserViewModel {Voters = new List<List<VoterUserViewModel>>()};
       foreach (var item in resultDto.Voters)
-      {
         result.Voters.Add(item.Select(x => new VoterUserViewModel
         {
           Age = x.Age,
@@ -172,27 +174,26 @@ namespace QuestionsServer.Controllers
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(x.OriginalAvatarUrl, AvatarSizeType.Small),
           UserId = x.UserId
         }).ToList());
-      }
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatisticsUsers)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestionFilteredStatisticsUsers)}.End");
       return new OkResponseResult("Question Statistic -> Users", result);
     }
 
     [HttpPost("get/background")]
     public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetQuestionBackground vm)
     {
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.Start");
-      var result = await _mainDb.Questions.GetBackground(vm.QuestionId);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.Start");
+      var result = await MainDb.Questions.GetBackground(vm.QuestionId);
       var url = MediaConverter.ToFullBackgroundurlUrl(result, vm.BackgroundSizeType);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.End");
       return new OkResponseResult("Background URL", new {Url = url});
     }
 
     [HttpPost("get/backgrounds/standard")]
     public async Task<IActionResult> GetStandardBackgroundUrls([FromBody] GetStandardBackgroundUrlsViewModel vm)
     {
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.Start");
-      var result = await _hub.Media.GetStandardBackgroundsUrl(vm.BackgroundSizeType);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.Start");
+      var result = await Hub.Media.GetStandardBackgroundsUrl(vm.BackgroundSizeType);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetStandardBackgroundUrls)}.End");
       return new OkResponseResult("Standard backgrounds",
         result.Select(x => MediaConverter.ToFullBackgroundurlUrl(x, vm.BackgroundSizeType)));
     }
@@ -200,9 +201,9 @@ namespace QuestionsServer.Controllers
     [HttpPost("get/backgrounds/custom")]
     public async Task<IActionResult> GetCustomQuestionBackgrounds([FromBody] GetCustomBackgroundUrlsViewModel user)
     {
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetCustomQuestionBackgrounds)}.Start");
-      var result = await _mainDb.Questions.GetCustomQuestionBackgrounds(user.UserId);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetCustomQuestionBackgrounds)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetCustomQuestionBackgrounds)}.Start");
+      var result = await MainDb.Questions.GetCustomQuestionBackgrounds(user.UserId);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetCustomQuestionBackgrounds)}.End");
       return new OkResponseResult("Custom backgrounds",
         result.Select(x => MediaConverter.ToFullBackgroundurlUrl(x, user.BackgroundSizeType)).ToList());
     }
@@ -211,19 +212,19 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetQuestion([FromBody] GetQuestionByCommentId getQuestionByCommentId)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.Start");
-      var questionId = await _mainDb.Questions.GetQuestionByCommentId(getQuestionByCommentId.CommentId);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.Start");
+      var questionId = await MainDb.Questions.GetQuestionByCommentId(getQuestionByCommentId.CommentId);
       if (questionId <= 0)
         return new ResponseResult((int) HttpStatusCode.NotFound, "We can not find the question with this comment");
 
-      var question = await _mainDb.Questions.FindQuestion(getQuestionByCommentId.UserId, questionId);
+      var question = await MainDb.Questions.FindQuestion(getQuestionByCommentId.UserId, questionId);
 
       GetTagsAndPhotos(getQuestionByCommentId.UserId, questionId, out var tags, out var firstPhotos,
         out var secondPhotos, out var comments);
 
-      var result = question.MapToGetQuestionsViewModel(tags, firstPhotos, secondPhotos, comments,
+      var result = question.MapToGetQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos, comments,
         getQuestionByCommentId.BackgroundSizeType);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.End");
       return new OkResponseResult(result);
     }
 
@@ -237,21 +238,21 @@ namespace QuestionsServer.Controllers
       var sex = 0;
       var city = string.Empty;
 
-      tags = _mainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
-      firstPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
+      tags = MainDb.Tags.GetTags(questionId).GetAwaiter().GetResult();
+      firstPhotos = MainDb.Questions.GetPhotos(userId, questionId, 1, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      secondPhotos = _mainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
+      secondPhotos = MainDb.Questions.GetPhotos(userId, questionId, 2, photosCount, maxAge.WhenBorned(),
         minAge.WhenBorned(), sex, city).GetAwaiter().GetResult();
-      comments = _mainDb.Comments.GetComments(userId, questionId, 0, commentsCount).GetAwaiter().GetResult();
+      comments = MainDb.Comments.GetComments(userId, questionId, 0, commentsCount).GetAwaiter().GetResult();
     }
 
     [HttpPost("delete")]
     public async Task<IActionResult> DeleteQuestion([FromBody] QuestionIdViewModel questionId)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(DeleteQuestion)}.Start");
-      var result = await _mainDb.Questions.DeleteQuestion(questionId.QuestionId);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(DeleteQuestion)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(DeleteQuestion)}.Start");
+      var result = await MainDb.Questions.DeleteQuestion(questionId.QuestionId);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(DeleteQuestion)}.End");
       return result
         ? new OkResponseResult((object) "Question was deleted.")
         : new ResponseResult((int) HttpStatusCode.NotModified, "Question was not deleted.");
@@ -261,10 +262,10 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> UpdateFeedback([FromBody] UpdateQuestionFeedbackViewModel feedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFeedback)}.Start");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFeedback)}.Start");
       var result =
-        await _mainDb.Questions.UpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFeedback)}.End");
+        await MainDb.Questions.UpdateQuestionFeedback(feedback.UserId, feedback.QuestionId, feedback.FeedbackType);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFeedback)}.End");
       return result
         ? new OkResponseResult((object) "Question's feedback was updated.")
         : new ResponseResult((int) HttpStatusCode.NotModified, "Question's feedback was not updated.");
@@ -274,9 +275,9 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> UpdateSaved([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateSaved)}.Start");
-      var result = await _mainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateSaved)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateSaved)}.Start");
+      var result = await MainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateSaved)}.End");
       return result
         ? new OkResponseResult((object) "Saves question was updated.")
         : new ResponseResult((int) HttpStatusCode.NotModified, "Save question was not updated.");
@@ -286,10 +287,9 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> UpdateFavorites([FromBody] UpdateQuestionFavoriteViewModel favorite)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFavorites)}.Start");
-      var result =
-        await _mainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFavorites)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFavorites)}.Start");
+      var result = await MainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFavorites)}.End");
       return result
         ? new OkResponseResult((object) "Question's favorites was updated.")
         : new ResponseResult((int) HttpStatusCode.NotModified, "Question's favorites was not updated.");
@@ -299,9 +299,9 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> UpdateAnswer([FromBody] UpdateQuestionAnswerViewModel answer)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateAnswer)}.Start");
-      var result = await _mainDb.Questions.UpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateAnswer)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateAnswer)}.Start");
+      var result = await MainDb.Questions.UpdateAnswer(answer.UserId, answer.QuestionId, answer.AnswerType);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateAnswer)}.End");
       return result
         ? new OkResponseResult((object) "Question's answer was updated.")
         : new ResponseResult((int) HttpStatusCode.NotModified, "Question's answer was not updated.");
@@ -312,13 +312,13 @@ namespace QuestionsServer.Controllers
       [FromBody] UploadQuestionBackgroundViaUrlViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaUrl)}.Start");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaUrl)}.Start");
       string url;
       if (MediaConverter.IsStandardBackground(background.Url))
-        url = await _hub.Media.UploadBackgroundUrl(BackgroundType.Standard, background.Url);
-      else url = await _hub.Media.UploadBackgroundUrl(BackgroundType.Custom, background.Url);
-      var isUpdated = !await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaUrl)}.End");
+        url = await Hub.Media.UploadBackgroundUrl(BackgroundType.Standard, background.Url);
+      else url = await Hub.Media.UploadBackgroundUrl(BackgroundType.Custom, background.Url);
+      var isUpdated = !await MainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaUrl)}.End");
       if (isUpdated) return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult("Background was updated",
         new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType)});
@@ -329,10 +329,10 @@ namespace QuestionsServer.Controllers
       [FromBody] UploadQuestionBackgroundViaFileViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaFile)}.Start");
-      var url = await _hub.Media.UploadBackgroundFile(BackgroundType.Custom, background.File);
-      var result = !await _mainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaFile)}.End");
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaFile)}.Start");
+      var url = await Hub.Media.UploadBackgroundFile(BackgroundType.Custom, background.File);
+      var result = !await MainDb.Questions.UpdateQuestionBackgroundUrl(background.QuestionId, url);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateBackgroundViaFile)}.End");
       if (result) return new ResponseResult((int) HttpStatusCode.NotModified, "We do not modify background.");
       return new OkResponseResult("Background was updated",
         new {Url = MediaConverter.ToFullBackgroundurlUrl(url, background.BackgroundSizeType)});
@@ -342,12 +342,12 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetVoters([FromBody] GetVoters voters)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetVoters)}.Start");
-      var answeredList = await _mainDb.Questions.GetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetVoters)}.Start");
+      var answeredList = await MainDb.Questions.GetVoters(voters.UserId, voters.QuestionId, voters.PageParams.Offset,
         voters.PageParams.Count, voters.AnswerType, DateTime.UtcNow.AddYears(-voters.MaxAge),
         DateTime.UtcNow.AddYears(-voters.MinAge), voters.SexType, voters.SearchedLogin);
-      _logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetVoters)}.End");
-      return new OkResponseResult(answeredList.MapAnsweredListDbToViewModel());
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetVoters)}.End");
+      return new OkResponseResult(answeredList.MapAnsweredListDbToViewModel(MediaConverter));
     }
   }
 }

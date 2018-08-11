@@ -14,24 +14,24 @@ namespace QuestionsServer.ViewModels.OutputParameters
 {
   public static class MappingQuestionDbToViewModel
   {
-    public static NewsAnsweredQuestionViewModel MapToNewsAnsweredQuestionsViewModel(this NewsAnsweredQuestionDto dto,
+    public static NewsAnsweredQuestionViewModel MapToNewsAnsweredQuestionsViewModel(this NewsAnsweredQuestionDto dto, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dto.NewsAnsweredQuestionDb, dbTags, dbFirstPhotos,
+        QuestionDbToViewModel<NewsAnsweredQuestionViewModel>(dto.NewsAnsweredQuestionDb, mediaConverter, dbTags, dbFirstPhotos,
           dbSecondPhotos, backgroundSizeType);
 
       viewModel.AnsweredFollowingsCount = dto.NewsAnsweredQuestionDb.AnsweredFollowingsCount;
       viewModel.Priority = dto.Priority;
-      viewModel.NewsType =  CommonLibraries.NewsType.Answered;
+      viewModel.NewsType = CommonLibraries.NewsType.Answered;
       return viewModel;
     }
 
-    public static NewsAskedQuestionViewModel MapToNewsAskedQuestionsViewModel(this NewsAskedQuestionDto dto,
+    public static NewsAskedQuestionViewModel MapToNewsAskedQuestionsViewModel(this NewsAskedQuestionDto dto, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<NewsAskedQuestionViewModel>(dto.NewsAskedQuestionDb, dbTags, dbFirstPhotos,
+        QuestionDbToViewModel<NewsAskedQuestionViewModel>(dto.NewsAskedQuestionDb, mediaConverter, dbTags, dbFirstPhotos,
           dbSecondPhotos, backgroundSizeType);
 
       viewModel.Priority = dto.Priority;
@@ -39,11 +39,11 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
-    public static NewsCommentedQuestionViewModel MapToNewsCommentedQuestionsViewModel(this NewsCommentedQuestionDto dto,
+    public static NewsCommentedQuestionViewModel MapToNewsCommentedQuestionsViewModel(this NewsCommentedQuestionDto dto, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<NewsCommentedQuestionViewModel>(dto.NewsCommentedQuestionDb, dbTags, dbFirstPhotos,
+        QuestionDbToViewModel<NewsCommentedQuestionViewModel>(dto.NewsCommentedQuestionDb, mediaConverter, dbTags, dbFirstPhotos,
           dbSecondPhotos, backgroundSizeType);
 
       viewModel.CommentedUser = new NewsUserViewModel
@@ -60,11 +60,11 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
-    public static NewsFavoriteQuestionViewModel MapToNewsFavoriteQuestionsViewModel(this NewsFavoriteQuestionDto dto,
+    public static NewsFavoriteQuestionViewModel MapToNewsFavoriteQuestionsViewModel(this NewsFavoriteQuestionDto dto, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<NewsFavoriteQuestionViewModel>(dto.NewsFavoriteQuestionDb, dbTags, dbFirstPhotos,
+        QuestionDbToViewModel<NewsFavoriteQuestionViewModel>(dto.NewsFavoriteQuestionDb, mediaConverter, dbTags, dbFirstPhotos,
           dbSecondPhotos, backgroundSizeType);
       viewModel.FavoriteAddedUser = new NewsUserViewModel
       {
@@ -79,11 +79,11 @@ namespace QuestionsServer.ViewModels.OutputParameters
     }
 
     public static NewsRecommendedQuestionViewModel MapNewsRecommendedQuestionsViewModel(
-      this NewsRecommendedQuestionDto dto, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      this NewsRecommendedQuestionDto dto, MediaConverter mediaConverter, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dto, dbTags, dbFirstPhotos,
+        QuestionDbToViewModel<NewsRecommendedQuestionViewModel>(dto, mediaConverter, dbTags, dbFirstPhotos,
           dbSecondPhotos, backgroundSizeType);
 
       viewModel.RecommendedUsers = new List<NewsUserViewModel>(dto.RecommendedUsers.Count);
@@ -107,87 +107,108 @@ namespace QuestionsServer.ViewModels.OutputParameters
     }
 
     public static UserAnsweredQuestionsViewModel MapToUserAnsweredQuestionsViewModel(
-      this UserAnsweredQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      this UserAnsweredQuestionDb dbEntity, MediaConverter mediaConverter,  IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<UserAnsweredQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+        QuestionDbToViewModel<UserAnsweredQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
-    public static UserAskedQuestionsViewModel MapToUserAskedQuestionsViewModel(this UserAskedQuestionDb dbEntity,
+    public static UserAskedQuestionsViewModel MapToUserAskedQuestionsViewModel(this UserAskedQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<UserAskedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+        QuestionDbToViewModel<UserAskedQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
     public static UserCommentedQuestionsViewModel MapToUserCommentedQuestionsViewModel(
-      this UserCommentedQuestionDto dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      this UserCommentedQuestionDto dbEntity, MediaConverter mediaConverter, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+        QuestionDbToViewModel<UserCommentedQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
 
       viewModel.Comments = dbEntity.Comments;
       return viewModel;
     }
 
     public static UserFavoriteQuestionsViewModel MapToUserFavoriteQuestionsViewModel(
-      this UserFavoriteQuestionDb dbEntity, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
+      this UserFavoriteQuestionDb dbEntity, MediaConverter mediaConverter, IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos,
       IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<UserFavoriteQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+        QuestionDbToViewModel<UserFavoriteQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
-    public static TopQuestionsViewModel MapToTopQuestionsViewModel(this TopQuestionDb dbEntity,
+    public static TopQuestionsViewModel MapToTopQuestionsViewModel(this TopQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<TopQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      var viewModel = QuestionDbToViewModel<TopQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
-    public static TopQuestionsViewModel MapToTopQuestionsViewModelMod(this QuestionDto dbEntity,
+    public static TopQuestionsViewModel MapToTopQuestionsViewModelMod( this QuestionDto dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<TopQuestionsViewModel>(new QuestionBaseDb
-      { QuestionId = dbEntity.QuestionId,
-       OriginalAvatarUrl = dbEntity.OriginalAvatarUrl,
-        IsInFavorites= dbEntity.IsInFavorites,
-         IsSaved = dbEntity.IsSaved,
-           CommentsCount = dbEntity.CommentsCount,
-            AddedDate = dbEntity.QuestionAddDate,
-             Condition = dbEntity.Condition,
-              DislikesCount = dbEntity.DislikesCount,
-              // FirstOption = dbEntity.Options.FirstOrDefault(x=>x.)
-      }, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      var viewModel = new TopQuestionsViewModel
+      {
+        QuestionId = dbEntity.QuestionId,
+        Condition = dbEntity.Condition,
+        Options = dbEntity.Options.Select(x => new Option { Text = x.Text, Voters = x.Voters }).ToList(),
+        Author = new AuthorViewModel
+        {
+          UserId = dbEntity.Author.UserId,
+          Login = dbEntity.Author.Login,
+          SexType = dbEntity.Author.SexType,
+          SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(dbEntity.Author.OriginalAvatarUrl, AvatarSizeType.Small)
+
+        },
+        BackgroundUrl = mediaConverter.ToFullBackgroundurlUrl(dbEntity.OriginalBackgroundUrl, backgroundSizeType),
+        QuestionType = dbEntity.QuestionType,
+        QuestionAddDate = dbEntity.QuestionAddDate,
+        LikesCount = dbEntity.LikesCount,
+        DislikesCount = dbEntity.DislikesCount,
+        YourAnswerType = dbEntity.YourAnswerType,
+        YourFeedbackType = dbEntity.YourFeedbackType,
+
+
+        IsInFavorites = dbEntity.IsInFavorites,
+        IsSaved = dbEntity.IsSaved,
+        CommentsCount = dbEntity.CommentsCount,
+        Photos = new List<List<PhotoViewModel>>{MapPhotosDbToViewModel(dbFirstPhotos, mediaConverter),
+   MapPhotosDbToViewModel(dbSecondPhotos, mediaConverter)},
+        Tags = MapTagsDbToTagViewModel(dbTags)
+
+
+        // FirstOption = dbEntity.Options.FirstOrDefault(x=>x.)
+      };
       return viewModel;
     }
 
 
-    public static AskedQuestionsViewModel MapToAskedQuestionsViewModel(this AskedQuestionDb dbEntity,
+    public static AskedQuestionsViewModel MapToAskedQuestionsViewModel(this AskedQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<AskedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      var viewModel = QuestionDbToViewModel<AskedQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
-    public static SelectedQuestionsViewModel MapToChosenQuestionsViewModel(this SelectedQuestionDb dbEntity,
+    public static SelectedQuestionsViewModel MapToChosenQuestionsViewModel(this SelectedQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<SelectedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      var viewModel = QuestionDbToViewModel<SelectedQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
 
-    public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(this RecommendedQuestionDb dbEntity,
+    public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(this RecommendedQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+        QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       //viewModel.ToUserId = dbEntity.ToUserId;
       //viewModel.ToUserLogin = dbEntity.ToUserLogin;
       //viewModel.RecommendDate = dbEntity.RecommendDate;
@@ -195,39 +216,39 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return viewModel;
     }
 
-    public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(this RecommendedQuestionDto dbEntity,
+    public static RecommendedQuestionViewModel MapToRecommendedQuestionsViewModel(this RecommendedQuestionDto dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
       var viewModel =
-        QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+        QuestionDbToViewModel<RecommendedQuestionViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
 
       viewModel.Users = dbEntity.RecommendedToUsers;
       return viewModel;
     }
 
-    public static LikedQuestionsViewModel MapToLikedQuestionsViewModel(this LikedQuestionDb dbEntity,
+    public static LikedQuestionsViewModel MapToLikedQuestionsViewModel(this LikedQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<LikedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      var viewModel = QuestionDbToViewModel<LikedQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
-    public static SavedQuestionsViewModel MapToSavedQuestionsViewModel(this SavedQuestionDb dbEntity,
+    public static SavedQuestionsViewModel MapToSavedQuestionsViewModel(this SavedQuestionDb dbEntity, MediaConverter mediaConverter,
       IEnumerable<TagDb> dbTags, IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<SavedQuestionsViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      var viewModel = QuestionDbToViewModel<SavedQuestionsViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
       return viewModel;
     }
 
-    public static GetQuestionViewModel MapToGetQuestionsViewModel(this QuestionDb dbEntity, IEnumerable<TagDb> dbTags,
+    public static GetQuestionViewModel MapToGetQuestionsViewModel(this QuestionDb dbEntity, MediaConverter mediaConverter, IEnumerable<TagDb> dbTags,
       IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, IEnumerable<CommentDb> comments, BackgroundSizeType backgroundSizeType)
     {
-      var viewModel = QuestionDbToViewModel<GetQuestionViewModel>(dbEntity, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
-      viewModel.Comments = comments.MapCommentsDbToViewModel();
+      var viewModel = QuestionDbToViewModel<GetQuestionViewModel>(dbEntity, mediaConverter, dbTags, dbFirstPhotos, dbSecondPhotos, backgroundSizeType);
+      viewModel.Comments = comments.MapCommentsDbToViewModel(mediaConverter);
       return viewModel;
     }
 
-    public static T QuestionDbToViewModel<T>(this QuestionBaseDb dbEntity, IEnumerable<TagDb> dbTags,
+    public static T QuestionDbToViewModel<T>(this QuestionBaseDb dbEntity, MediaConverter mediaConverter, IEnumerable<TagDb> dbTags,
       IEnumerable<PhotoDb> dbFirstPhotos, IEnumerable<PhotoDb> dbSecondPhotos, BackgroundSizeType backgroundSizeType) where T : QuestionBaseViewModel, new()
     {
       var question = new T
@@ -240,7 +261,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
             new Option(dbEntity.FirstAnswersCount, dbEntity.FirstOption),
             new Option(dbEntity.SecondAnswersCount, dbEntity.SecondOption)
           },
-        BackgroundUrl = dbEntity.OriginalBackgroundUrl!=null ? MediaConverter.ToFullBackgroundurlUrl(dbEntity.OriginalBackgroundUrl, backgroundSizeType) : null,
+        BackgroundUrl = dbEntity.OriginalBackgroundUrl != null ? mediaConverter.ToFullBackgroundurlUrl(dbEntity.OriginalBackgroundUrl, backgroundSizeType) : null,
         QuestionType = dbEntity.QuestionType,
         QuestionAddDate = dbEntity.AddedDate,
         Author = new AuthorViewModel
@@ -248,9 +269,9 @@ namespace QuestionsServer.ViewModels.OutputParameters
           UserId = dbEntity.UserId,
           Login = dbEntity.Login,
           SexType = dbEntity.SexType,
-          SmallAvatarUrl = dbEntity.OriginalAvatarUrl != null ?  MediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small) : null
+          SmallAvatarUrl = dbEntity.OriginalAvatarUrl != null ? mediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small) : null
         },
-       
+
         LikesCount = dbEntity.LikesCount,
         DislikesCount = dbEntity.DislikesCount,
         YourFeedbackType = dbEntity.YourFeedbackType,
@@ -259,7 +280,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         IsSaved = dbEntity.IsSaved,
         CommentsCount = dbEntity.CommentsCount,
         Tags = dbTags.MapTagsDbToTagViewModel(),
-        Photos = new List<List<PhotoViewModel>>(){ dbFirstPhotos.MapPhotosDbToViewModel(), dbSecondPhotos.MapPhotosDbToViewModel() }
+        Photos = new List<List<PhotoViewModel>>() { dbFirstPhotos.MapPhotosDbToViewModel(mediaConverter), dbSecondPhotos.MapPhotosDbToViewModel(mediaConverter) }
       };
       return question;
     }
@@ -274,7 +295,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       }).ToList();
     }
 
-    public static List<PhotoViewModel> MapPhotosDbToViewModel(this IEnumerable<PhotoDb> photosDb)
+    public static List<PhotoViewModel> MapPhotosDbToViewModel(this IEnumerable<PhotoDb> photosDb, MediaConverter mediaConverter)
     {
       return photosDb.Select(p => new PhotoViewModel
       {
@@ -282,18 +303,18 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Age = p.BirthDate.Age(),
         Login = p.Login,
         SexType = p.SexType,
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(p.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small)
+        SmallAvatarUrl =  mediaConverter.ToFullAvatarUrl(p.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small)
       }).ToList();
     }
 
-    public static List<CommentViewModel> MapCommentsDbToViewModel(this IEnumerable<CommentDb> commentsDb)
+    public static List<CommentViewModel> MapCommentsDbToViewModel(this IEnumerable<CommentDb> commentsDb, MediaConverter mediaConverter)
     {
       return commentsDb.Select(c => new CommentViewModel
       {
         CommentId = c.CommentId,
         UserId = c.UserId,
         Login = c.Login,
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(c.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(c.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
         Text = c.Text,
         LikesCount = c.LikesCount,
         DislikesCount = c.DislikesCount,
@@ -304,13 +325,13 @@ namespace QuestionsServer.ViewModels.OutputParameters
     }
 
     public static List<AnsweredListViewModel> MapAnsweredListDbToViewModel(
-      this IEnumerable<AnsweredListDb> answeredList)
+      this IEnumerable<AnsweredListDb> answeredList, MediaConverter mediaConverter)
     {
       return answeredList.Select(v => new AnsweredListViewModel
       {
         UserId = v.UserId,
         Login = v.Login,
-        SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(v.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(v.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
         Age = v.BirthDate.Age(),
         SexType = v.SexType,
         IsHeFollowed = v.IsHeFollowed,

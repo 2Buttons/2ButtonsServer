@@ -20,15 +20,18 @@ namespace QuestionsServer.Controllers
   [Route("questions/comments")]
   public class CommentsController : Controller
   {
-    private readonly QuestionsUnitOfWork _mainDb;
-    private readonly ConnectionsHub _hub;
-    private readonly ILogger<ComplaintsController> _logger;
+    private QuestionsUnitOfWork MainDb { get; }
+    private ConnectionsHub Hub { get; }
+    private ILogger<ComplaintsController> Logger { get; }
+    private MediaConverter MediaConverter { get; }
 
-    public CommentsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub, ILogger<ComplaintsController> logger)
+    public CommentsController(QuestionsUnitOfWork mainDb, ConnectionsHub hub, ILogger<ComplaintsController> logger,
+      MediaConverter mediaConverter)
     {
-      _mainDb = mainDb;
-      _hub = hub;
-      _logger = logger;
+      MainDb = mainDb;
+      Hub = hub;
+      Logger = logger;
+      MediaConverter = mediaConverter;
     }
 
     [HttpPost("add")]
@@ -36,13 +39,12 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       if (comment.PreviousCommentId == 0) comment.PreviousCommentId = null;
-      var commentId = await _mainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.Text,
+      var commentId = await MainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.Text,
         comment.PreviousCommentId);
       if (commentId < 0)
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "We can not create comment");
       if (comment.PreviousCommentId > 0)
-        await _hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId,
-          DateTime.UtcNow);
+        await Hub.Notifications.SendCommentNotification(comment.UserId, comment.QuestionId, commentId, DateTime.UtcNow);
       return new ResponseResult((int) HttpStatusCode.Created, new {CommentId = commentId});
     }
 
@@ -50,10 +52,10 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> AddCommentFeedback([FromBody] AddCommentFeedbackViewModel commentFeedback)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.Start");
-      var result = await _mainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
+      Logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.Start");
+      var result = await MainDb.Comments.UpdateCommentFeedback(commentFeedback.UserId, commentFeedback.CommentId,
         commentFeedback.FeedbackType);
-      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.End");
+      Logger.LogInformation($"{nameof(CommentsController)}.{nameof(AddCommentFeedback)}.End");
       return result
         ? new OkResponseResult(new {IsFeedbackUpdated = true})
         : new ResponseResult((int) HttpStatusCode.NotModified, new {IsFeedbackUpdated = false});
@@ -63,11 +65,11 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> GetComments([FromBody] GetCommentsViewModel commentsVm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.Start");
-      var comments = await _mainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId,
+      Logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.Start");
+      var comments = await MainDb.Comments.GetComments(commentsVm.UserId, commentsVm.QuestionId,
         commentsVm.PageParams.Offset, commentsVm.PageParams.Count);
-      await _hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
-      _logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.End");
+      await Hub.Monitoring.UpdateUrlMonitoring(commentsVm.UserId, UrlMonitoringType.GetsComments);
+      Logger.LogInformation($"{nameof(CommentsController)}.{nameof(GetComments)}.End");
       return new OkResponseResult(comments.Select(x => new CommentViewModel
       {
         CommentId = x.CommentId,
