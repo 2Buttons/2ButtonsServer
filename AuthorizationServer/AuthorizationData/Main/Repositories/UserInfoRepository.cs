@@ -34,7 +34,7 @@ namespace AuthorizationData.Main.Repositories
 
     public async Task<UserInfoDb> GetUserInfoAsync(int userId)
     {
-     return await _contextMain.UsersInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserTableData({userId})").FirstOrDefaultAsync() ?? new UserInfoDb();
+     return await _contextMain.UsersInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserTableData({userId})").FirstOrDefaultAsync();
     }
   }
 }

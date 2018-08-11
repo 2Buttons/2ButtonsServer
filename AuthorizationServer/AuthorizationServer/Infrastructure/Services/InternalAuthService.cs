@@ -68,7 +68,7 @@ namespace AuthorizationServer.Infrastructure.Services
         SexType = user.SexType,
         City = user.City,
         Description = user.Description,
-        OriginalAvatarUrl =( await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
+        OriginalAvatarUrl = (await _hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
       };
 
       if (!await _db.UsersInfo.AddUserInfoAsync(userInfo))
@@ -88,7 +88,7 @@ namespace AuthorizationServer.Infrastructure.Services
         RefreshToken = jwtToken.RefreshToken
       };
 
-    // SendConfirmedEmail(userDb.UserId, role, userDb.Email);
+      // SendConfirmedEmail(userDb.UserId, role, userDb.Email);
 
       if (!await _db.Tokens.AddTokenAsync(token))
         throw new Exception("Can not add token to database. You entered just as a guest.");
@@ -96,35 +96,26 @@ namespace AuthorizationServer.Infrastructure.Services
       return jwtToken;
     }
 
-    public async Task<UserDto> GetUserByCredentils(LoginViewModel credentials)
+    public async Task<UserDto> GetUserByPhone(string phone, string password)
     {
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByCredentils)}.Start");
-      var user = new UserDto {UserId = 0, RoleType = RoleType.Guest};
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByPhone)}.Start");
+      var user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(phone, password);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByPhone)}.End");
+      return user;
+    }
 
-      if (credentials.GrantType == GrantType.Guest) return user;
-
-      switch (credentials.GrantType)
-      {
-        case GrantType.Guest: break;
-        case GrantType.Phone:
-          user = await _db.Users.GetUserByInernalPhoneAndPasswordAsync(credentials.Phone, credentials.Password);
-          if (user == null) throw new NotFoundException("Phone and (or) password is incorrect");
-          break;
-        case GrantType.Email:
-          user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(credentials.Email, credentials.Password);
-          if (user == null) throw new NotFoundException("Email and (or) password is incorrect");
-          break;
-      }
-
-      user.RoleType = await _db.Users.GetUserRoleAsync(user.UserId);
-      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByCredentils)}.End");
+    public async Task<UserDto> GetUserByEmail(string email, string password)
+    {
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByEmail)}.Start");
+      var user = await _db.Users.GetUserByInternalEmailAndPasswordAsync(email, password);
+      _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(GetUserByEmail)}.End");
       return user;
     }
 
     public bool IsTokenValid(string token)
     {
       _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.Start");
-      var result =  _emailJwtService.IsTokenValid(token);
+      var result = _emailJwtService.IsTokenValid(token);
       _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(IsTokenValid)}.End");
       return result;
     }
@@ -136,7 +127,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
       var userTokenId = int.Parse(decodedToken.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)
                                     ?.Value ?? "0");
-      var result =  userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
+      var result = userId == userTokenId && userId != 0 && await _db.Users.ConfirmEmail(userId);
       _logger.LogInformation($"{nameof(InternalAuthService)}.{nameof(TryConfirmEmail)}.End");
       return result;
     }

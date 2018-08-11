@@ -107,28 +107,28 @@ namespace AuthorizationData.Account.Repostirories
 
     public async Task<UserDto> GetUserByInternalEmail(string email)
     {
-      var user = await _contextAccount.UsersDb.AsNoTracking()
+      var user = await _contextAccount.UsersDb
         .FirstOrDefaultAsync(x => x.Email == email);
       return user?.ToUserDto();
     }
 
     public async Task<UserDto> GetUserByUserId(int userId)
     {
-      var user = await _contextAccount.UsersDb.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+      var user = await _contextAccount.UsersDb.FirstOrDefaultAsync(x => x.UserId == userId);
       return user?.ToUserDto();
     }
 
 
     public async Task<UserDto> GetUserByInternalEmailAndPasswordAsync(string email, string passwordHash)
     {
-      var user = await _contextAccount.UsersDb.AsNoTracking()
+      var user = await _contextAccount.UsersDb
         .FirstOrDefaultAsync(x => x.Email == email && x.PasswordHash == passwordHash);
       return user?.ToUserDto();
     }
 
     public async Task<UserDto> GetUserByInernalPhoneAndPasswordAsync(string phone, string passwordHash)
     {
-      var user = await _contextAccount.UsersDb.AsNoTracking()
+      var user = await _contextAccount.UsersDb
         .FirstOrDefaultAsync(x => x.PhoneNumber == phone && x.PasswordHash == passwordHash);
       return user?.ToUserDto();
     }

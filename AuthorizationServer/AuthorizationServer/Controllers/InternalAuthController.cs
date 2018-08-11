@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using AuthorizationData.Account.DTO;
 using AuthorizationServer.Infrastructure.Services;
+using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.InputParameters.Auth;
 using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
@@ -54,21 +56,31 @@ namespace AuthorizationServer.Controllers
         ModelState.AddModelError("Password", "Password is null or empty, but grant type is not guest.");
         return new BadResponseResult(ModelState);
       }
-
+      var user = new UserDto { UserId = 0, RoleType = RoleType.Guest };
       switch (credentials.GrantType)
       {
-        case GrantType.Guest:
+        case GrantType.Guest: break;
         case GrantType.Phone:
+          user = await _internalAuthService.GetUserByPhone(credentials.Phone, credentials.Password);
+          if (user == null)
+            return new ResponseResult((int)HttpStatusCode.Forbidden, "Phone and(or) password is incorrect", new { Token = new Token(), User = new UserInfoViewModel() });
+          break;
         case GrantType.Email:
-          var user = await _internalAuthService.GetUserByCredentils(credentials);
-          var token = await _commonAuthService.GetAccessTokenAsync(user);
-          var userInfo = await _commonAuthService.GetUserInfo(user.UserId);
-          var result = new { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
-          return new OkResponseResult(result);
+          user = await _internalAuthService.GetUserByEmail(credentials.Email, credentials.Password);
+          if (user == null)
+            return new ResponseResult((int)HttpStatusCode.Forbidden, "Email and(or) password is incorrect", new { Token = new Token(), User = new UserInfoViewModel() });
+          break;
         default:
           ModelState.AddModelError("GrantType", "Sorry, we can not find such grant type.");
           return new BadResponseResult(ModelState);
       }
+
+      var token = await _commonAuthService.GetAccessTokenAsync(user);
+      var userInfo = await _commonAuthService.GetUserInfo(user.UserId);
+      var result = new { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo) };
+      return new OkResponseResult(result);
+
+
     }
 
     //[HttpPost("forgotPassword")]
