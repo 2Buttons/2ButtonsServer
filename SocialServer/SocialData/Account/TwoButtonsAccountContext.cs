@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommonLibraries.Entities;
+using CommonLibraries.Entities.Acccount;
+using Microsoft.EntityFrameworkCore;
 using SocialData.Account.Entities;
 using SocialData.Account.Entities.FunctionEntities;
 
@@ -6,8 +8,8 @@ namespace SocialData.Account
 {
   public class TwoButtonsAccountContext : DbContext
   {
-    public DbSet<UserDb> UsersDb { get; set; }
-    public DbSet<SocialDb> SocialsDb { get; set; }
+    public DbSet<UserEntity> UsersEntities { get; set; }
+    public DbSet<SocialEntity> SocialsEntities { get; set; }
 
     // functions
     public DbSet<UserIdDb> UserIds { get; set; }
@@ -22,7 +24,7 @@ namespace SocialData.Account
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<UserDb>(entity =>
+      modelBuilder.Entity<UserEntity>(entity =>
       {
         entity.HasKey(e => e.UserId);
 

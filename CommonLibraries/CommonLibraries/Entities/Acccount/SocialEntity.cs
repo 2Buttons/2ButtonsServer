@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibraries;
 
-namespace SocialData.Account.Entities
+namespace CommonLibraries.Entities.Acccount
 {
   [Table("Socials")]
-  public class SocialDb
+  public class SocialEntity
   {
     [Key]
     public int SocialId { get; set; }
@@ -16,5 +15,6 @@ namespace SocialData.Account.Entities
     public string PhoneNumber { get; set; }
     public string ExternalToken { get; set; }
     public long ExpiresIn { get; set; }
+    public bool IsDeleted { get; set; }
   }
 }

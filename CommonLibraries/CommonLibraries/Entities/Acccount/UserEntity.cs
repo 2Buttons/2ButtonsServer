@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibraries;
 
-namespace SocialData.Account.Entities
+namespace CommonLibraries.Entities.Acccount
 {
   [Table("Users")]
-  public partial class UserDb
+  public class UserEntity
   {
     [Key]
     public int UserId { get; set; }
@@ -18,6 +17,8 @@ namespace SocialData.Account.Entities
     public bool IsPhoneNumberConfirmed { get; set; }
     public RoleType RoleType { get; set; }
     public bool IsTwoFactorAuthenticationEnabled { get; set; }
+    public bool IsBot { get; set; }
     public DateTime RegistrationDate { get; set; }
+    public bool IsDeleted { get; set; }
   }
 }

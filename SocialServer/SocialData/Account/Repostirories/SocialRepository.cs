@@ -29,19 +29,19 @@ namespace SocialData.Account.Repostirories
    
     public async Task<UserDto> FindUserByUserId(int userId)
     {
-      var user = await _context.UsersDb.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
+      var user = await _context.UsersEntities.AsNoTracking().FirstOrDefaultAsync(x=>x.UserId == userId);
       return user?.ToUserDto();
     }
 
     public async Task<List<int>> GetUserIdsFromVkIds(IEnumerable<int> vkIds)
     {
-      return await _context.SocialsDb.Where(x => x.SocialType == SocialType.Vk)
+      return await _context.SocialsEntities.Where(x => x.SocialType == SocialType.Vk)
                .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.InternalId).ToListAsync() ?? new List<int>();
     }
 
     public async Task<List<long>> GetUserIdsFromFbIds(IEnumerable<int> fbIds)
     {
-        return await _context.SocialsDb.Where(x => x.SocialType == SocialType.Facebook)
+        return await _context.SocialsEntities.Where(x => x.SocialType == SocialType.Facebook)
           .Join(_context.ExternalIdsDb, o => o.ExternalId, i => i.ExternalId, (i, o) => i.ExternalId).ToListAsync() ?? new List<long>(); 
 
       /*
@@ -82,7 +82,7 @@ namespace SocialData.Account.Repostirories
 
     public async Task<List<UserSocialDto>> GetUserSocialsAsync(int userId)
     {
-      return await _context.SocialsDb.Where(x=>x.InternalId == userId).Select(x=> new UserSocialDto{ExternalId = x.ExternalId, SocialType = x.SocialType}).ToListAsync() ?? new List<UserSocialDto>();
+      return await _context.SocialsEntities.Where(x=>x.InternalId == userId).Select(x=> new UserSocialDto{ExternalId = x.ExternalId, SocialType = x.SocialType}).ToListAsync() ?? new List<UserSocialDto>();
     }
   }
 }

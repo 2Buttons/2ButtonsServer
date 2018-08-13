@@ -1,10 +1,12 @@
-﻿using SocialData.Account.Entities;
+﻿using CommonLibraries.Entities;
+using CommonLibraries.Entities.Acccount;
+using SocialData.Account.Entities;
 
 namespace SocialData.Account.DTO
 {
   public static class ExtenstionMap
   {
-    public static UserDto ToUserDto(this UserDb userDb)
+    public static UserDto ToUserDto(this UserEntity userDb)
     {
       return new UserDto
       {

@@ -124,10 +124,9 @@ namespace QuestionsData.Repositories
       var topQuestion = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
          .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
          .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
-           (q, o) => new { Question = q, Options = o }).Skip(offset).Take(count).OrderByDescending(x => x.Question.Question.LikesCount);
+           (q, o) => new { Question = q, Options = o }).OrderByDescending(x => x.Question.Question.LikesCount);
 
-
-      topQuestion
+      var result = topQuestion
         .Join(
           _db.AnswerEntities.DefaultIfEmpty()
             .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
@@ -157,16 +156,16 @@ namespace QuestionsData.Repositories
           QuestionType = x.Question.Question.Question.Question.QuestionType,
           YourAnswerType = x.Question.UserFeeling.AnswerType,
           YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
-        }).ToList();
+        }).Skip(offset).Take(count).ToList();
 
 
-        //.Join(
-        //  _db.AnswerEntities.DefaultIfEmpty()
-        //    .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
-        //  x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
-        //.GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
-        //  x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
-        //).OrderByDescending(x => x.LikesCount).ToList();
+      //.Join(
+      //  _db.AnswerEntities.DefaultIfEmpty()
+      //    .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
+      //  x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
+      //.GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
+      //  x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
+      //).OrderByDescending(x => x.LikesCount).ToList();
 
 
       //var result = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
@@ -201,7 +200,7 @@ namespace QuestionsData.Repositories
       //  }).OrderByDescending(x => x.LikesCount).ToList();
 
 
-      return new List<QuestionDto>();
+      return result;
 
       //return await _db.TopQuestionsDb.AsNoTracking()
       //  .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x => x.LikesCount)

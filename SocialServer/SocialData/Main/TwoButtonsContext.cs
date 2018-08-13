@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using CommonLibraries.Entities.Main;
+using Microsoft.EntityFrameworkCore;
 using SocialData.Main.Entities;
 using SocialData.Main.Entities.Followers;
 using SocialData.Main.Entities.Recommended;
@@ -18,6 +20,10 @@ namespace SocialData.Main
     public virtual DbSet<RecommendedFromFollowsDb> RecommendedFromFollowsDb { get; set; }
     public virtual DbSet<RecommendedFromFollowersDb> RecommendedFromFollowersDb { get; set; }
     public virtual DbSet<RecommendedFromUsersIdDb> RecommendedFromUsersIdsDb { get; set; }
+
+    public virtual DbSet<UserRelationshipEntity>  UserRelationshipEntities { get; set; }
+    public virtual DbSet<StatisticsEntity> StatisticsEntities { get; set; }
+    public virtual DbSet<UserInfoEntity> UserInfoEntities { get; set; }
 
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)
     {

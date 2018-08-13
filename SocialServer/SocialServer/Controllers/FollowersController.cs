@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using CommonLibraries.ConnectionServices;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.MediaFolders;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
@@ -62,7 +63,17 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (!await SocialDb.Followers.AddFollow(vm.UserId, vm.FollowingId))
+
+      var follower = new FollowingEntity
+      {
+        FollowedDate = DateTime.UtcNow,
+        UserId = vm.UserId,
+        FollowingId = vm.FollowingId,
+        IsDeleted = false,
+        VisitsCount = 1
+      };
+
+      if (!await SocialDb.Followers.AddFollow(follower))
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not connect you to this user.",
           new { IsFollowed = false });
       await Hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowingId, DateTime.UtcNow);
