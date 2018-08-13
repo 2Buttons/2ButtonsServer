@@ -1,4 +1,5 @@
-﻿using AccountData.Main.Queries;
+﻿using AccountData.DTO;
+using AccountData.Main.Queries;
 using AccountServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
 using CommonLibraries.Extensions;
@@ -9,7 +10,7 @@ namespace AccountServer.ViewModels
   public static class MappingUserDbToViewModel
   {
     public static UserInfoViewModel MapToUserInfoViewModel(
-      this UserInfoDb dbEntity, MediaConverter mediaConverter)
+      this UserInfoDto dbEntity, MediaConverter mediaConverter)
     {
       var viewModel = new UserInfoViewModel
       {
@@ -27,7 +28,7 @@ namespace AccountServer.ViewModels
         AskedQuestionsCount = dbEntity.AskedQuestionsCount,
         AnswersCount = dbEntity.AnswersCount,
         FollowersCount = dbEntity.FollowersCount,
-        FollowedCount = dbEntity.FollowedCount,
+        FollowedCount = dbEntity.FollowingsCount,
         FavoritesCount = dbEntity.FavoritesCount,
         CommentsCount = dbEntity.CommentsCount,
       };

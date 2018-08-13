@@ -23,13 +23,50 @@ namespace AccountData.Main.Repositories
       return user?.OriginalAvatarUrl;
     }
 
-    public async Task<UserInfoDb> FindUserInfoAsync(int userId, int userPageId)
+    public async Task<UserInfoDto> FindUserInfoAsync(int userId, int userPageId)
     {
-      var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
-        .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
-      if (userId != userPageId && user.IsYouFollowed) await UpdateVisitsAsync(userId, userPageId);
-      return user;
+      var user = await _db.UserInfoEntities.Where(x => x.UserId == userPageId).Join(_db.StatisticsEntities,
+        x => x.UserId, y => y.UserId, (x, y) => new { UserInfo = x, Statistic = y }).FirstOrDefaultAsync();
+
+      var result = new UserInfoDto
+      {
+        UserId = userPageId,
+        Login = user.UserInfo.Login,
+        BirthDate = user.UserInfo.BirthDate,
+        SexType = user.UserInfo.SexType,
+        City = (await _db.CityEntities.FirstOrDefaultAsync(x => x.CityId == user.UserInfo.CityId)).Name,
+        Description = user.UserInfo.Description,
+        OriginalAvatarUrl = user.UserInfo.OriginalAvatarUrl,
+
+        AskedQuestionsCount = user.Statistic.AskedQuestions,
+        AnswersCount = user.Statistic.AnsweredQuestions,
+        FollowersCount = user.Statistic.Followers,
+        FollowingsCount = user.Statistic.Followings,
+        FavoritesCount = user.Statistic.FavoriteQuestions,
+        CommentsCount = user.Statistic.CommentsWritten,
+
+        IsHeFollowed = false,
+        IsYouFollowed = false
+      };
+
+      if (userId == userPageId) return result;
+      {
+        await UpdateVisitsAsync(userId, userPageId);
+        result.IsHeFollowed =
+          _db.UserRelationshipEntities.Any(x => x.UserId == userId && x.StaredUserId == userPageId && x.IsFollowing);
+        result.IsYouFollowed =
+          _db.UserRelationshipEntities.Any(x => x.UserId == userPageId && x.StaredUserId == userId && x.IsFollowing);
+      }
+      return result;
     }
+
+    //public async Task<UserInfoDb> FindUserInfoAsync(int userId, int userPageId)
+    //{
+    //  var user = await _db.UserInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserInfo({userId}, {userPageId})")
+    //    .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
+    //  if (userId != userPageId && user.IsYouFollowed) await UpdateVisitsAsync(userId, userPageId);
+    //  return user;
+    //}
 
     public async Task<UserInfoEntity> FindUserInfo(int userId)
     {
