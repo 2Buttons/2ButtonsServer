@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QuestionsData;
-using QuestionsData.Entities;
 using QuestionsServer.ViewModels.InputParameters.ControllersViewModels;
 
 namespace QuestionsServer.Controllers

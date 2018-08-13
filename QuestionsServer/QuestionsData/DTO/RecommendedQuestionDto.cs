@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using QuestionsData.Entities;
 using QuestionsData.Queries;
 
 namespace QuestionsData.DTO

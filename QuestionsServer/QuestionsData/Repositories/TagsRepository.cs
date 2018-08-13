@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibraries.Entities.Main;
 using Microsoft.EntityFrameworkCore;
-using QuestionsData.Entities;
 using QuestionsData.Queries;
 
 namespace QuestionsData.Repositories

@@ -7,7 +7,6 @@ using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.DTO;
 using QuestionsData.DTO.NewsQuestions;
-using QuestionsData.Entities;
 using QuestionsData.Queries;
 using QuestionsData.Queries.UserQuestions;
 
@@ -117,114 +116,101 @@ namespace QuestionsData.Repositories
     }
 
 
-    public async Task<List<QuestionDto>> GeTopQuestionsMod(int userId, bool isOnlyNew, int offset, int count,
-      DateTime topAfterDate)
-    {
+    //public async Task<List<QuestionDto>> GeTopQuestionsMod(int userId, bool isOnlyNew, int offset, int count,
+    //  DateTime topAfterDate)
+    //{
 
-      var topQuestion = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
-         .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
-         .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
-           (q, o) => new { Question = q, Options = o }).OrderByDescending(x => x.Question.Question.LikesCount);
+    //  var topQuestion = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
+    //     .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
+    //     .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
+    //       (q, o) => new { Question = q, Options = o }).OrderByDescending(x => x.Question.Question.LikesCount);
 
-      var result = topQuestion
-        .Join(
-          _db.AnswerEntities.DefaultIfEmpty()
-            .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
-          x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new {Question = x, UserFeeling = y})
-        .GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
-          x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new {Question = x, Favourite = y})
-        .Select(x => new QuestionDto
-        {
-          QuestionId = x.Question.Question.Question.Question.QuestionId,
-          CommentsCount = 0, //TODO TODO
-          Condition = x.Question.Question.Question.Question.Condition,
-          DislikesCount = x.Question.Question.Question.Question.DislikesCount,
-          LikesCount = x.Question.Question.Question.Question.LikesCount,
-          IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
-          IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
-          Author =
-            new AuthorDto
-            {
-              Login = x.Question.Question.Question.Author.Login,
-              UserId = x.Question.Question.Question.Question.UserId,
-              SexType = x.Question.Question.Question.Author.SexType,
-              OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
-            },
-          OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
-          Options =
-            x.Question.Question.Options.Select(y => new OptionDto {Text = y.Text, Voters = y.AnswersCount}).ToList(),
-          QuestionType = x.Question.Question.Question.Question.QuestionType,
-          YourAnswerType = x.Question.UserFeeling.AnswerType,
-          YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
-        }).Skip(offset).Take(count).ToList();
-
-
-      //.Join(
-      //  _db.AnswerEntities.DefaultIfEmpty()
-      //    .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
-      //  x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
-      //.GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
-      //  x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
-      //).OrderByDescending(x => x.LikesCount).ToList();
+    //  var result = topQuestion
+    //    .Join(
+    //      _db.AnswerEntities.DefaultIfEmpty()
+    //        .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
+    //      x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new {Question = x, UserFeeling = y})
+    //    .GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
+    //      x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new {Question = x, Favourite = y})
+    //    .Select(x => new QuestionDto
+    //    {
+    //      QuestionId = x.Question.Question.Question.Question.QuestionId,
+    //      CommentsCount = 0, //TODO TODO
+    //      Condition = x.Question.Question.Question.Question.Condition,
+    //      DislikesCount = x.Question.Question.Question.Question.DislikesCount,
+    //      LikesCount = x.Question.Question.Question.Question.LikesCount,
+    //      IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
+    //      IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
+    //      Author =
+    //        new AuthorDto
+    //        {
+    //          Login = x.Question.Question.Question.Author.Login,
+    //          UserId = x.Question.Question.Question.Question.UserId,
+    //          SexType = x.Question.Question.Question.Author.SexType,
+    //          OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
+    //        },
+    //      OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
+    //      Options =
+    //        x.Question.Question.Options.Select(y => new OptionDto {Text = y.Text, Voters = y.AnswersCount}).ToList(),
+    //      QuestionType = x.Question.Question.Question.Question.QuestionType,
+    //      YourAnswerType = x.Question.UserFeeling.AnswerType,
+    //      YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
+    //    }).Skip(offset).Take(count).ToList();
 
 
-      //var result = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
-      //  .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
-      //  .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
-      //    (q, o) => new { Question = q, Options = o }).Skip(offset).Take(count).OrderByDescending(x => x.LikesCount).ToList()
-      //  .Join(
-      //    _db.AnswerEntities.DefaultIfEmpty()
-      //      .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
-      //    x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
-      //  .GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
-      //    x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
-      //  .Select(x => new QuestionDto
-      //  {
-      //    QuestionId = x.Question.Question.Question.Question.QuestionId,
-      //    CommentsCount = 0, //TODO TODO
-      //    Condition = x.Question.Question.Question.Question.Condition,
-      //    DislikesCount = x.Question.Question.Question.Question.DislikesCount,
-      //    LikesCount = x.Question.Question.Question.Question.LikesCount,
-      //    IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
-      //    IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
-      //    Login = x.Question.Question.Question.Author.Login,
-      //    UserId = x.Question.Question.Question.Question.UserId,
-      //    Options =
-      //      x.Question.Question.Options.Select(y => new OptionDto { Text = y.Text, Voters = y.AnswersCount }).ToList(),
-      //    OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
-      //    QuestionType = x.Question.Question.Question.Question.QuestionType,
-      //    SexType = x.Question.Question.Question.Author.SexType,
-      //    OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
-      //    YourAnswerType = x.Question.UserFeeling.AnswerType,
-      //    YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
-      //  }).OrderByDescending(x => x.LikesCount).ToList();
+    //  //.Join(
+    //  //  _db.AnswerEntities.DefaultIfEmpty()
+    //  //    .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
+    //  //  x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
+    //  //.GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
+    //  //  x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
+    //  //).OrderByDescending(x => x.LikesCount).ToList();
 
 
-      return result;
+    //  //var result = _db.QuestionEntities.Where(q => q.AddedDate > topAfterDate && !q.IsDeleted)
+    //  //  .Join(_db.UserEntities, x => x.UserId, y => y.UserId, (x, y) => new { Question = x, Author = y })
+    //  //  .GroupJoin(_db.OptionEntities, q => q.Question.QuestionId, o => o.QuestionId,
+    //  //    (q, o) => new { Question = q, Options = o }).Skip(offset).Take(count).OrderByDescending(x => x.LikesCount).ToList()
+    //  //  .Join(
+    //  //    _db.AnswerEntities.DefaultIfEmpty()
+    //  //      .Where(x => x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)),
+    //  //    x => x.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, UserFeeling = y })
+    //  //  .GroupJoin(_db.FavoriteEntities.Where(x => x.UserId == userId && !x.IsDeleted.Value),
+    //  //    x => x.Question.Question.Question.QuestionId, y => y.QuestionId, (x, y) => new { Question = x, Favourite = y })
+    //  //  .Select(x => new QuestionDto
+    //  //  {
+    //  //    QuestionId = x.Question.Question.Question.Question.QuestionId,
+    //  //    CommentsCount = 0, //TODO TODO
+    //  //    Condition = x.Question.Question.Question.Question.Condition,
+    //  //    DislikesCount = x.Question.Question.Question.Question.DislikesCount,
+    //  //    LikesCount = x.Question.Question.Question.Question.LikesCount,
+    //  //    IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
+    //  //    IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
+    //  //    Login = x.Question.Question.Question.Author.Login,
+    //  //    UserId = x.Question.Question.Question.Question.UserId,
+    //  //    Options =
+    //  //      x.Question.Question.Options.Select(y => new OptionDto { Text = y.Text, Voters = y.AnswersCount }).ToList(),
+    //  //    OriginalBackgroundUrl = x.Question.Question.Question.Question.OriginalBackgroundUrl,
+    //  //    QuestionType = x.Question.Question.Question.Question.QuestionType,
+    //  //    SexType = x.Question.Question.Question.Author.SexType,
+    //  //    OriginalAvatarUrl = x.Question.Question.Question.Author.OriginalAvatarUrl,
+    //  //    YourAnswerType = x.Question.UserFeeling.AnswerType,
+    //  //    YourFeedbackType = x.Question.UserFeeling.IsLiked ? QuestionFeedbackType.Like : QuestionFeedbackType.Neutral
+    //  //  }).OrderByDescending(x => x.LikesCount).ToList();
 
-      //return await _db.TopQuestionsDb.AsNoTracking()
-      //  .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x => x.LikesCount)
-      //  .Skip(offset).Take(count).ToListAsync();
-    }
+
+    //  return result;
+
+    //  //return await _db.TopQuestionsDb.AsNoTracking()
+    //  //  .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x => x.LikesCount)
+    //  //  .Skip(offset).Take(count).ToListAsync();
+    //}
 
 
 
     public async Task<List<TopQuestionDb>> GeTopQuestions(int userId, bool isOnlyNew, int offset, int count,
       DateTime topAfterDate)
     {
-
-      //_db.QuestionEntities.Where(q=>q.AddedDate > topAfterDate && !q.IsDeleted)
-      //  .Join(_db.UserEntities, x=>x.UserId, y=>y.UserId, (x,y)=> new { Question = x, Author = y })
-      //  .GroupJoin(_db.OptionEntities, q=>q.Question.QuestionId, o=>o.QuestionId,(q,o)=> new { Question = q, Options = o})
-
-      //  .Skip(offset).Take(count)
-
-      //  .Join(_db.AnswerEntities.DefaultIfEmpty().Where(x=>x.UserId == userId && (!isOnlyNew || x.AnswerType != AnswerType.NoAnswer)), x=>x.Question.Question.QuestionId, y=>y.QuestionId, (x,y)=> new {Question = x, UserFeeling = y})
-
-      //  .GroupJoin(_db.FavoriteEntities.Where(x=>x.UserId == userId && !x.IsDeleted.Value), x=>x.Question.Question.Question.QuestionId, y=>y.QuestionId, (x,y)=>new {Question = x, Favourite = y })
-      //  .Select(x=>
-      //  new Top
-      //  )
 
       return await _db.TopQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x => x.LikesCount)

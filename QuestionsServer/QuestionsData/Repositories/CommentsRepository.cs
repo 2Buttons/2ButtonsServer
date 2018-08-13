@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommonLibraries;
 using Microsoft.EntityFrameworkCore;
-using QuestionsData.Entities;
 using QuestionsData.Queries;
 
 namespace QuestionsData.Repositories
@@ -28,12 +27,12 @@ namespace QuestionsData.Repositories
 
        await _db.Database.ExecuteSqlCommandAsync(
         $"addComment {userId}, {questionId}, {comment}, {previousCommentId}, {commentedTime}, {commentedId} OUT");
-      var queetion = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
+      //var queetion = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
   
-      var userStat = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
-      queetion.CommentsCount++;
-      userStat.CommentsWritten++;
-      await _db.SaveChangesAsync();
+      //var userStat = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
+      //queetion.CommentsCount++;
+      //userStat.CommentsWritten++;
+      //await _db.SaveChangesAsync();
       return (int) commentedId.Value;
     }
 

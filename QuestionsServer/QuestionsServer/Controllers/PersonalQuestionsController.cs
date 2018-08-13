@@ -164,7 +164,7 @@ namespace QuestionsServer.Controllers
         ? DateTime.MinValue
         : DateTime.Now.AddSeconds(-questions.DeltaUnixTime);
 
-      var topQuestions = await MainDb.UserQuestions.GeTopQuestionsMod(questions.UserId, questions.IsOnlyNew,
+      var topQuestions = await MainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
         questions.PageParams.Offset, questions.PageParams.Count, dateTime);
 
       //var topQuestions = await _mainDb.UserQuestions.GeTopQuestions(questions.UserId, questions.IsOnlyNew,
@@ -176,7 +176,7 @@ namespace QuestionsServer.Controllers
       {
         GetTagsAndPhotos(questions.UserId, question.QuestionId, out var tags, out var firstPhotos,
           out var secondPhotos);
-        result.Add(question.MapToTopQuestionsViewModelMod(MediaConverter, tags, firstPhotos, secondPhotos,
+        result.Add(question.MapToTopQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos,
           questions.BackgroundSizeType));
       }
 

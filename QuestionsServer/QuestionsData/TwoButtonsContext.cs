@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using QuestionsData.Entities;
+﻿using CommonLibraries.Entities.Main;
+using Microsoft.EntityFrameworkCore;
 using QuestionsData.Queries;
 using QuestionsData.Queries.Moderators;
 using QuestionsData.Queries.NewsQuestions;
@@ -9,16 +9,16 @@ namespace QuestionsData
 {
   public class TwoButtonsContext : DbContext
   {
-    public virtual DbSet<UserEntity> UserEntities { get; set; }
+    public virtual DbSet<UserInfoEntity> UserEntities { get; set; }
     public virtual DbSet<CityEntity> CityEntities { get; set; }
     public virtual DbSet<AnswerEntity> AnswerEntities { get; set; }
-    public virtual DbSet<FavoriteEntity>  FavoriteEntities { get; set; }
     public virtual DbSet<QuestionEntity> QuestionEntities { get; set; }
     public virtual DbSet<OptionEntity> OptionEntities { get; set; }
-    public virtual DbSet<FollowEntity> FollowEntities { get; set; }
+    public virtual DbSet<UserRelationshipEntity> UserRelationshipEntities { get; set; }
     public virtual DbSet<QuestionTagEntity> QuestionTagEntities { get; set; }
     public virtual DbSet<TagEntity> TagEntities { get; set; }
     public virtual DbSet<RecommendedQuestionEntity> RecommendedQuestionEntities { get; set; }
+    public virtual DbSet<StatisticsEntity> StatisticsEntities { get; set; }
 
     //for functions and procedures
     public virtual DbQuery<QuestionDb> QuestionDb { get; set; }

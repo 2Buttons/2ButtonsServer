@@ -6,11 +6,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CommonLibraries;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.Extensions;
 using Microsoft.EntityFrameworkCore;
 using QuestionsData.DTO;
-using QuestionsData.Entities;
 using QuestionsData.Queries;
 
 namespace QuestionsData.Repositories
@@ -47,7 +47,7 @@ namespace QuestionsData.Repositories
    
       var minDate = minAge.WhenBorned();
       var maxDate = maxAge.WhenBorned();
-      Expression<Func<Tuple<UserEntity, AnswerEntity>, bool>> predicate =
+      Expression<Func<Tuple<UserInfoEntity, AnswerEntity>, bool>> predicate =
         x => x.Item1.BirthDate <= minDate && x.Item1.BirthDate >= maxDate &&
              (sexType == SexType.Both || x.Item1.SexType == sexType) && (cityId <= 0 || x.Item1.CityId == cityId);
 
@@ -55,12 +55,12 @@ namespace QuestionsData.Repositories
         throw new NotFoundException("We do not have this question");
 
       var questions = _db.AnswerEntities.Where(x => x.QuestionId == questionId).Join(_db.UserEntities, a => a.UserId,
-        u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a)).Where(predicate);
+        u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a)).Where(predicate);
       var votersCount = await questions.GroupBy(x=>x.Item2.AnswerType).Select(x=> new {Type = x.Key, Count = x.Count()}).ToListAsync();
 
-      var friendIds = _db.FollowEntities.Where(x => x.FollowerId == userId )
-        .Join(_db.FollowEntities, x => x.FollowingId, y => y.FollowerId,
-          (x, y) => new {UserId = x.FollowerId, FollowingId = x.FollowingId, FollowingToMeId = y.FollowingId})
+      var friendIds = _db.UserRelationshipEntities.Where(x => x.UserId == userId )
+        .Join(_db.UserRelationshipEntities, x => x.StaredUserId, y => y.UserId,
+          (x, y) => new {UserId = x.UserId, FollowingId = x.StaredUserId, FollowingToMeId = y.StaredUserId})
         .Where(x=>x.UserId == x.FollowingToMeId).Select(x => x.FollowingId)
         .ToList();
 
@@ -100,7 +100,7 @@ namespace QuestionsData.Repositories
       var minDate = minAge.WhenBorned();
       var maxDate = maxAge.WhenBorned();
 
-      Expression<Func<Tuple<UserEntity, AnswerEntity>, bool>> predicate =
+      Expression<Func<Tuple<UserInfoEntity, AnswerEntity>, bool>> predicate =
         x => x.Item1.BirthDate <= minDate && x.Item1.BirthDate >= maxDate &&
              (sexType == SexType.Both || x.Item1.SexType == sexType) && (cityId <= 0 || x.Item1.CityId == cityId);
 
@@ -108,8 +108,9 @@ namespace QuestionsData.Repositories
         throw new NotFoundException("We do not have this question");
 
       var voters = await _db.AnswerEntities.Where(x => x.QuestionId == questionId)
-        .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserEntity, AnswerEntity>(u, a))
-        .Where(predicate).Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowEntities.Any(x=>x.FollowerId== userId && x.FollowingId == f.Item1.UserId), isHeFollowed  = _db.FollowEntities.Any(x => x.FollowerId == f.Item1.UserId && x.FollowingId == userId) })
+        .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a))
+        .Where(predicate)
+        .Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.UserRelationshipEntities.Any(x=>x.UserId== userId && x.StaredUserId == f.Item1.UserId), isHeFollowed  = _db.UserRelationshipEntities.Any(x => x.UserId == f.Item1.UserId && x.StaredUserId == userId) })
         .OrderByDescending(x=>x.f.Item2.AnsweredDate).Skip(offset).Take(count).ToListAsync();
 
       var firstUsers = new List<VoterUserDto>();

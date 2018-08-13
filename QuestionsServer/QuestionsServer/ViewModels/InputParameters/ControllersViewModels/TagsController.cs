@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using QuestionsData.Entities;
 
 namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 {
