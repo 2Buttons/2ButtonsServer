@@ -22,9 +22,8 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
 
     private string GetInsertionQuestionLine(QuestionQuery question)
     {
-      var isAnonymous = question.IsAnonymous ? 1 : 0;
       return
-        $"EXECUTE [dbo].[addQuestionWithId] {question.QuestionId}, {question.UserId},  N'{question.Condition}',  N'{question.OriginalBackgroundUrl}', {isAnonymous}, {(int)question.AudienceType}, {(int)question.QuestionType}, N'{question.FirstOption}', N'{question.SecondOption}', '{question.AddedDate:u}'";
+        $"EXECUTE [dbo].[addQuestionWithId] {question.QuestionId}, {question.UserId},  N'{question.Condition}',  N'{question.OriginalBackgroundUrl}', {(int)question.AudienceType}, {(int)question.QuestionType}, N'{question.FirstOption}', N'{question.SecondOption}', '{question.AddedDate:u}'";
     }
 
     private string GetInsertionQuestionsLine(IList<QuestionQuery> questions)

@@ -49,9 +49,12 @@ namespace DataGenerator
       manager.DistributeQuestionOwners(users, questions);
 
       var cityQueries = manager.CreateMainCities(mainCities);
+
       var answerQueries = manager.CreateAnswers(users, questions);
       var questionFeedbacksQueries = manager.CreateFeedbacks(users, questions);
+
       var followerQueries = manager.CreateFollowers(users);
+
       var tagQueries = manager.CreateTags(questions);
       var userQueries = manager.CreateUsers(users);
       var questionQueries = manager.CreateQuestions(questions);

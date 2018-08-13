@@ -10,7 +10,6 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.Queries
     public string Condition { get; set; }
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }
-    public bool IsAnonymous { get; set; }
     public AudienceType AudienceType { get; set; }
     public QuestionType QuestionType { get; set; }
     public string OriginalBackgroundUrl { get; set; }

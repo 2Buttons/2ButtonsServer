@@ -9,6 +9,8 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion.Entities
     public int QuestionId { get; set; }
     public AnswerType AnswerType { get; set; }
     public bool IsLiked { get; set; }
-    public DateTime AnswerDate { get; set; }
+    public bool IsFavorite { get; set; }
+    public bool IsSaved { get; set; }
+    public DateTime AnsweredDate { get; set; }
   }
 }

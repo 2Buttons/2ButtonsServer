@@ -54,7 +54,7 @@ namespace DataGenerator
     }
 
     public void CreateScripts(List<CityQuery> mainCities, List<UserInfoQuery> userInfos, List<UserQuery> users,
-      List<FollowEntity> followers, List<QuestionQuery> questions, List<TagQuery> tags, List<AnswerEntity> answerEntities
+      List<FollowingEntity> followers, List<QuestionQuery> questions, List<TagQuery> tags, List<AnswerEntity> answerEntities
       //List<AnswerQuery> answers,
       //List<QuestionFeedbackQuery> questionFeedbacks
       )
@@ -125,7 +125,7 @@ namespace DataGenerator
       {
         answerEntities.Add(new AnswerEntity
         {
-          AnswerDate = answer.AnsweredDate,
+          AnsweredDate = answer.AnsweredDate,
           AnswerType = answer.AnswerType,
           IsLiked = false,
           QuestionId = answer.QuestionId,
@@ -143,7 +143,7 @@ namespace DataGenerator
         else
           answerEntities.Add(new AnswerEntity
           {
-            AnswerDate = RandomDay(),
+            AnsweredDate = RandomDay(),
             AnswerType = AnswerType.NoAnswer,
             IsLiked = false,
             QuestionId = feedback.QuestionId,
@@ -204,17 +204,17 @@ namespace DataGenerator
       return answers;
     }
 
-    public List<FollowEntity> CreateFollowersEntities(List<FollowerQuery> followerQueries)
+    public List<FollowingEntity> CreateFollowersEntities(List<UserRelationshipQuery> followerQueries)
     {
-      var result = new List<FollowEntity>();
+      var result = new List<FollowingEntity>();
       foreach (var followerQuery in followerQueries)
       {
-        result.Add(new FollowEntity
+        result.Add(new FollowingEntity
         {
-          FollowedDate = followerQuery.FollowedDate,
-          FollowingId = followerQuery.FollowingId,
-          FollowerId = followerQuery.FollowerId,
-          VisitsCount = 0
+          FollowingDate = followerQuery.FollowingDate,
+          FollowingId = followerQuery.StaredUserId,
+          UserId = followerQuery.UserId,
+          VisitsCount = _random.Next(100)
         });
       }
       return result;
@@ -251,7 +251,6 @@ namespace DataGenerator
           AudienceType = question.AudienceType,
           Condition = question.Condition,
           FirstOption = question.FirstOption,
-          IsAnonymous = question.IsAnonymous,
           OriginalBackgroundUrl = question.BackgroundUrl,
           QuestionId = question.QuestionId,
           QuestionType = question.QuestionType,
@@ -283,9 +282,9 @@ namespace DataGenerator
       return feedbacks;
     }
 
-    public List<FollowerQuery> CreateFollowers(List<User> users)
+    public List<UserRelationshipQuery> CreateFollowers(List<User> users)
     {
-      var followers = new List<FollowerQuery>();
+      var followers = new List<UserRelationshipQuery>();
 
       foreach (var t in users)
       {
@@ -293,23 +292,23 @@ namespace DataGenerator
         for (var i = 0; i < followersCount; i++)
         {
           var following = users[_random.Next(users.Count)];
-          if (followers.Any(x => x.FollowerId == t.UserId && x.FollowingId == following.UserId))
+          if (followers.Any(x => x.UserId == t.UserId && x.StaredUserId == following.UserId))
           {
             i = i - 1;
             continue;
           }
 
-          followers.Add(new FollowerQuery
+          followers.Add(new UserRelationshipQuery
           {
-            FollowerId = t.UserId,
-            FollowingId = following.UserId,
-            FollowedDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
+            UserId = t.UserId,
+            StaredUserId = following.UserId,
+            FollowingDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
           });
-          followers.Add(new FollowerQuery
+          followers.Add(new UserRelationshipQuery
           {
-            FollowerId = following.UserId,
-            FollowingId = t.UserId,
-            FollowedDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
+            UserId = following.UserId,
+            StaredUserId = t.UserId,
+            FollowingDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
           });
         }
       }

@@ -2,10 +2,10 @@
 
 namespace DataGenerator.ScriptsGenerators.FunctionInsertion.Queries
 {
-  public class FollowerQuery
+  public class UserRelationshipQuery
   {
-    public int FollowerId { get; set; }
-    public int FollowingId { get; set; }
-    public DateTime FollowedDate { get; set; }
+    public int UserId { get; set; }
+    public int StaredUserId { get; set; }
+    public DateTime FollowingDate { get; set; }
   }
 }

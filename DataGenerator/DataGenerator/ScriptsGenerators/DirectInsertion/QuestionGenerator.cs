@@ -29,8 +29,8 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
     private string GetInsertInit()
     {
       return
-        "INSERT INTO [dbo].[Questions] ([questionID], [userID], [condition], [IsAnonymous], [AudienceType], [QuestionType][QuestionType]," +
-        " [QuestionType], [LikesCount], [DislikesCount], [AddedDate], [IsDeleted]) VALUES" + Environment.NewLine;
+        "INSERT INTO [dbo].[Questions] ([questionID], [userID], [condition], [AudienceType], [QuestionType]," +
+        " [QuestionType], [LikesCount], [DislikesCount], [CommentsCount], [AddedDate], [IsDeleted]) VALUES" + Environment.NewLine;
     }
 
     private string GetUpdatingInit()
@@ -40,9 +40,8 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
 
     private string GetInsertionQuestionLine(QuestionEntity question)
     {
-      var anonymyty = question.IsAnonimoty ? 1 : 0;
       return
-        $"({question.QuestionId}, {question.UserId}, N'{question.Condition}', {anonymyty}, {(int) question.AudienceType}, {(int) question.QuestionType}, N'{question.OriginalBackgroundUrl}', {question.LikesCount}, {question.DislikesCount}, '{question.QuestionAddDate:u}', {0})";
+        $"({question.QuestionId}, {question.UserId}, N'{question.Condition}',  {(int) question.AudienceType}, {(int) question.QuestionType}, N'{question.OriginalBackgroundUrl}', {question.LikesCount}, {question.DislikesCount}, {question.CommentsCount}, '{question.QuestionAddDate:u}', {0})";
     }
 
     private string GetInsertionQuestionsLine(IList<QuestionEntity> questions)
