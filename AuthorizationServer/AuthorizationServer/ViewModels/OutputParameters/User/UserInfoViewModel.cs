@@ -1,4 +1,5 @@
 ﻿using System;
+using AuthorizationData.Main.Dto;
 using AuthorizationData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.MediaFolders;
@@ -36,7 +37,7 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
     //public UserStatisticsViewModel UserStatistics { get; set; } = new UserStatisticsViewModel();
     //public List<UserContactsViewModel> Social { get; set; } = new List<UserContactsViewModel>();
 
-    public static UserInfoViewModel CreateFromUserInfoDb(UserInfoDb userInfo, MediaConverter mediaConverter)
+    public static UserInfoViewModel CreateFromUserInfoDb(UserInfoDto userInfo, MediaConverter mediaConverter)
     {
       return new UserInfoViewModel
       {

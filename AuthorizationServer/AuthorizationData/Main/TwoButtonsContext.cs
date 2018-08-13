@@ -9,6 +9,7 @@ namespace AuthorizationData.Main
 
     public DbSet<UserInfoDb> UsersInfoDb { get; set; }
     public DbSet<UserInfoEntity> UserInfoEntities { get; set; }
+    public DbSet<CityEntity>  CityEntities { get; set; }
     public DbSet<StatisticsEntity> StatisticsEntities { get; set; }
 
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)

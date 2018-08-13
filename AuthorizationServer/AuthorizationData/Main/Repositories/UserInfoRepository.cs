@@ -2,7 +2,9 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using AuthorizationData.Main.Dto;
 using AuthorizationData.Main.Entities;
+using CommonLibraries.Entities.Main;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthorizationData.Main.Repositories
@@ -27,14 +29,42 @@ namespace AuthorizationData.Main.Repositories
       return await _contextMain.Database.ExecuteSqlCommandAsync($"addUser {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginalAvatarUrl}, {returnsCode} OUT") > 0;
     }
 
-    public async Task<bool> UpdateUserInfoAsync(UserInfoDb user)
+    public async Task<bool> UpdateUserInfoAsync(UserInfoEntity user)
     {
-      return await _contextMain.Database.ExecuteSqlCommandAsync( $"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginalAvatarUrl}") > 0;
+      var userChanged = await _contextMain.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+      if (userChanged == null) return false;
+
+      userChanged.Login = user.Login;
+      userChanged.BirthDate = user.BirthDate;
+      userChanged.SexType = user.SexType;
+      userChanged.Description = user.Description;
+      userChanged.OriginalAvatarUrl = user.OriginalAvatarUrl;
+
+      return
+        await _contextMain.SaveChangesAsync() >
+        0; //_contextMain.Database.ExecuteSqlCommandAsync( $"updateUserTableData {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginalAvatarUrl}") > 0;
     }
 
-    public async Task<UserInfoDb> GetUserInfoAsync(int userId)
+    public async Task<UserInfoEntity> GetUserInfoAsync(int userId)
     {
-     return await _contextMain.UsersInfoDb.AsNoTracking().FromSql($"select * from dbo.getUserTableData({userId})").FirstOrDefaultAsync();
+     return await _contextMain.UserInfoEntities.FirstOrDefaultAsync(x=>x.UserId == userId);
+    }
+
+    public async Task<UserInfoDto> GetUserInfoWithCityAsync(int userId)
+    {
+      var user =  await _contextMain.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == userId);
+      var city = await _contextMain.CityEntities.FirstOrDefaultAsync(x => x.CityId == user.CityId);
+      var result = new UserInfoDto
+      {
+        UserId = user.UserId,
+        Login = user.Login,
+        BirthDate = user.BirthDate,
+        City = city.Name,
+        Description = user.Description,
+        OriginalAvatarUrl = user.OriginalAvatarUrl,
+        SexType = user.SexType
+      };
+      return result;
     }
   }
 }

@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using AuthorizationData;
 using AuthorizationData.Account.DTO;
 using AuthorizationData.Account.Entities;
+using AuthorizationData.Main.Dto;
 using AuthorizationData.Main.Entities;
 using AuthorizationServer.Infrastructure.Jwt;
 using AuthorizationServer.Models;
 using AuthorizationServer.ViewModels.OutputParameters;
 using AuthorizationServer.ViewModels.OutputParameters.User;
 using CommonLibraries;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.MediaFolders;
 using Microsoft.Extensions.Logging;
 
@@ -44,7 +46,7 @@ namespace AuthorizationServer.Infrastructure.Services
     public async Task<LoginPairViewModel> Login(UserDto user)
     {
       var token = await GetAccessTokenAsync(user);
-      var userInfo = user.RoleType == RoleType.Guest? new UserInfoDb() :  await GetUserInfo(user.UserId);
+      var userInfo = user.RoleType == RoleType.Guest? new UserInfoDto() :  await  Db.UsersInfo.GetUserInfoWithCityAsync(user.UserId);
       return new LoginPairViewModel { Token = token, User = UserInfoViewModel.CreateFromUserInfoDb(userInfo, MediaConverter)};
     }
 
@@ -164,13 +166,7 @@ namespace AuthorizationServer.Infrastructure.Services
       //}
     }
 
-    public async Task<UserInfoDb> GetUserInfo(int userId)
-    {
-      Logger.LogInformation($"{nameof(CommonAuthService)}.{nameof(GetUserInfo)}.Start");
-      var result =  await Db.UsersInfo.GetUserInfoAsync(userId);
-      Logger.LogInformation($"{nameof(CommonAuthService)}.{nameof(GetUserInfo)}.End");
-      return result;
-    }
+ 
 
     public void Dispose()
     {

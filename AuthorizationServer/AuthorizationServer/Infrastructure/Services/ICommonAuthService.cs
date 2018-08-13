@@ -15,7 +15,6 @@ namespace AuthorizationServer.Infrastructure.Services
     Task<Token> GetRefreshTokenAsync(string refreshToken);
     Task<LoginPairViewModel> Login(UserDto user);
     Task<bool> IsUserIdValidAsync(int userId);
-    Task<UserInfoDb> GetUserInfo(int userId);
     bool IsValidToken(string token);
     Task<bool> LogOutAsync(int userId, string refreshToken);
   }
