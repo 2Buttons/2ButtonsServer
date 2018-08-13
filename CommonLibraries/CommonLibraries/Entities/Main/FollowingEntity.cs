@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CommonLibraries.Entities.Main
 {
-  [Table("UserRelationships")]
-  public class UserRelationshipEntity
+  [Table("Followings")]
+  public class FollowingEntity
   {
     [Key]
     public int UserId { get; set; }
-    public int StaredUserId { get; set; }
+    public int FollowingId { get; set; }
     public int VisitsCount { get; set; }
     public bool IsFollowing { get; set; }
     public DateTime FollowingDate { get; set; }

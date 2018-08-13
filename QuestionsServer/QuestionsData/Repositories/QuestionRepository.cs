@@ -58,9 +58,9 @@ namespace QuestionsData.Repositories
         u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a)).Where(predicate);
       var votersCount = await questions.GroupBy(x=>x.Item2.AnswerType).Select(x=> new {Type = x.Key, Count = x.Count()}).ToListAsync();
 
-      var friendIds = _db.UserRelationshipEntities.Where(x => x.UserId == userId )
-        .Join(_db.UserRelationshipEntities, x => x.StaredUserId, y => y.UserId,
-          (x, y) => new {UserId = x.UserId, FollowingId = x.StaredUserId, FollowingToMeId = y.StaredUserId})
+      var friendIds = _db.FollowingEntities.Where(x => x.UserId == userId )
+        .Join(_db.FollowingEntities, x => x.FollowingId, y => y.UserId,
+          (x, y) => new {UserId = x.UserId, FollowingId = x.FollowingId, FollowingToMeId = y.FollowingId })
         .Where(x=>x.UserId == x.FollowingToMeId).Select(x => x.FollowingId)
         .ToList();
 
@@ -110,7 +110,7 @@ namespace QuestionsData.Repositories
       var voters = await _db.AnswerEntities.Where(x => x.QuestionId == questionId)
         .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a))
         .Where(predicate)
-        .Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.UserRelationshipEntities.Any(x=>x.UserId== userId && x.StaredUserId == f.Item1.UserId), isHeFollowed  = _db.UserRelationshipEntities.Any(x => x.UserId == f.Item1.UserId && x.StaredUserId == userId) })
+        .Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowingEntities.Any(x=>x.UserId== userId && x.FollowingId == f.Item1.UserId), isHeFollowed  = _db.FollowingEntities.Any(x => x.UserId == f.Item1.UserId && x.FollowingId == userId) })
         .OrderByDescending(x=>x.f.Item2.AnsweredDate).Skip(offset).Take(count).ToListAsync();
 
       var firstUsers = new List<VoterUserDto>();
