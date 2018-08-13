@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SocialData;
+using SocialData.Main.DTO;
 using SocialData.Main.Entities.Recommended;
 using SocialServer.ViewModels.InputParameters;
 using SocialServer.ViewModels.OutputParameters;
@@ -60,7 +61,7 @@ namespace SocialServer.Infrastructure
 
       var followers = await SocialDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
       // return new BadResponseResult("Something goes wrong with followers.");
-      var sameFollows = await SocialDb.RecommendedPeople.GetRecommendedFromFollows(user.UserId, partOffset, partCount);
+      var sameFollows = await SocialDb.RecommendedPeople.GetRecommendedFromFollowings(user.UserId, partOffset, partCount);
       //return new BadResponseResult("Something goes wrong with follows as you ))) .");
 
       Parallel.ForEach(followers, x => { x.CommonFollowingsCount = (int)(x.CommonFollowingsCount * 1.5); });
@@ -71,12 +72,13 @@ namespace SocialServer.Infrastructure
 
       MakeFollowersAndFollowsTo(followers, sameFollows, out var followersOut, out var followsOut);
 
-      var result = new RecommendedUsers();
+      var result = new RecommendedUsers
+      {
+        SocialFriends = MakeSocialNetFriends(socialFriends, friendsCount),
 
-      result.SocialFriends = MakeSocialNetFriends(socialFriends, friendsCount);
-
-      result.Followers = followersOut.Take(followersCount / 2).ToList();
-      result.CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList();
+        Followers = followersOut.Take(followersCount / 2).ToList(),
+        CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList()
+      };
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.End");
       return result;
     }
@@ -110,7 +112,7 @@ namespace SocialServer.Infrastructure
     }
 
     private List<RecommendedUserViewModel> MakeSocialNetFriends(
-      IEnumerable<RecommendedFromUsersIdDb> recommendedStrangers, int count)
+      IEnumerable<RecommendedFromUsersIdDto> recommendedStrangers, int count)
     {
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeSocialNetFriends)}.Start");
       var result = new List<RecommendedUserViewModel>();
@@ -133,8 +135,8 @@ namespace SocialServer.Infrastructure
       return result;
     }
 
-    private void MakeFollowersAndFollowsTo(IEnumerable<RecommendedFromFollowersDb> recommendedFromFollowers,
-      IEnumerable<RecommendedFromFollowsDb> recommendedFromFollows,
+    private void MakeFollowersAndFollowsTo(IEnumerable<RecommendedFromFollowersDto> recommendedFromFollowers,
+      IEnumerable<RecommendedFromFollowingsDto> recommendedFromFollows,
       out List<RecommendedUserViewModel> followers, out List<RecommendedUserViewModel> follows)
     {
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.Start");

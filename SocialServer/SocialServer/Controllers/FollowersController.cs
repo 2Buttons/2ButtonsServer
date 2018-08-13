@@ -42,7 +42,7 @@ namespace SocialServer.Controllers
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var followers = await SocialDb.Followers.GetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
-        vm.PageParams.Count, vm.SearchedLogin);
+        vm.PageParams.Count);
       return new OkResponseResult(followers.MapToUserContactsViewModel(MediaConverter));
       // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -52,8 +52,8 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      var follower = await SocialDb.Followers.GetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
-        vm.PageParams.Count, vm.SearchedLogin);
+      var follower = await SocialDb.Followers.GetFollowings(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
+        vm.PageParams.Count);
       return new OkResponseResult(follower.MapToUserContactsViewModel(MediaConverter));
       // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
@@ -63,17 +63,7 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-
-      var follower = new FollowingEntity
-      {
-        FollowedDate = DateTime.UtcNow,
-        UserId = vm.UserId,
-        FollowingId = vm.FollowingId,
-        IsDeleted = false,
-        VisitsCount = 1
-      };
-
-      if (!await SocialDb.Followers.AddFollow(follower))
+      if (!await SocialDb.Followers.Follow(vm.UserId, vm.FollowingId))
         return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not connect you to this user.",
           new { IsFollowed = false });
       await Hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowingId, DateTime.UtcNow);
@@ -85,10 +75,65 @@ namespace SocialServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
-      if (await SocialDb.Followers.DeleteFollow(vm.UserId, vm.FollowingId))
+      if (await SocialDb.Followers.Unfollow(vm.UserId, vm.FollowingId))
         return new OkResponseResult("Now you unfollow", new { IsFollowed = false });
       return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not disconnect you to this user.",
         new { IsFollowed = true });
     }
+
+    //[HttpPost("followers")]
+    //public async Task<IActionResult> GetFollowers([FromBody] FollowerViewModel vm)
+    //{
+    //  if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+    //  var followers = await SocialDb.Followers.GetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
+    //    vm.PageParams.Count, vm.SearchedLogin);
+    //  return new OkResponseResult(followers.MapToUserContactsViewModel(MediaConverter));
+    //  // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+    //}
+
+    //[HttpPost("followings")]
+    //public async Task<IActionResult> GetFollowTo([FromBody] FollowerViewModel vm)
+    //{
+    //  if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+    //  var follower = await SocialDb.Followers.GetFollowTo(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
+    //    vm.PageParams.Count, vm.SearchedLogin);
+    //  return new OkResponseResult(follower.MapToUserContactsViewModel(MediaConverter));
+    //  // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
+    //}
+
+    //[HttpPost("follow")]
+    //public async Task<IActionResult> Follow([FromBody] FollowViewModel vm)
+    //{
+    //  if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+
+    //  var follower = new FollowingEntity
+    //  {
+    //    FollowedDate = DateTime.UtcNow,
+    //    UserId = vm.UserId,
+    //    FollowingId = vm.FollowingId,
+    //    IsDeleted = false,
+    //    VisitsCount = 1
+    //  };
+
+    //  if (!await SocialDb.Followers.AddFollow(follower))
+    //    return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not connect you to this user.",
+    //      new { IsFollowed = false });
+    //  await Hub.Notifications.SendFollowNotification(vm.UserId, vm.FollowingId, DateTime.UtcNow);
+    //  return new OkResponseResult("Now you follow", new { IsFollowed = true });
+    //}
+
+    //[HttpPost("unfollow")]
+    //public async Task<IActionResult> Unfollow([FromBody] FollowViewModel vm)
+    //{
+    //  if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+
+    //  if (await SocialDb.Followers.DeleteFollow(vm.UserId, vm.FollowingId))
+    //    return new OkResponseResult("Now you unfollow", new { IsFollowed = false });
+    //  return new ResponseResult((int)HttpStatusCode.InternalServerError, "We can not disconnect you to this user.",
+    //    new { IsFollowed = true });
+    //}
   }
 }

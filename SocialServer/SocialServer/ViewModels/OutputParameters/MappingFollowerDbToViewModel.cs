@@ -2,13 +2,14 @@
 using System.Linq;
 using CommonLibraries.Extensions;
 using CommonLibraries.MediaFolders;
+using SocialData.Main.DTO;
 using SocialData.Main.Entities.Followers;
 
 namespace SocialServer.ViewModels.OutputParameters
 {
   public static class MappingFollowerDbToViewModel
   {
-    public static List<GetFollowerViewModel> MapToUserContactsViewModel(this IEnumerable<FollowerDb> userContactsDb, MediaConverter mediaConverter)
+    public static List<GetFollowerViewModel> MapToUserContactsViewModel(this IEnumerable<FollowerDto> userContactsDb, MediaConverter mediaConverter)
     {
       return userContactsDb.Select(f => new GetFollowerViewModel
         {
@@ -23,7 +24,7 @@ namespace SocialServer.ViewModels.OutputParameters
         .ToList();
     }
 
-    public static List<GetFollowToViewModel> MapToUserContactsViewModel(this IEnumerable<FollowToDb> userContactsDb, MediaConverter mediaConverter)
+    public static List<GetFollowToViewModel> MapToUserContactsViewModel(this IEnumerable<FollowingDto> userContactsDb, MediaConverter mediaConverter)
     {
       return userContactsDb.Select(f => new GetFollowToViewModel
         {
