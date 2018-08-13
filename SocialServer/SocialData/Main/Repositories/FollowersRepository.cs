@@ -21,13 +21,13 @@ namespace SocialData.Main.Repositories
     {
       var relation =
         await _db.UserRelationshipEntities.FirstOrDefaultAsync(
-          x => x.UserId == userId && x.StaredUserId == followingUserId);
+          x => x.UserId == userId && x.FollowingId == followingUserId);
       if (relation == null)
       {
-        relation = new UserRelationshipEntity
+        relation = new FollowingEntity
         {
           UserId = userId,
-          StaredUserId = followingUserId,
+          FollowingId = followingUserId,
           VisitsCount = 0,
           IsFollowing = true,
           FollowingDate = DateTime.UtcNow,
@@ -48,7 +48,7 @@ namespace SocialData.Main.Repositories
     {
       var relation =
         await _db.UserRelationshipEntities.FirstOrDefaultAsync(
-          x => x.UserId == userId && x.StaredUserId == followingUserId);
+          x => x.UserId == userId && x.FollowingId == followingUserId);
       if (relation == null || !relation.IsFollowing) return true;
 
       relation.IsFollowing = false;
@@ -62,11 +62,11 @@ namespace SocialData.Main.Repositories
 
     public async Task<List<FollowerDto>> GetFollowers(int loggedUserId, int userPageId, int offset, int count)
     {
-      return await _db.UserRelationshipEntities.Where(x => x.StaredUserId == userPageId && x.IsFollowing)
+      return await _db.UserRelationshipEntities.Where(x => x.FollowingId == userPageId && x.IsFollowing)
         .Join(_db.UserRelationshipEntities.Where(x => x.UserId == loggedUserId).DefaultIfEmpty(), x => x.UserId,
-          y => y.StaredUserId, (x, y) => new {X = x, IsHeFollowed = y})
+          y => y.FollowingId, (x, y) => new {X = x, IsHeFollowed = y})
         .OrderByDescending(x => x.IsHeFollowed.VisitsCount).Skip(offset).Take(count)
-        .Join(_db.UserRelationshipEntities.Where(x => x.StaredUserId == loggedUserId).DefaultIfEmpty(), x => x.X.UserId,
+        .Join(_db.UserRelationshipEntities.Where(x => x.FollowingId == loggedUserId).DefaultIfEmpty(), x => x.X.UserId,
           y => y.UserId, (x, y) => new {X = x, IsYouFollowed = y})
         .Join(_db.UserInfoEntities, x => x.X.X.UserId, y => y.UserId, (x, y) => new {X = x, UserInfo = y}).Select(
           x => new FollowerDto
@@ -85,9 +85,9 @@ namespace SocialData.Main.Repositories
     {
       return await _db.UserRelationshipEntities.Where(x => x.UserId == userPageId && x.IsFollowing)
         .Join(_db.UserRelationshipEntities.Where(x => x.UserId == loggedUserId).DefaultIfEmpty(), x => x.UserId,
-          y => y.StaredUserId, (x, y) => new {X = x, IsHeFollowed = y})
+          y => y.FollowingId, (x, y) => new {X = x, IsHeFollowed = y})
         .OrderByDescending(x => x.IsHeFollowed.VisitsCount).Skip(offset).Take(count)
-        .Join(_db.UserRelationshipEntities.Where(x => x.StaredUserId == loggedUserId).DefaultIfEmpty(), x => x.X.UserId,
+        .Join(_db.UserRelationshipEntities.Where(x => x.FollowingId == loggedUserId).DefaultIfEmpty(), x => x.X.UserId,
           y => y.UserId, (x, y) => new {X = x, IsYouFollowed = y})
         .Join(_db.UserInfoEntities, x => x.X.X.UserId, y => y.UserId, (x, y) => new {X = x, UserInfo = y}).Select(
           x => new FollowingDto

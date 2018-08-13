@@ -28,9 +28,9 @@ namespace SocialData.Main.Repositories
     /// <returns></returns>
     public async Task<List<RecommendedFromFollowersDto>> GetRecommendedFromFollowers(int userId, int offset, int count)
     {
-      return await _db.UserRelationshipEntities.Where(x => x.StaredUserId == userId && x.IsFollowing)
+      return await _db.UserRelationshipEntities.Where(x => x.FollowingId == userId && x.IsFollowing)
         .Join(_db.UserRelationshipEntities.Where(x => x.UserId == userId).DefaultIfEmpty(), x => x.UserId,
-          y => y.StaredUserId, (x, y) => new { X = x, IsHeFollowed = y }).Where(x => !x.IsHeFollowed.IsFollowing)
+          y => y.FollowingId, (x, y) => new { X = x, IsHeFollowed = y }).Where(x => !x.IsHeFollowed.IsFollowing)
         .Join(_db.UserInfoEntities, x => x.X.UserId, y => y.UserId, (x, y) => new { X = x, UserInfo = y })
         .Select(x => new RecommendedFromFollowersDto
         {
@@ -39,7 +39,7 @@ namespace SocialData.Main.Repositories
           Login = x.UserInfo.Login,
           SexType = x.UserInfo.SexType,
           OriginalAvatarUrl = x.UserInfo.OriginalAvatarUrl,
-          CommonFollowingsCount = _db.UserRelationshipEntities.Where(i => i.UserId == x.UserInfo.UserId).GroupJoin(_db.UserRelationshipEntities.Where(o => o.UserId == userId), i => i.StaredUserId, o => o.StaredUserId, (i, o) => 1).Count()
+          CommonFollowingsCount = _db.UserRelationshipEntities.Where(i => i.UserId == x.UserInfo.UserId).GroupJoin(_db.UserRelationshipEntities.Where(o => o.UserId == userId), i => i.FollowingId, o => o.FollowingId, (i, o) => 1).Count()
 
         })
         .OrderByDescending(x => x.CommonFollowingsCount).Skip(offset).Take(count).ToListAsync();
@@ -55,7 +55,7 @@ namespace SocialData.Main.Repositories
     public async Task<List<RecommendedFromFollowingsDto>> GetRecommendedFromFollowings(int userId, int offset, int count)
     {
       return await _db.UserRelationshipEntities.Where(x => x.UserId == userId && x.IsFollowing)
-        .Join(_db.UserRelationshipEntities.Where(x => x.StaredUserId == userId).DefaultIfEmpty(), x => x.StaredUserId,
+        .Join(_db.UserRelationshipEntities.Where(x => x.FollowingId == userId).DefaultIfEmpty(), x => x.FollowingId,
           y => y.UserId, (x, y) => new { X = x, IsYouFollowed = y }).Where(x => !x.IsYouFollowed.IsFollowing)
         .Join(_db.UserInfoEntities, x => x.X.UserId, y => y.UserId, (x, y) => new { X = x, UserInfo = y })
         .Select(x => new RecommendedFromFollowingsDto
@@ -65,7 +65,7 @@ namespace SocialData.Main.Repositories
           Login = x.UserInfo.Login,
           SexType = x.UserInfo.SexType,
           OriginalAvatarUrl = x.UserInfo.OriginalAvatarUrl,
-          CommonFollowingsCount = _db.UserRelationshipEntities.Where(i => i.UserId == x.UserInfo.UserId).GroupJoin(_db.UserRelationshipEntities.Where(o => o.UserId == userId), i => i.StaredUserId, o => o.StaredUserId, (i, o) => 1).Count()
+          CommonFollowingsCount = _db.UserRelationshipEntities.Where(i => i.UserId == x.UserInfo.UserId).GroupJoin(_db.UserRelationshipEntities.Where(o => o.UserId == userId), i => i.FollowingId, o => o.FollowingId, (i, o) => 1).Count()
 
         })
         .OrderByDescending(x => x.CommonFollowingsCount).Skip(offset).Take(count).ToListAsync();

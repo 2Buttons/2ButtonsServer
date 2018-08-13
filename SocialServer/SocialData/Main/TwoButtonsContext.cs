@@ -21,7 +21,7 @@ namespace SocialData.Main
     public virtual DbSet<RecommendedFromFollowersDb> RecommendedFromFollowersDb { get; set; }
     public virtual DbSet<RecommendedFromUsersIdDb> RecommendedFromUsersIdsDb { get; set; }
 
-    public virtual DbSet<UserRelationshipEntity>  UserRelationshipEntities { get; set; }
+    public virtual DbSet<FollowingEntity>  UserRelationshipEntities { get; set; }
     public virtual DbSet<StatisticsEntity> StatisticsEntities { get; set; }
     public virtual DbSet<UserInfoEntity> UserInfoEntities { get; set; }
 
