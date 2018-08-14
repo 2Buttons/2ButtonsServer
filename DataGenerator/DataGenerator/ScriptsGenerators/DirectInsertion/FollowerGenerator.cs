@@ -28,7 +28,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
 
     private string GetInsertionFollowLine(FollowingEntity follow)
     {
-      var isFollowing = follow.IsFollowing ? 1 : 0;
+      var isFollowing = 1;// follow.IsFollowing ? 1 : 0;
       return $"({follow.UserId}, {follow.FollowingId}, {follow.VisitsCount}, {isFollowing}, '{follow.FollowingDate:u}', '{follow.LastVisitDate:u}')";
     }
 

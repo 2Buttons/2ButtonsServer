@@ -20,13 +20,13 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
       return Environment.NewLine + "GO" + Environment.NewLine;
     }
 
-    private string GetInsertionFollowerLine(UserRelationshipQuery follower)
+    private string GetInsertionFollowerLine(FollowingQuery follower)
     {
       return
-        $"EXECUTE [dbo].[addFollow] {follower.UserId}, {follower.StaredUserId}, '{follower.FollowingDate:u}'";
+        $"EXECUTE [dbo].[addFollow] {follower.UserId}, {follower.FollowingId}, '{follower.FollowingDate:u}'";
     }
 
-    private string GetInsertionFollowersLine(IList<UserRelationshipQuery> followers)
+    private string GetInsertionFollowersLine(IList<FollowingQuery> followers)
     {
       var result = new StringBuilder();
       for (var i = 0; i < followers.Count - 1; i++)
@@ -35,7 +35,7 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
       return result.ToString();
     }
 
-    public string GetInsertionLine(IList<UserRelationshipQuery> followers)
+    public string GetInsertionLine(IList<FollowingQuery> followers)
     {
       var result = new StringBuilder();
       var times = followers.Count < 1000 ? 1 : followers.Count / 1000;

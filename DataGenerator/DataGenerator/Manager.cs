@@ -204,7 +204,7 @@ namespace DataGenerator
       return answers;
     }
 
-    public List<FollowingEntity> CreateFollowersEntities(List<UserRelationshipQuery> followerQueries)
+    public List<FollowingEntity> CreateFollowersEntities(List<FollowingQuery> followerQueries)
     {
       var result = new List<FollowingEntity>();
       foreach (var followerQuery in followerQueries)
@@ -212,7 +212,7 @@ namespace DataGenerator
         result.Add(new FollowingEntity
         {
           FollowingDate = followerQuery.FollowingDate,
-          FollowingId = followerQuery.StaredUserId,
+          FollowingId = followerQuery.FollowingId,
           UserId = followerQuery.UserId,
           VisitsCount = _random.Next(100)
         });
@@ -282,9 +282,9 @@ namespace DataGenerator
       return feedbacks;
     }
 
-    public List<UserRelationshipQuery> CreateFollowers(List<User> users)
+    public List<FollowingQuery> CreateFollowers(List<User> users)
     {
-      var followers = new List<UserRelationshipQuery>();
+      var followers = new List<FollowingQuery>();
 
       foreach (var t in users)
       {
@@ -292,22 +292,22 @@ namespace DataGenerator
         for (var i = 0; i < followersCount; i++)
         {
           var following = users[_random.Next(users.Count)];
-          if (followers.Any(x => x.UserId == t.UserId && x.StaredUserId == following.UserId))
+          if (followers.Any(x => x.UserId == t.UserId && x.FollowingId == following.UserId))
           {
             i = i - 1;
             continue;
           }
 
-          followers.Add(new UserRelationshipQuery
+          followers.Add(new FollowingQuery
           {
             UserId = t.UserId,
-            StaredUserId = following.UserId,
+            FollowingId = following.UserId,
             FollowingDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
           });
-          followers.Add(new UserRelationshipQuery
+          followers.Add(new FollowingQuery
           {
             UserId = following.UserId,
-            StaredUserId = t.UserId,
+            FollowingId = t.UserId,
             FollowingDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
           });
         }
