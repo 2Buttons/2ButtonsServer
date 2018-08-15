@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AccountData;
-using AccountData.Account.Entities;
 using AccountData.DTO;
 using AccountServer.ViewModels;
 using AccountServer.ViewModels.OutputParameters.User;
@@ -15,6 +14,8 @@ using System.Linq;
 using AccountData.Main.Entities;
 using CommonLibraries;
 using CommonLibraries.ConnectionServices;
+using CommonLibraries.Entities.Acccount;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.Exceptions.ApiExceptions;
 using CommonLibraries.MediaFolders;
 using Microsoft.Extensions.Logging;
@@ -121,7 +122,7 @@ namespace AccountServer.Infrastructure.Services
         case SocialType.Nothing:
         default: throw new Exception("We do not support this social network.");
       }
-      var social = new SocialDb
+      var social = new SocialEntity
       {
         InternalId = userId,
         ExternalId = user.ExternalId,

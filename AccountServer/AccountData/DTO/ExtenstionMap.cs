@@ -1,10 +1,10 @@
-﻿using AccountData.Account.Entities;
+﻿using CommonLibraries.Entities.Acccount;
 
 namespace AccountData.DTO
 {
   public static class ExtenstionMap
   {
-    public static UserDto ToUserDto(this UserDb userDb)
+    public static UserDto ToUserDto(this UserEntity userDb)
     {
       return new UserDto
       {

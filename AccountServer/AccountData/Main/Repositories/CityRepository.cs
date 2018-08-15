@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AccountData.Main.Entities;
+using CommonLibraries.Entities.Main;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Main.Repositories

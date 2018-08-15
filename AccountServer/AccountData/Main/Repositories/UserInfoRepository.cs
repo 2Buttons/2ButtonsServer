@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AccountData.DTO;
 using AccountData.Main.Entities;
 using AccountData.Main.Queries;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.Exceptions.ApiExceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,9 +54,9 @@ namespace AccountData.Main.Repositories
       {
         await UpdateVisitsAsync(userId, userPageId);
         result.IsHeFollowed =
-          _db.UserRelationshipEntities.Any(x => x.UserId == userId && x.StaredUserId == userPageId && x.IsFollowing);
+          _db.FollowingEntities.Any(x => x.UserId == userId && x.FollowingId == userPageId && x.IsFollowing);
         result.IsYouFollowed =
-          _db.UserRelationshipEntities.Any(x => x.UserId == userPageId && x.StaredUserId == userId && x.IsFollowing);
+          _db.FollowingEntities.Any(x => x.UserId == userPageId && x.FollowingId == userId && x.IsFollowing);
       }
       return result;
     }

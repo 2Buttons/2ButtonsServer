@@ -1,12 +1,12 @@
-﻿using AccountData.Account.Entities;
+﻿using CommonLibraries.Entities.Acccount;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Account
 {
   public class TwoButtonsAccountContext : DbContext
   {
-    public DbSet<UserDb> UsersDb { get; set; }
-    public DbSet<SocialDb> SocialsDb { get; set; }
+    public DbSet<UserEntity> UsersDb { get; set; }
+    public DbSet<SocialEntity> SocialsDb { get; set; }
 
 
     public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)
@@ -16,7 +16,7 @@ namespace AccountData.Account
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-     modelBuilder.Entity<UserDb>(entity =>
+     modelBuilder.Entity<UserEntity>(entity =>
       {
         entity.HasKey(e => e.UserId);
 

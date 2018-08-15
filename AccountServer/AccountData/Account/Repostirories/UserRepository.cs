@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AccountData.Account.Entities;
 using AccountData.DTO;
 using CommonLibraries;
+using CommonLibraries.Entities.Acccount;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountData.Account.Repostirories
@@ -142,7 +142,7 @@ namespace AccountData.Account.Repostirories
       return await _context.UsersDb.AsNoTracking().AnyAsync(x => x.Email == email);
     }
 
-    public async Task<bool> AddUserSocialAsync(SocialDb social)
+    public async Task<bool> AddUserSocialAsync(SocialEntity social)
     {
       _context.SocialsDb.Add(social);
       return await _context.SaveChangesAsync() > 0;
