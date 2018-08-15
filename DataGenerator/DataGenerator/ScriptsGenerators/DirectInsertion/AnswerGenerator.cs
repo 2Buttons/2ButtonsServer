@@ -28,14 +28,13 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
 
     private string GetInsertInit()
     {
-      return "INSERT INTO[dbo].[Answers] ([userID], [questionID], [answerType], [isLiked], [isFavorite], [isSaved], [answeredDate], [isDeleted]) VALUES" +
+      return "INSERT INTO[dbo].[Answers] ([userID], [questionID], [answerType], [feedbackType], [isFavorite], [isSaved], [commentsCount], [answeredDate], [isDeleted]) VALUES" +
              Environment.NewLine;
     }
 
     private string GetInsertionAnswerLine(AnswerEntity answer)
     {
-      var isLiked = answer.IsLiked ? 1 : 0;
-      return $"({answer.UserId}, {answer.QuestionId}, {(int)answer.AnswerType}, {isLiked}, 0, 0, '{answer.AnsweredDate:u}', 0)";
+      return $"({answer.UserId}, {answer.QuestionId}, {(int)answer.AnswerType}, {(int)answer.FeedbackType}, 0, 0, 0, '{answer.AnsweredDate:u}', 0)";
     }
 
     private string GetInsertionAnswersLine(IList<AnswerEntity> answers)

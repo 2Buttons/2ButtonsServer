@@ -127,7 +127,7 @@ namespace DataGenerator
         {
           AnsweredDate = answer.AnsweredDate,
           AnswerType = answer.AnswerType,
-          IsLiked = false,
+          FeedbackType =  QuestionFeedbackType.Neutral,
           QuestionId = answer.QuestionId,
           UserId = answer.UserId
         });
@@ -139,13 +139,13 @@ namespace DataGenerator
           answerEntities.FirstOrDefault(x => x.UserId == feedback.UserId && x.QuestionId == feedback.QuestionId);
 
         if (alreadeAnswered != null)
-          alreadeAnswered.IsLiked = feedback.QuestionFeedbackType == QuestionFeedbackType.Like;
+          alreadeAnswered.FeedbackType = feedback.QuestionFeedbackType ;
         else
           answerEntities.Add(new AnswerEntity
           {
             AnsweredDate = RandomDay(),
             AnswerType = AnswerType.NoAnswer,
-            IsLiked = false,
+            FeedbackType =  QuestionFeedbackType.Neutral,
             QuestionId = feedback.QuestionId,
             UserId = feedback.UserId
           });
@@ -265,15 +265,25 @@ namespace DataGenerator
       var feedbacks = new List<QuestionFeedbackQuery>();
       foreach (var question in questions)
       {
+        RandomizerExtension.Shuffle(users);
+        RandomizerExtension.Shuffle(users);
         var likesCount = _random.Next(190, question.AnswersCount) + 20;
         for (var i = 0; i < likesCount; i++)
-        {
-          RandomizerExtension.Shuffle(users);
-          RandomizerExtension.Shuffle(users);
-
+        { 
           feedbacks.Add(new QuestionFeedbackQuery
           {
             QuestionFeedbackType = QuestionFeedbackType.Like,
+            UserId = users[i].UserId,
+            QuestionId = question.QuestionId
+          });
+        }
+
+        var dislikesCount = likesCount * _random.Next(10,25) /100;
+        for (var i = 0; i < dislikesCount; i++)
+        {
+          feedbacks.Add(new QuestionFeedbackQuery
+          {
+            QuestionFeedbackType = QuestionFeedbackType.Dislike,
             UserId = users[i].UserId,
             QuestionId = question.QuestionId
           });
