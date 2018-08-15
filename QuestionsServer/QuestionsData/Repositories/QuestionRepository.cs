@@ -214,7 +214,7 @@ namespace QuestionsData.Repositories
         {
           UserId = userId,
           QuestionId = questionId,
-          IsLiked = feedback == QuestionFeedbackType.Like,
+          FeedbackType =  feedback,
           IsDeleted = false,
           AnswerType = AnswerType.NoAnswer,
           AnsweredDate = DateTime.UtcNow,
@@ -225,7 +225,7 @@ namespace QuestionsData.Repositories
         return await _db.SaveChangesAsync() > 0;
       }
 
-      answer.IsLiked = feedback == QuestionFeedbackType.Like;
+      answer.FeedbackType = feedback;
       return await _db.SaveChangesAsync() > 0;
       //return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionFeedback {userId}, {questionId}, {feedback}") >
       //       0;
@@ -241,7 +241,7 @@ namespace QuestionsData.Repositories
         {
           UserId = userId,
           QuestionId = questionId,
-          IsLiked = false,
+          FeedbackType =  QuestionFeedbackType.Neutral,
           IsDeleted = false,
           AnswerType = AnswerType.NoAnswer,
           AnsweredDate = DateTime.UtcNow,
@@ -275,7 +275,7 @@ namespace QuestionsData.Repositories
         {
           UserId = userId,
           QuestionId = questionId,
-          IsLiked = false,
+          FeedbackType = QuestionFeedbackType.Neutral,
           IsDeleted = false,
           AnswerType = AnswerType.NoAnswer,
           AnsweredDate = DateTime.UtcNow,
@@ -310,7 +310,7 @@ namespace QuestionsData.Repositories
         {
           UserId = userId,
           QuestionId = questionId,
-          IsLiked = false,
+          FeedbackType = QuestionFeedbackType.Neutral,
           IsDeleted = false,
           AnswerType = answerType,
           AnsweredDate = DateTime.UtcNow,
