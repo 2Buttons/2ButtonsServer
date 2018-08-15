@@ -23,7 +23,7 @@ namespace QuestionsData.Repositories
 
     public async Task<bool> AddRecommendedQuestion(int userToId, int userFromId, int questionId)
     {
-      if (_db.UserEntities.All(x => x.UserId != userToId)) return false;
+      if (_db.UserInfoEntities.All(x => x.UserId != userToId)) return false;
 
       var recommendedDate = DateTime.UtcNow;
 
@@ -92,7 +92,7 @@ namespace QuestionsData.Repositories
             DislikesCount = t.DislikesCount,
             YourFeedbackType = t.YourFeedbackType,
             YourAnswerType = t.YourAnswerType,
-            IsInFavorites = t.IsInFavorites,
+            IsFavorite = t.IsFavorite,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
             FirstAnswersCount = t.FirstAnswersCount,
@@ -139,7 +139,7 @@ namespace QuestionsData.Repositories
     //      Condition = x.Question.Question.Question.Question.Condition,
     //      DislikesCount = x.Question.Question.Question.Question.DislikesCount,
     //      LikesCount = x.Question.Question.Question.Question.LikesCount,
-    //      IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
+    //      IsFavorite = x.Favourite.Any(y => y.IsAnonymous),
     //      IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
     //      Author =
     //        new AuthorDto
@@ -184,7 +184,7 @@ namespace QuestionsData.Repositories
     //  //    Condition = x.Question.Question.Question.Question.Condition,
     //  //    DislikesCount = x.Question.Question.Question.Question.DislikesCount,
     //  //    LikesCount = x.Question.Question.Question.Question.LikesCount,
-    //  //    IsInFavorites = x.Favourite.Any(y => y.IsAnonymous),
+    //  //    IsFavorite = x.Favourite.Any(y => y.IsAnonymous),
     //  //    IsSaved = x.Favourite.Any(y => !y.IsAnonymous),
     //  //    Login = x.Question.Question.Question.Author.Login,
     //  //    UserId = x.Question.Question.Question.Question.UserId,
@@ -212,9 +212,9 @@ namespace QuestionsData.Repositories
       DateTime topAfterDate)
     {
 
-      return await _db.TopQuestionsDb.AsNoTracking()
+      return _db.TopQuestionsDb.AsNoTracking()
         .FromSql($"select * from dbo.getTop({userId}, {topAfterDate}, {isOnlyNew})").OrderByDescending(x => x.LikesCount)
-        .Skip(offset).Take(count).ToListAsync();
+        .Skip(offset).Take(count).ToList();
     }
 
     public async Task<List<AskedQuestionDb>> GetAskedQuestions(int userId, int pageUserId, int offset, int count,
@@ -264,7 +264,7 @@ namespace QuestionsData.Repositories
             DislikesCount = t.DislikesCount,
             YourFeedbackType = t.YourFeedbackType,
             YourAnswerType = t.YourAnswerType,
-            IsInFavorites = t.IsInFavorites,
+            IsFavorite = t.IsFavorite,
             IsSaved = t.IsSaved,
             CommentsCount = t.CommentsCount,
             FirstAnswersCount = t.FirstAnswersCount,

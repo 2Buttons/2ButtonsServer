@@ -10,7 +10,6 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
   {
     [Required]
     public string Condition { get; set; }
-    public bool IsAnonymous { get; set; }
     public AudienceType AudienceType { get; set; }
     public QuestionType QuestionType { get; set; }
     [Required]
@@ -53,7 +52,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 
   public class UpdateQuestionFeedbackViewModel : QuestionIdViewModel
   {
-    public FeedbackType FeedbackType { get; set; }
+    public QuestionFeedbackType FeedbackType { get; set; }
   }
 
   public class UpdateQuestionAnswerViewModel : QuestionIdViewModel
@@ -93,7 +92,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
 
   public class UpdateQuestionFavoriteViewModel : QuestionIdViewModel
   {
-    public bool IsInFavorites { get; set; }
+    public bool IsFavorite { get; set; }
   }
 
 

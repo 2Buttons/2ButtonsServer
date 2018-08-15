@@ -65,8 +65,7 @@ namespace QuestionsServer.Controllers
         externalUrl = urls.Count < 1 ? null : urls[Random.Next(urls.Count)];
       }
 
-      var questionId = await MainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl,
-        question.IsAnonymous, question.AudienceType, question.QuestionType, question.FirstOption,
+      var questionId = await MainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl, question.AudienceType, question.QuestionType, question.FirstOption,
         question.SecondOption);
 
       var badAddedTags = new List<string>();
@@ -92,7 +91,7 @@ namespace QuestionsServer.Controllers
       if (badAddedTags.Count != 0)
         return new ResponseResult((int) HttpStatusCode.InternalServerError, "Not all tags were inserted.",
           new {NotAddedTags = badAddedTags});
-      return new OkResponseResult(questionId);
+      return new OkResponseResult(new {QuestionId = questionId});
     }
 
     [HttpPost("add/recommended")]
@@ -136,6 +135,40 @@ namespace QuestionsServer.Controllers
       var result = question.MapToGetQuestionsViewModel(MediaConverter, tags, firstPhotos, secondPhotos, comments,
         getQuestion.BackgroundSizeType);
       await Hub.Monitoring.UpdateUrlMonitoring(getQuestion.UserId, UrlMonitoringType.OpensQuestionPage);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.End");
+      return new OkResponseResult(result);
+    }
+
+    [HttpGet("get")]
+    public async Task<IActionResult> GetQuestion(int questionId)
+    {
+      if (!ModelState.IsValid) return new BadResponseResult(ModelState);
+      Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.Start");
+      var question = await MainDb.Questions.GetEmptyQuestion(questionId);
+
+      var result = new EmptyQuestionViewModel
+      {
+        QuestionId = question.QuestionId,
+        AddedDate = question.AddedDate,
+        Author =
+          new AuthorViewModel
+          {
+            Login = question.Author.Login,
+            SexType = question.Author.SexType,
+            SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(question.Author.OriginalAvatarUrl, AvatarSizeType.Small),
+            UserId = question.Author.UserId
+          },
+        BackgroundUrl =
+          MediaConverter.ToFullBackgroundurlUrl(question.OriginalBackgroundUrl, BackgroundSizeType.Original),
+        CommentsCount = question.CommentsCount,
+        Condition = question.Condition,
+        DislikesCount = question.DislikesCount,
+        LikesCount = question.LikesCount,
+        Options = question.Options.Select(x => new Option {Text = x.Text, Voters = x.Voters}).ToList(),
+        QuestionType = question.QuestionType
+      };
+
+     
       Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(GetQuestion)}.End");
       return new OkResponseResult(result);
     }
@@ -276,7 +309,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateSaved)}.Start");
-      var result = await MainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
+      var result = await MainDb.Questions.UpdateSaved(favorite.UserId, favorite.QuestionId, favorite.IsFavorite);
       Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateSaved)}.End");
       return result
         ? new OkResponseResult((object) "Saves question was updated.")
@@ -288,7 +321,7 @@ namespace QuestionsServer.Controllers
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
       Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFavorites)}.Start");
-      var result = await MainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsInFavorites);
+      var result = await MainDb.Questions.UpdateFavorites(favorite.UserId, favorite.QuestionId, favorite.IsFavorite);
       Logger.LogInformation($"{nameof(QuestionsController)}.{nameof(UpdateFavorites)}.End");
       return result
         ? new OkResponseResult((object) "Question's favorites was updated.")

@@ -23,7 +23,7 @@ namespace QuestionsData.Queries
     public int DislikesCount { get; set; }
     public QuestionFeedbackType YourFeedbackType { get; set; }
     public AnswerType YourAnswerType { get; set; }
-    public bool IsInFavorites { get; set; }
+    public bool IsFavorite { get; set; }
     public bool IsSaved { get; set; }
     public int CommentsCount { get; set; }
 

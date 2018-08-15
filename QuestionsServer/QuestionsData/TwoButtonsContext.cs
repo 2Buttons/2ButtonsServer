@@ -9,7 +9,7 @@ namespace QuestionsData
 {
   public class TwoButtonsContext : DbContext
   {
-    public virtual DbSet<UserInfoEntity> UserEntities { get; set; }
+    public virtual DbSet<UserInfoEntity> UserInfoEntities { get; set; }
     public virtual DbSet<CityEntity> CityEntities { get; set; }
     public virtual DbSet<AnswerEntity> AnswerEntities { get; set; }
     public virtual DbSet<QuestionEntity> QuestionEntities { get; set; }
@@ -54,13 +54,14 @@ namespace QuestionsData
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)
     {
     }
-    //}
-    //    }
-    //        optionsBuilder.UseSqlServer(@"Server=DESKTOP-T41QO6T\SQLEXPRESS;database=TwoButtons;Trusted_Connection=True;");
-    //    {
-    //    if (!optionsBuilder.IsConfigured)
-    //{
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      modelBuilder.Entity<AnswerEntity>().HasKey(x => new {x.UserId, x.QuestionId});
+      modelBuilder.Entity<FollowingEntity>().HasKey(x => new {x.UserId, x.FollowingId});
+      modelBuilder.Entity<RecommendedQuestionEntity>().HasKey(x => new {x.UserFromId, x.UserToId, x.QuestionId});
+      modelBuilder.Entity<QuestionTagEntity>().HasKey(x => new {x.QuestionId, x.TagId});
+
+    }
   }
 }

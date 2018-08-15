@@ -32,6 +32,42 @@ namespace QuestionsData.Repositories
       return result;
     }
 
+    public async Task<EmptyQuestionDto> GetEmptyQuestion(int questionId)
+    {
+      var question = await _db.QuestionEntities.Where(x => x.QuestionId == questionId).Join(_db.UserInfoEntities, x=>x.UserId, y=>y.UserId,(x,y)=>new {Q = x, U = y}).FirstOrDefaultAsync();
+      if (question == null) throw new NotFoundException("We do not have this question");
+      var oprion1 =
+        await  _db.OptionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId && x.Position == 1);
+      var oprion2 =
+        await _db.OptionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId && x.Position == 2);
+      var result = new EmptyQuestionDto
+      {
+        QuestionId = question.Q.QuestionId,
+        Author =
+          new AuthorDto
+          {
+            UserId = question.Q.UserId,
+            Login = question.U.Login,
+            SexType = question.U.SexType,
+            OriginalAvatarUrl = question.U.OriginalAvatarUrl
+          },
+        Condition = question.Q.Condition,
+        Options =
+          new List<OptionDto>
+          {
+            new OptionDto {Text = oprion1.Text, Voters = oprion1.AnswersCount},
+            new OptionDto {Text = oprion2.Text, Voters = oprion1.AnswersCount}
+          },
+        QuestionType = question.Q.QuestionType,
+        OriginalBackgroundUrl = question.Q.OriginalBackgroundUrl,
+        CommentsCount = question.Q.CommentsCount,
+        DislikesCount = question.Q.DislikesCount,
+        LikesCount = question.Q.LikesCount,
+        AddedDate = question.Q.AddedDate
+      };
+      return result;
+    }
+
     public async Task<string> GetBackground(int questionId)
     {
       var result = await _db.QuestionEntities.FirstOrDefaultAsync(x => x.QuestionId == questionId);
@@ -54,7 +90,7 @@ namespace QuestionsData.Repositories
       if (!_db.QuestionEntities.Any(x => x.QuestionId == questionId))
         throw new NotFoundException("We do not have this question");
 
-      var questions = _db.AnswerEntities.Where(x => x.QuestionId == questionId).Join(_db.UserEntities, a => a.UserId,
+      var questions = _db.AnswerEntities.Where(x => x.QuestionId == questionId).Join(_db.UserInfoEntities, a => a.UserId,
         u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a)).Where(predicate);
       var votersCount = await questions.GroupBy(x=>x.Item2.AnswerType).Select(x=> new {Type = x.Key, Count = x.Count()}).ToListAsync();
 
@@ -108,7 +144,7 @@ namespace QuestionsData.Repositories
         throw new NotFoundException("We do not have this question");
 
       var voters = await _db.AnswerEntities.Where(x => x.QuestionId == questionId)
-        .Join(_db.UserEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a))
+        .Join(_db.UserInfoEntities, a => a.UserId, u => u.UserId, (a, u) => new Tuple<UserInfoEntity, AnswerEntity>(u, a))
         .Where(predicate)
         .Join(_db.CityEntities, uc => uc.Item1.CityId, c => c.CityId, (f, s) => new {f, s, isYouFollowed = _db.FollowingEntities.Any(x=>x.UserId== userId && x.FollowingId == f.Item1.UserId), isHeFollowed  = _db.FollowingEntities.Any(x => x.UserId == f.Item1.UserId && x.FollowingId == userId) })
         .OrderByDescending(x=>x.f.Item2.AnsweredDate).Skip(offset).Take(count).ToListAsync();
@@ -151,7 +187,7 @@ namespace QuestionsData.Repositories
              ?.QuestionId ?? -1;
     }
 
-    public async Task<int> AddQuestion(int userId, string condition, string originalBackgroundUrl, bool isAnonymous,
+    public async Task<int> AddQuestion(int userId, string condition, string originalBackgroundUrl,
       AudienceType audienceType, QuestionType questionType, string firstOption, string secondOption)
     {
       var questionAddDate = DateTime.UtcNow;
@@ -159,7 +195,7 @@ namespace QuestionsData.Repositories
       var questionIdDb = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
 
       await _db.Database.ExecuteSqlCommandAsync(
-        $"addQuestion {userId}, {condition}, {originalBackgroundUrl}, {isAnonymous}, {audienceType}, {questionType}, {firstOption}, {secondOption}, {questionAddDate}, {questionIdDb} OUT");
+        $"addQuestion {userId}, {condition}, {originalBackgroundUrl}, {audienceType}, {questionType}, {firstOption}, {secondOption}, {questionAddDate}, {questionIdDb} OUT");
       return (int) questionIdDb.Value;
     }
 
@@ -168,34 +204,129 @@ namespace QuestionsData.Repositories
       return await _db.Database.ExecuteSqlCommandAsync($"deleteQuestion {questionId}") > 0;
     }
 
-    public async Task<bool> UpdateQuestionFeedback(int userId, int questionId, FeedbackType feedback)
+
+    public async Task<bool> UpdateQuestionFeedback(int userId, int questionId, QuestionFeedbackType feedback)
     {
-      return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionFeedback {userId}, {questionId}, {feedback}") >
-             0;
+      var answer = await _db.AnswerEntities.FirstOrDefaultAsync(x => x.UserId == userId && x.QuestionId == questionId);
+      if (answer == null)
+      {
+        answer = new AnswerEntity
+        {
+          UserId = userId,
+          QuestionId = questionId,
+          IsLiked = feedback == QuestionFeedbackType.Like,
+          IsDeleted = false,
+          AnswerType = AnswerType.NoAnswer,
+          AnsweredDate = DateTime.UtcNow,
+          IsFavorite = false,
+          IsSaved = false
+        };
+        _db.AnswerEntities.Add(answer);
+        return await _db.SaveChangesAsync() > 0;
+      }
+
+      answer.IsLiked = feedback == QuestionFeedbackType.Like;
+      return await _db.SaveChangesAsync() > 0;
+      //return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionFeedback {userId}, {questionId}, {feedback}") >
+      //       0;
     }
 
-    public async Task<bool> UpdateSaved(int userId, int questionId, bool isInFavorites)
+    public async Task<bool> UpdateSaved(int userId, int questionId, bool isSaved)
     {
-      var added = DateTime.Now;
 
-      return await _db.Database.ExecuteSqlCommandAsync(
-               $"updateFavorites {userId}, {questionId}, {1}, {isInFavorites}, {added}") > 0;
+      var answer = await _db.AnswerEntities.FirstOrDefaultAsync(x => x.UserId == userId && x.QuestionId == questionId);
+      if (answer == null)
+      {
+        answer = new AnswerEntity
+        {
+          UserId = userId,
+          QuestionId = questionId,
+          IsLiked = false,
+          IsDeleted = false,
+          AnswerType = AnswerType.NoAnswer,
+          AnsweredDate = DateTime.UtcNow,
+          IsFavorite = false,
+          IsSaved = isSaved
+        };
+        _db.AnswerEntities.Add(answer);
+        
+      }
+      var stat = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
+      if (isSaved)
+        stat.FavoriteQuestions++;
+      else
+        stat.FavoriteQuestions--;
+
+      answer.IsSaved = isSaved;
+      return await _db.SaveChangesAsync() > 0;
+
+      //var added = DateTime.Now;
+
+      //return await _db.Database.ExecuteSqlCommandAsync(
+      //         $"updateFavorites {userId}, {questionId}, {1}, {isFavorite}, {added}") > 0;
     }
 
-    public async Task<bool> UpdateFavorites(int userId, int questionId, bool isInFavorites)
+    public async Task<bool> UpdateFavorites(int userId, int questionId, bool isFavorite)
     {
-      var added = DateTime.Now;
+      var answer = await _db.AnswerEntities.FirstOrDefaultAsync(x => x.UserId == userId && x.QuestionId == questionId);
+      if (answer == null)
+      {
+        answer = new AnswerEntity
+        {
+          UserId = userId,
+          QuestionId = questionId,
+          IsLiked = false,
+          IsDeleted = false,
+          AnswerType = AnswerType.NoAnswer,
+          AnsweredDate = DateTime.UtcNow,
+          IsFavorite = isFavorite,
+          IsSaved = false
+        };
+        _db.AnswerEntities.Add(answer);
+       
+      }
+      var stat = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
+      if (isFavorite)
+        stat.PublicFavoriteQuestions++;
+      else
+        stat.PublicFavoriteQuestions--;
 
-      return await _db.Database.ExecuteSqlCommandAsync(
-               $"updateFavorites {userId}, {questionId}, {0}, {isInFavorites}, {added}") > 0;
+      answer.IsFavorite = isFavorite;
+      return await _db.SaveChangesAsync() > 0;
+
+      //var added = DateTime.Now;
+
+      //return await _db.Database.ExecuteSqlCommandAsync(
+      //         $"updateFavorites {userId}, {questionId}, {0}, {isFavorite}, {added}") > 0;
     }
 
     public async Task<bool> UpdateAnswer(int userId, int questionId, AnswerType answerType)
     {
-      var answered = DateTime.Now;
 
-      return await _db.Database.ExecuteSqlCommandAsync(
-               $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
+      var answer =  _db.AnswerEntities.FirstOrDefault(x => x.UserId == userId && x.QuestionId == questionId);
+      if (answer == null)
+      {
+        answer = new AnswerEntity
+        {
+          UserId = userId,
+          QuestionId = questionId,
+          IsLiked = false,
+          IsDeleted = false,
+          AnswerType = answerType,
+          AnsweredDate = DateTime.UtcNow,
+          IsFavorite = false,
+          IsSaved = false
+        };
+        _db.AnswerEntities.Add(answer);
+      }
+
+      answer.AnswerType = answerType;
+      _db.AnswerEntities.Update(answer);
+      return  _db.SaveChanges() > 0;
+      //var answered = DateTime.Now;
+
+      //return await _db.Database.ExecuteSqlCommandAsync(
+      //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
 
     public async Task<bool> UpdateQuestionBackgroundUrl(int questionId, string backgroundImageUrl)
