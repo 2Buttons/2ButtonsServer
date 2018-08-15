@@ -28,5 +28,10 @@ namespace SocialData.Main
     public TwoButtonsContext(DbContextOptions<TwoButtonsContext> options) : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      modelBuilder.Entity<FollowingEntity>().HasKey(x => new { x.UserId, x.FollowingId });
+    }
   }
 }
