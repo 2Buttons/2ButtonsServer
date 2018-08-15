@@ -18,28 +18,28 @@ namespace AuthorizationData.Account
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<TokenDb>(entity =>
-      {
-        entity.HasKey(e => e.TokenId);
+      //modelBuilder.Entity<TokenDb>(entity =>
+      //{
+      //  entity.HasKey(e => e.TokenId);
 
-        entity.Property(e => e.RefreshToken)
-          .IsRequired();
+      //  entity.Property(e => e.RefreshToken)
+      //    .IsRequired();
 
-        entity.Property(e => e.AllowedOrigin).HasMaxLength(50);
+      //  entity.Property(e => e.AllowedOrigin).HasMaxLength(50);
 
-        entity.Property(e => e.ApplicationType).HasDefaultValueSql("((0))");
-      });
+      //  entity.Property(e => e.ApplicationType).HasDefaultValueSql("((0))");
+      //});
 
-      modelBuilder.Entity<UserDb>(entity =>
-      {
-        entity.HasKey(e => e.UserId);
+      //modelBuilder.Entity<UserDb>(entity =>
+      //{
+      //  entity.HasKey(e => e.UserId);
 
-        entity.Property(e => e.AccessFailedCount).HasDefaultValueSql("((0))");
+      //  entity.Property(e => e.AccessFailedCount).HasDefaultValueSql("((0))");
 
-        entity.Property(e => e.Email).HasMaxLength(256);
+      //  entity.Property(e => e.Email).HasMaxLength(256);
 
-        entity.Property(e => e.RoleType).HasDefaultValueSql("((0))");
-      });
+      //  entity.Property(e => e.RoleType).HasDefaultValueSql("((0))");
+      //});
     }
   }
 }

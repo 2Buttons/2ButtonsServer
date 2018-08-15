@@ -13,7 +13,7 @@ namespace AuthorizationData.Account.Entities
     public long ExpiresIn{ get; set; }
     public string RefreshToken { get; set; }
 
-    public ApplicationType ApplicationType { get; set; }
-    public string AllowedOrigin { get; set; }
+    public ApplicationType ApplicationType { get; set; } = ApplicationType.JavaScript;
+    public string AllowedOrigin { get; set; } = string.Empty;
   }
 }

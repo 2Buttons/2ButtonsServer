@@ -54,7 +54,7 @@ namespace AuthorizationServer.Infrastructure.Services
         PhoneNumber = user.Phone,
         RoleType = role,
         PasswordHash = user.Password.GetMd5HashString(),
-        RegistrationDate = DateTime.UtcNow
+        RegistrationDate = DateTime.UtcNow,
       };
       var isAdded = await Db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
@@ -67,7 +67,7 @@ namespace AuthorizationServer.Infrastructure.Services
         SexType = user.SexType,
         City = user.City,
         Description = user.Description,
-        OriginalAvatarUrl = (await Hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault()
+        OriginalAvatarUrl = (await Hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault() ?? ""
       };
 
       if (!await Db.UsersInfo.AddUserInfoAsync(userInfo))
