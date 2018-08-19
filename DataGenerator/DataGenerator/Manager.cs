@@ -54,7 +54,7 @@ namespace DataGenerator
     }
 
     public void CreateScripts(List<CityQuery> mainCities, List<UserInfoQuery> userInfos, List<UserQuery> users,
-      List<FollowingEntity> followers, List<QuestionQuery> questions, List<TagQuery> tags, List<AnswerEntity> answerEntities
+      List<FollowingEntity> followers, List<QuestionQuery> questions, List<TagQuery> tags, List<AnswerEntity> answerEntities//, List<StatisticsEntity> statisticsEntities
       //List<AnswerQuery> answers,
       //List<QuestionFeedbackQuery> questionFeedbacks
       )
@@ -239,6 +239,11 @@ namespace DataGenerator
         for (var i = 0; i < question.Tags.Count; i++)
           tags.Add(new TagQuery { QuestionId = question.QuestionId, Position = i, Text = question.Tags[i] });
       return tags;
+    }
+
+    public List<StatisticsEntity> CreateStatistics(List<User> usersId)
+    {
+      return usersId.Select(x => new StatisticsEntity {UserId = x.UserId}).ToList();
     }
 
     public List<QuestionQuery> CreateQuestions(List<Question> questions)
