@@ -11,7 +11,6 @@ using CommonLibraries.Extensions;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using UserRegistrationViewModel = AuthorizationServer.ViewModels.InputParameters.UserRegistrationViewModel;
 
 namespace AuthorizationServer.Controllers
 {
@@ -29,7 +28,7 @@ namespace AuthorizationServer.Controllers
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationViewModel user)
+    public async Task<IActionResult> RegisterUser([FromBody] ViewModels.InputParameters.UserRegistrationViewModel user)
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
