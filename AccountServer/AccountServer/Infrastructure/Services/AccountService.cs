@@ -51,11 +51,11 @@ namespace AccountServer.Infrastructure.Services
       return result;
     }
 
-    public async Task<(string city, DateTime birthdate)> GetCityAndBirthdate(int userId)
+    public async Task<(string city, DateTime? birthdate)> GetCityAndBirthdate(int userId)
     {
       Logger.LogInformation($"{nameof(AccountService)}.{nameof(GetCityAndBirthdate)}.Start");
       var userInfoTask = await Db.UsersInfo.FindUserInfoAsync(userId, userId);
-      var result = (userInfoTask.City, userInfoTask.BirthDate);
+      var result = (userInfoTask.City, userInfoTask.BirthDate.Date != DateTime.MinValue.Date ? userInfoTask.BirthDate : new DateTime?());
       Logger.LogInformation($"{nameof(AccountService)}.{nameof(GetCityAndBirthdate)}.End");
       return result;
     }

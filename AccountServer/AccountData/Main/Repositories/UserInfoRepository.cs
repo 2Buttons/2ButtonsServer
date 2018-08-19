@@ -51,13 +51,13 @@ namespace AccountData.Main.Repositories
       };
 
       if (userId == userPageId) return result;
-      {
+      
         await UpdateVisitsAsync(userId, userPageId);
         result.IsHeFollowed =
           _db.FollowingEntities.Any(x => x.UserId == userId && x.FollowingId == userPageId && x.IsFollowing);
         result.IsYouFollowed =
           _db.FollowingEntities.Any(x => x.UserId == userPageId && x.FollowingId == userId && x.IsFollowing);
-      }
+      
       return result;
     }
 
