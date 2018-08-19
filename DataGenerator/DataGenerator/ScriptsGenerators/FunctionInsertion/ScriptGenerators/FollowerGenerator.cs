@@ -22,8 +22,9 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
 
     private string GetInsertionFollowerLine(FollowingQuery follower)
     {
+      var isFollowing = follower.IsFollowing ? 1 : 0;
       return
-        $"EXECUTE [dbo].[addFollow] {follower.UserId}, {follower.FollowingId}, '{follower.FollowingDate:u}'";
+        $"EXECUTE [dbo].[addFollowBot] {follower.UserId}, {follower.FollowingId}, {follower.VisitsCount}, {isFollowing}, '{follower.FollowingDate:u}', '{follower.LastVisitDate:u}'";
     }
 
     private string GetInsertionFollowersLine(IList<FollowingQuery> followers)

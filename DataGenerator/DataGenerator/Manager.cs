@@ -15,6 +15,7 @@ using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
 using DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators;
 using DataGenerator.Services;
 using Newtonsoft.Json;
+using AnswerGenerator = DataGenerator.ScriptsGenerators.DirectInsertion.AnswerGenerator;
 
 namespace DataGenerator
 {
@@ -54,10 +55,11 @@ namespace DataGenerator
     }
 
     public void CreateScripts(List<CityQuery> mainCities, List<UserInfoQuery> userInfos, List<UserQuery> users,
-      List<FollowingEntity> followers, List<QuestionQuery> questions, List<TagQuery> tags, List<AnswerEntity> answerEntities//, List<StatisticsEntity> statisticsEntities
+      List<FollowingQuery> followers, List<QuestionQuery> questions, List<TagQuery> tags,
+      List<AnswerEntity> answerEntities //, List<StatisticsEntity> statisticsEntities
       //List<AnswerQuery> answers,
       //List<QuestionFeedbackQuery> questionFeedbacks
-      )
+    )
     {
       var path = @"E:\Projects\2Buttons\Project\Data\Scripts\";
       var tagsUrl = "5_Tags.sql";
@@ -102,14 +104,13 @@ namespace DataGenerator
 
       using (var sw = new StreamWriter(Path.Combine(path, followersUrl), false, Encoding.UTF8))
       {
-        sw.WriteLine(new DataGenerator.ScriptsGenerators.DirectInsertion.FollowerGenerator().GetInsertionLine(followers));
+        sw.WriteLine(new FollowerGenerator().GetInsertionLine(followers));
       }
 
       using (var sw = new StreamWriter(Path.Combine(path, answersAndFeedbacks), false, Encoding.UTF8))
       {
-        sw.WriteLine(new DataGenerator.ScriptsGenerators.DirectInsertion.AnswerGenerator().GetInsertionLine(answerEntities));
+        sw.WriteLine(new AnswerGenerator().GetInsertionLine(answerEntities));
       }
-
 
       //using (var sw = new StreamWriter(Path.Combine(path, questionFeedbacksUrl), false, Encoding.UTF8))
       //{
@@ -120,32 +121,29 @@ namespace DataGenerator
     public List<AnswerEntity> CreateAnswersEntities(List<AnswerQuery> answerQueries,
       List<QuestionFeedbackQuery> feedbackQueries)
     {
-      List<AnswerEntity> answerEntities = new List<AnswerEntity>();
+      var answerEntities = new List<AnswerEntity>();
       foreach (var answer in answerQueries)
-      {
         answerEntities.Add(new AnswerEntity
         {
           AnsweredDate = answer.AnsweredDate,
           AnswerType = answer.AnswerType,
-          FeedbackType =  QuestionFeedbackType.Neutral,
+          FeedbackType = QuestionFeedbackType.Neutral,
           QuestionId = answer.QuestionId,
           UserId = answer.UserId
         });
-      }
 
       foreach (var feedback in feedbackQueries)
       {
         var alreadeAnswered =
           answerEntities.FirstOrDefault(x => x.UserId == feedback.UserId && x.QuestionId == feedback.QuestionId);
 
-        if (alreadeAnswered != null)
-          alreadeAnswered.FeedbackType = feedback.QuestionFeedbackType ;
+        if (alreadeAnswered != null) alreadeAnswered.FeedbackType = feedback.QuestionFeedbackType;
         else
           answerEntities.Add(new AnswerEntity
           {
             AnsweredDate = RandomDay(),
             AnswerType = AnswerType.NoAnswer,
-            FeedbackType =  QuestionFeedbackType.Neutral,
+            FeedbackType = QuestionFeedbackType.Neutral,
             QuestionId = feedback.QuestionId,
             UserId = feedback.UserId
           });
@@ -208,7 +206,6 @@ namespace DataGenerator
     {
       var result = new List<FollowingEntity>();
       foreach (var followerQuery in followerQueries)
-      {
         result.Add(new FollowingEntity
         {
           FollowingDate = followerQuery.FollowingDate,
@@ -216,7 +213,6 @@ namespace DataGenerator
           UserId = followerQuery.UserId,
           VisitsCount = _random.Next(100)
         });
-      }
       return result;
     }
 
@@ -228,7 +224,7 @@ namespace DataGenerator
     public List<CityQuery> CreateMainCities(List<string> mainCities)
     {
       var cities = new List<CityQuery>();
-      foreach (var city in mainCities) cities.Add(new CityQuery { Name = city });
+      foreach (var city in mainCities) cities.Add(new CityQuery {Name = city});
       return cities;
     }
 
@@ -237,7 +233,7 @@ namespace DataGenerator
       var tags = new List<TagQuery>();
       foreach (var question in questions)
         for (var i = 0; i < question.Tags.Count; i++)
-          tags.Add(new TagQuery { QuestionId = question.QuestionId, Position = i, Text = question.Tags[i] });
+          tags.Add(new TagQuery {QuestionId = question.QuestionId, Position = i, Text = question.Tags[i]});
       return tags;
     }
 
@@ -274,58 +270,43 @@ namespace DataGenerator
         RandomizerExtension.Shuffle(users);
         var likesCount = _random.Next(190, question.AnswersCount) + 20;
         for (var i = 0; i < likesCount; i++)
-        { 
           feedbacks.Add(new QuestionFeedbackQuery
           {
             QuestionFeedbackType = QuestionFeedbackType.Like,
             UserId = users[i].UserId,
             QuestionId = question.QuestionId
           });
-        }
 
-        var dislikesCount = likesCount * _random.Next(10,25) /100;
+        var dislikesCount = likesCount * _random.Next(10, 25) / 100;
         for (var i = 0; i < dislikesCount; i++)
-        {
           feedbacks.Add(new QuestionFeedbackQuery
           {
             QuestionFeedbackType = QuestionFeedbackType.Dislike,
             UserId = users[i].UserId,
             QuestionId = question.QuestionId
           });
-        }
       }
       return feedbacks;
     }
 
-    public List<FollowingQuery> CreateFollowers(List<User> users)
+    public List<FollowingQuery> CreateFollowings(List<User> users)
     {
       var followers = new List<FollowingQuery>();
 
-      foreach (var t in users)
+      foreach (var follower in users.ToList())
       {
-        var followersCount = _random.Next(15, 80);
-        for (var i = 0; i < followersCount; i++)
-        {
-          var following = users[_random.Next(users.Count)];
-          if (followers.Any(x => x.UserId == t.UserId && x.FollowingId == following.UserId))
-          {
-            i = i - 1;
-            continue;
-          }
-
+        var followingsCount = _random.Next(15, 80);
+        RandomizerExtension.Shuffle(users);
+        RandomizerExtension.Shuffle(users);
+        for (var i = 0; i < followingsCount; i++)
           followers.Add(new FollowingQuery
           {
-            UserId = t.UserId,
-            FollowingId = following.UserId,
+            UserId = follower.UserId,
+            FollowingId = users[i].UserId,
+            IsFollowing = true,
+            VisitsCount = _random.Next(10, 80),
             FollowingDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
           });
-          followers.Add(new FollowingQuery
-          {
-            UserId = following.UserId,
-            FollowingId = t.UserId,
-            FollowingDate = DateTime.UtcNow.Add(TimeSpan.FromDays(-_random.Next(250)))
-          });
-        }
       }
       return followers;
     }
@@ -515,7 +496,7 @@ namespace DataGenerator
             .First(x => x.Size == AvatarSizeType.Original).Url;
 
           _filesManager.SaveUrlMatching(Path.Combine(FilesUrl, "AvatarsMatching_0.txt"),
-            new UrlMatching { OldUrl = userReader.VkOriginalAvatrUrl, NewUrl = avatar });
+            new UrlMatching {OldUrl = userReader.VkOriginalAvatrUrl, NewUrl = avatar});
         }
         catch (Exception e)
         {
@@ -533,7 +514,7 @@ namespace DataGenerator
           var background = _mediaService.UploadBackground(userReader.BackgroundUrl, BackgroundType.Standard)
             .First(x => x.Size == BackgroundSizeType.Original).Url;
           _filesManager.SaveUrlMatching(Path.Combine(FilesUrl, "BackgroundsMatching_0.txt"),
-            new UrlMatching { OldUrl = userReader.BackgroundUrl, NewUrl = background });
+            new UrlMatching {OldUrl = userReader.BackgroundUrl, NewUrl = background});
         }
         catch (Exception e)
         {

@@ -80,7 +80,7 @@ namespace DataGenerator
       var answerQueries = manager.CreateAnswers(users, questions);
       var questionFeedbacksQueries = manager.CreateFeedbacks(users, questions);
 
-      var followerQueries = manager.CreateFollowers(users);
+      var followerQueries = manager.CreateFollowings(users);
 
       var tagQueries = manager.CreateTags(questions);
       var userQueries = manager.CreateUsers(users);
@@ -88,10 +88,9 @@ namespace DataGenerator
 
 
       var answersAndFeedbacksEntities = manager.CreateAnswersEntities(answerQueries, questionFeedbacksQueries);
-      var followersEntities = manager.CreateFollowersEntities(followerQueries);
 
-      manager.CreateScripts(cityQueries, userQueries.userInfos, userQueries.users, followersEntities,
-        questionQueries, tagQueries, answersAndFeedbacksEntities);// answerQueries, questionFeedbacksQueries);
+      manager.CreateScripts(cityQueries, userQueries.userInfos.OrderBy(x=>x.UserId).ToList(), userQueries.users.OrderBy(x => x.UserId).ToList(), followerQueries.OrderBy(x => x.UserId).ToList(),
+        questionQueries.OrderBy(x => x.QuestionId).ToList(), tagQueries.OrderBy(x => x.QuestionId).ToList(), answersAndFeedbacksEntities);// answerQueries, questionFeedbacksQueries);
 
 
 

@@ -23,7 +23,7 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
     private string GetInsertionAnswerLine(AnswerQuery answer)
     {
       return
-        $"EXECUTE [dbo].[updateAnswer] {answer.UserId}, {answer.QuestionId}, {(int) answer.AnswerType}, '{answer.AnsweredDate:u}'";
+        $"EXECUTE [dbo].[addAnswerBot] {answer.UserId}, {answer.QuestionId}, {(int) answer.AnswerType}, '{answer.AnsweredDate:u}'";
     }
 
     private string GetInsertionAnswersLine(IList<AnswerQuery> answers)
