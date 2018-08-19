@@ -165,7 +165,8 @@ namespace AuthorizationServer.Infrastructure.Services
         BirthDate = user.BirthDate,
         SexType = user.SexType,
         City = user.City,
-        OriginalAvatarUrl = fullUrl
+        OriginalAvatarUrl = fullUrl,
+        Description = ""
       };
 
       if (!await Db.UsersInfo.AddUserInfoAsync(userInfo))

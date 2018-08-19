@@ -66,7 +66,7 @@ namespace AuthorizationServer.Infrastructure.Services
         BirthDate = user.BirthDate,
         SexType = user.SexType,
         City = user.City,
-        Description = user.Description,
+        Description = user.Description ?? "",
         OriginalAvatarUrl = (await Hub.Media.GetStandardAvatarUrls(AvatarSizeType.Original)).FirstOrDefault() ?? ""
       };
 

@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using CommonLibraries;
 using DataGenerator.ScriptsGenerators.DirectInsertion.Entities;
 using DataGenerator.ScriptsGenerators.FunctionInsertion.Queries;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Transforms;
 
 namespace DataGenerator
 {
@@ -26,8 +31,30 @@ namespace DataGenerator
 
     public const string FolderUrl = @"E:\Projects\2Buttons\Project\Data\Bags\";
 
+    public static void ResizeImage(string originalPath, string rezisePath, int height, int width)
+    {
+      using (var image = Image.Load(originalPath))
+      {
+        image.Mutate(x => x.Resize(new ResizeOptions
+        {
+          Mode = ResizeMode.Max,
+          Size = new SixLabors.Primitives.Size { Height = height, Width = width }
+        }));
+        image.Save(rezisePath); // Automatic encoder selected based on extension.
+      }
+    }
+
+
     private static void Main(string[] args)
     {
+      //string fileName = "Viper.jpg";
+      //string originalFilePath = @"E:\Projects\2Buttons\Project\Data\Content\";
+      //var smallImagePath = @"E:\Projects\2Buttons\Project\Data\Content\"+"SMALL_"+ fileName;
+      //var largemagePath = @"E:\Projects\2Buttons\Project\Data\Content\" + "LARGE_" + fileName;
+
+      //ResizeImage(originalFilePath+fileName, Path.Combine(smallImagePath), 100, 100);
+      //ResizeImage(originalFilePath+ fileName, Path.Combine(largemagePath), 600, 600);
+
       var questionIdOffset = 100;
       var userIdOffset = 100;
 
@@ -66,7 +93,7 @@ namespace DataGenerator
       manager.CreateScripts(cityQueries, userQueries.userInfos, userQueries.users, followersEntities,
         questionQueries, tagQueries, answersAndFeedbacksEntities);// answerQueries, questionFeedbacksQueries);
 
-      //
+
 
       Console.ReadLine();
     }
