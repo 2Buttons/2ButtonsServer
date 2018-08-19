@@ -93,7 +93,7 @@ namespace CommonLibraries.SocialNetworks.Vk
     [JsonProperty("bdate")]
     public string VkBirthday { private get; set; }
 
-    public DateTime Birthday => !VkBirthday.IsNullOrEmpty() && DateTime.TryParse(VkBirthday, out var result) ? result : DateTime.UtcNow;
+    public DateTime Birthday => !VkBirthday.IsNullOrEmpty() && DateTime.TryParse(VkBirthday, out var result) ? result : DateTime.MinValue;
 
 
     [JsonProperty("city")]

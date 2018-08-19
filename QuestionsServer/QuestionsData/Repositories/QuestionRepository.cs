@@ -321,7 +321,7 @@ namespace QuestionsData.Repositories
       }
 
       answer.AnswerType = answerType;
-      _db.AnswerEntities.Update(answer);
+     // _db.AnswerEntities.Update(answer);
       return  _db.SaveChanges() > 0;
       //var answered = DateTime.Now;
 
