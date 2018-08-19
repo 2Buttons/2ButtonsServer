@@ -5,15 +5,14 @@ using CommonLibraries;
 
 namespace SocialData.Main.Entities.Followers
 {
-  public class FollowerBaseDb
+  public class FollowingQuery
   {
-    [Key]
     public int UserId { get; set; }
-
     public string Login { get; set; }
     public string OriginalAvatarUrl { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType SexType { get; set; }
+    public int VisitsCount { get; set; }
     public bool IsYouFollowed { get; set; }
     public bool IsHeFollowed { get; set; }
   }

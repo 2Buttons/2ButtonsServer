@@ -10,16 +10,13 @@ namespace SocialData.Main
 {
   public class TwoButtonsContext : DbContext
   {
-    public virtual DbSet<FollowerDb> FollowerDb { get; set; }
-    public virtual DbSet<FollowToDb> FolloToDb { get; set; }
-    public virtual DbSet<NewFollowersDb> NewFollowersDb { get; set; }
+    public virtual DbQuery<FollowingQuery> Followings { get; set; }
 
-    //public virtual DbSet<RecommendedFromContactsDb> RecommendedFromContactsDb { get; set; }
-    public virtual DbSet<RecommendedStrangersDb> RecommendedStrangersDb { get; set; }
+    public virtual DbQuery<RecommendedStrangersDb> RecommendedStrangersDb { get; set; }
 
-    public virtual DbSet<RecommendedFromFollowsDb> RecommendedFromFollowsDb { get; set; }
-    public virtual DbSet<RecommendedFromFollowersDb> RecommendedFromFollowersDb { get; set; }
-    public virtual DbSet<RecommendedFromUsersIdDb> RecommendedFromUsersIdsDb { get; set; }
+    public virtual DbQuery<RecommendedFromFollowsDb> RecommendedFromFollowsDb { get; set; }
+    public virtual DbQuery<RecommendedFromFollowersDb> RecommendedFromFollowersDb { get; set; }
+    public virtual DbQuery<RecommendedFromUsersIdDb> RecommendedFromUsersIdsDb { get; set; }
 
     public virtual DbSet<FollowingEntity>  UserRelationshipEntities { get; set; }
     public virtual DbSet<StatisticsEntity> StatisticsEntities { get; set; }

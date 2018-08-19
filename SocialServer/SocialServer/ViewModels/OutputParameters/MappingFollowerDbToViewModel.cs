@@ -9,25 +9,11 @@ namespace SocialServer.ViewModels.OutputParameters
 {
   public static class MappingFollowerDbToViewModel
   {
-    public static List<GetFollowerViewModel> MapToUserContactsViewModel(this IEnumerable<FollowerDto> userContactsDb, MediaConverter mediaConverter)
-    {
-      return userContactsDb.Select(f => new GetFollowerViewModel
-        {
-          UserId = f.UserId,
-          Login = f.Login,
-          SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
-          Age = f.BirthDate.Age(),
-          SexType = f.SexType,
-          IsYouFollowed = f.IsYouFollowed,
-          IsHeFollowed = f.IsHeFollowed
-        })
-        .ToList();
-    }
 
-    public static List<GetFollowToViewModel> MapToUserContactsViewModel(this IEnumerable<FollowingDto> userContactsDb, MediaConverter mediaConverter)
+    public static List<GetFollowingViewModel> MapToUserContactsViewModel(this IEnumerable<FollowingQuery> userContactsDb, MediaConverter mediaConverter)
     {
-      return userContactsDb.Select(f => new GetFollowToViewModel
-        {
+      return userContactsDb.Select(f => new GetFollowingViewModel
+      {
           UserId = f.UserId,
           Login = f.Login,
           SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
@@ -36,8 +22,23 @@ namespace SocialServer.ViewModels.OutputParameters
           VisitsCount = f.VisitsCount,
           IsYouFollowed = f.IsYouFollowed,
           IsHeFollowed = f.IsHeFollowed
-        })
+      })
         .ToList();
     }
+
+    //public static List<GetFollowerViewModel> MapToUserContactsViewModel(this IEnumerable<FollowerDto> userContactsDb, MediaConverter mediaConverter)
+    //{
+    //  return userContactsDb.Select(f => new GetFollowerViewModel
+    //    {
+    //      UserId = f.UserId,
+    //      Login = f.Login,
+    //      SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+    //      Age = f.BirthDate.Age(),
+    //      SexType = f.SexType,
+    //      IsYouFollowed = f.IsYouFollowed,
+    //      IsHeFollowed = f.IsHeFollowed
+    //    })
+    //    .ToList();
+    //}
   }
 }
