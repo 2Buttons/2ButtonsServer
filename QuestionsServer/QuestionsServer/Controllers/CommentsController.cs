@@ -38,7 +38,7 @@ namespace QuestionsServer.Controllers
     public async Task<IActionResult> AddComment([FromBody] AddCommentViewModel comment)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
-      if (comment.PreviousCommentId == 0) comment.PreviousCommentId = null;
+      if (comment.PreviousCommentId == null) comment.PreviousCommentId = 0;
       var commentId = await MainDb.Comments.AddComment(comment.UserId, comment.QuestionId, comment.Text,
         comment.PreviousCommentId);
       if (commentId < 0)
