@@ -37,23 +37,23 @@ namespace SocialServer.Controllers
     }
 
     [HttpPost("followers")]
-    public async Task<IActionResult> GetFollowers([FromBody] FollowerViewModel vm)
+    public async Task<IActionResult> GetFollowers([FromBody] FollowingViewModel vm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var followers = await SocialDb.Followers.GetFollowers(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
-        vm.PageParams.Count);
+        vm.PageParams.Count, vm.SearchedLogin);
       return new OkResponseResult(followers.MapToUserContactsViewModel(MediaConverter));
       // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }
 
     [HttpPost("followings")]
-    public async Task<IActionResult> GetFollowTo([FromBody] FollowerViewModel vm)
+    public async Task<IActionResult> GetFollowTo([FromBody] FollowingViewModel vm)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
       var follower = await SocialDb.Followers.GetFollowings(vm.UserId, vm.UserPageId, vm.PageParams.Offset,
-        vm.PageParams.Count);
+        vm.PageParams.Count, vm.SearchedLogin);
       return new OkResponseResult(follower.MapToUserContactsViewModel(MediaConverter));
       // return new BadResponseResult("Something goes wrong. We will fix it!... maybe)))");
     }

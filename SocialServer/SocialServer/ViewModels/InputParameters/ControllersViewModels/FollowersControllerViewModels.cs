@@ -2,8 +2,9 @@
 
 namespace SocialServer.ViewModels.InputParameters.ControllersViewModels
 {
-  public class FollowerViewModel : UserPageIdViewModel
+  public class FollowingViewModel : UserPageIdViewModel
   {
+    public string SearchedLogin { get; set; }
     public PageParams PageParams { get; set; } = new PageParams();
   }
 

@@ -62,15 +62,23 @@ namespace SocialData.Main.Repositories
     }
 
 
-    public async Task<List<FollowingQuery>> GetFollowers(int userId, int userPageId, int offset, int count)
+    public async Task<List<FollowingQuery>> GetFollowers(int userId, int userPageId, int offset, int count, string searchedLogin)
     {
+      if (!string.IsNullOrEmpty(searchedLogin))
+        return await _db.Followings.AsNoTracking()
+          .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").Where(x => x.Login.ToLower().Contains(searchedLogin.ToLower())).OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
+          .ToListAsync();
       return await _db.Followings.AsNoTracking()
         .FromSql($"select * from dbo.getFollowers({userId}, {userPageId})").OrderByDescending(x=>x.VisitsCount).Skip(offset).Take(count)
         .ToListAsync();
     }
 
-    public async Task<List<FollowingQuery>> GetFollowings(int userId, int userPageId, int offset, int count)
+    public async Task<List<FollowingQuery>> GetFollowings(int userId, int userPageId, int offset, int count, string searchedLogin)
     {
+      if(!string.IsNullOrEmpty(searchedLogin))
+        return await _db.Followings.AsNoTracking()
+          .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").Where(x=>x.Login.ToLower().Contains(searchedLogin.ToLower())).OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
+          .ToListAsync();
       return await _db.Followings.AsNoTracking()
         .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
         .ToListAsync();
