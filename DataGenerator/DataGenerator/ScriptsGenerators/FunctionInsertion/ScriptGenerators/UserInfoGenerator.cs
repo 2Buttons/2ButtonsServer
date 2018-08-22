@@ -23,7 +23,7 @@ namespace DataGenerator.ScriptsGenerators.FunctionInsertion.ScriptGenerators
     private string GetInsertionUserInfoLine(UserInfoQuery userInfo)
     {
       return
-        $"EXECUTE [dbo].[addUser] {userInfo.UserId}, N'{userInfo.Login}', '{userInfo.BirthDate:u}', {(int)userInfo.SexType}, N'{userInfo.City}', N'{userInfo.Description}', N'{userInfo.OriginalAvatarUrl}'";
+        $"EXECUTE [dbo].[addUser] {userInfo.UserId}, N'{userInfo.FirstName}', N'{userInfo.LastName}', '{userInfo.BirthDate:u}', {(int)userInfo.SexType}, N'{userInfo.City}', N'{userInfo.Description}', N'{userInfo.OriginalAvatarUrl}'";
     }
 
     private string GetInsertionUserInfosLine(IList<UserInfoQuery> userInfos)

@@ -380,7 +380,8 @@ namespace DataGenerator
         {
           UserId = userIdOffset + i,
           BirthDate = userBag.Birthday,
-          Login = userBag.FirstName + " " + userBag.LastName,
+          FirstName = userBag.FirstName,
+          LastName = userBag.LastName,
           OriginalAvatarUrl = originalAvatarUrl,
           PasswordHash = email.GetMd5HashString(),
           City = userBag.City,
@@ -430,7 +431,8 @@ namespace DataGenerator
           BirthDate = user.BirthDate,
           City = user.City,
           Description = user.Description,
-          Login = user.Login,
+          FirstName = user.FirstName,
+          LastName = user.LastName,
           OriginalAvatarUrl = user.OriginalAvatarUrl,
           SexType = user.SexType
         };
