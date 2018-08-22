@@ -274,7 +274,7 @@ namespace QuestionsData.Repositories
         }
         var question = result.FirstOrDefault(x => x.QuestionId == t.QuestionId);
         if (question != null && question.RecommendedToUsers.All(x => x.UserId != t.ToUserId)) question.RecommendedToUsers
-               .Add(new RecommendedToUserDto { UserId = t.ToUserId, Login = t.ToUserLogin });
+               .Add(new RecommendedToUserDto { UserId = t.ToUserId, FirstName = t.ToUserFirstName, LastName = t.ToUserLastName });
       }
 
       return result;

@@ -7,7 +7,8 @@ namespace QuestionsData.Queries
   {
     public int CommentId { get; set; }
     public int UserId { get; set; }
-    public string Login { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public string OriginalAvatarUrl { get; set; }
     public string Text { get; set; }
     public int LikesCount { get; set; }

@@ -10,7 +10,8 @@ namespace CommonLibraries.Entities.Main
     [Key]
     public int UserId { get; set; }
 
-    public string Login { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType SexType { get; set; }
     public int CityId { get; set; }

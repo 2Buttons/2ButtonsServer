@@ -47,7 +47,8 @@ namespace QuestionsData.Repositories
           new AuthorDto
           {
             UserId = question.Q.UserId,
-            Login = question.U.Login,
+            FirstName = question.U.FirstName,
+            LastName= question.U.LastName,
             SexType = question.U.SexType,
             OriginalAvatarUrl = question.U.OriginalAvatarUrl
           },
@@ -101,8 +102,8 @@ namespace QuestionsData.Repositories
         .ToList();
 
       var votersFriends =  friendIds.Join(questions, a=>a, b=>b.Item1.UserId, (a,b)=> b).ToList();//.Where(x=>x.Follow.(x => x.Item2.AnswerType).Select(x => new { Type = x.Key, Count = x.Count() }).ToListAsync();
-      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login,  SexType = x.Item1.SexType, OriginalAvatarUrl = x.Item1.OriginalAvatarUrl }).ToList();
-      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), Login = x.Item1.Login, SexType = x.Item1.SexType, OriginalAvatarUrl = x.Item1.OriginalAvatarUrl }).ToList();
+      var friendsFirstAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.First).Take(5).Select(x=>new VoterFriendDto{UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), FirstName = x.Item1.FirstName, LastName = x.Item1.LastName, SexType = x.Item1.SexType, OriginalAvatarUrl = x.Item1.OriginalAvatarUrl }).ToList();
+      var friendsSecondAnswer = votersFriends.Where(x => x.Item2.AnswerType == AnswerType.Second).Take(5).Select(x => new VoterFriendDto { UserId = x.Item2.UserId, Age = x.Item1.BirthDate.Age(), FirstName = x.Item1.FirstName, LastName = x.Item1.LastName, SexType = x.Item1.SexType, OriginalAvatarUrl = x.Item1.OriginalAvatarUrl }).ToList();
       //var countFirstAnswerType = voters.Count(x => x.Item2.AnswerType == AnswerType.First);
       //var countSecondAnswerType = voters.Count - countFirstAnswerType;
 
@@ -160,7 +161,8 @@ namespace QuestionsData.Repositories
           IsHeFollowed = voter.isHeFollowed,
           IsYouFollowed =voter.isYouFollowed,
           City = voter.s.Name,
-          Login = voter.f.Item1.Login,
+          FirstName = voter.f.Item1.FirstName,
+          LastName = voter.f.Item1.LastName,
           SexType = voter.f.Item1.SexType,
 
           OriginalAvatarUrl = voter.f.Item1.OriginalAvatarUrl

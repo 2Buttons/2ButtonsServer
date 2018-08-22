@@ -202,7 +202,7 @@ namespace QuestionsServer.Controllers
           City = x.City,
           IsHeFollowed = x.IsHeFollowed,
           IsYouFollowed = x.IsYouFollowed,
-          Login = x.Login,
+          Login = x.FirstName + " " + x.LastName,
           SexType = x.SexType,
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(x.OriginalAvatarUrl, AvatarSizeType.Small),
           UserId = x.UserId
