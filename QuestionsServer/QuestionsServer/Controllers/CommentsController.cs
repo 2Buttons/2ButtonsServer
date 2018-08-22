@@ -75,7 +75,7 @@ namespace QuestionsServer.Controllers
         CommentId = x.CommentId,
         DislikesCount = x.DislikesCount,
         LikesCount = x.LikesCount,
-        Login = x.Login,
+        Login = x.FirstName + " " + x.LastName,
         PreviousCommentId = x.PreviousCommentId,
         Text = x.Text,
         UserId = x.UserId,

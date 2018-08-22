@@ -153,7 +153,7 @@ namespace QuestionsServer.Controllers
         Author =
           new AuthorViewModel
           {
-            Login = question.Author.Login,
+            Login = question.Author.FirstName + " " + question.Author.LastName,
             SexType = question.Author.SexType,
             SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(question.Author.OriginalAvatarUrl, AvatarSizeType.Small),
             UserId = question.Author.UserId

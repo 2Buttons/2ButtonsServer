@@ -49,7 +49,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       viewModel.CommentedUser = new NewsUserViewModel
       {
         UserId = dto.NewsCommentedQuestionDb.CommentedUserId,
-        Login = dto.NewsCommentedQuestionDb.CommentedUserLogin,
+        Login = dto.NewsCommentedQuestionDb.CommentedUserFirstName + " " + dto.NewsCommentedQuestionDb.CommentedUserLastName,
         SexType = dto.NewsCommentedQuestionDb.CommentedUserSexType
       };
       viewModel.UserCommentsCount = dto.NewsCommentedQuestionDb.CommentedUserCommentsCount;
@@ -70,7 +70,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
       {
         UserId = dto.NewsFavoriteQuestionDb.FavoriteAddedUserId,
         SexType = dto.NewsFavoriteQuestionDb.FavoriteAddedUserSexType,
-        Login = dto.NewsFavoriteQuestionDb.FavoriteAddedUserLogin
+        Login = dto.NewsFavoriteQuestionDb.FavoriteAddedUserFirstName + " " + dto.NewsFavoriteQuestionDb.FavoriteAddedUserLastName
       };
 
       viewModel.Priority = dto.Priority;
@@ -93,7 +93,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         viewModel.RecommendedUsers.Add(new NewsUserViewModel
         {
           UserId = user.UserId,
-          Login = user.Login,
+          Login = user.FirstName + " " + user.LastName,
           SexType = user.SexType
         });
       }
@@ -101,7 +101,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
 
 
       viewModel.Priority = dto.Priority;
-      viewModel.NewsType = CommonLibraries.NewsType.Recommended;
+      viewModel.NewsType = NewsType.Recommended;
 
       return viewModel;
     }
@@ -161,7 +161,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Author = new AuthorViewModel
         {
           UserId = dbEntity.Author.UserId,
-          Login = dbEntity.Author.Login,
+          Login = dbEntity.Author.FirstName + " " + dbEntity.Author.LastName,
           SexType = dbEntity.Author.SexType,
           SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(dbEntity.Author.OriginalAvatarUrl, AvatarSizeType.Small)
 
@@ -301,9 +301,9 @@ namespace QuestionsServer.ViewModels.OutputParameters
       {
         UserId = p.UserId,
         Age = p.BirthDate.Age(),
-        Login = p.Login,
+        Login = p.FirstName + " " + p.LastName,
         SexType = p.SexType,
-        SmallAvatarUrl =  mediaConverter.ToFullAvatarUrl(p.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small)
+        SmallAvatarUrl =  mediaConverter.ToFullAvatarUrl(p.OriginalAvatarUrl, AvatarSizeType.Small)
       }).ToList();
     }
 
@@ -313,8 +313,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
       {
         CommentId = c.CommentId,
         UserId = c.UserId,
-        Login = c.Login,
-        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(c.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+        Login = c.FirstName + " " + c.LastName,
+        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(c.OriginalAvatarUrl, AvatarSizeType.Small),
         Text = c.Text,
         LikesCount = c.LikesCount,
         DislikesCount = c.DislikesCount,
@@ -330,8 +330,8 @@ namespace QuestionsServer.ViewModels.OutputParameters
       return answeredList.Select(v => new AnsweredListViewModel
       {
         UserId = v.UserId,
-        Login = v.Login,
-        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(v.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
+        Login = v.FirstName + " " + v.LastName,
+        SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(v.OriginalAvatarUrl, AvatarSizeType.Small),
         Age = v.BirthDate.Age(),
         SexType = v.SexType,
         IsHeFollowed = v.IsHeFollowed,

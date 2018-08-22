@@ -93,7 +93,7 @@ namespace QuestionsData.Repositories
         if (question != null && question.RecommendedUsers.All(x => x.UserId != t.RecommendedUserId))
         {
           question.RecommendedUsers
-          .Add(new RecommendedUserDto { UserId = t.RecommendedUserId, Login = t.RecommendedUserLogin, SexType = t.RecommendedUserSexType });
+          .Add(new RecommendedUserDto { UserId = t.RecommendedUserId, FirstName = t.RecommendedUserFirstName, LastName = t.RecommendedUserLastName,  SexType = t.RecommendedUserSexType });
         }
       }
 
