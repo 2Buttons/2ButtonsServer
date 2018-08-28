@@ -16,7 +16,8 @@ namespace QuestionsData.Queries
     public QuestionType QuestionType { get; set; }
     public DateTime AddedDate { get; set; }
     public int UserId { get; set; }
-    public string Login { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public SexType SexType { get; set; }
     public string OriginalAvatarUrl { get; set; }
     public int LikesCount { get; set; }

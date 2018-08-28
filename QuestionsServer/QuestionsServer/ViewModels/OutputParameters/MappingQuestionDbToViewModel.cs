@@ -267,7 +267,7 @@ namespace QuestionsServer.ViewModels.OutputParameters
         Author = new AuthorViewModel
         {
           UserId = dbEntity.UserId,
-          Login = dbEntity.Login,
+          Login = dbEntity.FirstName + " " + dbEntity.LastName,
           SexType = dbEntity.SexType,
           SmallAvatarUrl = dbEntity.OriginalAvatarUrl != null ? mediaConverter.ToFullAvatarUrl(dbEntity.OriginalAvatarUrl, AvatarSizeType.Small) : null
         },
