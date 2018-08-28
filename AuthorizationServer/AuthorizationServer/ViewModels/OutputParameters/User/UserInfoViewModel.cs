@@ -1,8 +1,7 @@
-﻿using System;
-using AuthorizationData.Main.Dto;
-using AuthorizationData.Main.Entities;
+﻿using AuthorizationData.Main.Dto;
 using CommonLibraries;
 using CommonLibraries.MediaFolders;
+using System;
 
 namespace AuthorizationServer.ViewModels.OutputParameters.User
 {
@@ -46,7 +45,7 @@ namespace AuthorizationServer.ViewModels.OutputParameters.User
         Description = userInfo.Description,
         LargeAvatarUrl = mediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Large),
         SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(userInfo.OriginalAvatarUrl, AvatarSizeType.Small),
-        Login = userInfo.Login,
+        Login = userInfo.FirstName + " " + userInfo.LastName,
         SexType = userInfo.SexType,
         UserId = userInfo.UserId
       };

@@ -34,7 +34,8 @@ namespace AuthorizationData.Main.Repositories
       var userChanged = await _contextMain.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == user.UserId);
       if (userChanged == null) return false;
 
-      userChanged.Login = user.Login;
+      userChanged.FirstName = user.FirstName;
+      userChanged.LastName = user.LastName;
       userChanged.BirthDate = user.BirthDate;
       userChanged.SexType = user.SexType;
       userChanged.Description = user.Description;
@@ -57,7 +58,8 @@ namespace AuthorizationData.Main.Repositories
       var result = new UserInfoDto
       {
         UserId = user.UserId,
-        Login = user.Login,
+        FirstName = user.FirstName,
+        LastName = user.LastName,
         BirthDate = user.BirthDate,
         City = city.Name,
         Description = user.Description,
