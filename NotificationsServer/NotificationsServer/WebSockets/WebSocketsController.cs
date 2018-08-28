@@ -12,7 +12,7 @@ namespace NotificationsServer.WebSockets
     private readonly NotificationManager _notificationManager;
     private readonly ILogger<NotificationManager> _logger;
 
-    public WebSocketsController(NotificationsDataUnitOfWork db, NotificationManager notificationManager,      ILogger<NotificationManager> logger)
+    public WebSocketsController(NotificationsDataUnitOfWork db, NotificationManager notificationManager, ILogger<NotificationManager> logger)
     {
       _db = db;
       _notificationManager = notificationManager;

@@ -13,7 +13,7 @@ namespace NotificationsData.Main.Entities
 
     public int UserId { get; set; }
     public string Text { get; set; }
-    public int? PreviousCommentId { get; set; }
+    public int PreviousCommentId { get; set; }
     public bool? IsDeleted { get; set; }
     public DateTime CommentedDate { get; set; }
   }

@@ -35,7 +35,7 @@ namespace NotificationsServer.Services
       var notification = new Notification
       {
         UserId = followNotification.NotifierId,
-        Login = info.Login,
+        Login = info.FirstName + " " + info.LastName,
         SmallAvatarLink = MediaConverter.ToFullAvatarUrl(info.OriginalAvatarUrl, AvatarSizeType.Small),
         ActionType = ActionType.Follow,
         EmmiterId = followNotification.NotifierId,
@@ -55,7 +55,7 @@ namespace NotificationsServer.Services
       var notification = new Notification
       {
         UserId = recommendedQuestionNotification.NotifierId,
-        Login = info.Login,
+        Login = info.FirstName + " " + info.LastName,
         SmallAvatarLink = MediaConverter.ToFullAvatarUrl(info.OriginalAvatarUrl, AvatarSizeType.Small),
         ActionType = ActionType.Follow,
         EmmiterId = recommendedQuestionNotification.QuestionId,
@@ -77,7 +77,7 @@ namespace NotificationsServer.Services
       var notification = new Notification
       {
         UserId = commentNotification.NotifierId,
-        Login = info.Login,
+        Login = info.FirstName + " " + info.LastName,
         SmallAvatarLink = MediaConverter.ToFullAvatarUrl(info.OriginalAvatarUrl, AvatarSizeType.Small),
         ActionType = ActionType.Follow,
         EmmiterId = commentNotification.CommentId,
