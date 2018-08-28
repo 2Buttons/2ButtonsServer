@@ -36,7 +36,8 @@ namespace SocialData.Main.Repositories
         {
           UserId = x.UserInfo.UserId,
           BirthDate = x.UserInfo.BirthDate,
-          Login = x.UserInfo.Login,
+          FirstName = x.UserInfo.FirstName,
+          LastName = x.UserInfo.LastName,
           SexType = x.UserInfo.SexType,
           OriginalAvatarUrl = x.UserInfo.OriginalAvatarUrl,
           CommonFollowingsCount = _db.UserRelationshipEntities.Where(i => i.UserId == x.UserInfo.UserId).GroupJoin(_db.UserRelationshipEntities.Where(o => o.UserId == userId), i => i.FollowingId, o => o.FollowingId, (i, o) => 1).Count()
@@ -62,7 +63,8 @@ namespace SocialData.Main.Repositories
         {
           UserId = x.UserInfo.UserId,
           BirthDate = x.UserInfo.BirthDate,
-          Login = x.UserInfo.Login,
+          FirstName = x.UserInfo.FirstName,
+          LastName = x.UserInfo.LastName,
           SexType = x.UserInfo.SexType,
           OriginalAvatarUrl = x.UserInfo.OriginalAvatarUrl,
           CommonFollowingsCount = _db.UserRelationshipEntities.Where(i => i.UserId == x.UserInfo.UserId).GroupJoin(_db.UserRelationshipEntities.Where(o => o.UserId == userId), i => i.FollowingId, o => o.FollowingId, (i, o) => 1).Count()
@@ -77,7 +79,8 @@ namespace SocialData.Main.Repositories
       {
         UserId = x.UserId,
         BirthDate = x.BirthDate,
-        Login = x.Login,
+        FirstName = x.FirstName,
+        LastName = x.LastName,
         OriginalAvatarUrl = x.OriginalAvatarUrl,
         SexType = x.SexType
       }).ToListAsync();
