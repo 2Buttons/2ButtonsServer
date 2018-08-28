@@ -32,7 +32,8 @@ namespace AccountData.Main.Repositories
       var result = new UserInfoDto
       {
         UserId = userPageId,
-        Login = user.UserInfo.Login,
+        FirstName = user.UserInfo.FirstName,
+        LastName = user.UserInfo.LastName,
         BirthDate = user.UserInfo.BirthDate,
         SexType = user.UserInfo.SexType,
         City = (await _db.CityEntities.FirstOrDefaultAsync(x => x.CityId == user.UserInfo.CityId)).Name,
@@ -78,7 +79,8 @@ namespace AccountData.Main.Repositories
     {
       var oldUserData = await _db.UserInfoEntities.FirstOrDefaultAsync(x => x.UserId == user.UserId);
 
-      oldUserData.Login = user.Login;
+      oldUserData.FirstName = user.FirstName;
+      oldUserData.LastName = user.LastName;
       oldUserData.BirthDate = user.BirthDate;
       oldUserData.SexType = user.SexType;
       oldUserData.Description = user.Description;

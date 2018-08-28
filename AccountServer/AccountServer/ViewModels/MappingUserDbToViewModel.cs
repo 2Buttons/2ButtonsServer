@@ -15,7 +15,7 @@ namespace AccountServer.ViewModels
       var viewModel = new UserInfoViewModel
       {
         UserId = dbEntity.UserId,
-        Login = dbEntity.Login,
+        Login = dbEntity.FirstName + " " + dbEntity.LastName,
         Age = dbEntity.BirthDate.Age(),
         SexType =  dbEntity.SexType,
         City = dbEntity.City,
