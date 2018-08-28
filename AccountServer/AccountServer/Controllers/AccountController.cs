@@ -71,15 +71,21 @@ namespace AccountServer.Controllers
     {
       if (!ModelState.IsValid)
         return new BadResponseResult(ModelState);
-      if (await _account.UpdateUserInfoAsync(new UpdateUserInfoDto
+
+      var updateUser = new UpdateUserInfoDto
       {
         BirthDate = user.BirthDate,
         City = user.City,
         Description = user.Description,
-        Login = user.Login,
         SexType = user.SexType,
         UserId = user.UserId
-      }))
+      };
+
+      var (firstName, lastName) = _account.ParseLoginIntoFirstNameAndLastName(user.Login);
+      updateUser.FristName = firstName;
+      updateUser.LastName = lastName;
+
+      if (await _account.UpdateUserInfoAsync(updateUser))
         return new OkResponseResult();
       return new ResponseResult((int)HttpStatusCode.NotModified);
     }

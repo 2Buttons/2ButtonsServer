@@ -16,5 +16,6 @@ namespace AccountServer.Infrastructure.Services
     Task<(bool isUpdated, string url)> UpdateAvatarViaFile(int userId, AvatarType avatarType, AvatarSizeType avatarSizeType, IFormFile file);
     Task<(bool isUpdated, string url)> UpdateAvatarViaUrl(int userId, AvatarType avatarType, AvatarSizeType avatarSizeType, string newAvatarUrl);
     Task<bool> UpdateUserInfoAsync(UpdateUserInfoDto user);
+    (string FirstName, string LastName) ParseLoginIntoFirstNameAndLastName(string login);
   }
 }
