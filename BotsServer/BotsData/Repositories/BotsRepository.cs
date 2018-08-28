@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using BotsData.Contexts;
 using BotsData.Dto;
-using BotsData.Entities;
 using CommonLibraries;
+using CommonLibraries.Entities.Acccount;
 using Microsoft.EntityFrameworkCore;
 
 namespace BotsData.Repositories

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BotsData;
 using BotsData.Contexts;
-using BotsData.Entities;
 using BotsServer.ViewModels.Input;
 using CommonLibraries;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,34 +14,20 @@ namespace BotsServer.Jobs
 {
   public class BotsManager
   {
-
-
     private readonly Random _random = new Random();
-    public BotsManager()
-    {
 
-    }
-
-    public async Task CreateTimer(BotsUnitOfWork db, DbContextOptions<TwoButtonsContext> dbOptions, MagicViewModel magic)
+    public async Task CreateTimer(BotsUnitOfWork db, DbContextOptions<TwoButtonsContext> dbOptions,
+      MagicViewModel magic)
     {
       TimerCallback timerDelegate = Task;
 
-
-
       var errorPercent = _random.Next(3, 5);
-      var errorAnwerType = (AnswerType)_random.Next(1, 3);
+      var errorAnwerType = (AnswerType) _random.Next(1, 3);
 
       var firstOptionPercent = magic.FirstOptionPercent;
 
-      if (errorAnwerType == AnswerType.First)
-      {
-        firstOptionPercent += errorPercent;
-      }
-      else
-      {
-        firstOptionPercent -= errorPercent;
-      }
-
+      if (errorAnwerType == AnswerType.First) firstOptionPercent += errorPercent;
+      else firstOptionPercent -= errorPercent;
 
       var firstBotsCount = magic.BotsCount * firstOptionPercent / 100;
       var secondBotsCount = magic.BotsCount - firstBotsCount;
@@ -50,30 +35,29 @@ namespace BotsServer.Jobs
       var allBots = await db.BotsRepository.GetAllBotsIdsExceptVoted(magic.QuestionId);
       RandomizerExtension.Shuffle(allBots);
 
+      var list = new List<BotVoting>();
 
-      List<BotVoting> list = new List<BotVoting>();
+      for (var i = 0; i < firstBotsCount && i < allBots.Count; i++)
+        list.Add(new BotVoting {BotId = allBots[i], QuestionId = magic.QuestionId, AnswerType = AnswerType.First});
 
-      for (int i = 0; i < firstBotsCount && i < allBots.Count; i++)
-      {
-        list.Add(new BotVoting { BotId = allBots[i], QuestionId = magic.QuestionId, AnswerType = AnswerType.First });
+      for (var i = firstBotsCount; i < secondBotsCount + firstBotsCount && i < allBots.Count; i++)
+        list.Add(new BotVoting {BotId = allBots[i], QuestionId = magic.QuestionId, AnswerType = AnswerType.Second});
 
-      }
-
-      for (int i = firstBotsCount; i < secondBotsCount + firstBotsCount && i < allBots.Count; i++)
-      {
-        list.Add(new BotVoting { BotId = allBots[i], QuestionId = magic.QuestionId, AnswerType = AnswerType.Second });
-      }
-
-      RandomizerExtension.Shuffle<BotVoting>(list);
+      RandomizerExtension.Shuffle(list);
       foreach (var bot in list)
       {
-        var job = new JobState { BotId = bot.BotId, AnswerType = bot.AnswerType, QuestionId = bot.QuestionId, DbOptions = dbOptions , Db = db};
+        var job = new JobState
+        {
+          BotId = bot.BotId,
+          AnswerType = bot.AnswerType,
+          QuestionId = bot.QuestionId,
+          DbOptions = dbOptions,
+          Db = db
+        };
 
         //await new TaskFactory().StartNew(() => Task(job));
         var timer = new Timer(timerDelegate, job, _random.Next(magic.VoteDurationInMilliseconds), Timeout.Infinite);
       }
-
-
     }
 
     //private void Task(object jobState)
@@ -87,14 +71,12 @@ namespace BotsServer.Jobs
     //    job.Db.QuestionRepository.UpdateAnswer(bot.BotId, bot.QuestionId, bot.AnswerType);
     //  }
 
-
     //  job.RemainingIteration--;
     //}
 
-
-    private async  void Task(object jobState)
+    private async void Task(object jobState)
     {
-      var job = (JobState)jobState;
+      var job = (JobState) jobState;
 
       var db = new TwoButtonsContext(job.DbOptions); // TODO интересно проверить теорию, что можно и не создавать
 
@@ -108,18 +90,16 @@ namespace BotsServer.Jobs
         UserId = job.BotId,
         AnsweredDate = answered,
         IsDeleted = false,
-        IsLiked = false
-
+        FeedbackType = QuestionFeedbackType.Like
       };
 
       await job.Db.QuestionRepository.UpdateAnswer(db, answer);
-
     }
+    //  if (job.RemainingIteration <= 0) job.Timer.Dispose();
+    //  var job = (JobState)jobState;
+    //{
 
     //private void Task(object jobState)
-    //{
-    //  var job = (JobState)jobState;
-    //  if (job.RemainingIteration <= 0) job.Timer.Dispose();
     //  var db = new TwoButtonsContext(job.DbOptions);
     //  for (int i = 0; i < job.BotsPerVote; i++)
     //  {
@@ -149,9 +129,7 @@ namespace BotsServer.Jobs
     //    Interlocked.Increment(ref job.Index);
     //  }
 
-
     //  job.RemainingIteration--;
     //}
-
   }
 }

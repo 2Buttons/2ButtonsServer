@@ -12,6 +12,7 @@ namespace CommonLibraries.Entities.Main
 
     public int UserId { get; set; }
     public string Condition { get; set; }
+    public AudienceType AudienceType { get; set; }
     public QuestionType QuestionType { get; set; }
     public DateTime AddedDate { get; set; }
     public string OriginalBackgroundUrl{ get; set; }

@@ -1,4 +1,4 @@
-﻿using BotsData.Entities;
+﻿using CommonLibraries.Entities.Main;
 using Microsoft.EntityFrameworkCore;
 
 namespace BotsData.Contexts
