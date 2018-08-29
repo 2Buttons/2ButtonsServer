@@ -20,8 +20,8 @@ namespace SocialServer.ViewModels.OutputParameters
           Age = f.BirthDate.Age(),
           SexType = f.SexType,
           VisitsCount = f.VisitsCount,
-          IsYouFollowed = f.IsYouFollowed,
-          IsHeFollowed = f.IsHeFollowed
+          IsYouFollowed = f.IsHeFollowed,
+          IsHeFollowed = f.IsYouFollowed
       })
         .ToList();
     }
