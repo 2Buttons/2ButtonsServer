@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SocialData;
 using SocialData.Main.DTO;
-using SocialData.Main.Entities.Recommended;
+using SocialData.Main.Queries;
 using SocialServer.ViewModels.InputParameters;
 using SocialServer.ViewModels.OutputParameters;
 using SocialServer.ViewModels.OutputParameters.User;
@@ -61,7 +61,7 @@ namespace SocialServer.Infrastructure
 
       var followers = await SocialDb.RecommendedPeople.GetRecommendedFromFollowers(user.UserId, partOffset, partCount);
       // return new BadResponseResult("Something goes wrong with followers.");
-      var sameFollows = await SocialDb.RecommendedPeople.GetRecommendedFromFollowings(user.UserId, partOffset, partCount);
+      var followings = await SocialDb.RecommendedPeople.GetRecommendedFromFollowings(user.UserId, partOffset, partCount);
       //return new BadResponseResult("Something goes wrong with follows as you ))) .");
 
       Parallel.ForEach(followers, x => { x.CommonFollowingsCount = (int)(x.CommonFollowingsCount * 1.5); });
@@ -70,14 +70,14 @@ namespace SocialServer.Infrastructure
       var friendsCount = user.PageParams.Count * 60 / 100;
       var followersCount = user.PageParams.Count - friendsCount;
 
-      MakeFollowersAndFollowsTo(followers, sameFollows, out var followersOut, out var followsOut);
+      MakeFollowersAndFollowsTo(followers, followings, out var followersOut, out var followingsOut);
 
       var result = new RecommendedUsers
       {
         SocialFriends = MakeSocialNetFriends(socialFriends, friendsCount),
 
         Followers = followersOut.Take(followersCount / 2).ToList(),
-        CommonFollowsTo = followsOut.Take(friendsCount - followersCount / 2).ToList()
+        Followings = followingsOut.Take(friendsCount - followersCount / 2).ToList()
       };
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.End");
       return result;
@@ -127,7 +127,7 @@ namespace SocialServer.Infrastructure
           UserId = item.UserId,
           Login = item.FirstName + " " + item.LastName,
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl, AvatarSizeType.Small),
-          BirthDate = item.BirthDate,
+          Age = item.BirthDate.Age(),
           SexType = item.SexType
         });
       }
@@ -135,8 +135,8 @@ namespace SocialServer.Infrastructure
       return result;
     }
 
-    private void MakeFollowersAndFollowsTo(IEnumerable<RecommendedFromFollowersDto> recommendedFromFollowers,
-      IEnumerable<RecommendedFromFollowingsDto> recommendedFromFollows,
+    private void MakeFollowersAndFollowsTo(IEnumerable<RecommendedFollowingQuery> recommendedFromFollowers,
+      IEnumerable<RecommendedFollowingQuery> recommendedFromFollows,
       out List<RecommendedUserViewModel> followers, out List<RecommendedUserViewModel> follows)
     {
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.Start");
@@ -153,9 +153,9 @@ namespace SocialServer.Infrastructure
           UserId = item.UserId,
           Login = item.FirstName + " " + item.LastName,
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl,  AvatarSizeType.Small),
-          BirthDate = item.BirthDate,
+          Age = item.BirthDate.Age(),
           SexType = item.SexType,
-          CommonFollowsTo = item.CommonFollowingsCount
+          CommonFollowsingCount = item.CommonFollowingsCount
         });
 
       foreach (var item in recommendedFromFollows)
@@ -165,16 +165,16 @@ namespace SocialServer.Infrastructure
           UserId = item.UserId,
           Login = item.FirstName + " " + item.LastName,
           SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl, AvatarSizeType.Small),
-          BirthDate = item.BirthDate,
+          Age = item.BirthDate.Age(),
           SexType = item.SexType,
-          CommonFollowsTo = item.CommonFollowingsCount
+          CommonFollowsingCount = item.CommonFollowingsCount
         });
 
       var mainList = new List<RecommendedUserViewModel>(followersLength + followsLength);
       mainList.AddRange(followers);
       mainList.AddRange(follows);
 
-      var mainListOrdered = mainList.OrderByDescending(x => x.CommonFollowsTo).ToList();
+      var mainListOrdered = mainList.OrderByDescending(x => x.CommonFollowsingCount).ToList();
 
       for (var i = 0; i < mainListOrdered.Count; i++)
       {

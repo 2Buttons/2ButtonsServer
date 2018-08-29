@@ -1,9 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibraries;
 
-namespace AccountData.Main.Entities
+namespace CommonLibraries.Entities.Main
 {
   [Table("Feedbacks")]
   public class FeedbackEntity

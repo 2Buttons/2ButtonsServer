@@ -12,12 +12,12 @@ namespace SocialData
     private readonly TwoButtonsContext _dbMain;
 
     private FollowersRepository _followersRepository;
-    private RecommendedPeopleRepository _recommendedSubscribersRepository;
+    private RecommendedFollowingsRepository _recommendedSubscribersRepository;
     private SocialRepository _userRepository;
 
 
     public FollowersRepository Followers => _followersRepository ??(_followersRepository = new FollowersRepository(_dbMain));
-    public RecommendedPeopleRepository RecommendedPeople => _recommendedSubscribersRepository ??(_recommendedSubscribersRepository =new RecommendedPeopleRepository(_dbMain));
+    public RecommendedFollowingsRepository RecommendedPeople => _recommendedSubscribersRepository ??(_recommendedSubscribersRepository =new RecommendedFollowingsRepository(_dbMain));
     public SocialRepository Users => _userRepository ?? (_userRepository = new SocialRepository(_dbAccount));
 
     public SocialDataUnitOfWork(TwoButtonsContext dbMain, TwoButtonsAccountContext dbAccount)

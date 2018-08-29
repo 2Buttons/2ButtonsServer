@@ -1,14 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibraries;
 
-namespace SocialData.Main.Entities.Followers
+namespace SocialData.Main.Queries
 {
   public class FollowingQuery
   {
     public int UserId { get; set; }
-    public string Login { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public string OriginalAvatarUrl { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType SexType { get; set; }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CommonLibraries.Entities.Main;
 using Microsoft.EntityFrameworkCore;
 using SocialData.Main.DTO;
-using SocialData.Main.Entities.Followers;
+using SocialData.Main.Queries;
 
 namespace SocialData.Main.Repositories
 {
@@ -36,12 +36,7 @@ namespace SocialData.Main.Repositories
         };
         _db.UserRelationshipEntities.Add(relation);
       }
-
-      var statFirst = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
-      var statSecond = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == followingUserId);
-      statFirst.Followings++;
-      statSecond.Followers++;
-
+      relation.IsFollowing = true;
       return await _db.SaveChangesAsync() > 0;
     }
 
@@ -51,13 +46,7 @@ namespace SocialData.Main.Repositories
         await _db.UserRelationshipEntities.FirstOrDefaultAsync(
           x => x.UserId == userId && x.FollowingId == followingUserId);
       if (relation == null || !relation.IsFollowing) return true;
-
       relation.IsFollowing = false;
-      var statFirst = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
-      var statSecond = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == followingUserId);
-      statFirst.Followings--;
-      statSecond.Followers--;
-
       return await _db.SaveChangesAsync() > 0;
     }
 
@@ -66,7 +55,7 @@ namespace SocialData.Main.Repositories
     {
       if (!string.IsNullOrEmpty(searchedLogin))
         return await _db.Followings.AsNoTracking()
-          .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").Where(x => x.Login.ToLower().Contains(searchedLogin.ToLower())).OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
+          .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").Where(x => (x.FirstName + " " + x.LastName).ToLower().Contains(searchedLogin.ToLower())).OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
           .ToListAsync();
       return await _db.Followings.AsNoTracking()
         .FromSql($"select * from dbo.getFollowers({userId}, {userPageId})").OrderByDescending(x=>x.VisitsCount).Skip(offset).Take(count)
@@ -77,7 +66,7 @@ namespace SocialData.Main.Repositories
     {
       if(!string.IsNullOrEmpty(searchedLogin))
         return await _db.Followings.AsNoTracking()
-          .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").Where(x=>x.Login.ToLower().Contains(searchedLogin.ToLower())).OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
+          .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").Where(x=> (x.FirstName + " " + x.LastName).ToLower().Contains(searchedLogin.ToLower())).OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)
           .ToListAsync();
       return await _db.Followings.AsNoTracking()
         .FromSql($"select * from dbo.getFollowings({userId}, {userPageId})").OrderByDescending(x => x.VisitsCount).Skip(offset).Take(count)

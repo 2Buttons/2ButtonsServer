@@ -3,7 +3,7 @@ using System.Linq;
 using CommonLibraries.Extensions;
 using CommonLibraries.MediaFolders;
 using SocialData.Main.DTO;
-using SocialData.Main.Entities.Followers;
+using SocialData.Main.Queries;
 
 namespace SocialServer.ViewModels.OutputParameters
 {
@@ -15,7 +15,7 @@ namespace SocialServer.ViewModels.OutputParameters
       return userContactsDb.Select(f => new GetFollowingViewModel
       {
           UserId = f.UserId,
-          Login = f.Login,
+          Login = f.FirstName + " " + f.LastName,
           SmallAvatarUrl = mediaConverter.ToFullAvatarUrl(f.OriginalAvatarUrl, CommonLibraries.AvatarSizeType.Small),
           Age = f.BirthDate.Age(),
           SexType = f.SexType,

@@ -11,10 +11,9 @@ namespace SocialServer.ViewModels.OutputParameters.User
     public int UserId { get; set; }
     public string Login { get; set; }
     public string SmallAvatarUrl { get; set; }
-    public DateTime BirthDate { get; set; }
+    public int Age { get; set; }
     public SexType SexType { get; set; }
 
-    [JsonIgnore]
-    public int CommonFollowsTo { get; set; }
+    public int CommonFollowsingCount { get; set; }
   }
 }
