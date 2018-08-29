@@ -129,7 +129,7 @@
   public enum QuestionType
   {
     NoType = 0,
-    Opened = 1,
+    Public = 1,
     Anonymous = 2
   }
 
