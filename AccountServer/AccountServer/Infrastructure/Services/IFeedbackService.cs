@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AccountData.Main.Entities;
+using CommonLibraries.Entities.Main;
 
 namespace AccountServer.Infrastructure.Services
 {

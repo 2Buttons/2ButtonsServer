@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AccountData;
-using AccountData.Main.Entities;
+using CommonLibraries.Entities.Main;
 using Microsoft.Extensions.Logging;
 
 namespace AccountServer.Infrastructure.Services

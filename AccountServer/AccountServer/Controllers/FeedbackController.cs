@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using AccountData.Main.Entities;
 using AccountServer.Infrastructure.Services;
 using AccountServer.ViewModels.InputParameters;
+using CommonLibraries.Entities.Main;
 using CommonLibraries.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;

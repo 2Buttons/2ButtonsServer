@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AccountData.DTO;
-using AccountData.Main.Entities;
 using AccountData.Main.Queries;
 using CommonLibraries.Entities.Main;
 using CommonLibraries.Exceptions.ApiExceptions;
