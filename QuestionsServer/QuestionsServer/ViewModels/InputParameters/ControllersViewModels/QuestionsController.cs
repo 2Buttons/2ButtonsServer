@@ -12,6 +12,7 @@ namespace QuestionsServer.ViewModels.InputParameters.ControllersViewModels
     public string Condition { get; set; }
     public AudienceType AudienceType { get; set; }
     public QuestionType QuestionType { get; set; }
+    public bool IsAnonymous { get; set; }
     [Required]
     public string FirstOption { get; set; }
     [Required]

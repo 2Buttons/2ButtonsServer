@@ -190,14 +190,15 @@ namespace QuestionsData.Repositories
     }
 
     public async Task<int> AddQuestion(int userId, string condition, string originalBackgroundUrl,
-      AudienceType audienceType, QuestionType questionType, string firstOption, string secondOption)
+      AudienceType audienceType, QuestionType questionType, bool isAnonymous, string firstOption, string secondOption)
     {
       var questionAddDate = DateTime.UtcNow;
 
       var questionIdDb = new SqlParameter {SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output};
+      var isAnonymousInt = isAnonymous ? 1 : 0;
 
       await _db.Database.ExecuteSqlCommandAsync(
-        $"addQuestion {userId}, {condition}, {originalBackgroundUrl}, {audienceType}, {questionType}, {firstOption}, {secondOption}, {questionAddDate}, {questionIdDb} OUT");
+        $"addQuestion {userId}, {condition}, {originalBackgroundUrl}, {audienceType}, {questionType}, {isAnonymousInt}, {firstOption}, {secondOption}, {questionAddDate}, {questionIdDb} OUT");
       return (int) questionIdDb.Value;
     }
 

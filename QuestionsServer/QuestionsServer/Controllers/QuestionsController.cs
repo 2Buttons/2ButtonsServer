@@ -65,7 +65,7 @@ namespace QuestionsServer.Controllers
         externalUrl = urls.Count < 1 ? null : urls[Random.Next(urls.Count)];
       }
 
-      var questionId = await MainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl, question.AudienceType, question.QuestionType, question.FirstOption,
+      var questionId = await MainDb.Questions.AddQuestion(question.UserId, question.Condition, externalUrl, question.AudienceType, question.QuestionType, question.IsAnonymous, question.FirstOption,
         question.SecondOption);
 
       var badAddedTags = new List<string>();
