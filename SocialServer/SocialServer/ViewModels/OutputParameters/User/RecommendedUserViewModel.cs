@@ -14,6 +14,6 @@ namespace SocialServer.ViewModels.OutputParameters.User
     public int Age { get; set; }
     public SexType SexType { get; set; }
 
-    public int CommonFollowsingCount { get; set; }
+    public int CommonFollowingsCount { get; set; }
   }
 }

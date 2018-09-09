@@ -64,20 +64,30 @@ namespace SocialServer.Infrastructure
       var followings = await SocialDb.RecommendedPeople.GetRecommendedFromFollowings(user.UserId, partOffset, partCount);
       //return new BadResponseResult("Something goes wrong with follows as you ))) .");
 
-      Parallel.ForEach(followers, x => { x.CommonFollowingsCount = (int)(x.CommonFollowingsCount * 1.5); });
+      //Parallel.ForEach(followers, x => { x.CommonFollowingsCount = (int)(x.CommonFollowingsCount * 1.5); });
+
+      var recommended = new List<(RecommendedType Type, RecommendedFollowingQuery list)>(followers.Count + followings.Count);
+
+      recommended.AddRange(followers.Select(x=>(RecommendedType.Follower, x)));
+      recommended.AddRange(followings.Select(x => (RecommendedType.Following, x)));
+
+      recommended = recommended.OrderByDescending(x =>
+      {
+        if(x.Type == RecommendedType.Follower)
+          return x.list.CommonFollowingsCount*1.5;
+        return x.list.CommonFollowingsCount;
+      }).Skip(user.PageParams.Offset).Take(user.PageParams.Count).ToList();
+
+      MakeFollowersAndFollowsTo(recommended, out var followersOut, out var followingsOut);
 
 
-      var friendsCount = user.PageParams.Count * 60 / 100;
-      var followersCount = user.PageParams.Count - friendsCount;
-
-      MakeFollowersAndFollowsTo(followers, followings, out var followersOut, out var followingsOut);
-
+    
       var result = new RecommendedUsers
       {
-        SocialFriends = MakeSocialNetFriends(socialFriends, friendsCount),
+        SocialFriends = MakeSocialNetFriends(socialFriends, 100),
 
-        Followers = followersOut.Take(followersCount / 2).ToList(),
-        Followings = followingsOut.Take(friendsCount - followersCount / 2).ToList()
+        Followers = followersOut,
+        Followings = followingsOut
       };
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(GetRecommendedUsers)}.End");
       return result;
@@ -135,54 +145,48 @@ namespace SocialServer.Infrastructure
       return result;
     }
 
-    private void MakeFollowersAndFollowsTo(IEnumerable<RecommendedFollowingQuery> recommendedFromFollowers,
-      IEnumerable<RecommendedFollowingQuery> recommendedFromFollows,
-      out List<RecommendedUserViewModel> followers, out List<RecommendedUserViewModel> follows)
+    private void MakeFollowersAndFollowsTo(IEnumerable<(RecommendedType Type, RecommendedFollowingQuery User)> recommended,
+      out List<RecommendedUserViewModel> followers, out List<RecommendedUserViewModel> followings)
     {
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.Start");
-      var followersLength = recommendedFromFollowers.Count();
-      var followsLength = recommendedFromFollows.Count();
 
-      followers = new List<RecommendedUserViewModel>(followersLength);
-      follows = new List<RecommendedUserViewModel>(followsLength);
+      followers = new List<RecommendedUserViewModel>();
+      followings = new List<RecommendedUserViewModel>();
 
-      foreach (var item in recommendedFromFollowers)
-        followers.Add(new RecommendedUserViewModel
-        {
-          Position = 0,
-          UserId = item.UserId,
-          Login = item.FirstName + " " + item.LastName,
-          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl,  AvatarSizeType.Small),
-          Age = item.BirthDate.Age(),
-          SexType = item.SexType,
-          CommonFollowsingCount = item.CommonFollowingsCount
-        });
-
-      foreach (var item in recommendedFromFollows)
-        follows.Add(new RecommendedUserViewModel
-        {
-          Position = 0,
-          UserId = item.UserId,
-          Login = item.FirstName + " " + item.LastName,
-          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.OriginalAvatarUrl, AvatarSizeType.Small),
-          Age = item.BirthDate.Age(),
-          SexType = item.SexType,
-          CommonFollowsingCount = item.CommonFollowingsCount
-        });
-
-      var mainList = new List<RecommendedUserViewModel>(followersLength + followsLength);
-      mainList.AddRange(followers);
-      mainList.AddRange(follows);
-
-      var mainListOrdered = mainList.OrderByDescending(x => x.CommonFollowsingCount).ToList();
-
-      for (var i = 0; i < mainListOrdered.Count; i++)
+      var valueTuples = recommended as List<(RecommendedType Type, RecommendedFollowingQuery User)> ?? recommended.ToList();
+      for (int i = 0; i < valueTuples.Count; i++)
       {
-        mainList[i].Position = i;
+        var item = valueTuples.ElementAt(i);
+        var user = new RecommendedUserViewModel
+        {
+          Position = i,
+          UserId = item.User.UserId,
+          Login = item.User.FirstName + " " + item.User.LastName,
+          SmallAvatarUrl = MediaConverter.ToFullAvatarUrl(item.User.OriginalAvatarUrl, AvatarSizeType.Small),
+          Age = item.User.BirthDate.Age(),
+          SexType = item.User.SexType,
+          CommonFollowingsCount = item.User.CommonFollowingsCount
+        };
+
+        switch (item.Type)
+        {
+          case RecommendedType.Follower:
+            followers.Add(user);
+            break;
+          case RecommendedType.Following:
+            followings.Add(user);
+            break;
+        }
       }
       Logger.LogInformation($"{nameof(FriendsService)}.{nameof(MakeFollowersAndFollowsTo)}.End");
     }
 
+  }
+
+  public enum RecommendedType
+  {
+    Follower = 0,
+    Following = 1
   }
 
 
