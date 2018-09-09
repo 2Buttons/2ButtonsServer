@@ -6,7 +6,8 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion.Entities
   public class UserInfoEntityAddUSer
   {
     public int UserId { get; set; }
-    public string Login { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType SexType { get; set; }
     public string City { get; set; }
