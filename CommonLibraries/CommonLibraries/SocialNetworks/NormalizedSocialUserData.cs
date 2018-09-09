@@ -8,7 +8,8 @@ namespace CommonLibraries.SocialNetworks
     public string ExternalEmail { get; set; }
     public string ExternalToken { get; set; }
     public long ExpiresIn { get; set; }
-    public string Login { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public DateTime BirthDate { get; set; }
     public SexType SexType { get; set; }
     public string City { get; set; }

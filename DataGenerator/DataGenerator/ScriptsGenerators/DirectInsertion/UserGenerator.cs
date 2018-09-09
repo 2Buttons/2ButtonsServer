@@ -40,7 +40,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
 
     private string GetInsertionInitLineMain()
     {
-      return "INSERT INTO[dbo].[Users] " + "([userID]," + "[login], " + "[birthDate], " + "[sexType], " + "[cityID], " +
+      return "INSERT INTO[dbo].[Users] " + "([userID]," + "[firstName], " + "[lastName], " + "[birthDate], " + "[sexType], " + "[cityID], " +
              "[description], " + "[lastNotsSeenDate], " + "[OriginalAvatarUrl])" + "VALUES" +
              Environment.NewLine;
     }
@@ -61,7 +61,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
     private string GetInserionLineMain(UserInfoEntity user)
     {
       return
-        $"({user.UserId}, N'{user.Login}', '{user.BirthDate:u}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', '{user.LastNotsSeenDate:u}', N'{user.OriginalAvatarUrl}')";
+        $"({user.UserId}, N'{user.FirstName}', N'{user.LastName}', '{user.BirthDate:u}', {(int) user.SexType}, {user.CityId}, N'{user.Description}', '{user.LastNotsSeenDate:u}', N'{user.OriginalAvatarUrl}')";
     }
 
     private string GetInsertionLineUsersMain(IList<UserInfoEntity> users)
@@ -106,7 +106,7 @@ namespace DataGenerator.ScriptsGenerators.DirectInsertion
     private string GetInserionLineAccountAddUser(UserInfoEntityAddUSer user)
     {
       return
-        $"EXECUTE [dbo].[addUser] {user.UserId}, N'{user.Login}', '{user.BirthDate:u}', { (int)user.SexType}, { user.City}, N'{user.Description}',  N'{user.OriginalAvatarUrl}')";
+        $"EXECUTE [dbo].[addUser] {user.UserId}, N'{user.FirstName}', N'{user.LastName}', '{user.BirthDate:u}', { (int)user.SexType}, { user.City}, N'{user.Description}',  N'{user.OriginalAvatarUrl}')";
     }
 
     private string GetInsertionLineUsersAccountAddUser(IList<UserInfoEntityAddUSer> users)

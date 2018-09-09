@@ -353,7 +353,7 @@ namespace DataGenerator
           Condition = questionBag.Condition,
           FirstOption = questionBag.FirstOption,
           IsAnonymous = false,
-          QuestionType = QuestionType.Opened,
+          QuestionType = QuestionType.Public,
           SecondOption = questionBag.SecondOption,
           Tags = questionBag.Tags,
           FirstOptionPercentCount = questionBag.FirstAnswersPercent,
