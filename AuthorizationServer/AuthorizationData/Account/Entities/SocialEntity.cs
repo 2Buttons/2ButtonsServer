@@ -5,7 +5,7 @@ using CommonLibraries;
 namespace AuthorizationData.Account.Entities
 {
   [Table("Socials")]
-  public class SocialDb
+  public class SocialEntity
   {
     [Key]
     public int SocialId { get; set; }

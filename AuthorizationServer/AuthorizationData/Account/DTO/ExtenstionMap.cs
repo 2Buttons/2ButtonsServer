@@ -4,7 +4,7 @@ namespace AuthorizationData.Account.DTO
 {
   public static class ExtenstionMap
   {
-    public static UserDto ToUserDto(this UserDb userDb)
+    public static UserDto ToUserDto(this UserEntity userDb)
     {
       return new UserDto
       {

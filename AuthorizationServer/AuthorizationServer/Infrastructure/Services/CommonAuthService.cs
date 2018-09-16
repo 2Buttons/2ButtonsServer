@@ -61,7 +61,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
       var result = await JwtService.GenerateJwtAsync(user.UserId, user.RoleType);
 
-      var token = new TokenDb
+      var token = new TokenEntity
       {
         UserId = user.UserId,
         ExpiresIn = result.ExpiresIn,
@@ -101,7 +101,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
       var result = await JwtService.GenerateJwtAsync(userId, role);
 
-      var token = new TokenDb
+      var token = new TokenEntity
       {
         UserId = userId,
         ExpiresIn = result.ExpiresIn,

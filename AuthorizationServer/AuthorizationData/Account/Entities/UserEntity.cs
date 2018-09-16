@@ -6,7 +6,7 @@ using CommonLibraries;
 namespace AuthorizationData.Account.Entities
 {
   [Table("Users")]
-  public class UserDb
+  public class UserEntity
   {
     [Key]
     public int UserId { get; set; }

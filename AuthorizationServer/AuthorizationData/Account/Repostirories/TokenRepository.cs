@@ -24,81 +24,81 @@ namespace AuthorizationData.Account.Repostirories
       _context.Dispose();
     }
 
-    public async Task<bool> AddTokenAsync(TokenDb token)
+    public async Task<bool> AddTokenAsync(TokenEntity token)
     {
       var existingToken =
-        _context.TokensDb.SingleOrDefault(r => r.TokenId == token.TokenId);
+        _context.TokenEntities.SingleOrDefault(r => r.TokenId == token.TokenId);
 
       if (existingToken != null)
         await RemoveTokenAsync(existingToken);
 
-      _context.TokensDb.Add(token);
+      _context.TokenEntities.Add(token);
 
       return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> RemoveTokenAsync(long tokenId)
     {
-      var refreshToken = await _context.TokensDb.FindAsync(tokenId);
+      var refreshToken = await _context.TokenEntities.FindAsync(tokenId);
 
       if (refreshToken == null) return false;
 
-      _context.TokensDb.Remove(refreshToken);
+      _context.TokenEntities.Remove(refreshToken);
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveTokenAsync(TokenDb refreshToken)
+    public async Task<bool> RemoveTokenAsync(TokenEntity refreshToken)
     {
-      _context.TokensDb.Remove(refreshToken);
+      _context.TokenEntities.Remove(refreshToken);
       return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveTokensAsync(IEnumerable<TokenDb> tokens)
+    public async Task<bool> RemoveTokensAsync(IEnumerable<TokenEntity> tokens)
     {
-     _context.TokensDb.RemoveRange(tokens);
+     _context.TokenEntities.RemoveRange(tokens);
       return await _context.SaveChangesAsync() >= tokens.Count();
     }
 
-    public async Task<bool> RemoveTokensAsync(Expression<Func<TokenDb, bool>>predicate)
+    public async Task<bool> RemoveTokensAsync(Expression<Func<TokenEntity, bool>>predicate)
     {
-      var tokensForRemoving = _context.TokensDb.AsNoTracking().Where(predicate);
-      _context.TokensDb.RemoveRange(tokensForRemoving);
+      var tokensForRemoving = _context.TokenEntities.AsNoTracking().Where(predicate);
+      _context.TokenEntities.RemoveRange(tokensForRemoving);
       return await _context.SaveChangesAsync() >= tokensForRemoving.Count();
     }
 
     public async Task<bool> RemoveTokensByUserIdAsync(int userId)
     {
-      var tokensForRemoving = _context.TokensDb.AsNoTracking().Where(x => x.UserId == userId).ToList();
+      var tokensForRemoving = _context.TokenEntities.AsNoTracking().Where(x => x.UserId == userId).ToList();
       var tokensCount = tokensForRemoving.Count();
-      _context.TokensDb.RemoveRange(tokensForRemoving);
+      _context.TokenEntities.RemoveRange(tokensForRemoving);
       return await _context.SaveChangesAsync() >=  tokensCount;
     }
 
 
-    public async Task<TokenDb> FindTokenByIdAsync(int tokenId)
+    public async Task<TokenEntity> FindTokenByIdAsync(int tokenId)
     {
-      return await _context.TokensDb.FindAsync(tokenId);
+      return await _context.TokenEntities.FindAsync(tokenId);
     }
 
-    public async Task<TokenDb> FindTokenByTokenAndUserIdAsync(int userId, string token)
+    public async Task<TokenEntity> FindTokenByTokenAndUserIdAsync(int userId, string token)
     {
-      return await _context.TokensDb.SingleOrDefaultAsync(x=>x.UserId == userId && x.RefreshToken == token);
+      return await _context.TokenEntities.SingleOrDefaultAsync(x=>x.UserId == userId && x.RefreshToken == token);
     }
 
 
-    public async Task<TokenDb> FindTokenAsync(string token)
+    public async Task<TokenEntity> FindTokenAsync(string token)
     {
-      return await _context.TokensDb.AsNoTracking().FirstOrDefaultAsync(x=>x.RefreshToken == token);
+      return await _context.TokenEntities.AsNoTracking().FirstOrDefaultAsync(x=>x.RefreshToken == token);
     }
 
     public async Task<int> CountTokensForUserAsync(int userId)
     {
-      return await _context.TokensDb.CountAsync(x=>x.UserId == userId);
+      return await _context.TokenEntities.CountAsync(x=>x.UserId == userId);
     }
 
-    public async Task<List<TokenDb>> GetAllTokensAsync()
+    public async Task<List<TokenEntity>> GetAllTokensAsync()
     {
-      return await _context.TokensDb.AsNoTracking().ToListAsync();
+      return await _context.TokenEntities.AsNoTracking().ToListAsync();
     }
   }
 }

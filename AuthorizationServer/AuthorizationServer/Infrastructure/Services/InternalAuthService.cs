@@ -48,7 +48,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
       const RoleType role = RoleType.User;
 
-      var userDb = new UserDb
+      var userDb = new UserEntity
       {
         Email = user.Email,
         PhoneNumber = user.Phone,
@@ -59,10 +59,25 @@ namespace AuthorizationServer.Infrastructure.Services
       var isAdded = await Db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
-      var userInfo = new UserInfoDb
+      string firstName;
+      string lastName;
+
+      var spacePosition = user.Login.IndexOf(' ');
+      if (spacePosition == -1)
+      {
+        firstName = user.Login.Substring(0, user.Login.Length);
+        lastName = "";
+      }
+      else
+      {
+        firstName = user.Login.Substring(0, spacePosition);
+        lastName = user.Login.Substring(spacePosition + 1).Trim();
+      }
+      var userInfo = new UserInfoQuery
       {
         UserId = userDb.UserId,
-        Login = user.Login,
+        FirstName = firstName,
+        LastName = lastName,
         BirthDate = user.BirthDate,
         SexType = user.SexType,
         City = user.City,
@@ -80,7 +95,7 @@ namespace AuthorizationServer.Infrastructure.Services
 
       var jwtToken = await JwtService.GenerateJwtAsync(userDb.UserId, role);
 
-      var token = new TokenDb
+      var token = new TokenEntity
       {
         UserId = userDb.UserId,
         ExpiresIn = jwtToken.ExpiresIn,

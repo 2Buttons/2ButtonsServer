@@ -23,10 +23,10 @@ namespace AuthorizationData.Main.Repositories
       _contextMain.Dispose();
     }
 
-    public async Task<bool> AddUserInfoAsync(UserInfoDb user)
+    public async Task<bool> AddUserInfoAsync(UserInfoQuery user)
     {
       var returnsCode = new SqlParameter { SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output };
-      return await _contextMain.Database.ExecuteSqlCommandAsync($"addUser {user.UserId}, {user.Login}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginalAvatarUrl}, {returnsCode} OUT") > 0;
+      return await _contextMain.Database.ExecuteSqlCommandAsync($"addUser {user.UserId}, {user.FirstName}, {user.LastName}, {user.BirthDate}, {user.SexType}, {user.City},  {user.Description}, {user.OriginalAvatarUrl}, {returnsCode} OUT") > 0;
     }
 
     public async Task<bool> UpdateUserInfoAsync(UserInfoEntity user)

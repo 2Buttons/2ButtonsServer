@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AuthorizationData.Account.Entities
 {
   [Table("Emails")]
-  public class EmailDb
+  public class EmailEntity
   {
     [Key]
     public int EmailId { get; set; }

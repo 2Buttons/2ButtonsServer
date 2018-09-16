@@ -94,7 +94,7 @@ namespace AuthorizationServer.Infrastructure.Services
       NormalizedSocialUserData socialUserData)
     {
       Logger.LogInformation($"{nameof(ExternalAuthService)}.{nameof(AddUserSocialAsync)}.Start");
-      var social = new SocialDb
+      var social = new SocialEntity
       {
         InternalId = internalId,
         SocialType = socialType,
@@ -152,16 +152,17 @@ namespace AuthorizationServer.Infrastructure.Services
     {
       const RoleType role = RoleType.User;
 
-      var userDb = new UserDb {Email = user.ExternalEmail, RoleType = role, RegistrationDate = DateTime.UtcNow};
+      var userDb = new UserEntity {Email = user.ExternalEmail, RoleType = role, RegistrationDate = DateTime.UtcNow};
       var isAdded = await Db.Users.AddUserAsync(userDb);
       if (!isAdded || userDb.UserId == 0) throw new Exception("We are not able to add you. Please, tell us about it.");
 
       var fullUrl = await UploadAvatarUrlOrGetStandard(user.OriginalPhotoUrl);
 
-      var userInfo = new UserInfoDb
+      var userInfo = new UserInfoQuery
       {
         UserId = userDb.UserId,
-        Login = user.Login,
+        FirstName = user.FirstName,
+        LastName = user.LastName,
         BirthDate = user.BirthDate,
         SexType = user.SexType,
         City = user.City,

@@ -5,10 +5,10 @@ namespace AuthorizationData.Account
 {
   public class TwoButtonsAccountContext : DbContext
   {
-    public DbSet<TokenDb> TokensDb { get; set; }
-    public DbSet<UserDb> UsersDb { get; set; }
-    public DbSet<SocialDb> SocialsDb { get; set; }
-    public DbSet<EmailDb> EmailsDb { get; set; }
+    public DbSet<TokenEntity> TokenEntities { get; set; }
+    public DbSet<UserEntity> UserEntities { get; set; }
+    public DbSet<SocialEntity> SocialEntities { get; set; }
+    public DbSet<EmailEntity> EmailEntities { get; set; }
 
 
     public TwoButtonsAccountContext(DbContextOptions<TwoButtonsAccountContext> options)

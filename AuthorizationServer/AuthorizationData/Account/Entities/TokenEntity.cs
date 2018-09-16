@@ -5,7 +5,7 @@ using CommonLibraries;
 namespace AuthorizationData.Account.Entities
 {
   [Table("Tokens")]
-  public class TokenDb
+  public class TokenEntity
   {
     [Key]
     public long TokenId { get; set; }
