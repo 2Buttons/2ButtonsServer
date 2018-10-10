@@ -87,7 +87,7 @@ namespace QuestionsServer.Controllers
       return new OkResponseResult(result);
     }
 
-    [HttpPost("selected")]
+    [HttpPost("chosen")]
     public async Task<IActionResult> GetChosenQustions([FromBody] PersonalQuestionsViewModel userQuestions)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
