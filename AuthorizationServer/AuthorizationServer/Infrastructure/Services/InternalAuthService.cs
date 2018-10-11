@@ -91,7 +91,7 @@ namespace AuthorizationServer.Infrastructure.Services
         throw new Exception("We are not able to add your information. Please, tell us about it.");
       }
 
-      await Hub.Monitoring.AddUrlMonitoring(userDb.UserId);
+      //await Hub.Monitoring.AddUrlMonitoring(userDb.UserId);
 
       var jwtToken = await JwtService.GenerateJwtAsync(userDb.UserId, role);
 
