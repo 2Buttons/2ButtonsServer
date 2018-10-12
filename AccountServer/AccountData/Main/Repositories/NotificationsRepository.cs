@@ -15,10 +15,10 @@ namespace AccountData.Main.Repositories
       _db = db;
     }
 
-    public async Task<List<NotificationDb>> GetNotifications(int userId)
+    public async Task<List<NotificationQuery>> GetNotifications(int userId)
     {
         return await _db.NotificationsDb.AsNoTracking()
-          .FromSql($"select * from dbo.getNotifications({userId})").ToListAsync() ?? new List<NotificationDb>();
+          .FromSql($"select * from dbo.getNotifications({userId})").ToListAsync() ?? new List<NotificationQuery>();
     }
 
     public async Task<bool> UpdateNotsDate(int userId)

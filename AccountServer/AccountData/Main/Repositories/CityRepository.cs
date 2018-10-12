@@ -41,7 +41,9 @@ namespace AccountData.Main.Repositories
     public async Task<CityEntity> GetOrCreateCity(string cityName)
     {
       var city = _db.CityEntities.FirstOrDefault(x => x.Name == cityName);
+
       if (city != null) return city;
+
       city = new CityEntity { Name = cityName, Inhabitants = 1 };
       _db.CityEntities.Add(city);
       await _db.SaveChangesAsync();
