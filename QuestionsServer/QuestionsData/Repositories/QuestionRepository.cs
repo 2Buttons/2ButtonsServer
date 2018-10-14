@@ -230,8 +230,6 @@ namespace QuestionsData.Repositories
 
       answer.FeedbackType = feedback;
       return await _db.SaveChangesAsync() > 0;
-      //return await _db.Database.ExecuteSqlCommandAsync($"updateQuestionFeedback {userId}, {questionId}, {feedback}") >
-      //       0;
     }
 
     public async Task<bool> UpdateSaved(int userId, int questionId, bool isSaved)
@@ -254,19 +252,8 @@ namespace QuestionsData.Repositories
         _db.AnswerEntities.Add(answer);
         
       }
-      var stat = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
-      if (isSaved)
-        stat.FavoriteQuestions++;
-      else
-        stat.FavoriteQuestions--;
-
       answer.IsSaved = isSaved;
       return await _db.SaveChangesAsync() > 0;
-
-      //var added = DateTime.Now;
-
-      //return await _db.Database.ExecuteSqlCommandAsync(
-      //         $"updateFavorites {userId}, {questionId}, {1}, {isFavorite}, {added}") > 0;
     }
 
     public async Task<bool> UpdateFavorites(int userId, int questionId, bool isFavorite)
@@ -288,19 +275,9 @@ namespace QuestionsData.Repositories
         _db.AnswerEntities.Add(answer);
        
       }
-      var stat = await _db.StatisticsEntities.FirstOrDefaultAsync(x => x.UserId == userId);
-      if (isFavorite)
-        stat.PublicFavoriteQuestions++;
-      else
-        stat.PublicFavoriteQuestions--;
 
       answer.IsFavorite = isFavorite;
       return await _db.SaveChangesAsync() > 0;
-
-      //var added = DateTime.Now;
-
-      //return await _db.Database.ExecuteSqlCommandAsync(
-      //         $"updateFavorites {userId}, {questionId}, {0}, {isFavorite}, {added}") > 0;
     }
 
     public async Task<bool> UpdateAnswer(int userId, int questionId, AnswerType answerType)
@@ -324,12 +301,7 @@ namespace QuestionsData.Repositories
       }
 
       answer.AnswerType = answerType;
-     // _db.AnswerEntities.Update(answer);
       return  _db.SaveChanges() > 0;
-      //var answered = DateTime.Now;
-
-      //return await _db.Database.ExecuteSqlCommandAsync(
-      //         $"updateAnswer {userId}, {questionId}, {answerType}, {answered}") > 0;
     }
 
     public async Task<bool> UpdateQuestionBackgroundUrl(int questionId, string backgroundImageUrl)
