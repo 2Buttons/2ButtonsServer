@@ -417,8 +417,7 @@ namespace QuestionsServer.Controllers
     }
 
     [HttpPost("update/background/file")]
-    public async Task<IActionResult> UpdateBackgroundViaFile(
-      [FromBody] UploadQuestionBackgroundViaFileViewModel background)
+    public async Task<IActionResult> UpdateBackgroundViaFile(UploadQuestionBackgroundViaFileViewModel background)
     {
       if (!ModelState.IsValid) return new BadResponseResult(ModelState);
 
