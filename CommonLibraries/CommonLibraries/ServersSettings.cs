@@ -4,7 +4,6 @@ namespace CommonLibraries
 {
   public class ServersSettings
   {
-    public string Hello { get; set; }
     public List<Server> Servers { get; set; }
 
     public Server this[string name]

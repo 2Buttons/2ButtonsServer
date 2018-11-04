@@ -22,11 +22,11 @@ namespace QuestionsData.Queries
     public string OriginalAvatarUrl { get; set; }
     public int LikesCount { get; set; }
     public int DislikesCount { get; set; }
-    public QuestionFeedbackType YourFeedbackType { get; set; }
-    public AnswerType YourAnswerType { get; set; }
-    public bool IsFavorite { get; set; }
-    public bool IsSaved { get; set; }
-    public int CommentsCount { get; set; }
+    public QuestionFeedbackType YourFeedbackType { get; set; } = QuestionFeedbackType.Neutral;
+    public AnswerType YourAnswerType { get; set; } = AnswerType.NoAnswer;
+    public bool IsFavorite { get; set; } = false;
+    public bool IsSaved { get; set; } = false;
+    public int CommentsCount { get; set; } = 0;
 
     public int FirstAnswersCount { get; set; }
     public int SecondAnswersCount { get; set; }
